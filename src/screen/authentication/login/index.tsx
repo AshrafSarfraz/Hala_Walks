@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View,Text,Image,ScrollView, KeyboardAvoidingView,Platform, ImageBackground,} from 'react-native';
+import { View,Text,Image,ScrollView, KeyboardAvoidingView,Platform, ImageBackground, TouchableOpacity, Alert,} from 'react-native';
 import CustomDropdown from '../../../components/Role';
 import EmployeeLogin from '../../../components/Logins/Westwalk_Staff';
 import TenantsLogin from '../../../components/Logins/Tenant';
@@ -44,8 +44,14 @@ const LoginScreen = ({navigation}) => {
             {userType === 'organization' && (
               <CorporationLogin  navigation={navigation} />
             )}
+             {userType === 'none' && (
+               <TouchableOpacity style={styles.button} onPress={()=>{Alert.alert('Select Role')}} >
+               <Text style={styles.buttonText}>Login</Text>
+             </TouchableOpacity>
+            )}
+              
           </View>
-
+             
             
         </ScrollView>
       </KeyboardAvoidingView>
