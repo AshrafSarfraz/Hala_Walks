@@ -7,23 +7,23 @@ import CustomButton from '../buttons/CustomButton';
 interface Props {}
 
 const CorporationLogin = ({navigation}) => {
-  const [employeeId, setEmployeeId] = React.useState('');
+  const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [hide, setHide] = React.useState(true);
   return (
     <View>
-      <View style={[styles.InputContainer,employeeId !== '' ? styles.Active_Input_Field : null ]}>
-        <Image source={ManIcon} style={styles.ManIcon} />
+      <View style={[styles.InputContainer,email !== '' ? styles.Active_Input_Field : null ]}>
+        <Image source={ManIcon} style={[styles.ManIcon, email!== '' ? styles.Active_Image : null]} />
         <TextInput
           placeholder="Email"
-          value={employeeId}
-          onChangeText={setEmployeeId}
+          value={email}
+          onChangeText={setEmail}
           style={styles.input}
         />
       </View>
 
       <View style={[styles.InputContainer,password !== '' ? styles.Active_Input_Field : null ]}>
-        <Image source={Lock} style={styles.ManIcon} />
+        <Image source={Lock} style={[styles.ManIcon, password!== '' ? styles.Active_Image : null]} />
         <TextInput
           secureTextEntry={hide}
           placeholder="Password"
@@ -32,7 +32,7 @@ const CorporationLogin = ({navigation}) => {
           style={styles.passwordinput}
         />
          <TouchableOpacity onPress={()=>{setHide(!hide)}} >
-          <Image source={hide ? Hide : Lock} style={styles.HideIcons} />
+          <Image source={hide ? Hide : Lock} style={[styles.HideIcons,password!== '' ? styles.Active_Image : null]} />
          </TouchableOpacity>
       </View>
       <CustomButton title='Login' onPress={()=>{navigation.navigate('BottomNavigation')}} />
@@ -58,7 +58,8 @@ const styles = StyleSheet.create({
        width:20,height:20,
        resizeMode:"contain",
        marginLeft:12,
-       marginRight:1
+       marginRight:1,
+       tintColor:Colors.Grey
   },
   input: {
     width:'80%',
@@ -75,11 +76,15 @@ const styles = StyleSheet.create({
   HideIcons: {
     width:20,height:20,
     resizeMode:"contain",
-    marginLeft:5
+    marginLeft:5,
+    tintColor:Colors.Grey
 },
 Active_Input_Field:{
   borderWidth:1,
   borderColor:Colors.PrimaryColor,
+},
+Active_Image:{
+  tintColor:Colors.PrimaryColor
 }
 
 });

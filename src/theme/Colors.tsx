@@ -4,4 +4,5 @@ export const Colors={
    SecondaryColor:"#E49924",
    White:'#FFFFFF',
    Black:'#000000',
+   Grey:'#A2A2A2'
 }

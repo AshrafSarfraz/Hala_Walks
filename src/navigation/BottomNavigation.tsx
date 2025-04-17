@@ -3,6 +3,8 @@ import { Text, View, Image, ImageSourcePropType } from 'react-native';
 import { createBottomTabNavigator, BottomTabNavigationOptions } from '@react-navigation/bottom-tabs';
 import { Colors } from '../theme/Colors';
 import Home from '../screen/home';
+import Wishlist from '../screen/Wishlist/Wishlist';
+import Profile from '../screen/Profile/Profile';
 
 const Tab = createBottomTabNavigator();
 
@@ -19,10 +21,10 @@ const MyTabs: React.FC = () => {
               iconSource = require('../assets/icons/lock.png');
               break;
             case 'Wishlist':
-            //   iconSource = require('../../Assests/Icons/wishlist.png');
+             iconSource = require('../assets/icons/hide.png');
               break;
             case 'Profile':
-            //   iconSource = require('../../Assests/Icons/profile.png');
+              iconSource = require('../assets/icons/man.png');
               break;
             default:
               return null;
@@ -45,8 +47,8 @@ const MyTabs: React.FC = () => {
       })}
     >
       <Tab.Screen name="Home" component={Home} options={{ tabBarLabel: 'Home' }} />
-      {/* <Tab.Screen name="Wishlist" component={Wishlist} options={{ tabBarLabel: 'Wishlist' }} />
-      <Tab.Screen name="Profile" component={Profile} options={{ tabBarLabel: 'Profile' }} /> */}
+      <Tab.Screen name="Wishlist" component={Wishlist} options={{ tabBarLabel: 'Wishlist' }} />
+      <Tab.Screen name="Profile" component={Profile} options={{ tabBarLabel: 'Profile' }} /> 
     </Tab.Navigator>
   );
 };
