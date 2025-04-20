@@ -22,9 +22,9 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.PrimaryColor, // Example color
     width:'100%',
     alignSelf:"center",
-    height:55,
+    height:50,
     justifyContent:"center",
-    borderRadius: 5,
+    borderRadius: 10,
   },
   buttonText: {
     color: 'white',

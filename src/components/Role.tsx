@@ -9,7 +9,6 @@ import {
   Image,
 } from 'react-native';
 import { Colors } from '../theme/Colors';
-import { Hide } from '../theme/Images';
 
 type UserType = 'staff' | 'tenant' | 'brands' | 'organization' | 'none';
 
@@ -93,13 +92,19 @@ export default CustomDropdown;
 
 const styles = StyleSheet.create({
   dropdown: {
-    borderWidth: 1,
-    borderRadius: 8,
+    borderWidth: 2,
+    borderRadius: 25,
     backgroundColor: Colors.White,
     marginBottom: 10,
-    height:45,
+    height:50,
     justifyContent:"center",
-    paddingLeft:16
+    paddingLeft:16,
+    width: '100%',
+    borderColor: "#CCC",
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3, // Optional for iOS
   },
   dropdownText: {
     fontSize: 16,

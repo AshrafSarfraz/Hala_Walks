@@ -13,3 +13,4 @@ const IconPath='../assets/icons/'
 export const Hide=require(IconPath+'hide.png')
 export const Lock=require(IconPath+'lock.png')
 export const ManIcon=require(IconPath+'man.png')
+export const Tick=require(IconPath+'Tick.png')

@@ -24,14 +24,25 @@ const LoginScreen = ({navigation}) => {
       >
         <ScrollView contentContainerStyle={styles.scrollContent}>
           <Image source={West_NB} style={styles.logo} resizeMode="contain" />
-
+        
+          {userType === 'none' && (
           <View style={styles.card}>
             <Text style={styles.title}>Welcome Back</Text>
             <Text style={styles.subtitle}>Please select your role to login</Text>
 
             <Text style={styles.label}>Role</Text>
             <CustomDropdown selected={userType} onSelect={setUserType} />
+            {userType === 'none' && (
+               <TouchableOpacity style={styles.button} onPress={()=>{Alert.alert('Select Role')}} >
+               <Text style={styles.buttonText}>Login</Text>
+             </TouchableOpacity>
+            )}
+              </View>)}
 
+            {userType !== 'none' && (
+           <View>
+             <Text style={styles.subtitle}>Enter your credentials to login</Text>
+           <CustomDropdown selected={userType} onSelect={setUserType} />
             {userType === 'staff' && (
               <EmployeeLogin navigation={navigation} />
             )}
@@ -44,13 +55,11 @@ const LoginScreen = ({navigation}) => {
             {userType === 'organization' && (
               <CorporationLogin  navigation={navigation} />
             )}
-             {userType === 'none' && (
-               <TouchableOpacity style={styles.button} onPress={()=>{Alert.alert('Select Role')}} >
-               <Text style={styles.buttonText}>Login</Text>
-             </TouchableOpacity>
-            )}
+            </View>
+          )}
+            
               
-          </View>
+        
              
             
         </ScrollView>
