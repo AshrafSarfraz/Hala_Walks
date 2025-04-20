@@ -11,7 +11,7 @@ import { styles } from './style';
 
 
 
-const LoginScreen = ({navigation}) => {
+const LoginScreen:React.FC = ({navigation}) => {
   const [userType, setUserType] = useState<'none' | 'staff' | 'tenant' | 'brands' | 'organization'>('none');
 
 

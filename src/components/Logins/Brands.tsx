@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {TextInput, StyleSheet, View, Text, Image, TouchableOpacity, Linking} from 'react-native';
-import {Hide, Lock, ManIcon} from '../../theme/Images';
+import {Email, Hide, Lock, Show} from '../../theme/Images';
 import { Colors } from '../../theme/Colors';
 import CustomButton from '../buttons/CustomButton';
 import CustomCheckbox from '../checkbox/checkbox';
@@ -23,7 +23,7 @@ const BrandsLogin = ({navigation}) => {
   return (
     <View>
       <View style={[styles.InputContainer,email !== '' ? styles.Active_Input_Field : null ]}>
-        <Image source={ManIcon} style={[styles.ManIcon, email!== '' ? styles.Active_Image : null ]} />
+        <Image source={Email} style={[styles.ManIcon, email!== '' ? styles.Active_Image : null ]} />
         <TextInput
           placeholder="Email"
           value={email}
@@ -42,7 +42,7 @@ const BrandsLogin = ({navigation}) => {
           style={styles.passwordinput}
         />
          <TouchableOpacity onPress={()=>{setHide(!hide)}} >
-          <Image source={hide ? Hide : Lock} style={[styles.HideIcons,password!== '' ? styles.Active_Image : null ]} />
+          <Image source={hide ? Hide : Show} style={[styles.HideIcons,password!== '' ? styles.Active_Image : null ]} />
          </TouchableOpacity>
       </View>
       <CustomCheckbox

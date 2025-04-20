@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {TextInput, StyleSheet, View, Text, Image, TouchableOpacity, Linking} from 'react-native';
-import {Hide, Lock, ManIcon} from '../../theme/Images';
+import {Hide, Lock, ManIcon, Show} from '../../theme/Images';
 import { Colors } from '../../theme/Colors';
 import CustomButton from '../buttons/CustomButton';
 import { useSelector } from 'react-redux';
@@ -41,7 +41,7 @@ const CorporationLogin = ({navigation}) => {
           style={styles.passwordinput}
         />
          <TouchableOpacity onPress={()=>{setHide(!hide)}} >
-          <Image source={hide ? Hide : Lock} style={[styles.HideIcons,password!== '' ? styles.Active_Image : null]} />
+          <Image source={hide ? Hide : Show} style={[styles.HideIcons,password!== '' ? styles.Active_Image : null]} />
          </TouchableOpacity>
       </View>
       <CustomCheckbox

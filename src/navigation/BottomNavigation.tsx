@@ -2,9 +2,10 @@ import React from 'react';
 import { Text, View, Image, ImageSourcePropType } from 'react-native';
 import { createBottomTabNavigator, BottomTabNavigationOptions } from '@react-navigation/bottom-tabs';
 import { Colors } from '../theme/Colors';
-import Home from '../screen/home';
+
 import Wishlist from '../screen/Wishlist/Wishlist';
 import Profile from '../screen/Profile/Profile';
+import Home from '../screen/Home';
 
 const Tab = createBottomTabNavigator();
 

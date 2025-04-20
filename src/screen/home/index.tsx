@@ -1,20 +1,102 @@
-import React from 'react';
-import { StyleSheet, View,Text, StatusBar } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Fonts } from '../../theme/Fonts';
+import React, { useEffect, useState } from 'react';
+import { SafeAreaView, View, Text, Image, TouchableOpacity, ScrollView, StatusBar, Platform, ImageBackground } from 'react-native';
 
-const Home = () => {
-    return (
-        <SafeAreaView style={{flex:1,backgroundColor:"yellow"}} >
-         <StatusBar hidden={false} translucent={true} animated={true} />
-        <View style={{flex:1,backgroundColor:"red",alignItems:"center",justifyContent:"center"}} >
-            <Text style={{fontSize:20, fontFamily:Fonts.SF_Bold}} >  Home</Text>
-          
-        </View>
-        </SafeAreaView>
-    );
-}
+import ImageSlider from './FlatOffer';
+import Categories from './Categories';
+import BestSeller from './BestSellers';
+import RecentlyAdded from './RecentlyAdded';
 
-const styles = StyleSheet.create({})
+
+import Venues from './Venues';
+import { useSelector } from 'react-redux';
+
+import { getStyles } from './style';
+
+import { RootState } from '../../redux/store';
+import { languageData } from '../../redux/language/languageSlice';
+import LanguageModal from '../../components/Modal/Lan_Modal';
+import {  BackgroundImg, Language,  Scope, Westwalk, } from '../../theme/Images';
+
+type HomeProps = {
+  navigation: any;
+};
+
+const Home: React.FC<HomeProps> = ({ navigation }) => {
+  const [alertVisible, setAlertVisible] = useState<boolean>(false);
+  const language = useSelector((state: RootState) => state.language.language); // Get the current language from Redux
+  const styles = getStyles(language);
+
+
+  
+
+  const showAlert = () => {
+    setAlertVisible(true);
+  };
+
+  const hideAlert = () => {
+    setAlertVisible(false);
+  };
+
+  return (
+    <ImageBackground source={BackgroundImg} style={{flex:1}}  imageStyle={{width:'100%',height:"100%"}} >
+       <StatusBar hidden={false} translucent={true} animated={true} />
+
+      <SafeAreaView style={styles.Container}>
+      </SafeAreaView>
+      <View style={styles.Header_container}>
+      <View style={styles.header}>
+            <Image source={Westwalk} style={styles.logo} />
+            <View style={styles.language_Cont}>
+              <TouchableOpacity style={styles.Btn} onPress={showAlert}>
+                <Image source={Language} style={styles.language_Icon} />
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.Btn} onPress={() => navigation.navigate('SearchScreen')}>
+                <Image source={Scope} style={styles.Scope_Icon} />
+              </TouchableOpacity>
+            </View>
+           
+      </View>
+      </View>
+
+        <ScrollView  showsVerticalScrollIndicator={false} >
+         
+      
+          <ImageSlider navigation={navigation} />
+
+          <View style={[styles.Categories_Cont]}>
+            <View style={styles.txt_cont} >
+            <Text style={styles.Categories_Txt}>{languageData[language].categories}</Text>
+            </View>
+  
+            <Categories navigation={navigation} />
+          </View>
+          <View style={[styles.Categories_Cont,{marginTop:'-1%'}]}>
+          <View style={styles.txt_cont} >
+            <Text style={styles.Categories_Txt}>{languageData[language].venues_collection}</Text>
+           </View>
+            <Venues navigation={navigation} />
+          </View>
+
+          <View style={[styles.BestSeller_Cont,{marginTop:"1%"}]}>
+          <View style={styles.txt_cont} >
+            <Text style={styles.BestSeller_Txt}>{languageData[language].best_sellers}</Text>
+            </View>
+            <BestSeller  />
+          </View>
+
+          <View style={styles.BestSeller_Cont}>
+          <View style={styles.txt_cont} >
+            <Text style={styles.BestSeller_Txt}>{languageData[language].recently_added}</Text>
+            </View>
+            <RecentlyAdded />
+          </View>
+        </ScrollView>
+
+        <LanguageModal visible={alertVisible} onClose={hideAlert} />
+       
+ 
+        </ImageBackground>
+  );
+};
 
 export default Home;
