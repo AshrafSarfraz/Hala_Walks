@@ -16,6 +16,7 @@ import { RootState } from '../../redux/store';
 import { languageData } from '../../redux/language/languageSlice';
 import LanguageModal from '../../components/Modal/Lan_Modal';
 import {  BackgroundImg, Language,  Scope, Westwalk, } from '../../theme/Images';
+import { Colors } from '../../theme/Colors';
 
 type HomeProps = {
   navigation: any;
@@ -38,11 +39,9 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
   };
 
   return (
-    <ImageBackground source={BackgroundImg} style={{flex:1}}  imageStyle={{width:'100%',height:"100%"}} >
+    <View style={{flex:1, backgroundColor:Colors.Bg}} >
+    {/* <ImageBackground source={BackgroundImg} style={{flex:1,}}  imageStyle={{width:'100%',height:"100%",opacity:0.2}} > */}
        <StatusBar hidden={false} translucent={true} animated={true} />
-
-      <SafeAreaView style={styles.Container}>
-      </SafeAreaView>
       <View style={styles.Header_container}>
       <View style={styles.header}>
             <Image source={Westwalk} style={styles.logo} />
@@ -70,7 +69,7 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
   
             <Categories navigation={navigation} />
           </View>
-          <View style={[styles.Categories_Cont,{marginTop:'-1%'}]}>
+          <View style={[styles.Categories_Cont,{marginTop:'2%'}]}>
           <View style={styles.txt_cont} >
             <Text style={styles.Categories_Txt}>{languageData[language].venues_collection}</Text>
            </View>
@@ -95,7 +94,8 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
         <LanguageModal visible={alertVisible} onClose={hideAlert} />
        
  
-        </ImageBackground>
+        {/* </ImageBackground> */}
+        </View>
   );
 };
 

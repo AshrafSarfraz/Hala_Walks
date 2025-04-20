@@ -9,14 +9,22 @@ const imageSize = (width - 40) / 4; // Adjusting image size dynamically
 export const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    marginHorizontal: '3%',
     marginTop: 10,
+    paddingHorizontal:"3%",
+    backgroundColor:Colors.White,
+    elevation:10,
+    paddingTop:'5%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
   },
   Flatlist_Cont: {
     marginRight: 6,
     alignItems: 'center',
     width: imageSize, // Making container responsive
-    marginBottom:10,
+    marginBottom:6
+ 
    
   },
   image: {
@@ -33,7 +41,7 @@ export const styles = StyleSheet.create({
     lineHeight: 14,
     letterSpacing: 0.3,
     textAlign: 'center',
-    width:"100%"
+    width:"100%",
   },
   showMoreButton: {
     marginTop: 10,

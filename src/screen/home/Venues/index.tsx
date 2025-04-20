@@ -86,7 +86,7 @@ const Venues: React.FC<VenuesProps> = () => {
 
         {/* Shimmer effect for venue name */}
         <ShimmerPlaceholder visible={!imageLoading} LinearGradient={LinearGradient} style={{ width: '80%',  marginTop: 2,  height: 20, borderRadius: 5, }}>
-          <Text style={styles.cate_txt}>{item.venueName}</Text>
+          <Text style={styles.cate_txt}>West Walk</Text>
         </ShimmerPlaceholder>
       </TouchableOpacity>
     );
@@ -108,6 +108,7 @@ const Venues: React.FC<VenuesProps> = () => {
         numColumns={4}
         renderItem={renderVenueItem}
         ListEmptyComponent={renderShimmerItem} // Render shimmer effect when the list is empty
+        showsHorizontalScrollIndicator={false}
       />
 
       {venues.length > 8 && (

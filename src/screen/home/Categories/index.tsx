@@ -39,6 +39,10 @@ const Categories:React.FC<CategoriesProps> = () => {
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
+        inverted={language === 'ar'}
+        contentContainerStyle={{
+          flexDirection: language === 'ar' ? 'row-reverse' : 'row',
+        }}
         renderItem={({ item }) => (
           <TouchableOpacity  style={styles.Flatlist_Cont} onPress={() => navigation.navigate('CategoriesScreen', { item })}>
             <Image source={item.source} style={styles.image}/>

@@ -3,20 +3,20 @@ import { Platform } from 'react-native';
 export const Fonts = {
    
     F_Bold: Platform.select({
-        ios: 'FilsonProBold',
+        ios: 'FilsonPro-Bold',
         android: 'FilsonProBold',
     }),
   
     F_Regular: Platform.select({
-        ios: 'FilsonProRegular',
+        ios: 'FilsonPro-Regular',
         android: 'FilsonProRegular',
     }),
     F_Medium: Platform.select({
-        ios: 'FilsonProMedium',
+        ios: 'FilsonPro-Medium',
         android: 'FilsonProMedium',
     }),
     F_Light: Platform.select({
-        ios: 'FilsonProLight',
+        ios: 'FilsonPro-Light',
         android: 'FilsonProLight',
     }),
 };

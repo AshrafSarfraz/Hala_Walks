@@ -10,6 +10,7 @@ export const getStyles=(language:String)=>  StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
+    
   },
   row: {
     justifyContent: 'space-between', // Ensures even spacing
@@ -26,9 +27,12 @@ Flatlist_Cont: {
     borderColor: '#E0E0E0',
     overflow: 'hidden',
     shadowColor: '#000', // Adding shadow effect for iOS
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 5,},
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
+    elevation: 3,
+    shadowOffset: { width: 1, height: 1 },
+  
+  },
     image: {
       width: '100%', // Adjust image size according to screen width
       height: 120,

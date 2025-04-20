@@ -9,14 +9,14 @@ export const getStyles =(language:String)=> StyleSheet.create({
     flex:1,
     backgroundColor:Colors.PrimaryColor,
     paddingHorizontal: Platform.OS === 'ios' ? '3%' : '0%',
-    marginTop: Platform.OS === 'ios' ? 0 : '8%',
-    marginBottom: Platform.OS === 'ios' ? 0 : '2%',
   },
   Header_container:{
-    height:90,
+    height:Platform.OS === 'ios' ? 140 : 120,
     backgroundColor:Colors.PrimaryColor,
     borderBottomLeftRadius:40,
     borderBottomRightRadius:40,
+    justifyContent:'flex-end',
+    paddingBottom:15
   },
   header: {
     paddingHorizontal: '5%',
