@@ -2,9 +2,6 @@ import {Platform, StyleSheet} from 'react-native';
 import { Colors } from '../../../theme/Colors';
 import { Fonts } from '../../../theme/Fonts';
 
-
-
-
 export const getStyles=(language:string) => StyleSheet.create({
   container: {
     paddingHorizontal: 24,

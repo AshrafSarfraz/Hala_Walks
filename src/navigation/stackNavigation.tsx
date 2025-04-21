@@ -9,6 +9,8 @@ import Bottom from './BottomNavigation';
 import ProfileScreen from '../screen/Employee_Data/Profile_Screen';
 import EmployeeTab from './EmployeeTab';
 import DetailScreen from '../screen/Others/detail_Screen';
+import SearchScreen from '../screen/Others/SearchScreen';
+import SelectedCategories from '../screen/Others/selected_categories';
 
 
 
@@ -28,7 +30,9 @@ export default function StackNavigation() {
         <Stack.Screen name="BottomNavigation" component={Bottom}   />
         <Stack.Screen name="Profile" component={ProfileScreen}   />
         <Stack.Screen name="EmployeeTab" component={EmployeeTab}   />
+        <Stack.Screen name="SearchScreen" component={SearchScreen}   />
         <Stack.Screen name="DetailScreen" component={DetailScreen}   />
+        <Stack.Screen name="CategoriesScreen" component={SelectedCategories}   />
       </Stack.Navigator>
     </NavigationContainer>
   );

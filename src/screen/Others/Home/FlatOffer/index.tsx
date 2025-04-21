@@ -37,7 +37,6 @@ const ImageSlider: React.FC<{ navigation: any }> = () => {
   useEffect(() => {
     const getBrands = async () => {
       setLoading(true);
-      // simulate delay
       setTimeout(() => {
         setOffers(OfferdummyData);
         setLoading(false);

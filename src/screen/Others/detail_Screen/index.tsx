@@ -90,7 +90,7 @@ const DetailScreen: React.FC<{route:any}> = ({route}) => {
                 LinearGradient={LinearGradient}
                 style={styles.image}
               >
-            <Image source={{uri:item.img}} style={styles.image}    onLoad={handleImageLoad} />
+            <Image source={typeof item.img === 'string' ? { uri: item.img } : item.img} style={styles.image}    onLoad={handleImageLoad} />
             </ShimmerPlaceholder>
             <View style={styles.Type_Cont}>
               <Text style={styles.Type_Text}>{item.selectedCategory}</Text>
