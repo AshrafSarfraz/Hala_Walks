@@ -17,12 +17,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import LinearGradient from 'react-native-linear-gradient';
 import { getStyles } from './style';
-import { RootState } from '../../redux/store';
-import { toggleItemInCart } from '../../redux/cartSlice';
-import CustomHeader from '../../components/header/CustomHeader';
-import { languageData } from '../../redux/language/languageSlice';
-import { Dark_Heart, Light_Heart } from '../../theme/Images';
-import CustomButton from '../../components/buttons/CustomButton';
+import { RootState } from '../../../redux/store';
+import { toggleItemInCart } from '../../../redux/cartSlice';
+import CustomHeader from '../../../components/header/CustomHeader';
+import { languageData } from '../../../redux/language/languageSlice';
+import { Dark_Heart, Light_Heart } from '../../../theme/Images';
+import CustomButton from '../../../components/buttons/CustomButton';
 
 
 
@@ -102,7 +102,7 @@ const DetailScreen: React.FC<{route:any}> = ({route}) => {
               
               <TouchableOpacity onPress={Contact} style={styles.call_cont}>
                 <Image
-                  source={require('../../assets/icons/man.png')}
+                  source={require('../../../assets/icons/man.png')}
                   style={styles.Phone_Icon}
                 />
                 <Text style={styles.call_txt}>Call Now</Text>

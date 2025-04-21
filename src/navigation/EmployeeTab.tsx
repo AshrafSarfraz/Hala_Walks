@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text,StyleSheet,TouchableOpacity,Image,Dimensions,} from 'react-native';
-import Animated, { useSharedValue,useAnimatedStyle, withTiming,} from 'react-native-reanimated';
+import { View, Text, StyleSheet, TouchableOpacity, Image, Dimensions } from 'react-native';
+import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
 import ProfileScreen from '../screen/Employee_Data/Profile_Screen';
 import Home from '../screen/Others/Home';
-
+import { Dark_Heart, HomeIcon, ProfileIcon, Wishlist } from '../theme/Images';
 
 const { width } = Dimensions.get('window');
 const tabWidth = width / 3;
@@ -19,13 +19,18 @@ type TabProps = {
   navigation: any;
 };
 
+type TabButtonProps = {
+  icon: any;
+  isFocused: boolean;
+  onPress: () => void;
+  isCenter?: boolean;
+};
 
-
-const EmployeeTab:React.FC<TabProps>= ({navigation}) => {
-  const [activeTab, setActiveTab] = useState(1);
+const EmployeeTab: React.FC<TabProps> = ({ navigation }) => {
+  const [activeTab, setActiveTab] = useState<number>(1);
   const indicatorPosition = useSharedValue(tabWidth); // Initially at Homework tab
 
-  const handleTabPress = (index) => {
+  const handleTabPress = (index: number) => {
     setActiveTab(index);
     indicatorPosition.value = withTiming(tabWidth * index, { duration: 300 });
   };
@@ -37,13 +42,13 @@ const EmployeeTab:React.FC<TabProps>= ({navigation}) => {
   const renderScreen = () => {
     switch (activeTab) {
       case 0:
-        return < Home navigation={navigation} />;
+        return <Home navigation={navigation} />;
       case 1:
         return <HomeworkScreen />;
       case 2:
-        return <ProfileScreen  />;
+        return <ProfileScreen />;
       default:
-        return <Home navigation={navigation}/>;
+        return <Home navigation={navigation} />;
     }
   };
 
@@ -57,18 +62,18 @@ const EmployeeTab:React.FC<TabProps>= ({navigation}) => {
 
         {/* Tab Buttons */}
         <TabButton
-          icon={require('../assets/icons/hide.png')}
+          icon={HomeIcon}
           isFocused={activeTab === 0}
           onPress={() => handleTabPress(0)}
         />
         <TabButton
-          icon={require('../assets/icons/lock.png')}
+          icon={Wishlist}
           isFocused={activeTab === 1}
           onPress={() => handleTabPress(1)}
           isCenter
         />
         <TabButton
-          icon={require('../assets/icons/man.png')}
+          icon={ProfileIcon}
           isFocused={activeTab === 2}
           onPress={() => handleTabPress(2)}
         />
@@ -77,7 +82,7 @@ const EmployeeTab:React.FC<TabProps>= ({navigation}) => {
   );
 };
 
-const TabButton = ({ icon, isFocused, onPress, isCenter }) => {
+const TabButton: React.FC<TabButtonProps> = ({ icon, isFocused, onPress, isCenter }) => {
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: withTiming(isFocused ? -20 : 0, { duration: 300 }) }],
   }));
@@ -121,12 +126,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 6,
     elevation: 5,
-    paddingBottom:15
+    paddingBottom: 15,
   },
   indicator: {
     position: 'absolute',
     bottom: 25,
-    left: tabWidth / 2 , // center under icon
+    left: tabWidth / 2, // center under icon
     width: 10,
     height: 10,
     backgroundColor: '#2f2f75',
@@ -144,17 +149,17 @@ const styles = StyleSheet.create({
   },
   focusedIcon: {
     backgroundColor: '#2f2f75',
-    width:60,
-    height:60,
-    alignItems:'center',
-    justifyContent:"center",
-    marginBottom:10,
+    width: 60,
+    height: 60,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 10,
   },
   icon: {
     width: 30,
     height: 30,
     tintColor: '#999',
-    resizeMode:"contain"
+    resizeMode: 'contain',
   },
   centerTab: {
     position: 'relative',
@@ -167,7 +172,3 @@ const styles = StyleSheet.create({
 });
 
 export default EmployeeTab;
-
-
-
-

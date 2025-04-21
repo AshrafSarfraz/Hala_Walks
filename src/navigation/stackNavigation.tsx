@@ -8,7 +8,8 @@ import LoginScreen from '../screen/authentication/login';
 import Bottom from './BottomNavigation';
 import ProfileScreen from '../screen/Employee_Data/Profile_Screen';
 import EmployeeTab from './EmployeeTab';
-import DetailScreen from '../screen/detail_Screen';
+import DetailScreen from '../screen/Others/detail_Screen';
+
 
 
 
