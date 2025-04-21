@@ -10,11 +10,6 @@ import WishlistScreen from '../screen/Others/Wishlist';
 const { width } = Dimensions.get('window');
 const tabWidth = width / 3;
 
-const HomeworkScreen = () => (
-  <View style={styles.screen}>
-    <Text style={{ fontSize: 24 }}>📘 Homework Screen</Text>
-  </View>
-);
 
 type TabProps = {
   navigation: any;
@@ -29,7 +24,7 @@ type TabButtonProps = {
 
 const EmployeeTab: React.FC<TabProps> = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState<number>(0);
-  const indicatorPosition = useSharedValue(tabWidth); // Initially at Homework tab
+  const indicatorPosition = useSharedValue(tabWidth * 0); 
 
   const handleTabPress = (index: number) => {
     setActiveTab(index);

@@ -1,5 +1,6 @@
 export const dummyDataList = [
     {
+      id: "item-1",
       phoneNumber: "+97430000000",
       descriptionArabic: "براون كافيه يفخر بحبوب القهوة المحمصة بعناية...",
       descriptionEng: "Brown Café prides ourselves in our deep roasted coffee beans...",
@@ -22,6 +23,7 @@ export const dummyDataList = [
       time: "2025-04-16T13:24:22Z"
     },
     {
+      id: "item-2",
       phoneNumber: "+97430000001",
       descriptionArabic: "استمتع بأفضل الأطباق الإيطالية التقليدية...",
       descriptionEng: "Enjoy the best traditional Italian dishes in the heart of Doha...",
@@ -44,6 +46,7 @@ export const dummyDataList = [
       time: "2025-04-16T13:25:22Z"
     },
     {
+      id: "item-3",
       phoneNumber: "+97430000002",
       descriptionArabic: "صالون يقدم خدمات تجميل عالية الجودة بأسعار مناسبة...",
       descriptionEng: "Salon offering high-quality beauty services at affordable prices...",
@@ -66,6 +69,7 @@ export const dummyDataList = [
       time: "2025-04-16T13:26:22Z"
     },
     {
+      id: "item-4",
       phoneNumber: "+97430000003",
       descriptionArabic: "استمتع بتجربة سبا فاخرة ومريحة بعد يوم طويل...",
       descriptionEng: "Relax in luxury spa treatments after a long day...",
@@ -88,6 +92,7 @@ export const dummyDataList = [
       time: "2025-04-16T13:27:22Z"
     },
     {
+      id: "item-5",
       phoneNumber: "+97430000004",
       descriptionArabic: "مطعم عربي يقدم أشهى الأكلات التقليدية بنكهات مميزة...",
       descriptionEng: "Arabic restaurant serving delicious traditional dishes with a modern twist...",
