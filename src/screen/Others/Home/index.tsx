@@ -12,11 +12,11 @@ import { useSelector } from 'react-redux';
 
 import { getStyles } from './style';
 
-import { RootState } from '../../redux/store';
-import { languageData } from '../../redux/language/languageSlice';
-import LanguageModal from '../../components/Modal/Lan_Modal';
-import {  BackgroundImg, Language,  Scope, Westwalk, } from '../../theme/Images';
-import { Colors } from '../../theme/Colors';
+import { RootState } from '../../../redux/store';
+import { languageData } from '../../../redux/language/languageSlice';
+import LanguageModal from '../../../components/Modal/Lan_Modal';
+import {  BackgroundImg, Language,  Scope, Westwalk, } from '../../../theme/Images';
+import { Colors } from '../../../theme/Colors';
 
 type HomeProps = {
   navigation: any;

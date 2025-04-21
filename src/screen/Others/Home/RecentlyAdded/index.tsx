@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
 import { getStyles } from './style';
 
 import { dummyDataList } from '../BestSellers/dummyData';
-import { RootState } from '../../../redux/store';
+import { RootState } from '../../../../redux/store';
 
 const RecentlyAdded = () => {
   const navigation = useNavigation();

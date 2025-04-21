@@ -2,10 +2,10 @@ import React from 'react';
 import { Text, View, Image, ImageSourcePropType } from 'react-native';
 import { createBottomTabNavigator, BottomTabNavigationOptions } from '@react-navigation/bottom-tabs';
 import { Colors } from '../theme/Colors';
+import Home from '../screen/Others/Home';
+import ProfileScreen from '../screen/Employee_Data/Profile_Screen';
 
-import Wishlist from '../screen/Wishlist/Wishlist';
-import Profile from '../screen/Profile/Profile';
-import Home from '../screen/Home';
+
 
 const Tab = createBottomTabNavigator();
 
@@ -48,8 +48,8 @@ const MyTabs: React.FC = () => {
       })}
     >
       <Tab.Screen name="Home" component={Home} options={{ tabBarLabel: 'Home' }} />
-      <Tab.Screen name="Wishlist" component={Wishlist} options={{ tabBarLabel: 'Wishlist' }} />
-      <Tab.Screen name="Profile" component={Profile} options={{ tabBarLabel: 'Profile' }} /> 
+      <Tab.Screen name="Wishlist" component={Home} options={{ tabBarLabel: 'Wishlist' }} />
+      <Tab.Screen name="Profile" component={ProfileScreen} options={{ tabBarLabel: 'Profile' }} /> 
     </Tab.Navigator>
   );
 };

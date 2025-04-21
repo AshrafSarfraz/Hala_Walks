@@ -6,7 +6,7 @@ import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import LinearGradient from 'react-native-linear-gradient';
 
 import { getStyles } from './style';
-import { RootState } from '../../../redux/store';
+import { RootState } from '../../../../redux/store';
 import { dummyDataList } from './dummyData';
 
 

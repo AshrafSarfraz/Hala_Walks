@@ -1,141 +1,173 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text,StyleSheet,TouchableOpacity,Image,Dimensions,} from 'react-native';
+import Animated, { useSharedValue,useAnimatedStyle, withTiming,} from 'react-native-reanimated';
 
-// Dummy Screens
-const HomeScreen = () => (
+import ProfileScreen from '../screen/Employee_Data/Profile_Screen';
+import Home from '../screen/Others/Home';
+
+
+const { width } = Dimensions.get('window');
+const tabWidth = width / 3;
+
+const HomeworkScreen = () => (
   <View style={styles.screen}>
-    <Text style={styles.screenText}>🏠 Home Screen</Text>
+    <Text style={{ fontSize: 24 }}>📘 Homework Screen</Text>
   </View>
 );
 
-const ProfileScreen = () => (
-  <View style={styles.screen}>
-    <Text style={styles.screenText}>👤 Profile Screen</Text>
-  </View>
-);
+type TabProps = {
+  navigation: any;
+};
 
-const SettingsScreen = () => (
-  <View style={styles.screen}>
-    <Text style={styles.screenText}>⚙️ Settings Screen</Text>
-  </View>
-);
 
-const EmployeeTab: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'home' | 'profile' | 'settings'>('home');
+
+const EmployeeTab:React.FC<TabProps>= ({navigation}) => {
+  const [activeTab, setActiveTab] = useState(1);
+  const indicatorPosition = useSharedValue(tabWidth); // Initially at Homework tab
+
+  const handleTabPress = (index) => {
+    setActiveTab(index);
+    indicatorPosition.value = withTiming(tabWidth * index, { duration: 300 });
+  };
+
+  const animatedIndicatorStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: indicatorPosition.value }],
+  }));
 
   const renderScreen = () => {
     switch (activeTab) {
-      case 'home':
-        return <HomeScreen />;
-      case 'profile':
-        return <ProfileScreen />;
-      case 'settings':
-        return <SettingsScreen />;
+      case 0:
+        return < Home navigation={navigation} />;
+      case 1:
+        return <HomeworkScreen />;
+      case 2:
+        return <ProfileScreen  />;
       default:
-        return null;
+        return <Home navigation={navigation}/>;
     }
   };
 
   return (
-    <View style={styles.container}>
-      {/* Screen Content */}
-      <View style={styles.content}>
-        {renderScreen()}
-      </View>
+    <View style={{ flex: 1 }}>
+      {renderScreen()}
 
-      {/* Custom Tab Bar */}
-      <View style={styles.tabBarContainer}>
-        <View style={styles.tabBar}>
-          <TabButton label="Home" isActive={activeTab === 'home'} onPress={() => setActiveTab('home')} />
-          <TabButton label="Profile" isActive={activeTab === 'profile'} onPress={() => setActiveTab('profile')} />
-          <TabButton label="Settings" isActive={activeTab === 'settings'} onPress={() => setActiveTab('settings')} />
-        </View>
+      <View style={styles.tabBar}>
+        {/* Moving Blue Circle */}
+        <Animated.View style={[styles.indicator, animatedIndicatorStyle]} />
+
+        {/* Tab Buttons */}
+        <TabButton
+          icon={require('../assets/icons/hide.png')}
+          isFocused={activeTab === 0}
+          onPress={() => handleTabPress(0)}
+        />
+        <TabButton
+          icon={require('../assets/icons/lock.png')}
+          isFocused={activeTab === 1}
+          onPress={() => handleTabPress(1)}
+          isCenter
+        />
+        <TabButton
+          icon={require('../assets/icons/man.png')}
+          isFocused={activeTab === 2}
+          onPress={() => handleTabPress(2)}
+        />
       </View>
     </View>
   );
 };
 
-// Custom Tab Button Component
-type TabButtonProps = {
-  label: string;
-  isActive: boolean;
-  onPress: () => void;
+const TabButton = ({ icon, isFocused, onPress, isCenter }) => {
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: withTiming(isFocused ? -20 : 0, { duration: 300 }) }],
+  }));
+
+  return (
+    <TouchableOpacity
+      activeOpacity={0.8}
+      onPress={onPress}
+      style={[styles.tabButton, isCenter && styles.centerTab]}
+    >
+      <Animated.View
+        style={[
+          styles.iconContainer,
+          isFocused && styles.focusedIcon,
+          animatedStyle,
+          isCenter && styles.centerIcon,
+        ]}
+      >
+        <Image source={icon} style={[styles.icon, isFocused && { tintColor: '#fff' }]} />
+      </Animated.View>
+    </TouchableOpacity>
+  );
 };
 
-const TabButton: React.FC<TabButtonProps> = ({ label, isActive, onPress }) => (
-  <TouchableOpacity onPress={onPress} style={styles.tabWrapper}>
-    {isActive ? (
-      <View style={styles.activeTabCircle}>
-        <Text style={styles.activeText}>{label}</Text>
-      </View>
-    ) : (
-      <Text style={styles.tabText}>{label}</Text>
-    )}
-  </TouchableOpacity>
-);
-
-// Styles
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  content: {
-    flex: 1,
-  },
   screen: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  screenText: {
-    fontSize: 22,
-    fontWeight: '600',
-  },
-  tabBarContainer: {
-    backgroundColor: '#f5e9e2', // Beige background
-    paddingBottom: 20, // Space at the bottom
-    paddingTop: 20, // Space for the circle
-  },
   tabBar: {
     flexDirection: 'row',
+    backgroundColor: '#fff',
+    height: 80,
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
     justifyContent: 'space-around',
-    backgroundColor: '#f5e9e2', // White tab bar
-    marginHorizontal: 20, // Margin on the sides
-    borderRadius: 30, // Rounded corners
-    height: 50, // Height of the tab bar
     alignItems: 'center',
-  },
-  tabWrapper: {
-    flex: 1, // Equal width for each tab
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '100%',
-  },
-  tabText: {
-    fontSize: 16,
-    color: '#444',
-  },
-  activeText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  activeTabCircle: {
-    backgroundColor: '#1e3a8a', // Dark blue circle
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    position: 'absolute',
-    top: -60, // Position to overlap the tab bar
-    alignItems: 'center',
-    justifyContent: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
     elevation: 5,
+    paddingBottom:15
+  },
+  indicator: {
+    position: 'absolute',
+    bottom: 25,
+    left: tabWidth / 2 , // center under icon
+    width: 10,
+    height: 10,
+    backgroundColor: '#2f2f75',
+    borderRadius: 15,
+    zIndex: 0,
+  },
+  tabButton: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  iconContainer: {
+    backgroundColor: '#fff',
+    padding: 10,
+    borderRadius: 40,
+  },
+  focusedIcon: {
+    backgroundColor: '#2f2f75',
+    width:60,
+    height:60,
+    alignItems:'center',
+    justifyContent:"center",
+    marginBottom:10,
+  },
+  icon: {
+    width: 30,
+    height: 30,
+    tintColor: '#999',
+    resizeMode:"contain"
+  },
+  centerTab: {
+    position: 'relative',
+    zIndex: 2,
+  },
+  centerIcon: {
+    padding: 16,
+    borderRadius: 35,
   },
 });
 
 export default EmployeeTab;
+
+
+
+
