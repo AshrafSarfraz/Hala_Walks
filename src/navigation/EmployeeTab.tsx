@@ -4,7 +4,8 @@ import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-na
 
 import ProfileScreen from '../screen/Employee_Data/Profile_Screen';
 import Home from '../screen/Others/Home';
-import { Dark_Heart, HomeIcon, ProfileIcon, Wishlist } from '../theme/Images';
+import {  HomeIcon, ProfileIcon, Wishlist, } from '../theme/Images';
+import WishlistScreen from '../screen/Others/Wishlist';
 
 const { width } = Dimensions.get('window');
 const tabWidth = width / 3;
@@ -27,7 +28,7 @@ type TabButtonProps = {
 };
 
 const EmployeeTab: React.FC<TabProps> = ({ navigation }) => {
-  const [activeTab, setActiveTab] = useState<number>(1);
+  const [activeTab, setActiveTab] = useState<number>(0);
   const indicatorPosition = useSharedValue(tabWidth); // Initially at Homework tab
 
   const handleTabPress = (index: number) => {
@@ -44,7 +45,7 @@ const EmployeeTab: React.FC<TabProps> = ({ navigation }) => {
       case 0:
         return <Home navigation={navigation} />;
       case 1:
-        return <HomeworkScreen />;
+        return <WishlistScreen navigation={navigation} />;
       case 2:
         return <ProfileScreen />;
       default:

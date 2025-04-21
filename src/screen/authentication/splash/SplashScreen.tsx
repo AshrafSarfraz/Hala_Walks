@@ -22,7 +22,7 @@ const Splash_Screen: React.FC<SplashScreenProps> = ({ navigation }) => {
     <View style={styles.Main_Container}>
         <StatusBar hidden={true} translucent={true} animated={true} />
       <View style={styles.Body}>
-        <Image source={require('../../../assets/images/Splash.png')} style={styles.Logo_Img} />
+        <Image source={require('../../../assets/images/Splash2.png')} style={styles.Logo_Img} />
       </View>
 
     </View>

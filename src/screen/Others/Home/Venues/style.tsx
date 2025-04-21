@@ -23,7 +23,7 @@ export const styles = StyleSheet.create({
     marginRight: 6,
     alignItems: 'center',
     width: imageSize, // Making container responsive
-    marginBottom:6
+    marginBottom:10
  
    
   },

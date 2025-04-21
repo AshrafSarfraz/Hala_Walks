@@ -86,7 +86,7 @@ const Venues: React.FC<VenuesProps> = () => {
 
         {/* Shimmer effect for venue name */}
         <ShimmerPlaceholder visible={!imageLoading} LinearGradient={LinearGradient} style={{ width: '80%',  marginTop: 2,  height: 20, borderRadius: 5, }}>
-          <Text style={styles.cate_txt}>West Walk</Text>
+          <Text style={styles.cate_txt}>{item.selectedVenue}</Text>
         </ShimmerPlaceholder>
       </TouchableOpacity>
     );

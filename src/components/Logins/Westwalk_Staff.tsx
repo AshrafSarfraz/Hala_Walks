@@ -51,7 +51,7 @@ const EmployeeLogin = ({navigation}) => {
             linkText={languageData[language].privacy_policy}
             onLinkPress={() => Linking.openURL('https://halabsaudi.com/privacy-policy-2/')}
           />
-       <CustomButton title='Login' onPress={()=>{navigation.navigate('BottomNavigation')}} />
+       <CustomButton title='Login' onPress={()=>{navigation.navigate('EmployeeTab')}} />
     </View>
   );
 };

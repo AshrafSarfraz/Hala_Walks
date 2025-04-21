@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {TextInput, StyleSheet, View, Text, Image, TouchableOpacity, Linking} from 'react-native';
+import {TextInput, StyleSheet, View, Text, Image, TouchableOpacity, Linking, Alert} from 'react-native';
 import {Email, Hide, Lock, Show} from '../../theme/Images';
 import { Colors } from '../../theme/Colors';
 import CustomButton from '../buttons/CustomButton';
@@ -52,7 +52,7 @@ const BrandsLogin = ({navigation}) => {
             linkText={languageData[language].privacy_policy}
             onLinkPress={() => Linking.openURL('https://halabsaudi.com/privacy-policy-2/')}
           />
-      <CustomButton title='Login' onPress={()=>{navigation.navigate('BottomNavigation')}} />
+      <CustomButton title='Login' onPress={()=>{Alert.alert('Currently Off')}} />
 
     </View>
   );

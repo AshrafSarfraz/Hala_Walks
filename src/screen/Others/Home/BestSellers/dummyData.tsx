@@ -38,7 +38,7 @@ export const dummyDataList = [
       selectedCategory: "Food and Drink",
       selectedCity: "Doha",
       selectedCountry: "Qatar",
-      selectedVenue: "City Center",
+      selectedVenue: "Festival City",
       startAt: "2024-11-01",
       status: "Yes",
       time: "2025-04-16T13:25:22Z"

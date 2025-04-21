@@ -11,6 +11,8 @@ import EmployeeTab from './EmployeeTab';
 import DetailScreen from '../screen/Others/detail_Screen';
 import SearchScreen from '../screen/Others/SearchScreen';
 import SelectedCategories from '../screen/Others/selected_categories';
+import WishlistScreen from '../screen/Others/Wishlist';
+
 
 
 
@@ -23,7 +25,7 @@ const Stack = createNativeStackNavigator();
 export default function StackNavigation() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="EmployeeTab" screenOptions={{headerShown:false}} >
+      <Stack.Navigator initialRouteName="SplashBlank" screenOptions={{headerShown:false}} >
         <Stack.Screen name="SplashBlank" component={Splash_Blank}   />
         <Stack.Screen name="SplashScreen" component={Splash_Screen}   />
         <Stack.Screen name="Login" component={LoginScreen}   />
@@ -33,6 +35,9 @@ export default function StackNavigation() {
         <Stack.Screen name="SearchScreen" component={SearchScreen}   />
         <Stack.Screen name="DetailScreen" component={DetailScreen}   />
         <Stack.Screen name="CategoriesScreen" component={SelectedCategories}   />
+        <Stack.Screen name="SelectedVenue" component={SelectedCategories}   />
+        <Stack.Screen name="WishlistScreen" component={WishlistScreen}   />
+
       </Stack.Navigator>
     </NavigationContainer>
   );
