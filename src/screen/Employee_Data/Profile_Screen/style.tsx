@@ -5,7 +5,7 @@ export const styles = StyleSheet.create({
       marginTop:Platform.OS==='ios'?40:20,
       paddingVertical: 20,
       backgroundColor: '#f4f4f4',
-      width:"90%",
+      width:"92%",
       alignSelf:"center"
     },
     Profile_container:{

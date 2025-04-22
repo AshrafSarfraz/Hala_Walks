@@ -11,6 +11,8 @@ import DetailScreen from '../screen/Others/detail_Screen';
 import SearchScreen from '../screen/Others/SearchScreen';
 import SelectedCategories from '../screen/Others/selected_categories';
 import WishlistScreen from '../screen/Others/Wishlist';
+import RedeemHistoryScreen from '../screen/Others/Reedem_Histroy';
+import DocumentControlScreen from '../screen/Employee_Data/Documents';
 
 
 
@@ -35,6 +37,9 @@ export default function StackNavigation() {
         <Stack.Screen name="CategoriesScreen" component={SelectedCategories}   />
         <Stack.Screen name="SelectedVenue" component={SelectedCategories}   />
         <Stack.Screen name="WishlistScreen" component={WishlistScreen}   />
+        <Stack.Screen name="RedeemHistroyScreen" component={RedeemHistoryScreen}   />
+        <Stack.Screen name="Doc" component={DocumentControlScreen}   />
+
 
       </Stack.Navigator>
     </NavigationContainer>

@@ -30,12 +30,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    elevation:2,
+    elevation:1,
     overflow:'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0,height: 5,},
     shadowOpacity: 0.2,
     shadowRadius: 4,
+    borderWidth:0.2
   },
   leftSection: {
     flexDirection: 'row',

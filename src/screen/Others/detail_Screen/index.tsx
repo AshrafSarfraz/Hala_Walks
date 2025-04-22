@@ -66,16 +66,12 @@ const DetailScreen: React.FC<{route:any}> = ({route}) => {
 
   return (
     <SafeAreaView>
-          <StatusBar hidden={true} translucent={true} animated={true} />
+          <StatusBar hidden={false} translucent={true} animated={true} />
       <ScrollView>
         <View style={styles.container}>
           <View style={styles.HeaderCont}>
-            <CustomHeader
-              title={languageData[language].Detail_Screen}
-              onBackPress={() => {
-                navigation.goBack();
-              }}
-            />
+            <CustomHeader title={languageData[language].Detail_Screen} onBackPress={() => { navigation.goBack();}}/>
+           
             <TouchableOpacity onPress={() =>{handleToggleCart()}}>
               {isInCart ? (
                 <Image source={Dark_Heart} style={styles.HeartStyle} />

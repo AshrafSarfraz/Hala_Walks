@@ -23,7 +23,7 @@ export const getStyles=(language:string) => StyleSheet.create({
   },
   Body_Cont: {
     justifyContent: 'center',
-    marginVertical: '2.5%',
+    marginVertical: '3%',
   },
   image: {
     width: '100%',

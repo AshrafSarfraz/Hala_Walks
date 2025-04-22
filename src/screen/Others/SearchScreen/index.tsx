@@ -72,14 +72,14 @@ const SearchScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar hidden={true} translucent={true} animated={true} />
+      <StatusBar hidden={false} translucent={true} animated={true} />
       <SafeAreaView style={{ flex: 1 }}>
         <CustomHeader
           title={language === 'en' ? 'Search Screen' : 'شاشة البحث'}
           onBackPress={() => navigation.goBack()}
         />
 
-        <View style={{ marginTop: '7%' }} />
+        <View style={{ marginTop: '5%' }} />
         <View style={styles.searchContainer}>
           <Image source={Scope} style={styles.searchIcon} />
           <TextInput
