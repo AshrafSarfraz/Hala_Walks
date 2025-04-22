@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text,  Image, ScrollView } from 'react-native';
+import { View, Text,  Image, ScrollView, StatusBar } from 'react-native';
 import { styles } from './style';
+import CustomHeader from '../../../components/header/CustomHeader';
 
 type UserProfile = {
   name: string;
@@ -44,9 +45,12 @@ const user: UserProfile = {
   supervisor: 'Mr. Smith',
 };
 
-const ProfileScreen: React.FC = () => {
+const ProfileScreen: React.FC = ({navigation}) => {
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <View style={styles.container} >
+        <StatusBar hidden={false} translucent={true} animated={true} />
+      <CustomHeader title='Profile' onBackPress={()=>{navigation.goBack()}} />
+    <ScrollView  showsVerticalScrollIndicator={false} contentContainerStyle={styles.Profile_container}>
       <Image source={{ uri: user.imageUrl }} style={styles.profileImage} />
       <Text style={styles.name}>{user.name}</Text>
       <Text style={styles.staffId}>Staff ID: {user.staffId}</Text>
@@ -82,6 +86,7 @@ const ProfileScreen: React.FC = () => {
         <InfoItem label="Pending Holidays" value={user.pendingHolidays.toString()} />
       </View>
     </ScrollView>
+    </View>
   );
 };
 

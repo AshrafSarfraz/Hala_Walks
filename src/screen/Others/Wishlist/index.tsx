@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   SafeAreaView,
   StatusBar,
-  Platform,
   ImageBackground,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
@@ -41,18 +40,9 @@ const WishlistScreen: React.FC<WishlistProps> = () => {
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: Colors.Bg}}>
-      {/* StatusBar fix for iOS */}
-      {/* <StatusBar
-        barStyle={Platform.OS === 'ios' ? 'dark-content' : 'dark-content'}
-        translucent={Platform.OS === 'android'}
-        backgroundColor={Platform.OS === 'android' ? Colors.Bg : 'transparent'}
-      /> */}
-        <StatusBar hidden={true} translucent={true} animated={true} />
-
+        <StatusBar hidden={false} translucent={true} animated={true} />
       <View style={styles.container}>
         <Text style={styles.Header_Txt}>Wishlist</Text>
-
-        {/* Render wishlist items */}
         <FlatList
           data={cartItems}
           keyExtractor={item => item.id}

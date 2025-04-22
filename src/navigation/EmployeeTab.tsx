@@ -6,6 +6,7 @@ import ProfileScreen from '../screen/Employee_Data/Profile_Screen';
 import Home from '../screen/Others/Home';
 import {  HomeIcon, ProfileIcon, Wishlist, } from '../theme/Images';
 import WishlistScreen from '../screen/Others/Wishlist';
+import Account from '../screen/Employee_Data/Account';
 
 const { width } = Dimensions.get('window');
 const tabWidth = width / 3;
@@ -42,7 +43,7 @@ const EmployeeTab: React.FC<TabProps> = ({ navigation }) => {
       case 1:
         return <WishlistScreen navigation={navigation} />;
       case 2:
-        return <ProfileScreen />;
+        return <Account navigation={navigation}   />;
       default:
         return <Home navigation={navigation} />;
     }
@@ -108,6 +109,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+ 
   },
   tabBar: {
     flexDirection: 'row',
@@ -123,6 +125,7 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 5,
     paddingBottom: 15,
+   
   },
   indicator: {
     position: 'absolute',

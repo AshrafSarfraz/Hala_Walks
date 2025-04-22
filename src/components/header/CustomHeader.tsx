@@ -44,6 +44,7 @@ const getStyles=(language:String)=> StyleSheet.create({
     fontFamily: Fonts.F_Bold,
     lineHeight: 24,
     color: Colors.PrimaryColor,
+    letterSpacing:0.3
   },
 
 })

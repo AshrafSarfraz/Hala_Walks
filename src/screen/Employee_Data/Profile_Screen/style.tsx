@@ -1,11 +1,17 @@
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
     container: {
-      alignItems: 'center',
-       marginTop:40,
+      marginTop:Platform.OS==='ios'?40:20,
       paddingVertical: 20,
-      backgroundColor: '#f2f2f2',
+      backgroundColor: '#f4f4f4',
+      width:"90%",
+      alignSelf:"center"
+    },
+    Profile_container:{
+      alignItems: 'center',
+      paddingVertical: 20,
+      backgroundColor: '#f4f4f4',
     },
     profileImage: {
       width: 120,
@@ -28,7 +34,7 @@ export const styles = StyleSheet.create({
       marginBottom: 20,
     },
     section: {
-      width: '90%',
+      width: '100%',
       backgroundColor: '#ffffff',
       padding: 15,
       marginVertical: 10,

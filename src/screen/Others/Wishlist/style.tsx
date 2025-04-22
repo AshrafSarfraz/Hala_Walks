@@ -9,15 +9,16 @@ export const styles =  StyleSheet.create({
     flex: 1,
     padding: 10,
     backgroundColor: Colors.Bg,
-    marginTop: Platform.OS === 'ios' ? 0 : '8%',
+    marginTop: Platform.OS === 'ios' ? '12%' : '8%',
   },
   Header_Txt: {
     marginHorizontal: '5%',
-    marginBottom: 20,
+    marginBottom: 18,
     fontSize: 22,
     fontFamily: Fonts.F_Bold,
     color: Colors.PrimaryColor,
     textAlign: 'center',
+
   },
   row: {
     justifyContent: 'space-between', // Ensures even spacing
