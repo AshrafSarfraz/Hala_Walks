@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text,  Image, ScrollView, StatusBar } from 'react-native';
 import { styles } from './style';
 import CustomHeader from '../../../components/header/CustomHeader';
+import { Colors } from '../../../theme/Colors';
 
 type UserProfile = {
   name: string;
@@ -48,7 +49,7 @@ const user: UserProfile = {
 const ProfileScreen: React.FC = ({navigation}) => {
   return (
     <View style={styles.container} >
-        <StatusBar hidden={false} translucent={true} animated={true} />
+        <StatusBar hidden={false} translucent={true} animated={true}  backgroundColor={Colors.Bg} barStyle={'dark-content'} />
       <CustomHeader title='Profile' onBackPress={()=>{navigation.goBack()}} />
     <ScrollView  showsVerticalScrollIndicator={false} contentContainerStyle={styles.Profile_container}>
       <Image source={{ uri: user.imageUrl }} style={styles.profileImage} />

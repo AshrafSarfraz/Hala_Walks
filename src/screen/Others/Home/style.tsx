@@ -11,12 +11,9 @@ export const getStyles =(language:String)=> StyleSheet.create({
     paddingHorizontal: Platform.OS === 'ios' ? '3%' : '0%',
   },
   Header_container:{
-    height:Platform.OS === 'ios' ? 140 : 120,
+    height:Platform.OS === 'ios' ? 110 : 100,
     backgroundColor:Colors.PrimaryColor,
-    borderBottomLeftRadius:40,
-    borderBottomRightRadius:40,
     justifyContent:'flex-end',
-    paddingBottom:15
   },
   header: {
     paddingHorizontal: '5%',

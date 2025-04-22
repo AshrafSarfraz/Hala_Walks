@@ -81,7 +81,7 @@ const EmployeeTab: React.FC<TabProps> = ({ navigation }) => {
 
 const TabButton: React.FC<TabButtonProps> = ({ icon, isFocused, onPress, isCenter }) => {
   const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: withTiming(isFocused ? -20 : 0, { duration: 300 }) }],
+    transform: [{ translateY: withTiming(isFocused ? -15 : 0, { duration: 300 }) }],
   }));
 
   return (
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
   tabBar: {
     flexDirection: 'row',
     backgroundColor: '#fff',
-    height: 80,
+    height: 70,
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
     justifyContent: 'space-around',
@@ -129,8 +129,8 @@ const styles = StyleSheet.create({
   },
   indicator: {
     position: 'absolute',
-    bottom: 25,
-    left: tabWidth / 2, // center under icon
+    bottom: 22,
+    left: tabWidth / 2.2, // center under icon
     width: 10,
     height: 10,
     backgroundColor: '#2f2f75',
@@ -148,15 +148,15 @@ const styles = StyleSheet.create({
   },
   focusedIcon: {
     backgroundColor: '#2f2f75',
-    width: 60,
-    height: 60,
+    width: 53,
+    height:53,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 10,
+    marginBottom: 15,
   },
   icon: {
-    width: 30,
-    height: 30,
+    width: 25,
+    height: 25,
     tintColor: '#999',
     resizeMode: 'contain',
   },

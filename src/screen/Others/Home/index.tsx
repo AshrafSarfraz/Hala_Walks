@@ -41,7 +41,7 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
   return (
     <View style={{flex:1, backgroundColor:Colors.Bg}} >
     {/* <ImageBackground source={BackgroundImg} style={{flex:1,}}  imageStyle={{width:'100%',height:"100%",opacity:0.2}} > */}
-       <StatusBar hidden={false} translucent={true} animated={true} />
+       <StatusBar hidden={false} translucent={true} animated={true} backgroundColor={Colors.PrimaryColor} />
       <View style={styles.Header_container}>
       <View style={styles.header}>
             <Image source={Westwalk} style={styles.logo} />
@@ -69,12 +69,12 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
   
             <Categories navigation={navigation} />
           </View>
-          <View style={[styles.Categories_Cont,{marginTop:'2%'}]}>
+          {/* <View style={[styles.Categories_Cont,{marginTop:'2%'}]}>
           <View style={styles.txt_cont} >
             <Text style={styles.Categories_Txt}>{languageData[language].venues_collection}</Text>
            </View>
             <Venues navigation={navigation} />
-          </View>
+          </View> */}
 
           <View style={[styles.BestSeller_Cont,{marginTop:"1%"}]}>
           <View style={styles.txt_cont} >

@@ -13,6 +13,7 @@ import SelectedCategories from '../screen/Others/selected_categories';
 import WishlistScreen from '../screen/Others/Wishlist';
 import RedeemHistoryScreen from '../screen/Others/Reedem_Histroy';
 import DocumentControlScreen from '../screen/Employee_Data/Documents';
+import SendEmailScreen from '../screen/Others/email';
 
 
 
@@ -39,6 +40,7 @@ export default function StackNavigation() {
         <Stack.Screen name="WishlistScreen" component={WishlistScreen}   />
         <Stack.Screen name="RedeemHistroyScreen" component={RedeemHistoryScreen}   />
         <Stack.Screen name="Doc" component={DocumentControlScreen}   />
+        <Stack.Screen name="EmailScreen" component={SendEmailScreen}   />
 
 
       </Stack.Navigator>

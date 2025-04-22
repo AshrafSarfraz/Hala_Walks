@@ -72,7 +72,7 @@ const SearchScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar hidden={false} translucent={true} animated={true} />
+      <StatusBar hidden={false} translucent={true} animated={true}  backgroundColor={Colors.Bg} barStyle={'dark-content'} />
       <SafeAreaView style={{ flex: 1 }}>
         <CustomHeader
           title={language === 'en' ? 'Search Screen' : 'شاشة البحث'}

@@ -23,7 +23,32 @@ import CustomHeader from '../../../components/header/CustomHeader';
 import { languageData } from '../../../redux/language/languageSlice';
 import { Dark_Heart, Light_Heart } from '../../../theme/Images';
 import CustomButton from '../../../components/buttons/CustomButton';
+import RedeemReceiptModal from '../../../components/Modal/RedeemModal';
+import { Colors } from '../../../theme/Colors';
 
+
+const dummyData = [
+  {
+    id: '1',
+    code: 'AQQVA6',
+    createdAt: 'April 13, 2025 - 2:04 PM',
+    percentage: '-20%',
+    qid: '284750123456',
+    staffId: 'EMP-1001',
+    eligibility: 'Staff and their family',
+    BrandName: 'Brown Coffee Shop',
+  },
+  {
+    id: '2',
+    code: 'ZX89LM',
+    createdAt: 'April 14, 2025 - 11:22 AM',
+    percentage: '-15%',
+    qid: '284750987654',
+    staffId: 'EMP-1002',
+    eligibility: 'Only staff',
+    BrandName: 'Kana Restaurant',
+  },
+];
 
 
 const DetailScreen: React.FC<{route:any}> = ({route}) => {
@@ -43,11 +68,16 @@ const DetailScreen: React.FC<{route:any}> = ({route}) => {
     const styles = getStyles(language);
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const isInCart = cartItems.some(cartItem => cartItem.id === item.id);
+    const [selectedItem, setSelectedItem] = useState<any>(null);
+    const [modalVisible, setModalVisible] = useState(false);
   const handleToggleCart = () => {
     dispatch(toggleItemInCart(item));
   };
   
-
+  const openModal = (item: any) => {
+    setSelectedItem(item);
+    setModalVisible(true);
+  };
 
 // Google Map and Mobile Number
   const handleOpenMaps = () => {
@@ -66,7 +96,7 @@ const DetailScreen: React.FC<{route:any}> = ({route}) => {
 
   return (
     <SafeAreaView>
-          <StatusBar hidden={false} translucent={true} animated={true} />
+          <StatusBar hidden={false} translucent={true} animated={true} backgroundColor={Colors.Bg} barStyle={'dark-content'} />
       <ScrollView>
         <View style={styles.container}>
           <View style={styles.HeaderCont}>
@@ -84,8 +114,7 @@ const DetailScreen: React.FC<{route:any}> = ({route}) => {
           <ShimmerPlaceholder
                 visible={!imageLoading}
                 LinearGradient={LinearGradient}
-                style={styles.image}
-              >
+                style={styles.image}>
             <Image source={typeof item.img === 'string' ? { uri: item.img } : item.img} style={styles.image}    onLoad={handleImageLoad} />
             </ShimmerPlaceholder>
             <View style={styles.Type_Cont}>
@@ -94,8 +123,6 @@ const DetailScreen: React.FC<{route:any}> = ({route}) => {
             <View style={styles.Title_Cont}>
               {language==='ar'?<Text style={styles.title}>{item.nameArabic}</Text>:
               <Text style={styles.title}>{item.nameEng}</Text>}
-            
-              
               <TouchableOpacity onPress={Contact} style={styles.call_cont}>
                 <Image
                   source={require('../../../assets/icons/man.png')}
@@ -120,7 +147,12 @@ const DetailScreen: React.FC<{route:any}> = ({route}) => {
 
           </View>
 
-          <CustomButton  title="Redeem"   onPress={() => {Alert.alert('Redeem')}} />
+          <CustomButton  title="Redeem"   onPress={() => {openModal(item)}} />
+          <RedeemReceiptModal
+           visible={modalVisible}
+           onClose={() => setModalVisible(false)}
+           data={selectedItem}
+           />
           <View style={{marginBottom: Platform.OS === 'ios' ? '5%' : '4%'}} />
           <CustomButton
             title="Open Map"

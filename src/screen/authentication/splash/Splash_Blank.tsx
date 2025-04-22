@@ -12,7 +12,7 @@ const Splash_Blank: React.FC<SplashBlankProps> = ({ navigation }) => {
   useEffect(() => {
     const timeout = setTimeout(() => {
       navigation.navigate('SplashScreen');
-    }, 2000);
+    }, 1000);
     return () => clearTimeout(timeout);
   }, [navigation]);
 

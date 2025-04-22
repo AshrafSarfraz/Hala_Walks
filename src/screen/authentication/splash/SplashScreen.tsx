@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { View, StyleSheet, Image, StatusBar } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Colors } from '../../../theme/Colors';
-import { WhiteLogo } from '../../../theme/Images';
 
 
 
@@ -14,7 +13,7 @@ const Splash_Screen: React.FC<SplashScreenProps> = ({ navigation }) => {
   useEffect(() => {
     const timeout = setTimeout(() => {
       navigation.navigate('Login');
-    }, 3000);
+    }, 2000);
     return () => clearTimeout(timeout);
   }, [navigation]);
 

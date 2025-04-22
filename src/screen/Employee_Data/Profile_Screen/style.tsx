@@ -2,10 +2,10 @@ import { Platform, StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
     container: {
-      marginTop:Platform.OS==='ios'?40:20,
+      marginTop:Platform.OS==='ios'?40:30,
       paddingVertical: 20,
       backgroundColor: '#f4f4f4',
-      width:"92%",
+      width:"90%",
       alignSelf:"center"
     },
     Profile_container:{

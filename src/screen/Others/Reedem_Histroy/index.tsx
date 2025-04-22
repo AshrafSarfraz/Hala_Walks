@@ -49,7 +49,7 @@ const RedeemHistoryScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar hidden={false} translucent={true} animated={true} />
+      <StatusBar hidden={false} backgroundColor={Colors.Bg} barStyle="dark-content" />
       <CustomHeader
         title="Redeem History"
         onBackPress={() => {
@@ -81,7 +81,7 @@ const RedeemHistoryScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.White,
+    backgroundColor: Colors.Bg,
     paddingHorizontal: 20,
     paddingTop: Platform.OS === 'ios'? '0%':20,
   },

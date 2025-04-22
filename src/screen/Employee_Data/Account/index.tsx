@@ -6,8 +6,12 @@ import CustomButton2 from '../../../components/buttons/CustomButton2';
 import { DocIcon, HistroyIcon, ProfileIcon, Show } from '../../../theme/Images';
 import CustomButton from '../../../components/buttons/CustomButton';
 
+type AccountProps={
+  navigation:any
+}
 
-const Account:React.FC = ({navigation}) => {
+
+const Account:React.FC<AccountProps> = ({navigation}) => {
     return (
        <SafeAreaView style={{flex:1,backgroundColor:Colors.Bg}} >
          <View style={styles.Header_Cont} >
@@ -17,11 +21,11 @@ const Account:React.FC = ({navigation}) => {
          </View>
          <View style={styles.Button_Cont} >
           <CustomButton2  title='Profile' image={ProfileIcon} onPress={()=>{navigation.navigate('ProfileScreen')}} />
-          <CustomButton2  title='Document' image={DocIcon} onPress={()=>{}} />
+          <CustomButton2  title='Document' image={DocIcon} onPress={()=>{navigation.navigate('Doc')}} />
           <CustomButton2  title='Redeem History' image={HistroyIcon} onPress={()=>{navigation.navigate('RedeemHistroyScreen')}} />
          </View>
           <View style={styles.Logout_Cont} >
-            <CustomButton title='Logout' onPress={()=>{}}  />
+            <CustomButton title='Logout' onPress={()=>{navigation.navigate('Login')}}  />
           </View>
 
        </SafeAreaView>
@@ -66,7 +70,7 @@ const styles = StyleSheet.create({
         width:'92%',
         alignSelf:"center",
         position:"absolute",
-        bottom:60
+        bottom:40
       }
 })
 

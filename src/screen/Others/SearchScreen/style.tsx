@@ -9,7 +9,7 @@ export const getStyles=(language:String) => StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.Bg,
     paddingHorizontal: "4%",
-    marginTop:Platform.OS==='ios'?'0%':'11%',
+    marginTop:Platform.OS==='ios'?'0%':'12%',
     marginBottom:Platform.OS==='ios'?'0%':'2%'
   },
   header: {
