@@ -82,6 +82,7 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
             </View>
             <BestSeller  />
           </View>
+          <ImageSlider navigation={navigation} />
 
           <View style={styles.BestSeller_Cont}>
           <View style={styles.txt_cont} >

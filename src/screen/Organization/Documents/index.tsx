@@ -1,4 +1,4 @@
-// screens/DocumentControlScreen.tsx
+// screens/TenantDocumentControlScreen.tsx
 
 import React, { useState } from 'react';
 import {
@@ -17,31 +17,28 @@ import {
 import CustomHeader from '../../../components/header/CustomHeader';
 import { Colors } from '../../../theme/Colors';
 
-const dummyDocs = [
-  { id: '1', name: 'QID Front.pdf' },
-  { id: '2', name: 'Visa Copy.jpg' },
-  { id: '3', name: 'Passport.pdf' },
-  { id: '4', name: 'Contract.pdf' },
+const tenantDocs = [
+  { id: '1', name: 'Tenancy Contract.pdf' },
+  { id: '2', name: 'QID Front.jpg' },
 ];
-type DocumentProps={
-  navigation:any
-}
 
-const DocumentControlScreen:React.FC<DocumentProps> = ({ navigation }) => {
-  const [documents, setDocuments] = useState(dummyDocs);
+type TenantDocumentScreenProps = {
+  navigation: any;
+};
+
+const TenantDocumentControlScreen: React.FC<TenantDocumentScreenProps> = ({ navigation }) => {
+  const [documents, setDocuments] = useState(tenantDocs);
   const [modalVisible, setModalVisible] = useState(false);
   const [fileName, setFileName] = useState('');
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
 
   const handleView = (name: string) => {
-    Alert.alert('View Document', `Opening "${name}"... (dummy view)`);
+    Alert.alert('View Document', `Opening "${name}"...`);
   };
 
   const handleDownload = (name: string) => {
-    Alert.alert('Download', `Downloading "${name}"... (dummy download)`);
+    Alert.alert('Download', `Downloading "${name}"...`);
   };
-
-
 
   const handleSave = () => {
     if (!fileName || !selectedFile) {
@@ -65,10 +62,10 @@ const DocumentControlScreen:React.FC<DocumentProps> = ({ navigation }) => {
       <Text style={styles.docName}>{item.name}</Text>
       <View style={styles.actionGroup}>
         <TouchableOpacity style={styles.actionBtn} onPress={() => handleView(item.name)}>
-          <Text style={styles.actionText}> View</Text>
+          <Text style={styles.actionText}>View</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.actionBtn} onPress={() => handleDownload(item.name)}>
-          <Text style={styles.actionText}> Download</Text>
+          <Text style={styles.actionText}>Download</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -78,7 +75,8 @@ const DocumentControlScreen:React.FC<DocumentProps> = ({ navigation }) => {
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
         <StatusBar hidden={false} barStyle={'dark-content'} backgroundColor={Colors.Bg} />
-        <CustomHeader title="Documents" onBackPress={() => navigation.goBack()} />
+        <CustomHeader title="Tenant Documents" onBackPress={() => navigation.goBack()} />
+
         <FlatList
           data={documents}
           keyExtractor={item => item.id}
@@ -88,16 +86,16 @@ const DocumentControlScreen:React.FC<DocumentProps> = ({ navigation }) => {
         />
 
         <TouchableOpacity style={styles.uploadBtn} onPress={() => setModalVisible(true)}>
-          <Text style={styles.uploadText}>➕ Upload Document</Text>
+          <Text style={styles.uploadText}>Upload Tenancy Document</Text>
         </TouchableOpacity>
 
         <Modal visible={modalVisible} animationType="slide" transparent>
           <View style={styles.modalOverlay}>
             <View style={styles.modalBox}>
-              <Text style={styles.modalTitle}>📄 Upload Document</Text>
+              <Text style={styles.modalTitle}>Upload New Document</Text>
 
               <TextInput
-                placeholder="Enter file name..."
+                placeholder="Enter file name (e.g. Tenancy Contract)..."
                 style={styles.input}
                 value={fileName}
                 onChangeText={setFileName}
@@ -105,10 +103,10 @@ const DocumentControlScreen:React.FC<DocumentProps> = ({ navigation }) => {
 
               <TouchableOpacity
                 style={styles.chooseBtn}
-                onPress={() => setSelectedFile('dummy-file.pdf')}
+                onPress={() => setSelectedFile('dummy-tenancy-doc.pdf')}
               >
                 <Text style={styles.chooseBtnText}>
-                  {selectedFile ? '✅ File Selected' : '📁 Choose File'}
+                  {selectedFile ? 'File Selected' : 'Choose File'}
                 </Text>
               </TouchableOpacity>
 
@@ -129,11 +127,12 @@ const DocumentControlScreen:React.FC<DocumentProps> = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1,
-    marginTop:Platform.OS==='ios'?0:'12%',
-    paddingHorizontal: 20, 
-     backgroundColor: '#f4f4f4' },
-
+  container: {
+    flex: 1,
+    marginTop: Platform.OS === 'ios' ? 0 : '12%',
+    paddingHorizontal: 20,
+    backgroundColor: '#f4f4f4',
+  },
   uploadBtn: {
     backgroundColor: '#2f2f75',
     padding: 14,
@@ -146,7 +145,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
   },
-
   docItem: {
     backgroundColor: '#fff',
     padding: 16,
@@ -156,7 +154,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 6,
-
   },
   docName: {
     fontSize: 16,
@@ -174,24 +171,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#edf1fa',
     borderRadius: 6,
   },
-  deleteBtn: {
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    backgroundColor: '#ffe5e5',
-    borderRadius: 6,
-  },
   actionText: {
     fontSize: 14,
     fontWeight: '600',
     color: '#2f2f75',
-
   },
-  deleteText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#dc3545',
-  },
-
   modalOverlay: {
     flex: 1,
     backgroundColor: '#00000088',
@@ -263,4 +247,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DocumentControlScreen;
+export default TenantDocumentControlScreen;

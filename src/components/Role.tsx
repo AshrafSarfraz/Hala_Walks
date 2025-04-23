@@ -9,7 +9,7 @@ import {
   Image,
 } from 'react-native';
 import { Colors } from '../theme/Colors';
-import { DropDownIcon, Hide, ManIcon } from '../theme/Images';
+import { DropDownIcon,  ManIcon } from '../theme/Images';
 
 type UserType = 'staff' | 'tenant'  | 'organization' | 'none';
 
