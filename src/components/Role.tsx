@@ -11,7 +11,7 @@ import {
 import { Colors } from '../theme/Colors';
 import { DropDownIcon, Hide, ManIcon } from '../theme/Images';
 
-type UserType = 'staff' | 'tenant' | 'brands' | 'organization' | 'none';
+type UserType = 'staff' | 'tenant'  | 'organization' | 'none';
 
 type Option = {
   label: string;
@@ -27,7 +27,6 @@ const options: Option[] = [
   { label: 'None', value: 'none' },
   { label: 'Westwalk Staff', value: 'staff' },
   { label: 'Tenant', value: 'tenant' },
-  { label: 'Brands', value: 'brands' },
   { label: 'Organization', value: 'organization' },
 ];
 

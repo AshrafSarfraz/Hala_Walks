@@ -3,16 +3,17 @@ import { View,Text,Image,ScrollView, KeyboardAvoidingView,Platform, ImageBackgro
 import CustomDropdown from '../../../components/Role';
 import EmployeeLogin from '../../../components/Logins/Westwalk_Staff';
 import TenantsLogin from '../../../components/Logins/Tenant';
-import BrandsLogin from '../../../components/Logins/Brands';
 import CorporationLogin from '../../../components/Logins/Corporation';
-import CustomButton from '../../../components/buttons/CustomButton';
 import { West_NB } from '../../../theme/Images';
 import { styles } from './style';
 
 
+type LoginProps={
+  navigation: any;
+}
 
-const LoginScreen:React.FC = ({navigation}) => {
-  const [userType, setUserType] = useState<'none' | 'staff' | 'tenant' | 'brands' | 'organization'>('none');
+const LoginScreen:React.FC<LoginProps> = ({navigation}) => {
+  const [userType, setUserType] = useState<'none' | 'staff' | 'tenant'| 'organization'>('none');
 
 
   return (
@@ -48,9 +49,6 @@ const LoginScreen:React.FC = ({navigation}) => {
             )}
             {userType === 'tenant' && (
               <TenantsLogin  navigation={navigation} />
-            )}
-            {userType === 'brands' && (
-              <BrandsLogin navigation={navigation} />
             )}
             {userType === 'organization' && (
               <CorporationLogin  navigation={navigation} />

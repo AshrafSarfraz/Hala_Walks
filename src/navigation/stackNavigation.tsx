@@ -13,11 +13,11 @@ import SelectedCategories from '../screen/Others/selected_categories';
 import WishlistScreen from '../screen/Others/Wishlist';
 import RedeemHistoryScreen from '../screen/Others/Reedem_Histroy';
 import DocumentControlScreen from '../screen/Employee_Data/Documents';
-import SendEmailScreen from '../screen/Others/email';
-import TestingComponent from '../screen/testingComponent';
 import TenantsTab from './TenantTab';
-import BrandTab from './BrandsTab';
 import CorporationTab from './CorporationTab';
+import TenantsProfile from '../screen/Tenants_Data/Profile_Screen';
+import TenantDocumentControlScreen from '../screen/Tenants_Data/Documents';
+import TenantsContactUsScreen from '../screen/Tenants_Data/ContactUs';
 
 
 
@@ -35,6 +35,7 @@ export default function StackNavigation() {
         <Stack.Screen name="SplashBlank" component={Splash_Blank}   />
         <Stack.Screen name="SplashScreen" component={Splash_Screen}   />
         <Stack.Screen name="Login" component={LoginScreen}   />
+        <Stack.Screen name="EmployeeTab" component={EmployeeTab}   />
         <Stack.Screen name="ProfileScreen" component={ProfileScreen}   />
         <Stack.Screen name="SearchScreen" component={SearchScreen}   />
         <Stack.Screen name="DetailScreen" component={DetailScreen}   />
@@ -43,9 +44,14 @@ export default function StackNavigation() {
         <Stack.Screen name="WishlistScreen" component={WishlistScreen}   />
         <Stack.Screen name="RedeemHistroyScreen" component={RedeemHistoryScreen}   />
         <Stack.Screen name="Doc" component={DocumentControlScreen}   />
-        <Stack.Screen name="EmployeeTab" component={EmployeeTab}   />
+        {/* Tenants Screen */}
         <Stack.Screen name="TenantsTab" component={TenantsTab}   />
-        <Stack.Screen name="BrandTab" component={BrandTab}   />
+        <Stack.Screen name="TenantsProfile" component={TenantsProfile}   />
+        <Stack.Screen name="TenantDocumentControlScreen" component={TenantDocumentControlScreen}   />
+        <Stack.Screen name="TenantsContactUs" component={TenantsContactUsScreen}   />
+
+
+
         <Stack.Screen name="CorporationTab" component={CorporationTab}   />
 
 

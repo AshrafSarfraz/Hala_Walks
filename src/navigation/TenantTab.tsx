@@ -7,6 +7,7 @@ import Home from '../screen/Others/Home';
 import {  HomeIcon, ProfileIcon, Wishlist, } from '../theme/Images';
 import WishlistScreen from '../screen/Others/Wishlist';
 import Account from '../screen/Employee_Data/Account';
+import TenantsAccount from '../screen/Tenants_Data/Account';
 
 const { width } = Dimensions.get('window');
 const tabWidth = width / 3;
@@ -43,7 +44,7 @@ const TenantsTab: React.FC<TabProps> = ({ navigation }) => {
       case 1:
         return <WishlistScreen navigation={navigation} />;
       case 2:
-        return <Account navigation={navigation}   />;
+        return <TenantsAccount navigation={navigation}   />;
       default:
         return <Home navigation={navigation} />;
     }
