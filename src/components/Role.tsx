@@ -25,7 +25,7 @@ type Props = {
 
 const options: Option[] = [
   { label: 'None', value: 'none' },
-  { label: 'West-Walk Staff', value: 'staff' },
+  { label: 'Westwalk Staff', value: 'staff' },
   { label: 'Tenant', value: 'tenant' },
   { label: 'Brands', value: 'brands' },
   { label: 'Organization', value: 'organization' },

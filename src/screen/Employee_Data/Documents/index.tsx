@@ -22,8 +22,11 @@ const dummyDocs = [
   { id: '2', name: 'Visa Copy.jpg' },
   { id: '3', name: 'Passport.pdf' },
 ];
+type DocumentProps={
+  navigation:any
+}
 
-const DocumentControlScreen = ({ navigation }) => {
+const DocumentControlScreen:React.FC<DocumentProps> = ({ navigation }) => {
   const [documents, setDocuments] = useState(dummyDocs);
   const [modalVisible, setModalVisible] = useState(false);
   const [fileName, setFileName] = useState('');

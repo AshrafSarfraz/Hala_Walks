@@ -15,6 +15,9 @@ import RedeemHistoryScreen from '../screen/Others/Reedem_Histroy';
 import DocumentControlScreen from '../screen/Employee_Data/Documents';
 import SendEmailScreen from '../screen/Others/email';
 import TestingComponent from '../screen/testingComponent';
+import TenantsTab from './TenantTab';
+import BrandTab from './BrandsTab';
+import CorporationTab from './CorporationTab';
 
 
 
@@ -33,7 +36,6 @@ export default function StackNavigation() {
         <Stack.Screen name="SplashScreen" component={Splash_Screen}   />
         <Stack.Screen name="Login" component={LoginScreen}   />
         <Stack.Screen name="ProfileScreen" component={ProfileScreen}   />
-        <Stack.Screen name="EmployeeTab" component={EmployeeTab}   />
         <Stack.Screen name="SearchScreen" component={SearchScreen}   />
         <Stack.Screen name="DetailScreen" component={DetailScreen}   />
         <Stack.Screen name="CategoriesScreen" component={SelectedCategories}   />
@@ -41,8 +43,10 @@ export default function StackNavigation() {
         <Stack.Screen name="WishlistScreen" component={WishlistScreen}   />
         <Stack.Screen name="RedeemHistroyScreen" component={RedeemHistoryScreen}   />
         <Stack.Screen name="Doc" component={DocumentControlScreen}   />
-        <Stack.Screen name="EmailScreen" component={SendEmailScreen}   />
-        <Stack.Screen name="SelectedCategories" component={TestingComponent}   />
+        <Stack.Screen name="EmployeeTab" component={EmployeeTab}   />
+        <Stack.Screen name="TenantsTab" component={TenantsTab}   />
+        <Stack.Screen name="BrandTab" component={BrandTab}   />
+        <Stack.Screen name="CorporationTab" component={CorporationTab}   />
 
 
       </Stack.Navigator>
