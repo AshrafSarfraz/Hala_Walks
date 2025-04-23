@@ -14,6 +14,7 @@ import WishlistScreen from '../screen/Others/Wishlist';
 import RedeemHistoryScreen from '../screen/Others/Reedem_Histroy';
 import DocumentControlScreen from '../screen/Employee_Data/Documents';
 import SendEmailScreen from '../screen/Others/email';
+import TestingComponent from '../screen/testingComponent';
 
 
 
@@ -27,7 +28,7 @@ const Stack = createNativeStackNavigator();
 export default function StackNavigation() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="SplashBlank" screenOptions={{headerShown:false}} >
+      <Stack.Navigator initialRouteName="Login" screenOptions={{headerShown:false}} >
         <Stack.Screen name="SplashBlank" component={Splash_Blank}   />
         <Stack.Screen name="SplashScreen" component={Splash_Screen}   />
         <Stack.Screen name="Login" component={LoginScreen}   />
@@ -41,6 +42,7 @@ export default function StackNavigation() {
         <Stack.Screen name="RedeemHistroyScreen" component={RedeemHistoryScreen}   />
         <Stack.Screen name="Doc" component={DocumentControlScreen}   />
         <Stack.Screen name="EmailScreen" component={SendEmailScreen}   />
+        <Stack.Screen name="SelectedCategories" component={TestingComponent}   />
 
 
       </Stack.Navigator>

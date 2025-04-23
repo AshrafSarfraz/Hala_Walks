@@ -42,6 +42,7 @@ const WishlistScreen: React.FC<WishlistProps> = () => {
     <SafeAreaView style={{flex: 1, backgroundColor: Colors.Bg}}>
         <StatusBar hidden={false} translucent={true} animated={true} backgroundColor={Colors.Bg} barStyle={'dark-content'} />
       <View style={styles.container}>
+        
         <Text style={styles.Header_Txt}>Wishlist</Text>
         <FlatList
           data={cartItems}

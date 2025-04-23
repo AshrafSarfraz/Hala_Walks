@@ -9,6 +9,7 @@ import {
   Image,
 } from 'react-native';
 import { Colors } from '../theme/Colors';
+import { DropDownIcon, Hide, ManIcon } from '../theme/Images';
 
 type UserType = 'staff' | 'tenant' | 'brands' | 'organization' | 'none';
 
@@ -49,6 +50,8 @@ const CustomDropdown: React.FC<Props> = ({ selected, onSelect }) => {
         ]}
         onPress={() => setOpen(true)}
       >
+        <View style={styles.left_cont} >
+         <Image source={ManIcon} style={styles.ManIcon} />
         <Text
           style={[
             styles.dropdownText,
@@ -57,6 +60,8 @@ const CustomDropdown: React.FC<Props> = ({ selected, onSelect }) => {
         >
           {getLabel()}
         </Text>
+        </View>
+        <Image source={DropDownIcon} style={styles.dropdownIcon} />
       </TouchableOpacity>
 
       <Modal visible={open} transparent animationType="fade">
@@ -92,12 +97,14 @@ export default CustomDropdown;
 
 const styles = StyleSheet.create({
   dropdown: {
+    flexDirection:"row",
+    alignItems:"center",
+    justifyContent:"space-between",
     borderWidth: 2,
     borderRadius: 25,
     backgroundColor: Colors.White,
     marginBottom: 10,
     height:50,
-    justifyContent:"center",
     paddingLeft:16,
     width: '100%',
     borderColor: "#CCC",
@@ -105,10 +112,20 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 3, // Optional for iOS
+   
   },
   dropdownText: {
     fontSize: 16,
     color: '#333',
+  },
+  left_cont:{
+    flexDirection:"row",
+     alignItems:"center",
+     justifyContent:"center"
+  },
+  ManIcon:{
+     width:20,height:20,
+     marginRight:10
   },
   overlay: {
     flex: 1,
@@ -118,8 +135,16 @@ const styles = StyleSheet.create({
   modal: {
     backgroundColor: '#fff',
     marginHorizontal: 30,
-    borderRadius: 8,
+    borderRadius: 20,
+
     padding: 20,
+  },
+  dropdownIcon:{
+   width:15,
+   height:10,
+   marginRight:20,
+   resizeMode:"contain",
+   transform: [{ rotate: '180deg' }] 
   },
   item: {
     padding: 10,
