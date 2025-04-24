@@ -22,7 +22,7 @@ const TenantsAccount:React.FC<AccountProps> = ({navigation}) => {
          <View style={styles.Button_Cont} >
           <CustomButton2  title='Account Info' image={ProfileIcon} onPress={()=>{navigation.navigate('TenantsProfile')}} />
           <CustomButton2  title='Document' image={DocIcon} onPress={()=>{navigation.navigate('TenantDocumentControlScreen')}} />
-          <CustomButton2  title='Redeem History' image={HistroyIcon} onPress={()=>{navigation.navigate('RedeemHistroyScreen')}} />
+          <CustomButton2  title='Redeem History' image={HistroyIcon} onPress={()=>{navigation.navigate('TenantsHistroyScreen')}} />
           <CustomButton2  title='Contact Us' image={HistroyIcon} onPress={()=>{navigation.navigate('TenantsContactUs')}} />
          </View>
           <View style={styles.Logout_Cont} >

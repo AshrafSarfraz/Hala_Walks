@@ -11,19 +11,17 @@ type AccountProps={
 }
 
 
-const TenantsAccount:React.FC<AccountProps> = ({navigation}) => {
+const CorporationAccount:React.FC<AccountProps> = ({navigation}) => {
     return (
        <SafeAreaView style={{flex:1,backgroundColor:Colors.Bg}} >
          <View style={styles.Header_Cont} >
          <Image source={{ uri:'https://i.pravatar.cc/300' }} style={styles.profileImage} />
-          <Text style={styles.name}>Tenant Name</Text>
-               <Text style={styles.staffId}>Room ID: Room123</Text>
+          <Text style={styles.name}>Employee Name</Text>
+               <Text style={styles.staffId}>EMP ID: EMP-123</Text>
          </View>
          <View style={styles.Button_Cont} >
-          <CustomButton2  title='Account Info' image={ProfileIcon} onPress={()=>{navigation.navigate('TenantsProfile')}} />
-          <CustomButton2  title='Document' image={DocIcon} onPress={()=>{navigation.navigate('TenantDocumentControlScreen')}} />
-          <CustomButton2  title='Redeem History' image={HistroyIcon} onPress={()=>{navigation.navigate('RedeemHistroyScreen')}} />
-          <CustomButton2  title='Contact Us' image={HistroyIcon} onPress={()=>{navigation.navigate('TenantsContactUs')}} />
+          <CustomButton2  title='Account Info' image={ProfileIcon} onPress={()=>{navigation.navigate('CorporationProfile')}} />
+          <CustomButton2  title='Redeem History' image={HistroyIcon} onPress={()=>{navigation.navigate('CorporationHistroyScreen')}} />
          </View>
           <View style={styles.Logout_Cont} >
             <CustomButton title='Logout' onPress={()=>{navigation.navigate('Login')}}  />
@@ -75,4 +73,4 @@ const styles = StyleSheet.create({
       }
 })
 
-export default TenantsAccount;
+export default CorporationAccount;

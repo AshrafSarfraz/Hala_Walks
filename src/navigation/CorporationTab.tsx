@@ -4,7 +4,7 @@ import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-na
 import Home from '../screen/Others/Home';
 import {  HomeIcon, ProfileIcon, Wishlist, } from '../theme/Images';
 import WishlistScreen from '../screen/Others/Wishlist';
-import Account from '../screen/Employee_Data/Account';
+import CorporationAccount from '../screen/Organization/Account';
 
 const { width } = Dimensions.get('window');
 const tabWidth = width / 3;
@@ -41,7 +41,7 @@ const CorporationTab: React.FC<TabProps> = ({ navigation }) => {
       case 1:
         return <WishlistScreen navigation={navigation} />;
       case 2:
-        return <Account navigation={navigation}   />;
+        return <CorporationAccount navigation={navigation}   />;
       default:
         return <Home navigation={navigation} />;
     }

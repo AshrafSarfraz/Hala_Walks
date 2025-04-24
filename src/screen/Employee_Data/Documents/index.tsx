@@ -27,7 +27,7 @@ type DocumentProps={
   navigation:any
 }
 
-const DocumentControlScreen:React.FC<DocumentProps> = ({ navigation }) => {
+const StaffDocumentControlScreen:React.FC<DocumentProps> = ({ navigation }) => {
   const [documents, setDocuments] = useState(dummyDocs);
   const [modalVisible, setModalVisible] = useState(false);
   const [fileName, setFileName] = useState('');
@@ -263,4 +263,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DocumentControlScreen;
+export default StaffDocumentControlScreen;

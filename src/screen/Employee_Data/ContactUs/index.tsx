@@ -18,7 +18,7 @@ type ContactUsProps={
     navigation: any;
 }
 
-const TenantsContactUsScreen:React.FC<ContactUsProps> = ({ navigation }: any) => {
+const StaffContactUs:React.FC<ContactUsProps> = ({ navigation }: any) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [subject, setSubject] = useState('');
@@ -133,4 +133,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TenantsContactUsScreen;
+export default StaffContactUs;
