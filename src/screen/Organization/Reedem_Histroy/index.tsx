@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import RedeemReceiptModal from '../../../components/Modal/RedeemModal';
 import CustomHeader from '../../../components/header/CustomHeader';
-import {useNavigation} from '@react-navigation/native';
 import {Colors} from '../../../theme/Colors';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
@@ -37,8 +36,8 @@ const dummyData = [
   },
 ];
 
-const CorporationHistoryScreen: React.FC = () => {
-  const navigation = useNavigation();
+const CorporationHistoryScreen: React.FC<{ navigation: any }>  = ({navigation}) => {
+
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [modalVisible, setModalVisible] = useState(false);
 

@@ -45,8 +45,11 @@ const user: UserProfile = {
   contractExpiry: '2025-03-14',
   supervisor: 'Mr. Smith',
 };
+type ProfileProps={
+navigation:any
+}
 
-const ProfileScreen: React.FC = ({navigation}) => {
+const ProfileScreen: React.FC<ProfileProps> = ({navigation}) => {
   return (
     <View style={styles.container} >
         <StatusBar hidden={false} translucent={true} animated={true}  backgroundColor={Colors.Bg} barStyle={'dark-content'} />

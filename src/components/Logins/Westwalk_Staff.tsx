@@ -8,9 +8,12 @@ import { RootState } from '../../redux/store';
 import CustomCheckbox from '../checkbox/checkbox';
 import { languageData } from '../../redux/language/languageSlice';
 
-interface Props {}
+interface LoginProps {
+  navigation:any
+}
 
-const EmployeeLogin = ({navigation}) => {
+
+const EmployeeLogin:React.FC<LoginProps> = ({navigation}) => {
   const [employeeId, setEmployeeId] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [hide, setHide] = React.useState(true);
