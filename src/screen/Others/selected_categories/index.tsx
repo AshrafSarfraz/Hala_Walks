@@ -21,6 +21,7 @@ import { languageData } from '../../../redux/language/languageSlice';
 import CustomHeader from '../../../components/header/CustomHeader';
 import { Scope } from '../../../theme/Images';
 import { Colors } from '../../../theme/Colors';
+import { fetchBrandsFromFirebase } from '../../../firebase/firebaseutils';
 
 const SelectedCategories: React.FC<{ route: any }> = ({ route }) => {
   const navigation = useNavigation<any>();
@@ -33,34 +34,21 @@ const SelectedCategories: React.FC<{ route: any }> = ({ route }) => {
   const language = useSelector((state: RootState) => state.language.language);
   const styles = getStyles(language);
 
-//   useEffect(() => {
-//     const getBrands = async () => {
-//       setLoading(true);
-//       const fetchedBrands = await fetchBrandsFromFirebase();
-//       const matchedItems = fetchedBrands.filter(data =>
-//         data.selectedCategory?.toLowerCase() === item.text?.toLowerCase(),
-//       );
-//       setFilteredItems(matchedItems);
-//       setLoading(false);
-//     };
+  useEffect(() => {
+    const getBrands = async () => {
+      setLoading(true);
+      const fetchedBrands = await fetchBrandsFromFirebase();
+      const matchedItems = fetchedBrands.filter(data =>
+        data.selectedCategory?.toLowerCase() === item.text?.toLowerCase(),
+      );
+      setFilteredItems(matchedItems);
+      setLoading(false);
+    };
 
-//     getBrands();
-//   }, []);
+    getBrands();
+  }, []);
 
- useEffect(() => {
-      const getBrands = async () => {
-        setLoading(true);
-        const fetchedBrands =dummyDataList ;
-        const matchedItems = fetchedBrands.filter(data =>
-        data.selectedCategory?.toLowerCase() === item.text?.toLowerCase(), );
-        // simulate delay
-        setTimeout(() => {
-            setFilteredItems(matchedItems);
-          setLoading(false);
-        }, 1000);
-      };
-      getBrands();
-    }, []);
+ 
 
   const handleImageLoad = (id: string) => {
     setImageLoaded((prev) => ({

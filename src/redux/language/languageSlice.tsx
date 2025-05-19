@@ -35,7 +35,7 @@ const languageData = {
     Found_Items:"Items Found",
     No_Items_Found:"No Item Found ",
     Detail_Screen:"Detail Screen",
-    
+    Upcoming_event:"Upcoming Events",
     
     next: "next",
    
@@ -80,7 +80,9 @@ const languageData = {
     Found_Items:'تم العثور على العناص'   ,
     No_Items_Found:"لم يتم العثور على عناصر"  ,    
     Detail_Screen:"شاشة التفاصيل",
-    
+    Upcoming_event : "الفعاليات القادمة",
+
+
     confirm: "تأكيد",
     discount_history: "سجل الخصومات",
     account: "الحساب",

@@ -13,19 +13,18 @@ import {
 } from 'react-native';
 
 import {useNavigation} from '@react-navigation/native';
-import { useDispatch, useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import LinearGradient from 'react-native-linear-gradient';
-import { getStyles } from './style';
-import { RootState } from '../../../redux/store';
-import { toggleItemInCart } from '../../../redux/cartSlice';
+import {getStyles} from './style';
+import {RootState} from '../../../redux/store';
+import {toggleItemInCart} from '../../../redux/cartSlice';
 import CustomHeader from '../../../components/header/CustomHeader';
-import { languageData } from '../../../redux/language/languageSlice';
-import { Dark_Heart, Light_Heart } from '../../../theme/Images';
+import {languageData} from '../../../redux/language/languageSlice';
+import {Dark_Heart, Light_Heart} from '../../../theme/Images';
 import CustomButton from '../../../components/buttons/CustomButton';
 import RedeemReceiptModal from '../../../components/Modal/RedeemModal';
-import { Colors } from '../../../theme/Colors';
-
+import {Colors} from '../../../theme/Colors';
 
 const dummyData = [
   {
@@ -50,36 +49,34 @@ const dummyData = [
   },
 ];
 
-
-const DetailScreen: React.FC<{route:any}> = ({route}) => {
-
+const DetailScreen: React.FC<{route: any}> = ({route}) => {
   const {item} = route.params; // Home se data le rahe hain
   const dispatch = useDispatch();
   const latitude = item.latitude ? item.latitude : null;
   const longitude = item.longitude ? item.longitude : null;
   const phoneNumber = item.PhoneNumber;
   const navigation = useNavigation();
-   const [imageLoading, setImageLoading] = useState(true);
-  
-   console.log("Fetched Offers:", item);
+  const [imageLoading, setImageLoading] = useState(true);
+
+  console.log('Fetched Offers:', item);
 
   // Redux Toolkit
-   const language = useSelector((state: RootState) => state.language.language); 
-    const styles = getStyles(language);
+  const language = useSelector((state: RootState) => state.language.language);
+  const styles = getStyles(language);
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const isInCart = cartItems.some(cartItem => cartItem.id === item.id);
-    const [selectedItem, setSelectedItem] = useState<any>(null);
-    const [modalVisible, setModalVisible] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<any>(null);
+  const [modalVisible, setModalVisible] = useState(false);
   const handleToggleCart = () => {
     dispatch(toggleItemInCart(item));
   };
-  
+
   const openModal = (item: any) => {
     setSelectedItem(item);
     setModalVisible(true);
   };
 
-// Google Map and Mobile Number
+  // Google Map and Mobile Number
   const handleOpenMaps = () => {
     const url = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
     Linking.openURL(url);
@@ -96,13 +93,27 @@ const DetailScreen: React.FC<{route:any}> = ({route}) => {
 
   return (
     <SafeAreaView>
-          <StatusBar hidden={false} translucent={true} animated={true} backgroundColor={Colors.Bg} barStyle={'dark-content'} />
+      <StatusBar
+        hidden={false}
+        translucent={true}
+        animated={true}
+        backgroundColor={Colors.Bg}
+        barStyle={'dark-content'}
+      />
       <ScrollView>
         <View style={styles.container}>
           <View style={styles.HeaderCont}>
-            <CustomHeader title={languageData[language].Detail_Screen} onBackPress={() => { navigation.goBack();}}/>
-           
-            <TouchableOpacity onPress={() =>{handleToggleCart()}}>
+            <CustomHeader
+              title={languageData[language].Detail_Screen}
+              onBackPress={() => {
+                navigation.goBack();
+              }}
+            />
+
+            <TouchableOpacity
+              onPress={() => {
+                handleToggleCart();
+              }}>
               {isInCart ? (
                 <Image source={Dark_Heart} style={styles.HeartStyle} />
               ) : (
@@ -110,19 +121,32 @@ const DetailScreen: React.FC<{route:any}> = ({route}) => {
               )}
             </TouchableOpacity>
           </View>
+
           <View style={styles.Body_Cont}>
-          <ShimmerPlaceholder
-                visible={!imageLoading}
-                LinearGradient={LinearGradient}
-                style={styles.image}>
-            <Image source={typeof item.img === 'string' ? { uri: item.img } : item.img} style={styles.image}    onLoad={handleImageLoad} />
+            <ShimmerPlaceholder
+              visible={!imageLoading}
+              LinearGradient={LinearGradient}
+              style={styles.image}>
+              <Image
+                source={
+                  typeof item.img === 'string' ? {uri: item.img} : item.img
+                }
+                style={styles.image}
+                onLoad={handleImageLoad}
+              />
             </ShimmerPlaceholder>
+
             <View style={styles.Type_Cont}>
               <Text style={styles.Type_Text}>{item.selectedCategory}</Text>
             </View>
+
             <View style={styles.Title_Cont}>
-              {language==='ar'?<Text style={styles.title}>{item.nameArabic}</Text>:
-              <Text style={styles.title}>{item.nameEng}</Text>}
+              {language === 'ar' ? (
+                <Text style={styles.title}>{item.nameArabic}</Text>
+              ) : (
+                <Text style={styles.title}>{item.nameEng}</Text>
+              )}
+
               <TouchableOpacity onPress={Contact} style={styles.call_cont}>
                 <Image
                   source={require('../../../assets/icons/man.png')}
@@ -131,28 +155,63 @@ const DetailScreen: React.FC<{route:any}> = ({route}) => {
                 <Text style={styles.call_txt}>Call Now</Text>
               </TouchableOpacity>
             </View>
+            <View style={styles.Loc_Cont}>
+              <Image
+                source={require('../../../assets/icons/man.png')}
+                style={styles.Loc_Icon}
+              />
+              <Text style={styles.Loc_Txt}>{item.Address} </Text>
+            </View>
 
             <View style={styles.Dis_Cont}>
-              <Text style={styles.Discount}>{languageData[language].discount} </Text>
-              <Text style={styles.Total_Discount}> {''+ item.discount +'%'}  </Text>
-            </View>
-            
-              <View style={styles.Desc_Cont} >
-              <Text style={styles.Desc}>{languageData[language].description}</Text>
+              <View style={styles.Dis_txt_cont}>
+                <Text style={styles.Total_Discount}>
+                  {' '}
+                  {'' + item.discount + '%'}{' '}
+                </Text>
+                <Text style={styles.Discount}>
+                  {languageData[language].discount}{' '}
+                </Text>
               </View>
-              {
-                language==='ar'?<Text style={styles.Detail}>{item.descriptionArabic}</Text>:
-                <Text style={styles.Detail}>{item.descriptionEng}</Text>
-              }
 
+              <TouchableOpacity
+                style={styles.Menu_Btn}
+                onPress={() => {
+                  if (item.pdfUrl) {
+                    navigation.navigate('PDFViewerScreen', {
+                      pdfUrl: item.pdfUrl,
+                    });
+                  } else {
+                    setModalVisible(true);
+                  }
+                }}>
+                <Text style={styles.menu_txt}>View Menu</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.Desc_Cont}>
+              <Text style={styles.Desc}>
+                {languageData[language].description}
+              </Text>
+            </View>
+            {language === 'ar' ? (
+              <Text style={styles.Detail}>{item.descriptionArabic}</Text>
+            ) : (
+              <Text style={styles.Detail}>{item.descriptionEng}</Text>
+            )}
           </View>
 
-          <CustomButton  title="Redeem"   onPress={() => {openModal(item)}} />
+          <CustomButton
+            title="Redeem"
+            onPress={() => {
+              openModal(item);
+            }}
+          />
           <RedeemReceiptModal
-           visible={modalVisible}
-           onClose={() => setModalVisible(false)}
-           data={selectedItem}
-           />
+            visible={modalVisible}
+            onClose={() => setModalVisible(false)}
+            data={selectedItem}
+          />
           <View style={{marginBottom: Platform.OS === 'ios' ? '5%' : '4%'}} />
           <CustomButton
             title="Open Map"
@@ -161,7 +220,6 @@ const DetailScreen: React.FC<{route:any}> = ({route}) => {
             }}
           />
         </View>
-       
       </ScrollView>
     </SafeAreaView>
   );

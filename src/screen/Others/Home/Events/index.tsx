@@ -3,21 +3,15 @@ import { View, Text, FlatList, Image, Dimensions, TouchableOpacity } from 'react
 import { useNavigation } from '@react-navigation/native';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import LinearGradient from 'react-native-linear-gradient';
-
-
 import { useSelector } from 'react-redux';
-
-
 import { getStyles } from './style';
-
-
 import { RootState } from '../../../../redux/store';
-import { fetchFlatOfferFromFirebase } from '../../../../firebase/firebaseutils';
-import { languageData } from '../../../../redux/language/languageSlice';
+import { fetchBrandsFromFirebase, fetchFlatOfferFromFirebase } from '../../../../firebase/firebaseutils';
+
 
 const { width } = Dimensions.get('screen');
 
-const ImageSlider: React.FC<{ navigation: any }> = () => {
+const EventSlider: React.FC<{ navigation: any }> = () => {
   const navigation = useNavigation();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [offers, setOffers] = useState<any[]>([]); // State to store Firestore data
@@ -30,7 +24,7 @@ const ImageSlider: React.FC<{ navigation: any }> = () => {
   useEffect(() => {
     const getFlatOffer = async () => {
       setLoading(true);
-      const fetchedOffers = await fetchFlatOfferFromFirebase();
+      const fetchedOffers = await fetchBrandsFromFirebase();
       setOffers(fetchedOffers);
       setLoading(false);
     };
@@ -95,7 +89,7 @@ const ImageSlider: React.FC<{ navigation: any }> = () => {
       )}
 
       {/* Pagination Dots */}
-      <View style={styles.pagination}>
+      {/* <View style={styles.pagination}>
         {offers.map((_, index) => (
           <View
             key={index}
@@ -108,9 +102,9 @@ const ImageSlider: React.FC<{ navigation: any }> = () => {
             ]}
           />
         ))}
-      </View>
+      </View> */}
     </View>
   );
 };
 
-export default ImageSlider;
+export default EventSlider;

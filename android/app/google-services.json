@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "561032764465",
+    "project_id": "west-walk-163cb",
+    "storage_bucket": "west-walk-163cb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:561032764465:android:0faf107bf92ed0186bc910",
+        "android_client_info": {
+          "package_name": "com.westwalk"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCzOqr-RWH_TtTHvyzTcSQPDY-mtW8My_4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

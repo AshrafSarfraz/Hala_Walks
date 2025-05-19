@@ -4,12 +4,10 @@ import { useNavigation } from '@react-navigation/native';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import LinearGradient from 'react-native-linear-gradient';
 
-
 import { useSelector } from 'react-redux';
 import { getStyles } from './style';
-
-import { dummyDataList } from '../BestSellers/dummyData';
 import { RootState } from '../../../../redux/store';
+import { firestore } from '../../../../firebase/firebaseconfig';
 
 const RecentlyAdded = () => {
   const navigation = useNavigation();
@@ -19,45 +17,35 @@ const RecentlyAdded = () => {
   const language = useSelector((state: RootState) => state.language.language); // Get the current language from Redux
   const styles = getStyles(language);
 
-  // useEffect(() => {
-  //   const fetchRecentlyAdded = async () => {
-  //     try {
-  //       const snapshot = await firestore().collection('Brands').get();
-  //       const data = snapshot.docs.map(doc => ({
-  //         id: doc.id,
-  //         ...doc.data(),
-  //       }));
+  useEffect(() => {
+    const fetchRecentlyAdded = async () => {
+      try {
+        const snapshot = await firestore().collection('Brands').get();
+        const data = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
 
-  //       // 🕒 Get current time and subtract 1 month
-  //       const oneMonthAgo = new Date();
-  //       oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+        // 🕒 Get current time and subtract 1 month
+        const oneMonthAgo = new Date();
+        oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
 
-  //       const filtered = data.filter(item => {
-  //         const createdAt = item.time?.toDate?.(); // Convert Firestore Timestamp to JS Date
-  //         return createdAt && createdAt > oneMonthAgo;
-  //       });
-  //       setRecentItems(filtered);
-  //       setLoading(false);  // Set loading to false when data is fetched
-  //     } catch (error) {
-  //       console.error('❌ Error fetching recently added items:', error);
-  //       setLoading(false);  // Set loading to false if error occurs
-  //     }
-  //   };
+        const filtered = data.filter(item => {
+          const createdAt = item.time?.toDate?.(); // Convert Firestore Timestamp to JS Date
+          return createdAt && createdAt > oneMonthAgo;
+        });
+        setRecentItems(filtered);
+        setLoading(false);  // Set loading to false when data is fetched
+      } catch (error) {
+        console.error('❌ Error fetching recently added items:', error);
+        setLoading(false);  // Set loading to false if error occurs
+      }
+    };
 
-  //   fetchRecentlyAdded();
-  // }, []);
+    fetchRecentlyAdded();
+  }, []);
 
-    useEffect(() => {
-      const getBrands = async () => {
-        setLoading(true);
-        // simulate delay
-        setTimeout(() => {
-          setRecentItems(dummyDataList.filter(item => item.isBestSeller === 'Yes'));
-          setLoading(false);
-        }, 1000);
-      };
-      getBrands();
-    }, []);
+
   const handleImageLoad = () => {
     setImageLoading(false); // Stop shimmer effect once the image has loaded
   };

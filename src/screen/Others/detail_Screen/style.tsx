@@ -77,31 +77,35 @@ export const getStyles=(language:string) => StyleSheet.create({
        fontFamily: Fonts.F_Bold,
    },
 
-
-  Dis_Cont: {
-    marginVertical: "3%",
+   Dis_Cont: {
+    marginVertical: '3%',
     backgroundColor: Colors.White,
-    padding: "3%",
-    paddingVertical:"4%",
+    padding: '3%',
+    paddingVertical: '4%',
     borderRadius: 10,
-    flexDirection:language==='en'?'row':'row-reverse'
+    flexDirection: language === 'en' ? 'row' : 'row-reverse',
+    justifyContent:'space-between',
+    alignItems:"center"
   },
-  Discount: {
-    fontSize:language==='en'?20:20,
-    color: Colors.PrimaryColor,
-    fontFamily: language==='en'?Fonts.F_Bold:'',
-    letterSpacing:0.4,
-    lineHeight:language==='en'?26:36,
-    fontWeight:language==='en'?'400':'bold'
+  Dis_txt_cont:{
+   flexDirection:'row'
+  },
+  Menu_Btn:{
+    backgroundColor:Colors.PrimaryColor,
+    padding:8,
+    borderRadius:6
+  },
+  menu_txt:{
+   color:Colors.White,
+   fontSize:12,
+   lineHeight:16,
+   fontFamily:Fonts.F_Bold,
+   
   
   },
-  Total_Discount: {
-    fontSize: 20,
-    color: Colors.PrimaryColor,
-    fontFamily: Fonts.F_Bold,
-    letterSpacing:0.4,
-    lineHeight:28
-  },
+
+
+  
   Desc_Cont: {
       flexDirection:language==='en'?'row':'row-reverse',
   },
@@ -115,6 +119,21 @@ export const getStyles=(language:string) => StyleSheet.create({
     marginTop:'2%',
     marginBottom:language==='en'?'2%':'0.5%'
   },
+  Discount: {
+    fontSize: language === 'en' ? 14 : 14,
+    color: Colors.PrimaryColor,
+    fontFamily: language === 'en' ? Fonts.F_Bold : '',
+    letterSpacing: 0.4,
+    lineHeight: language === 'en' ? 26 : 36,
+    fontWeight: language === 'en' ? '400' : 'bold',
+  },
+  Total_Discount: {
+    fontSize: 18,
+    color: Colors.PrimaryColor,
+    fontFamily: Fonts.F_Bold,
+    letterSpacing: 0.2,
+    lineHeight: 26,
+  },
 
   Detail: {
     fontSize: 14,
@@ -125,5 +144,22 @@ export const getStyles=(language:string) => StyleSheet.create({
     marginBottom: '3%',
     textAlign:language==='en'?'left':'right',
   },
+  Loc_Cont: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop:'2%'
+  },
+  Loc_Icon: {
+    width: 16,
+    height: 16,
+    resizeMode: 'contain',
+    marginRight:"1%",
+    
+  },
+
+  Loc_Txt: {
+    fontSize: 10,
+  },
+ 
 
 });

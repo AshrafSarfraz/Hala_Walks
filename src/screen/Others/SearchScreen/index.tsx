@@ -15,11 +15,11 @@ import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import { getStyles } from './style';
 import LinearGradient from 'react-native-linear-gradient';
 import { RootState } from '../../../redux/store';
-import { dummyDataList } from '../Home/BestSellers/dummyData';
 import { languageData } from '../../../redux/language/languageSlice';
 import CustomHeader from '../../../components/header/CustomHeader';
-import { Lock, Scope } from '../../../theme/Images';
+import {  Scope } from '../../../theme/Images';
 import { Colors } from '../../../theme/Colors';
+import { fetchBrandsFromFirebase } from '../../../firebase/firebaseutils';
 
 const SearchScreen: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -30,28 +30,18 @@ const SearchScreen: React.FC = () => {
   const language = useSelector((state: RootState) => state.language.language);
   const styles = getStyles(language);
 
-  // useEffect(() => {
-  //   const getBrands = async () => {
-  //     setLoading(true);
-  //     const fetchedBrands = await fetchBrandsFromFirebase();
-  //     setBrands(fetchedBrands);
-  //     setLoading(false);
-  //   };
-
-  //   getBrands();
-  // }, []);
-
   useEffect(() => {
-      const getBrands = async () => {
-        setLoading(true);
-        // simulate delay
-        setTimeout(() => {
-          setBrands(dummyDataList);
-          setLoading(false);
-        }, 1000);
-      };
-      getBrands();
-    }, []);
+    const getBrands = async () => {
+      setLoading(true);
+      const fetchedBrands = await fetchBrandsFromFirebase();
+      setBrands(fetchedBrands);
+      setLoading(false);
+    };
+
+    getBrands();
+  }, []);
+
+  
 
   const filteredData = brands.filter(item =>
     item.nameEng?.toLowerCase().includes(searchQuery.toLowerCase())

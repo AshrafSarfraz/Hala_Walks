@@ -8,6 +8,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { getStyles } from './style';
 import { RootState } from '../../../../redux/store';
 import { dummyDataList } from './dummyData';
+import { fetchBrandsFromFirebase } from '../../../../firebase/firebaseutils';
 
 
 const BestSeller: React.FC = () => {
@@ -19,27 +20,19 @@ const BestSeller: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [loadedCards, setLoadedCards] = useState<{ [key: string]: boolean }>({});
 
-  // useEffect(() => {
-  //   const getBrands = async () => {
-  //     setLoading(true);
-  //     const fetchedBrands = await fetchBrandsFromFirebase();
-  //     setBrands(fetchedBrands);
-  //     setLoading(false);
-  //   };
-  //   getBrands();
-  // }, []);
-  
   useEffect(() => {
     const getBrands = async () => {
       setLoading(true);
-      // simulate delay
-      setTimeout(() => {
-        setBrands(dummyDataList.filter(item => item.isBestSeller === 'Yes'));
-        setLoading(false);
-      }, 1000);
+      const fetchedBrands = await fetchBrandsFromFirebase();
+      const bestSellers = fetchedBrands.filter((item: any) => item.bestSeller === "Yes");
+      setBrands(bestSellers);
+      setLoading(false);
     };
     getBrands();
   }, []);
+  
+  
+
 
 
   const handleCardLoad = (id: string) => setLoadedCards(prev => ({ ...prev, [id]: true }));

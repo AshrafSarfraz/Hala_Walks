@@ -5,18 +5,15 @@ import ImageSlider from './FlatOffer';
 import Categories from './Categories';
 import BestSeller from './BestSellers';
 import RecentlyAdded from './RecentlyAdded';
-
-
-import Venues from './Venues';
 import { useSelector } from 'react-redux';
 
 import { getStyles } from './style';
-
 import { RootState } from '../../../redux/store';
 import { languageData } from '../../../redux/language/languageSlice';
 import LanguageModal from '../../../components/Modal/Lan_Modal';
 import {  BackgroundImg, Language,  Scope, Westwalk, } from '../../../theme/Images';
 import { Colors } from '../../../theme/Colors';
+import EventSlider from './Events';
 
 type HomeProps = {
   navigation: any;
@@ -26,9 +23,6 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
   const [alertVisible, setAlertVisible] = useState<boolean>(false);
   const language = useSelector((state: RootState) => state.language.language); // Get the current language from Redux
   const styles = getStyles(language);
-
-
-  
 
   const showAlert = () => {
     setAlertVisible(true);
@@ -69,12 +63,7 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
   
             <Categories navigation={navigation} />
           </View>
-          {/* <View style={[styles.Categories_Cont,{marginTop:'2%'}]}>
-          <View style={styles.txt_cont} >
-            <Text style={styles.Categories_Txt}>{languageData[language].venues_collection}</Text>
-           </View>
-            <Venues navigation={navigation} />
-          </View> */}
+         
 
           <View style={[styles.BestSeller_Cont,{marginTop:"1%"}]}>
           <View style={styles.txt_cont} >
@@ -82,7 +71,13 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
             </View>
             <BestSeller  />
           </View>
-          <ImageSlider navigation={navigation} />
+
+          <View style={[styles.BestSeller_Cont,{marginTop:"1%"}]}>
+          <View style={styles.txt_cont} >
+            <Text style={styles.BestSeller_Txt}>{languageData[language].Upcoming_event}</Text>
+            </View>
+            <EventSlider navigation={navigation} />
+          </View>
 
           <View style={styles.BestSeller_Cont}>
           <View style={styles.txt_cont} >
