@@ -22,6 +22,8 @@ import TenantHistoryScreen from '../screen/Tenants_Data/Reedem_Histroy';
 import CorporationHistoryScreen from '../screen/Organization/Reedem_Histroy';
 import StaffDocumentControlScreen from '../screen/Employee_Data/Documents';
 import StaffContactUs from '../screen/Employee_Data/ContactUs';
+import RoleSelectionScreen from '../screen/authentication/select_role';
+import EmployeeLogin from '../components/Logins/Westwalk_Staff';
 
 
 
@@ -38,6 +40,7 @@ export default function StackNavigation() {
       <Stack.Navigator initialRouteName="SplashBlank" screenOptions={{headerShown:false}} >
         <Stack.Screen name="SplashBlank" component={Splash_Blank}   />
         <Stack.Screen name="SplashScreen" component={Splash_Screen}   />
+        <Stack.Screen name="Role" component={RoleSelectionScreen}   />
         <Stack.Screen name="Login" component={LoginScreen}   />
         <Stack.Screen name="SearchScreen" component={SearchScreen}   />
         <Stack.Screen name="DetailScreen" component={DetailScreen}   />
@@ -46,6 +49,7 @@ export default function StackNavigation() {
         <Stack.Screen name="WishlistScreen" component={WishlistScreen}   />
       
         {/* Staff Screen */}
+        <Stack.Screen name="StaffLogin" component={EmployeeLogin}   />
         <Stack.Screen name="EmployeeTab" component={EmployeeTab}   />
         <Stack.Screen name="ProfileScreen" component={ProfileScreen}   />
         <Stack.Screen name="StaffHistroyScreen" component={StaffHistoryScreen}   />

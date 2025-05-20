@@ -12,6 +12,9 @@ export const BackgroundImg=require(ImgPath+'image.png')
 
 
 const IconPath='../assets/icons/'
+export const User=require(IconPath+'user.png')
+export const Tenants=require(IconPath+'real-estate.png')
+export const Emp_User=require(IconPath+'emp_user.png')
 export const Hide=require(IconPath+'hide.png')
 export const Show=require(IconPath+'show.png')
 export const Lock=require(IconPath+'lock.png')

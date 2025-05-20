@@ -6,7 +6,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { useSelector } from 'react-redux';
 import { getStyles } from './style';
 import { RootState } from '../../../../redux/store';
-import { fetchBrandsFromFirebase, fetchFlatOfferFromFirebase } from '../../../../firebase/firebaseutils';
+import { fetchEventsFromFirebase} from '../../../../firebase/firebaseutils';
 
 
 const { width } = Dimensions.get('screen');
@@ -24,7 +24,7 @@ const EventSlider: React.FC<{ navigation: any }> = () => {
   useEffect(() => {
     const getFlatOffer = async () => {
       setLoading(true);
-      const fetchedOffers = await fetchBrandsFromFirebase();
+      const fetchedOffers = await fetchEventsFromFirebase();
       setOffers(fetchedOffers);
       setLoading(false);
     };
@@ -66,7 +66,7 @@ const EventSlider: React.FC<{ navigation: any }> = () => {
           renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.imageContainer}
-              onPress={() => navigation.navigate('DetailScreen', { item })}
+              onPress={() => navigation.navigate('DetailScreen', { item, source: 'event'  })}
             >
               {/* Shimmer effect for image */}
               <ShimmerPlaceholder

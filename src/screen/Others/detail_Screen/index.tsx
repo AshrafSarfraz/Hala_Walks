@@ -50,7 +50,7 @@ const dummyData = [
 ];
 
 const DetailScreen: React.FC<{route: any}> = ({route}) => {
-  const {item} = route.params; // Home se data le rahe hain
+  const {item, source} = route.params; // Home se data le rahe hain
   const dispatch = useDispatch();
   const latitude = item.latitude ? item.latitude : null;
   const longitude = item.longitude ? item.longitude : null;
@@ -100,126 +100,190 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
         backgroundColor={Colors.Bg}
         barStyle={'dark-content'}
       />
+     
+    
       <ScrollView>
+      { source==='event'?
+      (
         <View style={styles.container}>
-          <View style={styles.HeaderCont}>
-            <CustomHeader
-              title={languageData[language].Detail_Screen}
-              onBackPress={() => {
-                navigation.goBack();
-              }}
+        <View style={styles.HeaderCont}>
+          <CustomHeader
+            title={languageData[language].Detail_Screen}
+            onBackPress={() => {
+              navigation.goBack();
+            }}
+          />
+
+        </View>
+
+        <View style={styles.Body_Cont}>
+          <ShimmerPlaceholder
+            visible={!imageLoading}
+            LinearGradient={LinearGradient}
+            style={styles.image}>
+            <Image
+              source={
+                typeof item.img === 'string' ? {uri: item.img} : item.img
+              }
+              style={styles.image}
+              onLoad={handleImageLoad}
             />
+          </ShimmerPlaceholder>
+
+          <View style={styles.Title_Cont}>
+            {language === 'ar' ? (
+              <Text style={styles.title}>{item.nameArabic}</Text>
+            ) : (
+              <Text style={styles.title}>{item.nameEng}</Text>
+            )}
+
+          </View>
+          <View style={styles.Loc_Cont}>
+            <Image
+              source={require('../../../assets/icons/man.png')}
+              style={styles.Loc_Icon}
+            />
+            <Text style={styles.Loc_Txt}>{item.Address} </Text>
+          </View>
+
+        
+
+          <View style={styles.Desc_Cont}>
+            <Text style={styles.Desc}>
+              {languageData[language].description}
+            </Text>
+          </View>
+          {language === 'ar' ? (
+            <Text style={styles.Detail}>{item.descriptionArabic}</Text>
+          ) : (
+            <Text style={styles.Detail}>{item.descriptionEng}</Text>
+          )}
+        </View>
+
+      </View>
+      ):
+      (
+        <View style={styles.container}>
+        <View style={styles.HeaderCont}>
+          <CustomHeader
+            title={languageData[language].Detail_Screen}
+            onBackPress={() => {
+              navigation.goBack();
+            }}
+          />
+
+          <TouchableOpacity
+            onPress={() => {
+              handleToggleCart();
+            }}>
+            {isInCart ? (
+              <Image source={Dark_Heart} style={styles.HeartStyle} />
+            ) : (
+              <Image source={Light_Heart} style={styles.HeartStyle} />
+            )}
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.Body_Cont}>
+          <ShimmerPlaceholder
+            visible={!imageLoading}
+            LinearGradient={LinearGradient}
+            style={styles.image}>
+            <Image
+              source={
+                typeof item.img === 'string' ? {uri: item.img} : item.img
+              }
+              style={styles.image}
+              onLoad={handleImageLoad}
+            />
+          </ShimmerPlaceholder>
+
+          <View style={styles.Type_Cont}>
+            <Text style={styles.Type_Text}>{item.selectedCategory}</Text>
+          </View>
+
+          <View style={styles.Title_Cont}>
+            {language === 'ar' ? (
+              <Text style={styles.title}>{item.nameArabic}</Text>
+            ) : (
+              <Text style={styles.title}>{item.nameEng}</Text>
+            )}
+
+            <TouchableOpacity onPress={Contact} style={styles.call_cont}>
+              <Image
+                source={require('../../../assets/icons/man.png')}
+                style={styles.Phone_Icon}
+              />
+              <Text style={styles.call_txt}>Call Now</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.Loc_Cont}>
+            <Image
+              source={require('../../../assets/icons/man.png')}
+              style={styles.Loc_Icon}
+            />
+            <Text style={styles.Loc_Txt}>{item.Address} </Text>
+          </View>
+
+          <View style={styles.Dis_Cont}>
+            <View style={styles.Dis_txt_cont}>
+              <Text style={styles.Total_Discount}>
+                {' '}
+                {'' + item.discount + '%'}{' '}
+              </Text>
+              <Text style={styles.Discount}>
+                {languageData[language].discount}{' '}
+              </Text>
+            </View>
 
             <TouchableOpacity
+              style={styles.Menu_Btn}
               onPress={() => {
-                handleToggleCart();
+                if (item.pdfUrl) {
+                  navigation.navigate('PDFViewerScreen', {
+                    pdfUrl: item.pdfUrl,
+                  });
+                } else {
+                  setModalVisible(true);
+                }
               }}>
-              {isInCart ? (
-                <Image source={Dark_Heart} style={styles.HeartStyle} />
-              ) : (
-                <Image source={Light_Heart} style={styles.HeartStyle} />
-              )}
+              <Text style={styles.menu_txt}>View Menu</Text>
             </TouchableOpacity>
           </View>
 
-          <View style={styles.Body_Cont}>
-            <ShimmerPlaceholder
-              visible={!imageLoading}
-              LinearGradient={LinearGradient}
-              style={styles.image}>
-              <Image
-                source={
-                  typeof item.img === 'string' ? {uri: item.img} : item.img
-                }
-                style={styles.image}
-                onLoad={handleImageLoad}
-              />
-            </ShimmerPlaceholder>
-
-            <View style={styles.Type_Cont}>
-              <Text style={styles.Type_Text}>{item.selectedCategory}</Text>
-            </View>
-
-            <View style={styles.Title_Cont}>
-              {language === 'ar' ? (
-                <Text style={styles.title}>{item.nameArabic}</Text>
-              ) : (
-                <Text style={styles.title}>{item.nameEng}</Text>
-              )}
-
-              <TouchableOpacity onPress={Contact} style={styles.call_cont}>
-                <Image
-                  source={require('../../../assets/icons/man.png')}
-                  style={styles.Phone_Icon}
-                />
-                <Text style={styles.call_txt}>Call Now</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.Loc_Cont}>
-              <Image
-                source={require('../../../assets/icons/man.png')}
-                style={styles.Loc_Icon}
-              />
-              <Text style={styles.Loc_Txt}>{item.Address} </Text>
-            </View>
-
-            <View style={styles.Dis_Cont}>
-              <View style={styles.Dis_txt_cont}>
-                <Text style={styles.Total_Discount}>
-                  {' '}
-                  {'' + item.discount + '%'}{' '}
-                </Text>
-                <Text style={styles.Discount}>
-                  {languageData[language].discount}{' '}
-                </Text>
-              </View>
-
-              <TouchableOpacity
-                style={styles.Menu_Btn}
-                onPress={() => {
-                  if (item.pdfUrl) {
-                    navigation.navigate('PDFViewerScreen', {
-                      pdfUrl: item.pdfUrl,
-                    });
-                  } else {
-                    setModalVisible(true);
-                  }
-                }}>
-                <Text style={styles.menu_txt}>View Menu</Text>
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.Desc_Cont}>
-              <Text style={styles.Desc}>
-                {languageData[language].description}
-              </Text>
-            </View>
-            {language === 'ar' ? (
-              <Text style={styles.Detail}>{item.descriptionArabic}</Text>
-            ) : (
-              <Text style={styles.Detail}>{item.descriptionEng}</Text>
-            )}
+          <View style={styles.Desc_Cont}>
+            <Text style={styles.Desc}>
+              {languageData[language].description}
+            </Text>
           </View>
-
-          <CustomButton
-            title="Redeem"
-            onPress={() => {
-              openModal(item);
-            }}
-          />
-          <RedeemReceiptModal
-            visible={modalVisible}
-            onClose={() => setModalVisible(false)}
-            data={selectedItem}
-          />
-          <View style={{marginBottom: Platform.OS === 'ios' ? '5%' : '4%'}} />
-          <CustomButton
-            title="Open Map"
-            onPress={() => {
-              handleOpenMaps();
-            }}
-          />
+          {language === 'ar' ? (
+            <Text style={styles.Detail}>{item.descriptionArabic}</Text>
+          ) : (
+            <Text style={styles.Detail}>{item.descriptionEng}</Text>
+          )}
         </View>
+
+        <CustomButton
+          title="Redeem"
+          onPress={() => {
+            openModal(item);
+          }}
+        />
+        <RedeemReceiptModal
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+          data={selectedItem}
+        />
+        <View style={{marginBottom: Platform.OS === 'ios' ? '5%' : '4%'}} />
+        <CustomButton
+          title="Open Map"
+          onPress={() => {
+            handleOpenMaps();
+          }}
+        />
+      </View>
+      )}
+     
       </ScrollView>
     </SafeAreaView>
   );

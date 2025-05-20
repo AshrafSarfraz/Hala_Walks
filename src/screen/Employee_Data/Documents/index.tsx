@@ -18,10 +18,10 @@ import CustomHeader from '../../../components/header/CustomHeader';
 import { Colors } from '../../../theme/Colors';
 
 const dummyDocs = [
-  { id: '1', name: 'QID Front.pdf' },
-  { id: '2', name: 'Visa Copy.jpg' },
-  { id: '3', name: 'Passport.pdf' },
-  { id: '4', name: 'Contract.pdf' },
+  { id: '1', name: 'Q-id.pdf' },
+  { id: '2', name: 'Visa.jpg' },
+  { id: '3', name: 'Passport' },
+  { id: '4', name: 'Contract' },
 ];
 type DocumentProps={
   navigation:any
@@ -67,8 +67,8 @@ const StaffDocumentControlScreen:React.FC<DocumentProps> = ({ navigation }) => {
         <TouchableOpacity style={styles.actionBtn} onPress={() => handleView(item.name)}>
           <Text style={styles.actionText}> View</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.actionBtn} onPress={() => handleDownload(item.name)}>
-          <Text style={styles.actionText}> Download</Text>
+        <TouchableOpacity style={[styles.actionBtn,{backgroundColor:'#e5edea'}]} onPress={() => handleDownload(item.name)}>
+          <Text style={[styles.actionText,{color:"#005029"}]}> Download</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -167,12 +167,15 @@ const styles = StyleSheet.create({
   actionGroup: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+
   },
   actionBtn: {
     paddingVertical: 6,
     paddingHorizontal: 12,
     backgroundColor: '#edf1fa',
-    borderRadius: 6,
+    borderRadius: 4,
+    width:'48%',
+    alignItems:'center'
   },
   deleteBtn: {
     paddingVertical: 6,
