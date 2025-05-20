@@ -1,26 +1,20 @@
 import {StyleSheet} from 'react-native';
-import {Colors} from '../../Themes/Colors';
-import {Fonts} from '../../Themes/Fonts';
+import { Colors } from '../../../theme/Colors';
+import { Fonts } from '../../../theme/Fonts';
+
 
 export const getStyles = (language: string) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: Colors.Bg,
+      backgroundColor: Colors.White,
     },
-    prevButton: {
-      position: 'absolute',
-      top: 20,
-      marginHorizontal:20,
-      alignSelf:language === 'en' ? 'flex-start' : 'flex-end',
-
-     
-    },
+ 
     backIcon: {
       width: 20,
       height: 20,
       resizeMode: 'contain',
-      tintColor: Colors.Green,
+      tintColor: Colors.PrimaryColor,
       transform:language === 'en' ?  [{scaleX:1}] :  [{scaleX:-1}] 
      
     },
@@ -38,7 +32,7 @@ export const getStyles = (language: string) =>
     title: {
       fontSize: 22,
       textAlign: 'center',
-      fontFamily: language === 'en' ? Fonts.SF_Bold : undefined,
+      fontFamily: language === 'en' ? Fonts.F_Bold : undefined,
       color: Colors.Black,
       lineHeight: language==='en'?28:40,
       marginTop: '3%',
@@ -47,7 +41,7 @@ export const getStyles = (language: string) =>
     description: {
       fontSize: 14,
       textAlign: 'center',
-      fontFamily: language === 'en' ? Fonts.SF_Medium : undefined,
+      fontFamily: language === 'en' ? Fonts.F_Medium : undefined,
       color: '#232C33',
       lineHeight: 20,
       letterSpacing: 0.2,
@@ -61,7 +55,7 @@ export const getStyles = (language: string) =>
     },
   
     prevButtonText: {
-      color: Colors.Black2,
+      color: Colors.Black,
       fontSize: 16,
     },
     paginationContainer: {
@@ -74,11 +68,11 @@ export const getStyles = (language: string) =>
       width: 8,
       height: 8,
       borderRadius: 4,
-      backgroundColor: Colors.Grey4,
+      backgroundColor: Colors.Grey,
       marginHorizontal: 2,
     },
     activePaginationDot: {
-      backgroundColor: Colors.Green,
+      backgroundColor: Colors.PrimaryColor,
       width: 30,
       height: 8,
       borderRadius: 6,

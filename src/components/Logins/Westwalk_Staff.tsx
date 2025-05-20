@@ -1,6 +1,20 @@
-import React, {useState} from 'react';
-import {TextInput, StyleSheet, View, Text, Image, TouchableOpacity, Linking} from 'react-native';
-import {Hide, Lock, ManIcon, Show} from '../../theme/Images';
+import React, { useState } from 'react';
+import {
+  TextInput,
+  StyleSheet,
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  Linking,
+} from 'react-native';
+import {
+  Hide,
+  Lock,
+  ManIcon,
+  Show,
+  West_NB,
+} from '../../theme/Images';
 import { Colors } from '../../theme/Colors';
 import CustomButton from '../buttons/CustomButton';
 import { useSelector } from 'react-redux';
@@ -9,107 +23,196 @@ import CustomCheckbox from '../checkbox/checkbox';
 import { languageData } from '../../redux/language/languageSlice';
 
 interface LoginProps {
-  navigation:any
+  navigation: any;
 }
 
+const EmployeeLogin: React.FC<LoginProps> = ({ navigation }) => {
+  const [employeeId, setEmployeeId] = useState('');
+  const [password, setPassword] = useState('');
+  const [hide, setHide] = useState(true);
+  const [isChecked, setIsChecked] = useState<boolean>(false);
 
-const EmployeeLogin:React.FC<LoginProps> = ({navigation}) => {
-  const [employeeId, setEmployeeId] = React.useState('');
-  const [password, setPassword] = React.useState('');
-  const [hide, setHide] = React.useState(true);
-    const [isChecked, setIsChecked] = useState<boolean>(false);
+  const language = useSelector(
+    (state: RootState) => state.language.language
+  );
 
-  const language = useSelector((state: RootState) => state.language.language); // Get the current language from Redux
- 
   const styles = getStyles(language);
+
   return (
-    <View>
-      <View style={[styles.InputContainer,employeeId !== '' ? styles.Active_Input_Field : null ]}>
-        <Image source={ManIcon} style={[styles.ManIcon,employeeId !== '' ? styles.Active_Image : null ]} />
+    <View style={styles.Container}>
+      <Image source={West_NB} style={styles.Logo} />
+
+      <Text style={styles.Title}>Staff Login</Text>
+      <Text style={styles.Subtitle}>Enter your credentials to continue</Text>
+
+      <View
+        style={[
+          styles.InputContainer,
+          employeeId !== '' && styles.Active_Input_Field,
+        ]}
+      >
+        <Image
+          source={ManIcon}
+          style={[
+            styles.Icon,
+            employeeId !== '' && styles.Active_Image,
+          ]}
+        />
         <TextInput
-          placeholder="Staff ID"
+          placeholder="Enter your Staff ID"
           value={employeeId}
           onChangeText={setEmployeeId}
           style={styles.input}
+          placeholderTextColor="#888"
         />
       </View>
 
-      <View style={[styles.InputContainer,password !== '' ? styles.Active_Input_Field : null ]}>
-        <Image source={Lock} style={[styles.ManIcon,password !== '' ? styles.Active_Image : null]} />
+      <View
+        style={[
+          styles.InputContainer,
+          password !== '' && styles.Active_Input_Field,
+        ]}
+      >
+        <Image
+          source={Lock}
+          style={[
+            styles.Icon,
+            password !== '' && styles.Active_Image,
+          ]}
+        />
         <TextInput
           secureTextEntry={hide}
-          placeholder="Password"
+          placeholder="Enter your Password"
           value={password}
           onChangeText={setPassword}
           style={styles.passwordinput}
+          placeholderTextColor="#888"
         />
-         <TouchableOpacity onPress={()=>{setHide(!hide)}} >
-          <Image source={hide ? Hide : Show} style={[styles.HideIcons,password !== '' ? styles.Active_Image : null]} />
-         </TouchableOpacity>
+        <TouchableOpacity onPress={() => setHide(!hide)}>
+          <Image
+            source={hide ? Hide : Show}
+            style={[
+              styles.HideIcon,
+              password !== '' && styles.Active_Image,
+            ]}
+          />
+        </TouchableOpacity>
       </View>
-      <CustomCheckbox
+
+      <View style={styles.forgotContainer}>
+        <View style={styles.checkboxContainer}>
+          <CustomCheckbox
             label={languageData[language].agree_to}
             isChecked={isChecked}
             onPress={() => setIsChecked(!isChecked)}
             linkText={languageData[language].privacy_policy}
-            onLinkPress={() => Linking.openURL('https://halabsaudi.com/privacy-policy-2/')}
+            onLinkPress={() =>
+              Linking.openURL('https://halabsaudi.com/privacy-policy-2/')
+            }
           />
-       <CustomButton title='Login' onPress={()=>{navigation.navigate('EmployeeTab')}} />
+        </View>
+        <TouchableOpacity
+          onPress={() =>
+            Linking.openURL('https://halabsaudi.com/forgot-password/')
+          }
+        >
+          <Text style={styles.ForgotText}>
+            {languageData[language]?.forgot_password || 'Forgot Password?'}
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <CustomButton
+        title="Login"
+        onPress={() => navigation.navigate('EmployeeTab')}
+      />
     </View>
   );
 };
 
 export default EmployeeLogin;
 
-const getStyles=(language:string)=> StyleSheet.create({
-  InputContainer: {
-    flexDirection: 'row',
-    width: '100%',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: "#CCC",
-    borderRadius: 25,
-    height: 50,
-    marginBottom: 10,
-    backgroundColor: '#ffffff',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3, // Optional for iOS
-  },
-  ManIcon: {
-       width:20,height:20,
-       resizeMode:"contain",
-       marginLeft:12,
-       marginRight:1,
-       tintColor:Colors.Grey
-  },
-  input: {
-    width:'80%',
-    borderColor: '#ccc',
-    padding: 12,
-    borderRadius: 10,
-    fontSize:14
-
-  },
-  passwordinput:{
-    width:'75%',
-    borderColor: '#ccc',
-    padding: 12,
-    borderRadius: 10,
-  },
-  HideIcons: {
-    width:25,height:25,
-    resizeMode:"contain",
-    marginLeft:5,
-    tintColor:Colors.Grey
-},
-Active_Input_Field:{
-  borderWidth:2,
-  borderColor:Colors.PrimaryColor,
-},
-Active_Image:{
-  tintColor:Colors.PrimaryColor
-}
-
-});
+// ===================== STYLES =====================
+const getStyles = (language: string) =>
+  StyleSheet.create({
+    Container: {
+      flex: 1,
+      backgroundColor: '#ffffff',
+      paddingHorizontal: 24,
+      paddingTop: 60,
+    },
+    Logo: {
+      width: 180,
+      height: 100,
+      alignSelf: 'center',
+      resizeMode: 'contain',
+      marginBottom: 40,
+    },
+    Title: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      color: '#222',
+      textAlign: 'center',
+      marginBottom: 8,
+    },
+    Subtitle: {
+      fontSize: 14,
+      color: '#666',
+      textAlign: 'center',
+      marginBottom: 30,
+    },
+    InputContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      borderWidth: 2,
+      borderColor: '#CCC',
+      borderRadius: 10,
+      height: 50,
+      marginBottom: 16,
+      backgroundColor: '#fff',
+      paddingHorizontal: 10,
+    },
+    Icon: {
+      width: 20,
+      height: 20,
+      resizeMode: 'contain',
+      marginRight: 10,
+      tintColor: Colors.Grey,
+    },
+    input: {
+      flex: 1,
+      fontSize: 14,
+      color: '#000',
+    },
+    passwordinput: {
+      flex: 1,
+      fontSize: 14,
+      color: '#000',
+    },
+    HideIcon: {
+      width: 24,
+      height: 24,
+      tintColor: Colors.Grey,
+      resizeMode: 'contain',
+    },
+    Active_Input_Field: {
+      borderColor: Colors.PrimaryColor,
+    },
+    Active_Image: {
+      tintColor: Colors.PrimaryColor,
+    },
+    ForgotText: {
+      color: Colors.PrimaryColor,
+      fontSize: 13,
+      textDecorationLine: 'underline',
+    },
+    forgotContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: 30,
+    },
+    checkboxContainer: {
+      flex: 1,
+    },
+  });

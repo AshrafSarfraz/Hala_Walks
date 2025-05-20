@@ -4,7 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Splash_Blank from '../screen/authentication/splash/Splash_Blank';
 import Splash_Screen from '../screen/authentication/splash/SplashScreen';
-import LoginScreen from '../screen/authentication/login';
+
 import ProfileScreen from '../screen/Employee_Data/Profile_Screen';
 import EmployeeTab from './EmployeeTab';
 import DetailScreen from '../screen/Others/detail_Screen';
@@ -24,6 +24,7 @@ import StaffDocumentControlScreen from '../screen/Employee_Data/Documents';
 import StaffContactUs from '../screen/Employee_Data/ContactUs';
 import RoleSelectionScreen from '../screen/authentication/select_role';
 import EmployeeLogin from '../components/Logins/Westwalk_Staff';
+import OnBoarding from '../screen/Others/OnBoarding';
 
 
 
@@ -41,7 +42,7 @@ export default function StackNavigation() {
         <Stack.Screen name="SplashBlank" component={Splash_Blank}   />
         <Stack.Screen name="SplashScreen" component={Splash_Screen}   />
         <Stack.Screen name="Role" component={RoleSelectionScreen}   />
-        <Stack.Screen name="Login" component={LoginScreen}   />
+        <Stack.Screen name="onBoarding" component={OnBoarding}   />
         <Stack.Screen name="SearchScreen" component={SearchScreen}   />
         <Stack.Screen name="DetailScreen" component={DetailScreen}   />
         <Stack.Screen name="CategoriesScreen" component={SelectedCategories}   />

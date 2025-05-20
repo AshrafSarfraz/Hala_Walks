@@ -4,6 +4,7 @@ import { Emp_User, ManIcon, Tenants, User, West_Icon } from '../../../theme/Imag
 import { Colors } from '../../../theme/Colors';
 import { Fonts } from '../../../theme/Fonts';
 
+
 const RoleSelectionScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
