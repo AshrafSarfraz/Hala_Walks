@@ -1,95 +1,90 @@
-import React from 'react';
-import { View, Text,  Image, ScrollView, StatusBar } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Image, ScrollView, StatusBar } from 'react-native';
 import { styles } from './style';
 import CustomHeader from '../../../components/header/CustomHeader';
 import { Colors } from '../../../theme/Colors';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-type UserProfile = {
-  name: string;
-  staffId: string;
-  company: string;
-  imageUrl: string;
-  absences: number;
-  pendingHolidays: number;
-  email: string;
-  phone: string;
-  department: string;
-  position: string;
-  nationality: string;
-  visaNumber: string;
-  passportNumber: string;
-  status: 'Active' | 'On Leave' | 'Resigned';
-  location: string;
-  joiningDate: string;
-  contractExpiry: string;
-  supervisor: string;
+type ProfileProps = {
+  navigation: any;
 };
 
-const user: UserProfile = {
-  name: 'John Doe',
-  staffId: 'EMP123456',
-  company: 'ABC Properties',
-  imageUrl: 'https://i.pravatar.cc/300',
-  absences: 4,
-  pendingHolidays: 10,
-  email: 'john.doe@example.com',
-  phone: '+123 456 7890',
-  department: 'Maintenance',
-  position: 'Senior Technician',
-  nationality: 'Indian',
-  visaNumber: 'VISA987654321',
-  passportNumber: 'P123456789',
-  status: 'Active',
-  location: 'West Walk Tower B',
-  joiningDate: '2020-03-15',
-  contractExpiry: '2025-03-14',
-  supervisor: 'Mr. Smith',
-};
-type ProfileProps={
-navigation:any
-}
+const ProfileScreen: React.FC<ProfileProps> = ({ navigation }) => {
+  const [userData, setUserData] = useState<any>(null);
 
-const ProfileScreen: React.FC<ProfileProps> = ({navigation}) => {
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const storedUserData = await AsyncStorage.getItem('@user_data');
+        if (storedUserData) {
+          setUserData(JSON.parse(storedUserData));
+        }
+      } catch (error) {
+        console.log('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  if (!userData) {
+    return (
+      <View style={styles.container}>
+        <Text>Loading profile...</Text>
+      </View>
+    );
+  }
+
   return (
-    <View style={styles.container} >
-        <StatusBar hidden={false} translucent={true} animated={true}  backgroundColor={Colors.Bg} barStyle={'dark-content'} />
-      <CustomHeader title='Profile' onBackPress={()=>{navigation.goBack()}} />
-    <ScrollView  showsVerticalScrollIndicator={false} contentContainerStyle={styles.Profile_container}>
-      <Image source={{ uri: user.imageUrl }} style={styles.profileImage} />
-      <Text style={styles.name}>{user.name}</Text>
-      <Text style={styles.staffId}>Staff ID: {user.staffId}</Text>
-      <Text style={styles.company}>Company: {user.company}</Text>
+    <View style={styles.container}>
+      <StatusBar
+        hidden={false}
+        translucent={true}
+        animated={true}
+        backgroundColor={Colors.Bg}
+        barStyle={'dark-content'}
+      />
+      <CustomHeader title="Profile" onBackPress={() => navigation.goBack()} />
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.Profile_container}
+      >
+        <Image source={{ uri: userData.profileImg }} style={styles.profileImage} />
+        <Text style={styles.name}>{userData.name}</Text>
+        <Text style={styles.staffId}>Staff ID: {userData.staffId}</Text>
+        <Text style={styles.company}>Company: {userData.company}</Text>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Contact</Text>
-        <InfoItem label="Email" value={user.email} />
-        <InfoItem label="Phone" value={user.phone} />
-      </View>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Contact</Text>
+          <InfoItem label="Email" value={userData.email} />
+          <InfoItem label="Phone" value={userData.phoneNumber} />
+        </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Company Info</Text>
-        <InfoItem label="Department" value={user.department} />
-        <InfoItem label="Position" value={user.position} />
-        <InfoItem label="Supervisor" value={user.supervisor} />
-        <InfoItem label="Work Location" value={user.location} />
-        <InfoItem label="Joining Date" value={user.joiningDate} />
-        <InfoItem label="Contract Expiry" value={user.contractExpiry} />
-        <InfoItem label="Status" value={user.status} />
-      </View>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Company Info</Text>
+          <InfoItem label="Department" value={userData.department} />
+          <InfoItem label="Position" value={userData.position} />
+          <InfoItem label="Supervisor" value={userData.superVisor} />
+          <InfoItem label="Work Location" value={userData.workLocation} />
+          <InfoItem label="Joining Date" value={userData.joiningDate} />
+          <InfoItem label="Contract Expiry" value={userData.contractExpiry} />
+          <InfoItem label="Status" value={userData.status} />
+        </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>ID Info</Text>
-        <InfoItem label="Nationality" value={user.nationality} />
-        <InfoItem label="Visa Number" value={user.visaNumber} />
-        <InfoItem label="Passport Number" value={user.passportNumber} />
-      </View>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>ID Info</Text>
+          <InfoItem label="Nationality" value={userData.nationality} />
+          <InfoItem label="Visa Number" value={userData.visa || 'N/A'} />
+          <InfoItem label="Passport Number" value={userData.passportNumber} />
+          <InfoItem label="QID" value={userData.qid || 'N/A'} />
+        </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Leave Overview</Text>
-        <InfoItem label="Absences" value={user.absences.toString()} />
-        <InfoItem label="Pending Holidays" value={user.pendingHolidays.toString()} />
-      </View>
-    </ScrollView>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Leave Overview</Text>
+          <InfoItem label="Absences" value={userData.absences} />
+          <InfoItem label="Pending Holidays" value={userData.pendingHoliday} />
+        </View>
+      </ScrollView>
     </View>
   );
 };

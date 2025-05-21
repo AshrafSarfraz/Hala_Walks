@@ -7,6 +7,7 @@ import {
   Image,
   TouchableOpacity,
   Linking,
+  Alert,
 } from 'react-native';
 import {
   Hide,
@@ -22,6 +23,9 @@ import { RootState } from '../../../redux/store';
 import CustomCheckbox from '../../../components/checkbox/checkbox';
 import { languageData } from '../../../redux/language/languageSlice';
 import CustomHeader from '../../../components/header/CustomHeader';
+import { auth, firestore } from '../../../firebase/firebaseconfig';
+import ActivityIndicatorModal from '../../../components/Loader/ActivityIndicator';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface LoginProps {
   navigation: any;
@@ -32,12 +36,55 @@ const EmployeeLogin: React.FC<LoginProps> = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [hide, setHide] = useState(true);
   const [isChecked, setIsChecked] = useState<boolean>(false);
-
+  const [isLoading, setIsLoading] = useState<boolean>(false); 
   const language = useSelector(
     (state: RootState) => state.language.language
   );
-
   const styles = getStyles(language);
+
+
+  const handleLogin = async () => {
+    if (!employeeId || !password) {
+      Alert.alert('Please enter Staff ID and Password');
+      return;
+    }
+     setIsLoading(true);
+    try {
+      // Step 1: Get email from emp_id
+      const snapshot = await firestore()
+        .collection('Westwalk_Staff')
+        .where('staffId', '==', employeeId)
+        .limit(1)
+        .get();
+
+      if (snapshot.empty) {
+        Alert.alert('Staff ID not found');
+        setIsLoading(false)
+        return;
+      }
+      const userDoc = snapshot.docs[0];
+      const userData = userDoc.data();
+      const { email } = userDoc.data();
+ 
+  
+      if (!email) {
+        Alert.alert('Email not found for this Staff ID');
+        setIsLoading(false)
+        return;
+      }
+      // Step 2: Login with email and password
+      await auth().signInWithEmailAndPassword(email, password);
+      await AsyncStorage.setItem('@user_data', JSON.stringify(userData));
+      // Success: Navigate to employee dashboard
+      navigation.navigate('EmployeeTab');
+      setIsLoading(false)
+    } catch (error) {
+      console.error('Login error:', error);
+      Alert.alert('Login failed. Please check your credentials.');
+    }
+    setIsLoading(false)
+  };
+  
 
   return (
     <View style={styles.Container}>
@@ -52,7 +99,7 @@ const EmployeeLogin: React.FC<LoginProps> = ({ navigation }) => {
           styles.InputContainer,
           employeeId !== '' && styles.Active_Input_Field,
         ]}
-      >
+      >57333
         <Image
           source={ManIcon}
           style={[
@@ -126,8 +173,11 @@ const EmployeeLogin: React.FC<LoginProps> = ({ navigation }) => {
 
       <CustomButton
         title="Login"
-        onPress={() => navigation.navigate('EmployeeTab')}
+        onPress={handleLogin}
       />
+      {isLoading && (
+            <ActivityIndicatorModal visible={isLoading} />
+          )}
     </View>
   );
 };
@@ -185,11 +235,13 @@ const getStyles = (language: string) =>
       flex: 1,
       fontSize: 14,
       color: '#000',
+      height:40
     },
     passwordinput: {
       flex: 1,
       fontSize: 14,
       color: '#000',
+      height:40
     },
     HideIcon: {
       width: 24,
