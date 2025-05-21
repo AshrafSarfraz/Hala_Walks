@@ -14,13 +14,14 @@ import {
   ManIcon,
   Show,
   West_NB,
-} from '../../theme/Images';
-import { Colors } from '../../theme/Colors';
-import CustomButton from '../buttons/CustomButton';
+} from '../../../theme/Images';
+import { Colors } from '../../../theme/Colors';
+import CustomButton from '../../../components/buttons/CustomButton';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../redux/store';
-import CustomCheckbox from '../checkbox/checkbox';
-import { languageData } from '../../redux/language/languageSlice';
+import { RootState } from '../../../redux/store';
+import CustomCheckbox from '../../../components/checkbox/checkbox';
+import { languageData } from '../../../redux/language/languageSlice';
+import CustomHeader from '../../../components/header/CustomHeader';
 
 interface LoginProps {
   navigation: any;
@@ -40,8 +41,9 @@ const EmployeeLogin: React.FC<LoginProps> = ({ navigation }) => {
 
   return (
     <View style={styles.Container}>
+      
+      <CustomHeader title=' ' onBackPress={()=>{navigation.goBack()}} />
       <Image source={West_NB} style={styles.Logo} />
-
       <Text style={styles.Title}>Staff Login</Text>
       <Text style={styles.Subtitle}>Enter your credentials to continue</Text>
 

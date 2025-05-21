@@ -26,7 +26,7 @@ const TenantsAccount:React.FC<AccountProps> = ({navigation}) => {
           <CustomButton2  title='Contact Us' image={HistroyIcon} onPress={()=>{navigation.navigate('TenantsContactUs')}} />
          </View>
           <View style={styles.Logout_Cont} >
-            <CustomButton title='Logout' onPress={()=>{navigation.navigate('Login')}}  />
+            <CustomButton title='Logout' onPress={()=>{navigation.navigate('Role')}}  />
           </View>
 
        </SafeAreaView>

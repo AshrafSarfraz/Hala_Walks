@@ -22,14 +22,14 @@ const RoleSelectionScreen = ({ navigation }) => {
         </View>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Company')}>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('TenantsLogin')}>
         <View style={styles.innerButton}>
           <Image source={Tenants} style={styles.icon} />
           <Text style={styles.buttonText}>WEST-WALK TENANT</Text>
         </View>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Staff')}>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('CorEmp_Login')}>
         <View style={styles.innerButton}>
           <Image source={Emp_User} style={styles.icon} />
           <Text style={styles.buttonText}>ORGANIZATION-EMP </Text>

@@ -24,7 +24,7 @@ const CorporationAccount:React.FC<AccountProps> = ({navigation}) => {
           <CustomButton2  title='Redeem History' image={HistroyIcon} onPress={()=>{navigation.navigate('CorporationHistroyScreen')}} />
          </View>
           <View style={styles.Logout_Cont} >
-            <CustomButton title='Logout' onPress={()=>{navigation.navigate('Login')}}  />
+            <CustomButton title='Logout' onPress={()=>{navigation.navigate('Role')}}  />
           </View>
 
        </SafeAreaView>

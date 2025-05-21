@@ -23,8 +23,10 @@ import CorporationHistoryScreen from '../screen/Organization/Reedem_Histroy';
 import StaffDocumentControlScreen from '../screen/Employee_Data/Documents';
 import StaffContactUs from '../screen/Employee_Data/ContactUs';
 import RoleSelectionScreen from '../screen/authentication/select_role';
-import EmployeeLogin from '../components/Logins/Westwalk_Staff';
 import OnBoarding from '../screen/Others/OnBoarding';
+import EmployeeLogin from '../screen/authentication/logins/Westwalk_Staff';
+import TenantsLogin from '../screen/authentication/logins/Tenants_Login';
+import OrgEmp_Login from '../screen/authentication/logins/Organization_Login';
 
 
 
@@ -58,6 +60,7 @@ export default function StackNavigation() {
         <Stack.Screen name="StaffContactUs" component={StaffContactUs}   />
 
         {/* Tenants Screen */}
+        <Stack.Screen name="TenantsLogin" component={TenantsLogin}   />
         <Stack.Screen name="TenantsTab" component={TenantsTab}   />
         <Stack.Screen name="TenantsProfile" component={TenantsProfile}   />
         <Stack.Screen name="TenantDocumentControlScreen" component={TenantDocumentControlScreen}   />
@@ -65,6 +68,7 @@ export default function StackNavigation() {
         <Stack.Screen name="TenantsHistroyScreen" component={TenantHistoryScreen}   />
 
         {/* Organization Screen */}
+        <Stack.Screen name="CorEmp_Login" component={OrgEmp_Login}   />
         <Stack.Screen name="CorporationTab" component={CorporationTab}   />
         <Stack.Screen name="CorporationProfile" component={CorporationProfile}   />
         <Stack.Screen name="CorporationHistroyScreen" component={CorporationHistoryScreen}   />
