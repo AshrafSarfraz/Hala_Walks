@@ -27,6 +27,8 @@ import OnBoarding from '../screen/Others/OnBoarding';
 import EmployeeLogin from '../screen/authentication/logins/Westwalk_Staff';
 import TenantsLogin from '../screen/authentication/logins/Tenants_Login';
 import OrgEmp_Login from '../screen/authentication/logins/Organization_Login';
+import StaffForgetPassword from '../screen/authentication/ForgetScreen/StaffForgetScreen';
+import PDFViewerScreen from '../screen/Others/pdfViewer';
 
 
 
@@ -50,9 +52,11 @@ export default function StackNavigation() {
         <Stack.Screen name="CategoriesScreen" component={SelectedCategories}   />
         <Stack.Screen name="SelectedVenue" component={SelectedCategories}   />
         <Stack.Screen name="WishlistScreen" component={WishlistScreen}   />
+        <Stack.Screen name="PDFViewerScreen" component={PDFViewerScreen}   />
       
         {/* Staff Screen */}
         <Stack.Screen name="StaffLogin" component={EmployeeLogin}   />
+        <Stack.Screen name="StaffForgetPassword" component={StaffForgetPassword}   />
         <Stack.Screen name="EmployeeTab" component={EmployeeTab}   />
         <Stack.Screen name="ProfileScreen" component={ProfileScreen}   />
         <Stack.Screen name="StaffHistroyScreen" component={StaffHistoryScreen}   />

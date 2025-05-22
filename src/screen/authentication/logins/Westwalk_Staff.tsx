@@ -162,11 +162,11 @@ const EmployeeLogin: React.FC<LoginProps> = ({ navigation }) => {
         </View>
         <TouchableOpacity
           onPress={() =>
-            Linking.openURL('https://halabsaudi.com/forgot-password/')
+             {navigation.navigate("StaffForgetPassword")}
           }
         >
           <Text style={styles.ForgotText}>
-            {languageData[language]?.forgot_password || 'Forgot Password?'}
+            {languageData[language]?.forget_password || 'Forgot Password?'}
           </Text>
         </TouchableOpacity>
       </View>

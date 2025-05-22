@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, Dimensions } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Image, Dimensions } from 'react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
-import ProfileScreen from '../screen/Employee_Data/Profile_Screen';
 import Home from '../screen/Others/Home';
 import {  HomeIcon, ProfileIcon, Wishlist, } from '../theme/Images';
 import WishlistScreen from '../screen/Others/Wishlist';

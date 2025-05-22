@@ -23,9 +23,6 @@ const handleLogout = async (navigation: any) => {
 
 const Account:React.FC<AccountProps> = ({navigation}) => {
   const [userData, setUserData] = useState<any>(null);
-
- 
-
   useEffect(() => {
     const fetchUserData = async () => {
       try {

@@ -36,6 +36,7 @@ const languageData = {
     No_Items_Found:"No Item Found ",
     Detail_Screen:"Detail Screen",
     Upcoming_event:"Upcoming Events",
+    forget_password: "Forget Password",
     
     next: "next",
    
@@ -81,7 +82,7 @@ const languageData = {
     No_Items_Found:"لم يتم العثور على عناصر"  ,    
     Detail_Screen:"شاشة التفاصيل",
     Upcoming_event : "الفعاليات القادمة",
-
+    forget_password: "نسيت كلمة المرور",
 
     confirm: "تأكيد",
     discount_history: "سجل الخصومات",

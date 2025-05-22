@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -13,32 +13,11 @@ import CustomHeader from '../../../components/header/CustomHeader';
 import {useNavigation} from '@react-navigation/native';
 import {Colors} from '../../../theme/Colors';
 import {SafeAreaView} from 'react-native-safe-area-context';
-
-const dummyData = [
-  {
-    id: '1',
-    code: 'AQQVA6',
-    createdAt: 'April 13, 2025 - 2:04 PM',
-    percentage: '-20%',
-    qid: '284750123456',
-    staffId: 'EMP-1001',
-    eligibility: 'Staff and their family',
-    BrandName: 'Brown Coffee Shop',
-  },
-  {
-    id: '2',
-    code: 'ZX89LM',
-    createdAt: 'April 14, 2025 - 11:22 AM',
-    percentage: '-15%',
-    qid: '284750987654',
-    staffId: 'EMP-1002',
-    eligibility: 'Only staff',
-    BrandName: 'Kana Restaurant',
-  },
-];
+import {auth, firestore} from '../../../firebase/firebaseconfig';
 
 const RedeemHistoryScreen: React.FC = () => {
   const navigation = useNavigation();
+  const [redeemHistory, setRedeemHistory] = useState<any[]>([]);
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -47,26 +26,53 @@ const RedeemHistoryScreen: React.FC = () => {
     setModalVisible(true);
   };
 
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        const user = auth().currentUser;
+        if (!user) return;
+
+        const snapshot = await firestore()
+          .collection('Westwalk_Staff')
+          .doc(user.uid)
+          .collection('redeemed_discounts')
+          .orderBy('createdAt', 'desc')
+          .get();
+
+        const history = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setRedeemHistory(history);
+      } catch (error) {
+        console.error('Error fetching redeem history:', error);
+      }
+    };
+
+    fetchHistory();
+  }, []);
+
+  const renderItem = ({item}: {item: any}) => (
+    <TouchableOpacity style={styles.item} onPress={() => openModal(item)}>
+      <Text style={styles.itemCode}>Brand: {item.brandName}</Text>
+      <Text>Code: {item.code}</Text>
+      <Text>Date: {item.date || new Date(item.createdAt).toLocaleString()}</Text>
+      <Text>Discount: {item.discount}</Text>
+      <Text>Eligibility: {item.eligibility}</Text>
+    </TouchableOpacity>
+  );
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar hidden={false} backgroundColor={Colors.Bg} barStyle="dark-content" />
-      <CustomHeader
-        title="Redeem History"
-        onBackPress={() => {
-          navigation.goBack();
-        }}
-      />
+      <CustomHeader title="Redeem History" onBackPress={() => navigation.goBack()} />
 
       <FlatList
-        data={dummyData}
+        data={redeemHistory}
         keyExtractor={item => item.id}
-        renderItem={({item}) => (
-          <TouchableOpacity style={styles.item} onPress={() => openModal(item)}>
-            <Text style={styles.itemCode}>Code: {item.code}</Text>
-            <Text>{item.createdAt}</Text>
-            <Text>{item.percentage}</Text>
-          </TouchableOpacity>
-        )}
+        renderItem={renderItem}
+        ListEmptyComponent={<Text style={{textAlign: 'center', marginTop: 20}}>No redeem history found.</Text>}
+        contentContainerStyle={{paddingBottom: 20}}
       />
 
       <RedeemReceiptModal
@@ -83,9 +89,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.Bg,
     paddingHorizontal: 20,
-    paddingTop: Platform.OS === 'ios'? '0%':20,
+    paddingTop: Platform.OS === 'ios' ? 0 : 20,
   },
-  title: {fontSize: 22, fontWeight: 'bold', marginBottom: 20},
   item: {
     backgroundColor: '#f0f0f0',
     padding: 15,
@@ -97,6 +102,7 @@ const styles = StyleSheet.create({
   itemCode: {
     fontWeight: '600',
     fontSize: 16,
+    marginBottom: 5,
   },
 });
 

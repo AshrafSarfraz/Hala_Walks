@@ -3,9 +3,11 @@ import { View, Text, TouchableOpacity, StyleSheet, Image, Platform } from 'react
 import { Emp_User, ManIcon, Tenants, User, West_Icon } from '../../../theme/Images';
 import { Colors } from '../../../theme/Colors';
 import { Fonts } from '../../../theme/Fonts';
+import { useNavigation } from '@react-navigation/native';
 
 
-const RoleSelectionScreen = ({ navigation }) => {
+const RoleSelectionScreen:React.FC= () => {
+  const navigation=useNavigation()
   return (
     <View style={styles.container}>
       <View style={styles.Header_Cont} >

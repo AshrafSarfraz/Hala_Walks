@@ -1,269 +1,147 @@
-// screens/DocumentControlScreen.tsx
-
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
-  Modal,
-  TextInput,
-  SafeAreaView,
-  Platform,
-  StatusBar,
-} from 'react-native';
-import CustomHeader from '../../../components/header/CustomHeader';
+import React, { useEffect, useState } from 'react';
+import { View, Text, ScrollView, StyleSheet, Button, Image, Linking, TouchableOpacity, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors } from '../../../theme/Colors';
+import { Fonts } from '../../../theme/Fonts';
+import CustomHeader from '../../../components/header/CustomHeader';
 
-const dummyDocs = [
-  { id: '1', name: 'Q-id.pdf' },
-  { id: '2', name: 'Visa.jpg' },
-  { id: '3', name: 'Passport' },
-  { id: '4', name: 'Contract' },
-];
-type DocumentProps={
-  navigation:any
-}
+const StaffDocumentControlScreen = ({navigation}) => {
+  const [userData, setUserData] = useState(null);
 
-const StaffDocumentControlScreen:React.FC<DocumentProps> = ({ navigation }) => {
-  const [documents, setDocuments] = useState(dummyDocs);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [fileName, setFileName] = useState('');
-  const [selectedFile, setSelectedFile] = useState<string | null>(null);
-
-  const handleView = (name: string) => {
-    Alert.alert('View Document', `Opening "${name}"... (dummy view)`);
-  };
-
-  const handleDownload = (name: string) => {
-    Alert.alert('Download', `Downloading "${name}"... (dummy download)`);
-  };
-
-
-
-  const handleSave = () => {
-    if (!fileName || !selectedFile) {
-      Alert.alert('Missing Info', 'Please enter a name and choose a file.');
-      return;
+  const getDataFromStorage = async () => {
+    try {
+      const value = await AsyncStorage.getItem('@user_data');
+      if (value !== null) {
+        const parsed = JSON.parse(value);
+        console.log('Parsed Data:', parsed);
+        setUserData(parsed);
+      } else {
+        console.log('No data found');
+      }
+    } catch (e) {
+      console.error('Error retrieving data:', e);
     }
-
-    const newDoc = {
-      id: Date.now().toString(),
-      name: fileName,
-    };
-
-    setDocuments(prev => [...prev, newDoc]);
-    setFileName('');
-    setSelectedFile(null);
-    setModalVisible(false);
   };
 
-  const renderItem = ({ item }: any) => (
-    <View style={styles.docItem}>
-      <Text style={styles.docName}>{item.name}</Text>
-      <View style={styles.actionGroup}>
-        <TouchableOpacity style={styles.actionBtn} onPress={() => handleView(item.name)}>
-          <Text style={styles.actionText}> View</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.actionBtn,{backgroundColor:'#e5edea'}]} onPress={() => handleDownload(item.name)}>
-          <Text style={[styles.actionText,{color:"#005029"}]}> Download</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
+  useEffect(() => {
+    getDataFromStorage();
+  }, []);
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View style={styles.container}>
-        <StatusBar hidden={false} barStyle={'dark-content'} backgroundColor={Colors.Bg} />
-        <CustomHeader title="Documents" onBackPress={() => navigation.goBack()} />
-        <FlatList
-          data={documents}
-          keyExtractor={item => item.id}
-          renderItem={renderItem}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 20, paddingTop: 15 }}
-        />
+    <ScrollView style={styles.container}>
+      
+      {userData?.documents && (
+  <View style={{ marginTop: 30 }}>
+   <CustomHeader title='Documents' onBackPress={()=>{navigation.goBack()}} />
 
-        <TouchableOpacity style={styles.uploadBtn} onPress={() => setModalVisible(true)}>
-          <Text style={styles.uploadText}>➕ Upload Document</Text>
-        </TouchableOpacity>
 
-        <Modal visible={modalVisible} animationType="slide" transparent>
-          <View style={styles.modalOverlay}>
-            <View style={styles.modalBox}>
-              <Text style={styles.modalTitle}>📄 Upload Document</Text>
-
-              <TextInput
-                placeholder="Enter file name..."
-                style={styles.input}
-                value={fileName}
-                onChangeText={setFileName}
-              />
-
-              <TouchableOpacity
-                style={styles.chooseBtn}
-                onPress={() => setSelectedFile('dummy-file.pdf')}
-              >
-                <Text style={styles.chooseBtnText}>
-                  {selectedFile ? '✅ File Selected' : '📁 Choose File'}
-                </Text>
-              </TouchableOpacity>
-
-              <View style={styles.modalActions}>
-                <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.cancelBtn}>
-                  <Text style={styles.cancelText}>Cancel</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={handleSave} style={styles.saveBtn}>
-                  <Text style={styles.saveText}>Save</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </Modal>
+    {Object.entries(userData.documents).map(([key, value]) => (
+      <View key={key} style={styles.documentCard}>
+        <Text style={styles.documentTitle}>{key}</Text>
+        <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.Menu_Btn} onPress={() => {
+                   if (value) {
+                     navigation.navigate('PDFViewerScreen', { pdfUrl: value});
+                   } else { }}}  >
+                        
+                         <Text style={styles.menu_txt} >View </Text>
+                       </TouchableOpacity>
+          <Button
+            title="Download"
+            onPress={() => {
+              // This is a placeholder; for real download functionality you’ll need a file downloader like react-native-fs or rn-fetch-blob
+              Alert.alert(`Download ${key} from:\n${value}`);
+            }}
+            color="green"
+          />
+        </View>
       </View>
-    </SafeAreaView>
+    ))}
+  </View>
+)}
+
+
+
+    
+    </ScrollView>
   );
 };
 
-const styles = StyleSheet.create({
-  container: { flex: 1,
-    marginTop:Platform.OS==='ios'?0:'12%',
-    paddingHorizontal: 20, 
-     backgroundColor: '#f4f4f4' },
+export default StaffDocumentControlScreen;
 
-  uploadBtn: {
-    backgroundColor: '#2f2f75',
-    padding: 14,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginVertical: 16,
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
   },
-  uploadText: {
-    color: '#fff',
+  card: {
+    marginTop: 20,
+    padding: 16,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 10,
+  },
+  title: {
+    fontSize: 24,
     fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  subTitle: {
+    marginTop: 16,
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  item: {
+    marginVertical: 4,
     fontSize: 16,
   },
-
-  docItem: {
+  label: {
+    fontWeight: 'bold',
+  },
+  profileImg: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    alignSelf: 'center',
+    marginBottom: 16,
+  },
+  documentCard: {
     backgroundColor: '#fff',
+    borderRadius: 10,
     padding: 16,
-    borderRadius: 12,
     marginBottom: 12,
     shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 6,
-
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  docName: {
+  
+  documentTitle: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#1e1e2f',
-    marginBottom: 15,
-  },
-  actionGroup: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-
-  },
-  actionBtn: {
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    backgroundColor: '#edf1fa',
-    borderRadius: 4,
-    width:'48%',
-    alignItems:'center'
-  },
-  deleteBtn: {
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    backgroundColor: '#ffe5e5',
-    borderRadius: 6,
-  },
-  actionText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#2f2f75',
-
-  },
-  deleteText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#dc3545',
-  },
-
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: '#00000088',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalBox: {
-    backgroundColor: '#fff',
-    padding: 25,
-    borderRadius: 16,
-    width: '90%',
-    elevation: 10,
-  },
-  modalTitle: {
-    fontSize: 20,
     fontWeight: 'bold',
-    color: '#2f2f75',
-    marginBottom: 20,
-    textAlign: 'center',
+    marginBottom: 10,
   },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 12,
-    borderRadius: 10,
-    marginBottom: 15,
-    fontSize: 15,
-  },
-  chooseBtn: {
-    backgroundColor: '#e9eefb',
-    padding: 12,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  chooseBtnText: {
-    fontWeight: '600',
-    fontSize: 15,
-    color: '#2f2f75',
-  },
-  modalActions: {
+  
+  buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    gap: 12,
   },
-  cancelBtn: {
-    padding: 12,
-    backgroundColor: '#e0e0e0',
-    borderRadius: 10,
-    flex: 1,
-    marginRight: 10,
-  },
-  saveBtn: {
-    padding: 12,
-    backgroundColor: '#2f2f75',
-    borderRadius: 10,
-    flex: 1,
-  },
-  cancelText: {
-    textAlign: 'center',
-    color: '#333',
-    fontWeight: '600',
-    fontSize: 15,
-  },
-  saveText: {
-    textAlign: 'center',
-    color: '#fff',
-    fontWeight: '600',
-    fontSize: 15,
-  },
+   Menu_Btn:{
+      backgroundColor:Colors.PrimaryColor,
+      padding:8,
+      borderRadius:6
+    },
+    menu_txt:{
+     color:Colors.White,
+     fontSize:12,
+     lineHeight:16,
+     fontFamily:Fonts.F_Bold,
+     
+    
+    },
+  
 });
 
-export default StaffDocumentControlScreen;
+
+

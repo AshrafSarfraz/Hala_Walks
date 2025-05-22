@@ -8,7 +8,6 @@ import {
   Platform,
   ScrollView,
   Linking,
-  Alert,
   StatusBar,
 } from 'react-native';
 
@@ -26,28 +25,7 @@ import CustomButton from '../../../components/buttons/CustomButton';
 import RedeemReceiptModal from '../../../components/Modal/RedeemModal';
 import {Colors} from '../../../theme/Colors';
 
-const dummyData = [
-  {
-    id: '1',
-    code: 'AQQVA6',
-    createdAt: 'April 13, 2025 - 2:04 PM',
-    percentage: '-20%',
-    qid: '284750123456',
-    staffId: 'EMP-1001',
-    eligibility: 'Staff and their family',
-    BrandName: 'Brown Coffee Shop',
-  },
-  {
-    id: '2',
-    code: 'ZX89LM',
-    createdAt: 'April 14, 2025 - 11:22 AM',
-    percentage: '-15%',
-    qid: '284750987654',
-    staffId: 'EMP-1002',
-    eligibility: 'Only staff',
-    BrandName: 'Kana Restaurant',
-  },
-];
+
 
 const DetailScreen: React.FC<{route: any}> = ({route}) => {
   const {item, source} = route.params; // Home se data le rahe hain
@@ -236,19 +214,13 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
               </Text>
             </View>
 
-            <TouchableOpacity
-              style={styles.Menu_Btn}
-              onPress={() => {
-                if (item.pdfUrl) {
-                  navigation.navigate('PDFViewerScreen', {
-                    pdfUrl: item.pdfUrl,
-                  });
-                } else {
-                  setModalVisible(true);
-                }
-              }}>
-              <Text style={styles.menu_txt}>View Menu</Text>
-            </TouchableOpacity>
+            <TouchableOpacity style={styles.Menu_Btn} onPress={() => {
+          if (item.pdfUrl) {
+            navigation.navigate('PDFViewerScreen', { pdfUrl: item.pdfUrl });
+          } else { setModalVisible(true)}}}  >
+               
+                <Text style={styles.menu_txt} >View Menu</Text>
+              </TouchableOpacity>
           </View>
 
           <View style={styles.Desc_Cont}>
