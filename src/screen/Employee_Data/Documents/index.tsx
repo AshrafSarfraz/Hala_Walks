@@ -10,7 +10,7 @@ const StaffDocumentControlScreen = ({navigation}) => {
 
   const getDataFromStorage = async () => {
     try {
-      const value = await AsyncStorage.getItem('@user_data');
+      const value = await AsyncStorage.getItem('staff_data');
       if (value !== null) {
         const parsed = JSON.parse(value);
         console.log('Parsed Data:', parsed);

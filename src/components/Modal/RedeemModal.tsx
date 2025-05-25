@@ -39,7 +39,7 @@ const RedeemReceiptModal: React.FC<Props> = ({ visible, onClose, data }) => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const storedUserData = await AsyncStorage.getItem('@user_data');
+        const storedUserData = await AsyncStorage.getItem('staff_data');
         if (storedUserData) {
           const parsed = JSON.parse(storedUserData);
           setUserData(parsed);
@@ -87,6 +87,7 @@ const RedeemReceiptModal: React.FC<Props> = ({ visible, onClose, data }) => {
   
       if (!user) {
         Alert.alert('Error', 'No user is logged in');
+        onClose();
         return;
       }
   
@@ -103,7 +104,7 @@ const RedeemReceiptModal: React.FC<Props> = ({ visible, onClose, data }) => {
         code: pin,
         date: currentDate,
         discount: data.discount || data.percentage,
-        validity: '7 days',
+        validity: '3 days',
         eligibility: eligibility,
         createdAt: new Date().toISOString(),
       };
@@ -241,5 +242,3 @@ const styles = StyleSheet.create({
 export default RedeemReceiptModal;
 
 
-
-RedeemReceiptModal

@@ -74,7 +74,7 @@ const EmployeeLogin: React.FC<LoginProps> = ({ navigation }) => {
       }
       // Step 2: Login with email and password
       await auth().signInWithEmailAndPassword(email, password);
-      await AsyncStorage.setItem('@user_data', JSON.stringify(userData));
+      await AsyncStorage.setItem('staff_data', JSON.stringify(userData));
       // Success: Navigate to employee dashboard
       navigation.navigate('EmployeeTab');
       setIsLoading(false)

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -10,37 +10,48 @@ import {
 } from 'react-native';
 import RedeemReceiptModal from '../../../components/Modal/RedeemModal';
 import CustomHeader from '../../../components/header/CustomHeader';
-import {useNavigation} from '@react-navigation/native';
-import {Colors} from '../../../theme/Colors';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
+import { Colors } from '../../../theme/Colors';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { auth, firestore } from '../../../firebase/firebaseconfig';
+import RedeemHistoryModal from '../../../components/Modal/RedeemhistoryModal';
 
-const dummyData = [
-  {
-    id: '1',
-    code: 'AQQVA6',
-    createdAt: 'April 13, 2025 - 2:04 PM',
-    percentage: '-20%',
-    qid: '284750123456',
-    staffId: 'EMP-1001',
-    eligibility: 'Staff and their family',
-    BrandName: 'Brown Coffee Shop',
-  },
-  {
-    id: '2',
-    code: 'ZX89LM',
-    createdAt: 'April 14, 2025 - 11:22 AM',
-    percentage: '-15%',
-    qid: '284750987654',
-    staffId: 'EMP-1002',
-    eligibility: 'Only staff',
-    BrandName: 'Kana Restaurant',
-  },
-];
 
 const StaffHistoryScreen: React.FC = () => {
   const navigation = useNavigation();
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [history, setHistory] = useState<any[]>([]);
+ 
+
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        const user = auth().currentUser;
+        if (user) {
+          const snapshot = await firestore()
+            .collection('Westwalk_Staff')
+            .doc(user.uid)
+            .collection('redeemed_discounts')
+            .orderBy('createdAt', 'desc')
+            .get();
+
+          const data = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+          })) as any[];
+
+          setHistory(data);
+        }
+      } catch (error) {
+        console.error('Error fetching history:', error);
+      } finally {
+
+      }
+    };
+
+    fetchHistory();
+  }, []);
 
   const openModal = (item: any) => {
     setSelectedItem(item);
@@ -58,22 +69,22 @@ const StaffHistoryScreen: React.FC = () => {
       />
 
       <FlatList
-        data={dummyData}
+        data={history}
         keyExtractor={item => item.id}
-        renderItem={({item}) => (
+        renderItem={({ item }) => (
           <TouchableOpacity style={styles.item} onPress={() => openModal(item)}>
-            <Text style={styles.itemCode}>Code: {item.code}</Text>
-            <Text>{item.createdAt}</Text>
-            <Text>{item.percentage}</Text>
+            <Text style={styles.itemCode}>Brand: {item.brandName}</Text>
+            <Text>{item.discount}</Text>
+            <Text>{new Date(item.createdAt).toLocaleString()}</Text>
           </TouchableOpacity>
         )}
       />
 
-      <RedeemReceiptModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        data={selectedItem}
-      />
+<RedeemHistoryModal
+  visible={modalVisible}
+  onClose={() => setModalVisible(false)}
+  data={selectedItem}
+/>
     </SafeAreaView>
   );
 };
@@ -83,9 +94,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.Bg,
     paddingHorizontal: 20,
-    paddingTop: Platform.OS === 'ios'? '0%':20,
+    paddingTop: Platform.OS === 'ios' ? '0%' : 20,
   },
-  title: {fontSize: 22, fontWeight: 'bold', marginBottom: 20},
   item: {
     backgroundColor: '#f0f0f0',
     padding: 15,

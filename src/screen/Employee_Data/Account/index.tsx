@@ -26,7 +26,7 @@ const Account:React.FC<AccountProps> = ({navigation}) => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const storedUserData = await AsyncStorage.getItem('@user_data');
+        const storedUserData = await AsyncStorage.getItem('staff_data');
         if (storedUserData) {
           setUserData(JSON.parse(storedUserData));
         }
@@ -53,7 +53,7 @@ const Account:React.FC<AccountProps> = ({navigation}) => {
          <View style={styles.Header_Cont} >
          <Image source={{ uri: userData.profileImg }} style={styles.profileImage} />
           <Text style={styles.name}>{userData.name}</Text>
-               <Text style={styles.staffId}>Staff ID: Ashraf07255</Text>
+               <Text style={styles.staffId}>Staff ID: {userData.name}</Text>
          </View>
          <View style={styles.Button_Cont} >
           <CustomButton2  title='Profile' image={ProfileIcon} onPress={()=>{navigation.navigate('ProfileScreen')}} />

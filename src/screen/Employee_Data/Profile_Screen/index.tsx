@@ -15,7 +15,7 @@ const ProfileScreen: React.FC<ProfileProps> = ({ navigation }) => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const storedUserData = await AsyncStorage.getItem('@user_data');
+        const storedUserData = await AsyncStorage.getItem('staff_data');
         if (storedUserData) {
           setUserData(JSON.parse(storedUserData));
         }
