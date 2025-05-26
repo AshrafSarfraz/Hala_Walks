@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Image, ScrollView, StatusBar } from 'react-native';
 import { styles } from './style';
 import CustomHeader from '../../../components/header/CustomHeader';
 import { Colors } from '../../../theme/Colors';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type TenantProfile = {
   name: string;
@@ -30,29 +31,33 @@ type TenantProfile = {
   status: 'Active' | 'Moved Out' | 'Notice Given';
 };
 
-const tenant: TenantProfile = {
-  name: 'Ahmed Ali',
-  qid: 'QID12345678',
-  mobile: '+974 5555 1234',
-  email: 'ahmed.ali@example.com',
-  nationality: 'Pakistani',
-  dateOfBirth: '1992-06-10',
-  roomNumber: 'A-204',
-  unitNumber: 'U14',
-  buildingName: 'West Walk Tower B',
-  tower: 'B',
-  checkInDate: '2022-01-10',
-  contractStart: '2022-01-10',
-  contractEnd: '2025-01-09',
-  numberOfOccupants: 2,
-  emergencyContactName: 'Zeeshan Khan',
-  emergencyContactNumber: '+974 6666 4321',
-  profileImage: 'https://i.pravatar.cc/300',
-  contractFileUrl: 'https://example.com/contract.pdf',
-  status: 'Active',
-};
+
 
 const TenantsProfile: React.FC<{ navigation: any }> = ({ navigation }) => {
+  const [userData, setUserData] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const storedUserData = await AsyncStorage.getItem('tenant_data');
+        if (storedUserData) {
+          setUserData(JSON.parse(storedUserData));
+        }
+      } catch (error) {
+        console.log('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  if (!userData) {
+    return (
+      <View style={styles.container}>
+        <Text>Loading profile...</Text>
+      </View>
+    );
+  }
   return (
     <View style={styles.container}>
       <StatusBar
@@ -67,32 +72,35 @@ const TenantsProfile: React.FC<{ navigation: any }> = ({ navigation }) => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.Profile_container}
       >
-        <Image source={{ uri: tenant.profileImage }} style={styles.profileImage} />
-        <Text style={styles.name}>{tenant.name}</Text>
-        <Text style={styles.staffId}>QID: {tenant.qid}</Text>
-        <Text style={styles.company}>Status: {tenant.status}</Text>
+          <Image source={{ uri: userData.profileImg }} style={styles.profileImage} />
+        <Text style={styles.name}>{userData.name}</Text>
+        <Text style={styles.staffId}>QID: {userData.qid}</Text>
+        <Text style={styles.company}>Status: {userData.status}</Text>
+        
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Contact Info</Text>
-          <InfoItem label="Mobile" value={tenant.mobile} />
-          {tenant.email && <InfoItem label="Email" value={tenant.email} />}
-          {tenant.dateOfBirth && <InfoItem label="Date of Birth" value={tenant.dateOfBirth} />}
+          <InfoItem label="Mobile" value={userData.phoneNumber} />
+          <InfoItem label="Nationality" value={userData.nationality} />
+          {userData.email && <InfoItem label="Email" value={userData.email} />}
+          {userData.dateOfBirth && <InfoItem label="Date of Birth" value={userData.dateOfBirth} />}
         </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Residence Info</Text>
-          <InfoItem label="Room Number" value={tenant.roomNumber} />
-          <InfoItem label="Unit Number" value={tenant.unitNumber} />
-          <InfoItem label="Building" value={tenant.buildingName} />
-          {tenant.tower && <InfoItem label="Tower" value={tenant.tower} />}
+
+          <InfoItem label="Category" value={userData.tenantCategory} />
+          <InfoItem label="Room Number" value={userData.roomNumber} />
+          <InfoItem label="Unit Number" value={userData.unitNumber} />
+          <InfoItem label="Building" value={userData.buildingNo} />
+          {userData.tower && <InfoItem label="Tower" value={userData.tower} />}
         </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Contract Info</Text>
-          <InfoItem label="Check-In Date" value={tenant.checkInDate} />
-          <InfoItem label="Contract Start" value={tenant.contractStart} />
-          <InfoItem label="Contract End" value={tenant.contractEnd} />
-          <InfoItem label="Occupants" value={tenant.numberOfOccupants.toString()} />
+          <InfoItem label="Contract Start" value={userData.joiningDate} />
+          <InfoItem label="Contract End" value={userData.contractExpiry} />
+        <InfoItem label="Occupants" value={userData.occupants} />
         </View>
 
       

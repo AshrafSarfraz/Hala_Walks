@@ -12,17 +12,10 @@ type AccountProps={
 }
 
 
-const handleLogout = async (navigation: any) => {
-  try {
-    await AsyncStorage.removeItem('userData'); // or AsyncStorage.clear()
-    navigation.navigate('Role');
-  } catch (error) {
-    console.log('Error during logout:', error);
-  }
-};
 
 const Account:React.FC<AccountProps> = ({navigation}) => {
   const [userData, setUserData] = useState<any>(null);
+  
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -46,6 +39,15 @@ const Account:React.FC<AccountProps> = ({navigation}) => {
     );
   }
 
+  const handleLogout = async (navigation: any) => {
+    try {
+      await AsyncStorage.removeItem('staff_data'); // or AsyncStorage.clear()
+      navigation.navigate('Role');
+    } catch (error) {
+      console.log('Error during logout:', error);
+    }
+  };
+  
 
 
     return (
@@ -53,7 +55,7 @@ const Account:React.FC<AccountProps> = ({navigation}) => {
          <View style={styles.Header_Cont} >
          <Image source={{ uri: userData.profileImg }} style={styles.profileImage} />
           <Text style={styles.name}>{userData.name}</Text>
-               <Text style={styles.staffId}>Staff ID: {userData.name}</Text>
+               <Text style={styles.staffId}>Staff ID: {userData.staffId}</Text>
          </View>
          <View style={styles.Button_Cont} >
           <CustomButton2  title='Profile' image={ProfileIcon} onPress={()=>{navigation.navigate('ProfileScreen')}} />

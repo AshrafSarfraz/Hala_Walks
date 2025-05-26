@@ -1,250 +1,122 @@
-// screens/TenantDocumentControlScreen.tsx
-
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
-  Modal,
-  TextInput,
-  SafeAreaView,
-  Platform,
-  StatusBar,
-} from 'react-native';
-import CustomHeader from '../../../components/header/CustomHeader';
+import React, { useEffect, useState } from 'react';
+import { View, Text, ScrollView, StyleSheet, Button, Image, Linking, TouchableOpacity, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors } from '../../../theme/Colors';
+import { Fonts } from '../../../theme/Fonts';
+import CustomHeader from '../../../components/header/CustomHeader';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-const tenantDocs = [
-  { id: '1', name: 'Tenancy Contract.pdf' },
-  { id: '2', name: 'QID Front.jpg' },
-];
+const StaffDocumentControlScreen = ({navigation}) => {
+  const [userData, setUserData] = useState(null);
 
-type TenantDocumentScreenProps = {
-  navigation: any;
-};
-
-const TenantDocumentControlScreen: React.FC<TenantDocumentScreenProps> = ({ navigation }) => {
-  const [documents, setDocuments] = useState(tenantDocs);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [fileName, setFileName] = useState('');
-  const [selectedFile, setSelectedFile] = useState<string | null>(null);
-
-  const handleView = (name: string) => {
-    Alert.alert('View Document', `Opening "${name}"...`);
-  };
-
-  const handleDownload = (name: string) => {
-    Alert.alert('Download', `Downloading "${name}"...`);
-  };
-
-  const handleSave = () => {
-    if (!fileName || !selectedFile) {
-      Alert.alert('Missing Info', 'Please enter a name and choose a file.');
-      return;
+  const getDataFromStorage = async () => {
+    try {
+      const value = await AsyncStorage.getItem('tenant_data');
+      if (value !== null) {
+        const parsed = JSON.parse(value);
+        console.log('Parsed Data:', parsed);
+        setUserData(parsed);
+      } else {
+        console.log('No data found');
+      }
+    } catch (e) {
+      console.error('Error retrieving data:', e);
     }
-
-    const newDoc = {
-      id: Date.now().toString(),
-      name: fileName,
-    };
-
-    setDocuments(prev => [...prev, newDoc]);
-    setFileName('');
-    setSelectedFile(null);
-    setModalVisible(false);
   };
 
-  const renderItem = ({ item }: any) => (
-    <View style={styles.docItem}>
-      <Text style={styles.docName}>{item.name}</Text>
-      <View style={styles.actionGroup}>
-        <TouchableOpacity style={styles.actionBtn} onPress={() => handleView(item.name)}>
-          <Text style={styles.actionText}>View</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.actionBtn} onPress={() => handleDownload(item.name)}>
-          <Text style={styles.actionText}>Download</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
+  useEffect(() => {
+    getDataFromStorage();
+  }, []);
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View style={styles.container}>
-        <StatusBar hidden={false} barStyle={'dark-content'} backgroundColor={Colors.Bg} />
-        <CustomHeader title="Tenant Documents" onBackPress={() => navigation.goBack()} />
-
-        <FlatList
-          data={documents}
-          keyExtractor={item => item.id}
-          renderItem={renderItem}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 20, paddingTop: 15 }}
-        />
-
-        <TouchableOpacity style={styles.uploadBtn} onPress={() => setModalVisible(true)}>
-          <Text style={styles.uploadText}>Upload Tenancy Document</Text>
+    <SafeAreaView style={styles.Maincontainer} >
+    <ScrollView style={styles.container}>
+      
+      {userData?.documents && (
+  <View style={{}}>
+   <CustomHeader title='Documents' onBackPress={()=>{navigation.goBack()}} />
+   
+   <View style={{marginTop:15}} >
+    {Object.entries(userData.documents).map(([key, value]) => (
+      <View key={key} style={styles.documentCard}>
+        <Text style={styles.documentTitle}>{key}</Text>
+        <View style={styles.buttonContainer}>
+        <TouchableOpacity style={[styles.Menu_Btn,{backgroundColor:'#E5EDEA'}]} 
+         onPress={() => {  if (value) { navigation.navigate('PDFViewerScreen', { pdfUrl: value});} else { }}}  >
+        <Text style={[styles.menu_txt,{color:"#005029"}]} >View </Text>
         </TouchableOpacity>
-
-        <Modal visible={modalVisible} animationType="slide" transparent>
-          <View style={styles.modalOverlay}>
-            <View style={styles.modalBox}>
-              <Text style={styles.modalTitle}>Upload New Document</Text>
-
-              <TextInput
-                placeholder="Enter file name (e.g. Tenancy Contract)..."
-                style={styles.input}
-                value={fileName}
-                onChangeText={setFileName}
-              />
-
-              <TouchableOpacity
-                style={styles.chooseBtn}
-                onPress={() => setSelectedFile('dummy-tenancy-doc.pdf')}
-              >
-                <Text style={styles.chooseBtnText}>
-                  {selectedFile ? 'File Selected' : 'Choose File'}
-                </Text>
-              </TouchableOpacity>
-
-              <View style={styles.modalActions}>
-                <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.cancelBtn}>
-                  <Text style={styles.cancelText}>Cancel</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={handleSave} style={styles.saveBtn}>
-                  <Text style={styles.saveText}>Save</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </Modal>
+        <TouchableOpacity style={[styles.Menu_Btn,{backgroundColor:'#EAEBF0'}]} 
+          onPress={() => {
+            Alert.alert(`Download ${key} from:\n${value}`);
+           }}  >
+        <Text style={[styles.menu_txt,{color:"#31386A"}]} >Download </Text>
+        </TouchableOpacity>
+         
+        </View>
       </View>
+    ))}
+    </View>
+  </View>
+)}
+    </ScrollView>
     </SafeAreaView>
   );
 };
 
+export default StaffDocumentControlScreen;
+
 const styles = StyleSheet.create({
+  Maincontainer:{
+    flex: 1,
+    backgroundColor: '#F4F4F4',
+  },
   container: {
     flex: 1,
-    marginTop: Platform.OS === 'ios' ? 0 : '12%',
-    paddingHorizontal: 20,
-    backgroundColor: '#f4f4f4',
+    backgroundColor: '#F4F4F4',
+    paddingHorizontal:20
   },
-  uploadBtn: {
-    backgroundColor: '#2f2f75',
-    padding: 14,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginVertical: 16,
-  },
-  uploadText: {
-    color: '#fff',
-    fontWeight: 'bold',
+  item: {
+    marginVertical: 4,
     fontSize: 16,
   },
-  docItem: {
-    backgroundColor: '#fff',
+  label: {
+    fontWeight: 'bold',
+  },
+  documentCard: {
+    backgroundColor: '#ffffff',
+    borderRadius: 10,
     padding: 16,
-    borderRadius: 12,
     marginBottom: 12,
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 6,
+    borderColor:'grey',
+    borderWidth:0.2
   },
-  docName: {
+  
+  documentTitle: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#1e1e2f',
-    marginBottom: 15,
-  },
-  actionGroup: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  actionBtn: {
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    backgroundColor: '#edf1fa',
-    borderRadius: 6,
-  },
-  actionText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#2f2f75',
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: '#00000088',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalBox: {
-    backgroundColor: '#fff',
-    padding: 25,
-    borderRadius: 16,
-    width: '90%',
-    elevation: 10,
-  },
-  modalTitle: {
-    fontSize: 20,
     fontWeight: 'bold',
-    color: '#2f2f75',
-    marginBottom: 20,
-    textAlign: 'center',
+    marginBottom: 10,
   },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 12,
-    borderRadius: 10,
-    marginBottom: 15,
-    fontSize: 15,
-  },
-  chooseBtn: {
-    backgroundColor: '#e9eefb',
-    padding: 12,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  chooseBtnText: {
-    fontWeight: '600',
-    fontSize: 15,
-    color: '#2f2f75',
-  },
-  modalActions: {
+  
+  buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    gap: 12,
   },
-  cancelBtn: {
-    padding: 12,
-    backgroundColor: '#e0e0e0',
-    borderRadius: 10,
-    flex: 1,
-    marginRight: 10,
-  },
-  saveBtn: {
-    padding: 12,
-    backgroundColor: '#2f2f75',
-    borderRadius: 10,
-    flex: 1,
-  },
-  cancelText: {
-    textAlign: 'center',
-    color: '#333',
-    fontWeight: '600',
-    fontSize: 15,
-  },
-  saveText: {
-    textAlign: 'center',
-    color: '#fff',
-    fontWeight: '600',
-    fontSize: 15,
-  },
+   Menu_Btn:{
+      justifyContent:'center',
+      alignItems:"center",
+      width:'48%',
+      borderRadius:4,
+      height:24
+    },
+    menu_txt:{
+     color:Colors.White,
+     fontSize:12,
+     lineHeight:18,
+     fontFamily:Fonts.F_Bold,
+    },
+  
 });
 
-export default TenantDocumentControlScreen;
+
+

@@ -4,6 +4,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Colors } from '../../../theme/Colors';
 
 
+
 type SplashBlankProps = {
   navigation: NativeStackNavigationProp<any>;
 };

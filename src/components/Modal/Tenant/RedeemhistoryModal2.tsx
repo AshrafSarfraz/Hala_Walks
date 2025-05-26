@@ -8,8 +8,8 @@ import {
   Image,
   ImageBackground,
 } from 'react-native';
-import { West_NB } from '../../theme/Images';
-import { Colors } from '../../theme/Colors';
+import { West_NB } from '../../../theme/Images';
+import { Colors } from '../../../theme/Colors';
 
 type Props = {
   visible: boolean;
@@ -19,7 +19,6 @@ type Props = {
     createdAt: string;
     validity?: string;
     eligibility?: string;
-    employeeId?: string;
     qid?: string;
     brandName: string;
     nameEng?: string;
@@ -27,8 +26,7 @@ type Props = {
     percentage?: string;
   } | null;
 };
-
-const RedeemHistoryModal: React.FC<Props> = ({ visible, onClose, data }) => {
+const RedeemHistoryModal2: React.FC<Props> = ({ visible, onClose, data }) => {
   if (!data) return null;
 
   const userData = {
@@ -71,7 +69,7 @@ const RedeemHistoryModal: React.FC<Props> = ({ visible, onClose, data }) => {
       <View style={styles.overlay}>
         <View style={styles.modal}>
           <ImageBackground
-            source={require('../../assets/images/westwalk_Icon.png')}
+            source={require('../../../assets/images/westwalk_Icon.png')}
             style={styles.BgImg}
             imageStyle={{
               resizeMode: 'contain',
@@ -81,16 +79,16 @@ const RedeemHistoryModal: React.FC<Props> = ({ visible, onClose, data }) => {
             }}
           >
             <Image source={West_NB} style={styles.logo} resizeMode="contain" />
-            <Text style={styles.heading}>Redeem Details</Text>
+            <Text style={styles.heading}> Tenant Redeem Details</Text>
             <Text style={[styles.Status,]}>{getStatusText()}</Text> 
 
             <Detail label="Brand Name" value={data.nameEng || data.brandName} />
             <Detail
               label="Employee ID"
               value={
-                userData.staffId ||
+     
                 userData.tenantId ||
-                userData.orgEmpId ||
+
                 'N/A'
               }
             />
@@ -196,4 +194,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default RedeemHistoryModal;
+export default RedeemHistoryModal2;

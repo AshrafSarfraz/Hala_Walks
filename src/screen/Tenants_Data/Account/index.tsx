@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { SafeAreaView, StyleSheet, View,Image, Platform, Text, TouchableOpacity } from 'react-native';
 import { Colors } from '../../../theme/Colors';
 import { Fonts } from '../../../theme/Fonts';
 import CustomButton2 from '../../../components/buttons/CustomButton2';
 import { DocIcon, HistroyIcon, ProfileIcon, Show } from '../../../theme/Images';
 import CustomButton from '../../../components/buttons/CustomButton';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type AccountProps={
   navigation:any
@@ -12,12 +13,46 @@ type AccountProps={
 
 
 const TenantsAccount:React.FC<AccountProps> = ({navigation}) => {
+      const [userData, setUserData] = useState<any>(null);
+      
+      useEffect(() => {
+        const fetchUserData = async () => {
+          try {
+            const storedUserData = await AsyncStorage.getItem('tenant_data');
+            if (storedUserData) {
+              setUserData(JSON.parse(storedUserData));
+            }
+          } catch (error) {
+            console.log('Error fetching user data:', error);
+          }
+        };
+    
+        fetchUserData();
+      }, []);
+    
+      if (!userData) {
+        return (
+          <View style={styles.container}>
+            <Text>Loading profile...</Text>
+          </View>
+        );
+      }
+
+      const handleLogout = async (navigation: any) => {
+        try {
+          await AsyncStorage.removeItem('tenant_data'); // or AsyncStorage.clear()
+          navigation.navigate('Role');
+        } catch (error) {
+          console.log('Error during logout:', error);
+        }}
+
+
     return (
        <SafeAreaView style={{flex:1,backgroundColor:Colors.Bg}} >
          <View style={styles.Header_Cont} >
-         <Image source={{ uri:'https://i.pravatar.cc/300' }} style={styles.profileImage} />
-          <Text style={styles.name}>Tenant Name</Text>
-               <Text style={styles.staffId}>Room ID: Room123</Text>
+         <Image source={{ uri:userData.profileImg }} style={styles.profileImage} />
+          <Text style={styles.name}>{userData.name}</Text>
+               <Text style={styles.staffId}>Tenant ID: {userData.tenantId}</Text>
          </View>
          <View style={styles.Button_Cont} >
           <CustomButton2  title='Account Info' image={ProfileIcon} onPress={()=>{navigation.navigate('TenantsProfile')}} />
@@ -26,7 +61,7 @@ const TenantsAccount:React.FC<AccountProps> = ({navigation}) => {
           <CustomButton2  title='Contact Us' image={HistroyIcon} onPress={()=>{navigation.navigate('TenantsContactUs')}} />
          </View>
           <View style={styles.Logout_Cont} >
-            <CustomButton title='Logout' onPress={()=>{navigation.navigate('Role')}}  />
+            <CustomButton title='Logout' onPress={()=>{handleLogout(navigation)}}  />
           </View>
 
        </SafeAreaView>

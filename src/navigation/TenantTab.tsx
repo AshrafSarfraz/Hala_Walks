@@ -22,6 +22,9 @@ type TabButtonProps = {
   isCenter?: boolean;
 };
 
+
+
+
 const TenantsTab: React.FC<TabProps> = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState<number>(0);
   const indicatorPosition = useSharedValue(tabWidth * 0); 

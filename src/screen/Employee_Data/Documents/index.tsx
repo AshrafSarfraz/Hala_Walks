@@ -74,22 +74,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
   },
-  card: {
-    marginTop: 20,
-    padding: 16,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 10,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  subTitle: {
-    marginTop: 16,
-    fontSize: 18,
-    fontWeight: '600',
-  },
   item: {
     marginVertical: 4,
     fontSize: 16,

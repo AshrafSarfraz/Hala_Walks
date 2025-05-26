@@ -2,8 +2,7 @@
 import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Splash_Blank from '../screen/authentication/splash/Splash_Blank';
-import Splash_Screen from '../screen/authentication/splash/SplashScreen';
+
 
 import ProfileScreen from '../screen/Employee_Data/Profile_Screen';
 import EmployeeTab from './EmployeeTab';
@@ -22,13 +21,15 @@ import TenantHistoryScreen from '../screen/Tenants_Data/Reedem_Histroy';
 import CorporationHistoryScreen from '../screen/Organization/Reedem_Histroy';
 import StaffDocumentControlScreen from '../screen/Employee_Data/Documents';
 import StaffContactUs from '../screen/Employee_Data/ContactUs';
-import RoleSelectionScreen from '../screen/authentication/select_role';
 import OnBoarding from '../screen/Others/OnBoarding';
-import EmployeeLogin from '../screen/authentication/logins/Westwalk_Staff';
-import TenantsLogin from '../screen/authentication/logins/Tenants_Login';
-import OrgEmp_Login from '../screen/authentication/logins/Organization_Login';
-import StaffForgetPassword from '../screen/authentication/ForgetScreen/StaffForgetScreen';
+import EmployeeLogin from '../screen/Tenants_Data/Authentication/login/Westwalk_Staff';
+import TenantsLogin from '../screen/Employee_Data/Authentication/login/Tenants_Login';
+import OrgEmp_Login from '../screen/Organization/Authentication/login/Organization_Login';
+import StaffForgetPassword from '../screen/Employee_Data/Authentication/forget/StaffForgetScreen';
 import PDFViewerScreen from '../screen/Others/pdfViewer';
+import Splash_Blank from '../screen/Others/splash/Splash_Blank';
+import Splash_Screen from '../screen/Others/splash/SplashScreen';
+import RoleSelectionScreen from '../screen/Others/select_role';
 
 
 

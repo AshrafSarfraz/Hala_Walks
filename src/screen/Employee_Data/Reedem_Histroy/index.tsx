@@ -8,13 +8,14 @@ import {
   Platform,
   StatusBar,
 } from 'react-native';
-import RedeemReceiptModal from '../../../components/Modal/RedeemModal';
+
 import CustomHeader from '../../../components/header/CustomHeader';
 import { useNavigation } from '@react-navigation/native';
 import { Colors } from '../../../theme/Colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { auth, firestore } from '../../../firebase/firebaseconfig';
-import RedeemHistoryModal from '../../../components/Modal/RedeemhistoryModal';
+import RedeemHistoryModal from '../../../components/Modal/StaffModal/RedeemhistoryModal';
+
 
 
 const StaffHistoryScreen: React.FC = () => {

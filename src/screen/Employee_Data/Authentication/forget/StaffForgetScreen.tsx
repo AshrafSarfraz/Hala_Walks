@@ -8,14 +8,14 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import { ManIcon, West_NB } from '../../../theme/Images';
-import { Colors } from '../../../theme/Colors';
-import CustomButton from '../../../components/buttons/CustomButton';
+import { ManIcon, West_NB } from '../../../../theme/Images';
+import { Colors } from '../../../../theme/Colors';
+import CustomButton from '../../../../components/buttons/CustomButton';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../../redux/store';
-import CustomHeader from '../../../components/header/CustomHeader';
-import { auth, firestore } from '../../../firebase/firebaseconfig';
-import ActivityIndicatorModal from '../../../components/Loader/ActivityIndicator';
+import { RootState } from '../../../../redux/store';
+import CustomHeader from '../../../../components/header/CustomHeader';
+import { auth, firestore } from '../../../../firebase/firebaseconfig';
+import ActivityIndicatorModal from '../../../../components/Loader/ActivityIndicator';
 
 interface LoginProps {
   navigation: any;

@@ -14,14 +14,14 @@ import {
   ManIcon,
   Show,
   West_NB,
-} from '../../../theme/Images';
-import { Colors } from '../../../theme/Colors';
-import CustomButton from '../../../components/buttons/CustomButton';
+} from '../../../../theme/Images';
+import { Colors } from '../../../../theme/Colors';
+import CustomButton from '../../../../components/buttons/CustomButton';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../../redux/store';
-import CustomCheckbox from '../../../components/checkbox/checkbox';
-import { languageData } from '../../../redux/language/languageSlice';
-import CustomHeader from '../../../components/header/CustomHeader';
+import { RootState } from '../../../../redux/store';
+import CustomCheckbox from '../../../../components/checkbox/checkbox';
+import { languageData } from '../../../../redux/language/languageSlice';
+import CustomHeader from '../../../../components/header/CustomHeader';
 
 interface LoginProps {
   navigation: any;

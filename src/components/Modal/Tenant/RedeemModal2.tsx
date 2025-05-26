@@ -9,10 +9,10 @@ import {
   ImageBackground,
   Alert,
 } from 'react-native';
-import { West_NB } from '../../theme/Images';
-import { Colors } from '../../theme/Colors';
+import { West_NB } from '../../../theme/Images';
+import { Colors } from '../../../theme/Colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { auth, firestore } from '../../firebase/firebaseconfig';
+import { auth, firestore } from '../../../firebase/firebaseconfig';
 
 type Props = {
   visible: boolean;
@@ -20,10 +20,6 @@ type Props = {
   data: {
     code: string;
     createdAt: string;
-    validity?: string;
-    eligibility?: string;
-    staffId?: string;
-    qid?: string;
     BrandName: string;
     nameEng?: string;
     discount?: string;
@@ -31,7 +27,7 @@ type Props = {
   } | null;
 };
 
-const RedeemReceiptModal: React.FC<Props> = ({ visible, onClose, data }) => {
+const RedeemReceiptModal2: React.FC<Props> = ({ visible, onClose, data }) => {
   const [userData, setUserData] = useState<any>(null);
   const [currentDate, setCurrentDate] = useState('');
   const [pin, setPin] = useState('');
@@ -39,7 +35,7 @@ const RedeemReceiptModal: React.FC<Props> = ({ visible, onClose, data }) => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const storedUserData = await AsyncStorage.getItem('staff_data');
+        const storedUserData = await AsyncStorage.getItem('tenant_data');
         if (storedUserData) {
           const parsed = JSON.parse(storedUserData);
           setUserData(parsed);
@@ -73,68 +69,51 @@ const RedeemReceiptModal: React.FC<Props> = ({ visible, onClose, data }) => {
     setPin(result);
   };
 
-  const getEligibility = () => {
-    if (userData?.staffId) return 'Staff & Family';
-    if (userData?.tenantId) return 'Husband & Wife';
-    if (userData?.orgEmpId) return '1 Person Only';
-    return 'N/A';
-  };
-
   const handleClose = async () => {
     if (!userData || !data) return;
+
     try {
       const user = auth().currentUser;
-  
       if (!user) {
         Alert.alert('Error', 'No user is logged in');
         onClose();
         return;
       }
-  
-      // Determine eligibility based on user type
-      let eligibility = '';
-      if (userData.staffId) eligibility = 'Staff & Family';
-      else if (userData.tenantId) eligibility = 'Husband & Wife';
-      else if (userData.orgEmpId) eligibility = '1 Person Only';
-  
+
       const redeemData = {
         brandName: data.nameEng || data.BrandName,
-        employeeId: userData.staffId || userData.tenantId || userData.orgEmpId,
+        employeeId: userData.tenantId,
         qid: userData.qid,
         code: pin,
         date: currentDate,
         discount: data.discount || data.percentage,
-        validity: '3 days',
-        eligibility: eligibility,
+        validity: '7 days',
+        eligibility: 'Husband & Wife',
         createdAt: new Date().toISOString(),
       };
-  
-      if (user) {// Save under the current user's Firestore document
+
       await firestore()
-        .collection('Westwalk_Staff')
+        .collection('Tenants')
         .doc(user.uid)
         .collection('redeemed_discounts')
         .add(redeemData);
+
       Alert.alert('Success', 'Redeem history saved successfully.');
       onClose();
-    }}
-    catch (error) {
+    } catch (error) {
       console.error('Error saving redeem history:', error);
       Alert.alert('Error', 'Failed to save redeem history.');
     }
   };
-  
 
-  if (!data || !userData) {
-    return null;
-  }
+  if (!data || !userData) return null;
 
   return (
     <Modal visible={visible} animationType="slide" transparent>
       <View style={styles.overlay}>
         <View style={styles.modal}>
           <ImageBackground
-            source={require('../../assets/images/westwalk_Icon.png')}
+            source={require('../../../assets/images/westwalk_Icon.png')}
             style={styles.BgImg}
             imageStyle={{
               resizeMode: 'contain',
@@ -144,16 +123,16 @@ const RedeemReceiptModal: React.FC<Props> = ({ visible, onClose, data }) => {
             }}
           >
             <Image source={West_NB} style={styles.logo} resizeMode="contain" />
-            <Text style={styles.heading}>Redeem Details</Text>
+            <Text style={styles.heading}>Tenant Redeem Details</Text>
 
             <Detail label="Brand Name" value={data.nameEng || data.BrandName} />
-            <Detail label="Employee ID" value={userData.staffId || userData.tenantId || userData.orgEmpId || 'N/A'} />
+            <Detail label="Employee ID" value={userData.tenantId || 'N/A'} />
             <Detail label="QID" value={userData.qid || 'N/A'} />
             <Detail label="Code" value={pin} />
             <Detail label="Date" value={currentDate} />
             <Detail label="Discount" value={data.discount || data.percentage || 'N/A'} />
             <Detail label="Valid for" value="7 days" />
-            <Detail label="Eligibility" value={getEligibility()} />
+            <Detail label="Eligibility" value="Husband & Wife" />
 
             <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
               <Text style={styles.closeButtonText}>Close</Text>
@@ -239,6 +218,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default RedeemReceiptModal;
-
-
+export default RedeemReceiptModal2;

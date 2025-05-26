@@ -8,11 +8,12 @@ import {
   Platform,
   StatusBar,
 } from 'react-native';
-import RedeemReceiptModal from '../../../components/Modal/RedeemModal';
+
 import CustomHeader from '../../../components/header/CustomHeader';
 import {useNavigation} from '@react-navigation/native';
 import {Colors} from '../../../theme/Colors';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import RedeemReceiptModal from '../../../components/Modal/StaffModal/RedeemModal';
 
 const dummyData = [
   {

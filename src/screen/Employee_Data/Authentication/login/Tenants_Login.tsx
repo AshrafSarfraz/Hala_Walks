@@ -9,89 +9,75 @@ import {
   Linking,
   Alert,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   Hide,
   Lock,
   ManIcon,
   Show,
   West_NB,
-} from '../../../theme/Images';
-import { Colors } from '../../../theme/Colors';
-import CustomButton from '../../../components/buttons/CustomButton';
+} from '../../../../theme/Images';
+
+import CustomButton from '../../../../components/buttons/CustomButton';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../../redux/store';
-import CustomCheckbox from '../../../components/checkbox/checkbox';
-import { languageData } from '../../../redux/language/languageSlice';
-import CustomHeader from '../../../components/header/CustomHeader';
-import { auth, firestore } from '../../../firebase/firebaseconfig';
-import ActivityIndicatorModal from '../../../components/Loader/ActivityIndicator';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { RootState } from '../../../../redux/store';
+import CustomCheckbox from '../../../../components/checkbox/checkbox';
+import { languageData } from '../../../../redux/language/languageSlice';
+import CustomHeader from '../../../../components/header/CustomHeader';
+import { fetch_Tenant_Data } from '../../../../firebase/firebaseutils';
+import { Colors } from '../../../../theme/Colors';
 
 interface LoginProps {
   navigation: any;
 }
 
-const EmployeeLogin: React.FC<LoginProps> = ({ navigation }) => {
+const TenantsLogin: React.FC<LoginProps> = ({ navigation }) => {
   const [employeeId, setEmployeeId] = useState('');
   const [password, setPassword] = useState('');
   const [hide, setHide] = useState(true);
   const [isChecked, setIsChecked] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false); 
+
   const language = useSelector(
     (state: RootState) => state.language.language
   );
   const styles = getStyles(language);
 
-
   const handleLogin = async () => {
     if (!employeeId || !password) {
-      Alert.alert('Please enter Staff ID and Password');
+      Alert.alert('Missing Fields', 'Please enter both ID and Password');
       return;
     }
-     setIsLoading(true);
-    try {
-      // Step 1: Get email from emp_id
-      const snapshot = await firestore()
-        .collection('Westwalk_Staff')
-        .where('staffId', '==', employeeId)
-        .limit(1)
-        .get();
 
-      if (snapshot.empty) {
-        Alert.alert('Staff ID not found');
-        setIsLoading(false)
-        return;
+    try {
+      const tenants = await fetch_Tenant_Data();
+      const matchedTenant = tenants.find(
+        tenant =>
+          tenant.tenantId === employeeId &&
+          tenant.password === password
+      );
+
+      if (matchedTenant) {
+        await AsyncStorage.setItem(
+          'tenant_data',
+          JSON.stringify(matchedTenant)
+        );
+
+        console.log('✅ Tenant Login Success:', matchedTenant);
+        navigation.navigate('TenantsTab', { userData: matchedTenant });
+      } else {
+        Alert.alert('Login Failed', 'Invalid ID or Password');
       }
-      const userDoc = snapshot.docs[0];
-      const userData = userDoc.data();
-      const { email } = userDoc.data();
- 
-  
-      if (!email) {
-        Alert.alert('Email not found for this Staff ID');
-        setIsLoading(false)
-        return;
-      }
-      // Step 2: Login with email and password
-      await auth().signInWithEmailAndPassword(email, password);
-      await AsyncStorage.setItem('staff_data', JSON.stringify(userData));
-      // Success: Navigate to employee dashboard
-      navigation.navigate('EmployeeTab');
-      setIsLoading(false)
     } catch (error) {
-      console.error('Login error:', error);
-      Alert.alert('Login failed. Please check your credentials.');
+      console.error('❌ Login Error:', error);
+      Alert.alert('Error', 'Something went wrong. Please try again.');
     }
-    setIsLoading(false)
   };
-  
 
   return (
     <View style={styles.Container}>
-      
-      <CustomHeader title=' ' onBackPress={()=>{navigation.goBack()}} />
+      <CustomHeader title=" " onBackPress={() => navigation.goBack()} />
       <Image source={West_NB} style={styles.Logo} />
-      <Text style={styles.Title}>Staff Login</Text>
+      <Text style={styles.Title}>Tenants Login</Text>
       <Text style={styles.Subtitle}>Enter your credentials to continue</Text>
 
       <View
@@ -99,7 +85,7 @@ const EmployeeLogin: React.FC<LoginProps> = ({ navigation }) => {
           styles.InputContainer,
           employeeId !== '' && styles.Active_Input_Field,
         ]}
-      >57333
+      >
         <Image
           source={ManIcon}
           style={[
@@ -108,7 +94,7 @@ const EmployeeLogin: React.FC<LoginProps> = ({ navigation }) => {
           ]}
         />
         <TextInput
-          placeholder="Enter your Staff ID"
+          placeholder="Enter your Tenant ID"
           value={employeeId}
           onChangeText={setEmployeeId}
           style={styles.input}
@@ -160,31 +146,20 @@ const EmployeeLogin: React.FC<LoginProps> = ({ navigation }) => {
             }
           />
         </View>
-        <TouchableOpacity
-          onPress={() =>
-             {navigation.navigate("StaffForgetPassword")}
-          }
-        >
-          <Text style={styles.ForgotText}>
-            {languageData[language]?.forget_password || 'Forgot Password?'}
-          </Text>
-        </TouchableOpacity>
       </View>
 
       <CustomButton
         title="Login"
         onPress={handleLogin}
       />
-      {isLoading && (
-            <ActivityIndicatorModal visible={isLoading} />
-          )}
     </View>
   );
 };
 
-export default EmployeeLogin;
+export default TenantsLogin;
 
 // ===================== STYLES =====================
+
 const getStyles = (language: string) =>
   StyleSheet.create({
     Container: {
@@ -235,13 +210,11 @@ const getStyles = (language: string) =>
       flex: 1,
       fontSize: 14,
       color: '#000',
-      height:40
     },
     passwordinput: {
       flex: 1,
       fontSize: 14,
       color: '#000',
-      height:40
     },
     HideIcon: {
       width: 24,
@@ -254,11 +227,6 @@ const getStyles = (language: string) =>
     },
     Active_Image: {
       tintColor: Colors.PrimaryColor,
-    },
-    ForgotText: {
-      color: Colors.PrimaryColor,
-      fontSize: 13,
-      textDecorationLine: 'underline',
     },
     forgotContainer: {
       flexDirection: 'row',

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -22,12 +22,16 @@ import CustomHeader from '../../../components/header/CustomHeader';
 import {languageData} from '../../../redux/language/languageSlice';
 import {Dark_Heart, Light_Heart} from '../../../theme/Images';
 import CustomButton from '../../../components/buttons/CustomButton';
-import RedeemReceiptModal from '../../../components/Modal/RedeemModal';
 import {Colors} from '../../../theme/Colors';
+import RedeemReceiptModal from '../../../components/Modal/StaffModal/RedeemModal';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import RedeemReceiptModal2 from '../../../components/Modal/Tenant/RedeemModal2';
+
 
 
 
 const DetailScreen: React.FC<{route: any}> = ({route}) => {
+ 
   const {item, source} = route.params; // Home se data le rahe hain
   const dispatch = useDispatch();
   const latitude = item.latitude ? item.latitude : null;
@@ -35,8 +39,6 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
   const phoneNumber = item.PhoneNumber;
   const navigation = useNavigation();
   const [imageLoading, setImageLoading] = useState(true);
-
-  console.log('Fetched Offers:', item);
 
   // Redux Toolkit
   const language = useSelector((state: RootState) => state.language.language);
@@ -65,9 +67,43 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
   };
   // Google Map and Mobile Number
 
+
   const handleImageLoad = () => {
     setImageLoading(false); // Stop shimmer effect once the image has loaded
   };
+
+
+  // async_Storage Data  for Selection the Correct Modal 
+    const [userType, setUserType] = useState<'staff' | 'tenant' | 'org' | null>(null);
+
+    useEffect(() => {
+      const getUserType = async () => {
+        try {
+          const staff = await AsyncStorage.getItem('staff_data');
+          const tenant = await AsyncStorage.getItem('tenant_data');
+          const org = await AsyncStorage.getItem('org_emp_data');
+    
+          if (staff) {
+            setUserType('staff');
+          } else if (tenant) {
+            setUserType('tenant');
+          } else if (org) {
+            setUserType('org');
+          }
+        } catch (error) {
+          console.error('Error reading AsyncStorage:', error);
+        }
+      };
+    
+      getUserType();
+    }, []);
+    
+
+    useEffect(() => {
+      console.log("User type is:", userType);
+    }, [userType]);
+    
+
 
   return (
     <SafeAreaView>
@@ -241,11 +277,35 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
             openModal(item);
           }}
         />
-        <RedeemReceiptModal
+
+{userType==='staff' && (
+        // <RedeemReceiptModal
+        //   visible={modalVisible}
+        //   onClose={() => setModalVisible(false)}
+        //   data={selectedItem}
+        // />
+        <Text>Ashraf</Text>
+      )}
+
+      {userType==='tenant' && (
+        <RedeemReceiptModal2
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
           data={selectedItem}
         />
+      )}
+
+      {userType==='org' && (
+        // <RedeemReceiptModal
+        //   visible={modalVisible}
+        //   onClose={() => setModalVisible(false)}
+        //   data={selectedItem}
+        // />
+        <Text>mE</Text>
+      )}
+     
+
+
         <View style={{marginBottom: Platform.OS === 'ios' ? '5%' : '4%'}} />
         <CustomButton
           title="Open Map"
