@@ -70,6 +70,22 @@ export const fetch_Tenant_Data = async () => {
 };
 
 
+export const fetch_OrgEmp_Data = async () => {
+  try {
+    // Directly fetch data from Firebase without using AsyncStorage
+    const snapshot = await firestore().collection('Employees').get();
+    const data = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    return data; // Return freshly fetched data from Firebase
+  } catch (error) {
+    // Handle the error appropriately (console log, show error message, etc.)
+    console.error('❌ Error fetching flat offers:', error);
+    return []; // Return empty array if error occurs
+  }
+};
+
 
 
 

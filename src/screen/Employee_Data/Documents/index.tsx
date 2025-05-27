@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors } from '../../../theme/Colors';
 import { Fonts } from '../../../theme/Fonts';
 import CustomHeader from '../../../components/header/CustomHeader';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const StaffDocumentControlScreen = ({navigation}) => {
   const [userData, setUserData] = useState(null);
@@ -28,51 +29,51 @@ const StaffDocumentControlScreen = ({navigation}) => {
   }, []);
 
   return (
+    <SafeAreaView style={styles.Maincontainer} >
     <ScrollView style={styles.container}>
       
       {userData?.documents && (
-  <View style={{ marginTop: 30 }}>
+  <View style={{}}>
    <CustomHeader title='Documents' onBackPress={()=>{navigation.goBack()}} />
-
-
+   
+   <View style={{marginTop:15}} >
     {Object.entries(userData.documents).map(([key, value]) => (
       <View key={key} style={styles.documentCard}>
         <Text style={styles.documentTitle}>{key}</Text>
         <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.Menu_Btn} onPress={() => {
-                   if (value) {
-                     navigation.navigate('PDFViewerScreen', { pdfUrl: value});
-                   } else { }}}  >
-                        
-                         <Text style={styles.menu_txt} >View </Text>
-                       </TouchableOpacity>
-          <Button
-            title="Download"
-            onPress={() => {
-              // This is a placeholder; for real download functionality you’ll need a file downloader like react-native-fs or rn-fetch-blob
-              Alert.alert(`Download ${key} from:\n${value}`);
-            }}
-            color="green"
-          />
+        <TouchableOpacity style={[styles.Menu_Btn,{backgroundColor:'#E5EDEA'}]} 
+         onPress={() => {  if (value) { navigation.navigate('PDFViewerScreen', { pdfUrl: value});} else { }}}  >
+        <Text style={[styles.menu_txt,{color:"#005029"}]} >View </Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.Menu_Btn,{backgroundColor:'#EAEBF0'}]} 
+          onPress={() => {
+            Alert.alert(`Download ${key} from:\n${value}`);
+           }}  >
+        <Text style={[styles.menu_txt,{color:"#31386A"}]} >Download </Text>
+        </TouchableOpacity>
+         
         </View>
       </View>
     ))}
+    </View>
   </View>
 )}
-
-
-
-    
     </ScrollView>
+    </SafeAreaView>
   );
 };
 
 export default StaffDocumentControlScreen;
 
 const styles = StyleSheet.create({
+  Maincontainer:{
+    flex: 1,
+    backgroundColor: '#F4F4F4',
+  },
   container: {
     flex: 1,
-    padding: 16,
+    backgroundColor: '#F4F4F4',
+    paddingHorizontal:20
   },
   item: {
     marginVertical: 4,
@@ -81,23 +82,13 @@ const styles = StyleSheet.create({
   label: {
     fontWeight: 'bold',
   },
-  profileImg: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    alignSelf: 'center',
-    marginBottom: 16,
-  },
   documentCard: {
-    backgroundColor: '#fff',
+    backgroundColor: '#ffffff',
     borderRadius: 10,
     padding: 16,
     marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    borderColor:'grey',
+    borderWidth:0.2
   },
   
   documentTitle: {
@@ -112,17 +103,17 @@ const styles = StyleSheet.create({
     gap: 12,
   },
    Menu_Btn:{
-      backgroundColor:Colors.PrimaryColor,
-      padding:8,
-      borderRadius:6
+      justifyContent:'center',
+      alignItems:"center",
+      width:'48%',
+      borderRadius:4,
+      height:24
     },
     menu_txt:{
      color:Colors.White,
      fontSize:12,
-     lineHeight:16,
+     lineHeight:18,
      fontFamily:Fonts.F_Bold,
-     
-    
     },
   
 });

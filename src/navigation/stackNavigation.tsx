@@ -22,14 +22,15 @@ import CorporationHistoryScreen from '../screen/Organization/Reedem_Histroy';
 import StaffDocumentControlScreen from '../screen/Employee_Data/Documents';
 import StaffContactUs from '../screen/Employee_Data/ContactUs';
 import OnBoarding from '../screen/Others/OnBoarding';
-import EmployeeLogin from '../screen/Tenants_Data/Authentication/login/Westwalk_Staff';
-import TenantsLogin from '../screen/Employee_Data/Authentication/login/Tenants_Login';
+
 import OrgEmp_Login from '../screen/Organization/Authentication/login/Organization_Login';
 import StaffForgetPassword from '../screen/Employee_Data/Authentication/forget/StaffForgetScreen';
 import PDFViewerScreen from '../screen/Others/pdfViewer';
 import Splash_Blank from '../screen/Others/splash/Splash_Blank';
 import Splash_Screen from '../screen/Others/splash/SplashScreen';
 import RoleSelectionScreen from '../screen/Others/select_role';
+import EmployeeLogin from '../screen/Employee_Data/Authentication/login/Westwalk_Staff';
+import TenantsLogin from '../screen/Tenants_Data/Authentication/login/Tenants_Login';
 
 
 

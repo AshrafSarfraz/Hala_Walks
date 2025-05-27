@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -13,30 +13,11 @@ import CustomHeader from '../../../components/header/CustomHeader';
 import {useNavigation} from '@react-navigation/native';
 import {Colors} from '../../../theme/Colors';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import RedeemReceiptModal from '../../../components/Modal/StaffModal/RedeemModal';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { firestore } from '../../../firebase/firebaseconfig';
+import RedeemHistoryModal2 from '../../../components/Modal/Tenant/RedeemhistoryModal2';
 
-const dummyData = [
-  {
-    id: '1',
-    code: 'AQQVA6',
-    createdAt: 'April 13, 2025 - 2:04 PM',
-    percentage: '-20%',
-    qid: '284750123456',
-    staffId: 'EMP-1001',
-    eligibility: 'Staff and their family',
-    BrandName: 'Brown Coffee Shop',
-  },
-  {
-    id: '2',
-    code: 'ZX89LM',
-    createdAt: 'April 14, 2025 - 11:22 AM',
-    percentage: '-15%',
-    qid: '284750987654',
-    staffId: 'EMP-1002',
-    eligibility: 'Only staff',
-    BrandName: 'Kana Restaurant',
-  },
-];
+
 
 const TenantHistoryScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -47,6 +28,58 @@ const TenantHistoryScreen: React.FC = () => {
     setSelectedItem(item);
     setModalVisible(true);
   };
+
+  const [history, setHistory] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchRedeemHistory();
+  }, []);
+
+  const fetchRedeemHistory = async () => {
+    
+    try {
+      const stored = await AsyncStorage.getItem('tenant_data');
+      if (!stored) return;
+
+      const parsed = JSON.parse(stored);
+      const tenantId = parsed.tenantId;
+
+      const tenantSnapshot = await firestore()
+        .collection('Tenants')
+        .where('tenantId', '==', tenantId)
+        .get();
+
+      if (tenantSnapshot.empty) {
+        console.warn('Tenant not found');
+        return;
+      }
+
+      const tenantDocId = tenantSnapshot.docs[0].id;
+
+      const redeemSnapshot = await firestore()
+        .collection('Tenants')
+        .doc(tenantDocId)
+        .collection('redeemed_discounts')
+        .orderBy('createdAt', 'desc')
+        .get();
+
+      const data = redeemSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      setHistory(data);
+    } catch (error) {
+      console.error('Error fetching redeem history:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -59,18 +92,19 @@ const TenantHistoryScreen: React.FC = () => {
       />
 
       <FlatList
-        data={dummyData}
+        data={history}
         keyExtractor={item => item.id}
         renderItem={({item}) => (
           <TouchableOpacity style={styles.item} onPress={() => openModal(item)}>
-            <Text style={styles.itemCode}>Code: {item.code}</Text>
-            <Text>{item.createdAt}</Text>
-            <Text>{item.percentage}</Text>
+            <Text style={styles.itemCode}>Code: {item.brandName}</Text>
+            <Text>{item.code}</Text>
+            <Text>{item.discount}</Text>
+            <Text>{item.eligibility}</Text>
           </TouchableOpacity>
         )}
       />
 
-      <RedeemReceiptModal
+      <RedeemHistoryModal2
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         data={selectedItem}

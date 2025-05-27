@@ -7,6 +7,7 @@ import {
   Image,
   TouchableOpacity,
   Linking,
+  Alert,
 } from 'react-native';
 import {
   Hide,
@@ -22,6 +23,9 @@ import { RootState } from '../../../../redux/store';
 import CustomCheckbox from '../../../../components/checkbox/checkbox';
 import { languageData } from '../../../../redux/language/languageSlice';
 import CustomHeader from '../../../../components/header/CustomHeader';
+import { fetch_OrgEmp_Data } from '../../../../firebase/firebaseutils';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import ActivityIndicatorModal from '../../../../components/Loader/ActivityIndicator';
 
 interface LoginProps {
   navigation: any;
@@ -31,13 +35,46 @@ const OrgEmp_Login: React.FC<LoginProps> = ({ navigation }) => {
   const [employeeId, setEmployeeId] = useState('');
   const [password, setPassword] = useState('');
   const [hide, setHide] = useState(true);
+   const [isLoading, setIsLoading] = useState<boolean>(false); 
   const [isChecked, setIsChecked] = useState<boolean>(false);
 
   const language = useSelector(
     (state: RootState) => state.language.language
   );
-
   const styles = getStyles(language);
+
+  const handleLogin = async () => {
+    if (!employeeId || !password) {
+      Alert.alert('Missing Fields', 'Please enter both ID and Password');
+      return;
+    }
+     setIsLoading(true);
+    try {
+      const employees = await fetch_OrgEmp_Data();
+      const matchedTenant = employees.find(
+        OrgEmp =>
+        OrgEmp.empId === employeeId &&
+        OrgEmp.password === password
+      );
+
+      if (matchedTenant) {
+        await AsyncStorage.setItem(
+          'org_emp_data',
+          JSON.stringify(matchedTenant)
+        );
+
+        console.log('✅ Tenant Login Success:', matchedTenant);
+        navigation.navigate('CorporationTab', { userData: matchedTenant });
+        setIsLoading(false)
+      } else {
+        Alert.alert('Login Failed', 'Invalid ID or Password');
+      }
+    } catch (error) {
+      console.error('❌ Login Error:', error);
+      Alert.alert('Error', 'Something went wrong. Please try again.');
+    }
+    setIsLoading(false)
+  };
 
   return (
     <View style={styles.Container}>
@@ -60,7 +97,7 @@ const OrgEmp_Login: React.FC<LoginProps> = ({ navigation }) => {
           ]}
         />
         <TextInput
-          placeholder="Enter your Staff ID"
+          placeholder="Enter Emp-ID"
           value={employeeId}
           onChangeText={setEmployeeId}
           style={styles.input}
@@ -117,8 +154,12 @@ const OrgEmp_Login: React.FC<LoginProps> = ({ navigation }) => {
 
       <CustomButton
         title="Login"
-        onPress={() => navigation.navigate('CorporationTab')}
+        onPress={handleLogin}
       />
+
+       {isLoading && (
+            <ActivityIndicatorModal visible={isLoading} />
+          )}
     </View>
   );
 };
@@ -176,11 +217,13 @@ const getStyles = (language: string) =>
       flex: 1,
       fontSize: 14,
       color: '#000',
+      height:45,
     },
     passwordinput: {
       flex: 1,
       fontSize: 14,
       color: '#000',
+      height:45,
     },
     HideIcon: {
       width: 24,

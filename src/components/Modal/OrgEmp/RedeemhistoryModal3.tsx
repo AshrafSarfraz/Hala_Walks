@@ -27,7 +27,7 @@ type Props = {
     percentage?: string;
   } | null;
 };
-const RedeemHistoryModal2: React.FC<Props> = ({ visible, onClose, data }) => {
+const RedeemHistoryModal3: React.FC<Props> = ({ visible, onClose, data }) => {
   if (!data) return null;
 
   const userData = {
@@ -80,7 +80,7 @@ const RedeemHistoryModal2: React.FC<Props> = ({ visible, onClose, data }) => {
             }}
           >
             <Image source={West_NB} style={styles.logo} resizeMode="contain" />
-            <Text style={styles.heading}> Tenant Redeem Details</Text>
+            <Text style={styles.heading}>Organization Redeem Details</Text>
             <Text style={[styles.Status,]}>{getStatusText()}</Text> 
 
             <Detail label="Brand Name" value={data.nameEng || data.brandName} />
@@ -114,6 +114,8 @@ const Detail = ({ label, value }: { label: string; value: string }) => (
     <Text style={styles.value}>{value}</Text>
   </View>
 );
+
+export default RedeemHistoryModal3;
 
 const styles = StyleSheet.create({
   overlay: {
@@ -190,4 +192,3 @@ const styles = StyleSheet.create({
   }
 });
 
-export default RedeemHistoryModal2;

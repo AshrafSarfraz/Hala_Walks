@@ -7,9 +7,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 
 import { getStyles } from './style';
-import { RootState } from '../../../redux/store';
-import { languageData } from '../../../redux/language/languageSlice';
-import CustomButton from '../../../components/buttons/CustomButton';
+import { RootState } from '../../redux/store';
+import CustomButton from '../../components/buttons/CustomButton';
+import { languageData } from '../../redux/language/languageSlice';
+
 
 
 const langData = {

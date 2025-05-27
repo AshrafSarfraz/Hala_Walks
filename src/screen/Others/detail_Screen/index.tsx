@@ -26,6 +26,7 @@ import {Colors} from '../../../theme/Colors';
 import RedeemReceiptModal from '../../../components/Modal/StaffModal/RedeemModal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RedeemReceiptModal2 from '../../../components/Modal/Tenant/RedeemModal2';
+import RedeemReceiptModal3 from '../../../components/Modal/OrgEmp/RedeemModal3';
 
 
 
@@ -279,12 +280,11 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
         />
 
 {userType==='staff' && (
-        // <RedeemReceiptModal
-        //   visible={modalVisible}
-        //   onClose={() => setModalVisible(false)}
-        //   data={selectedItem}
-        // />
-        <Text>Ashraf</Text>
+        <RedeemReceiptModal
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+          data={selectedItem}
+        />
       )}
 
       {userType==='tenant' && (
@@ -296,12 +296,12 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
       )}
 
       {userType==='org' && (
-        // <RedeemReceiptModal
-        //   visible={modalVisible}
-        //   onClose={() => setModalVisible(false)}
-        //   data={selectedItem}
-        // />
-        <Text>mE</Text>
+        <RedeemReceiptModal3
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+          data={selectedItem}
+        />
+       
       )}
      
 

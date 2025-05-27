@@ -26,6 +26,7 @@ import { languageData } from '../../../../redux/language/languageSlice';
 import CustomHeader from '../../../../components/header/CustomHeader';
 import { fetch_Tenant_Data } from '../../../../firebase/firebaseutils';
 import { Colors } from '../../../../theme/Colors';
+import ActivityIndicatorModal from '../../../../components/Loader/ActivityIndicator';
 
 interface LoginProps {
   navigation: any;
@@ -35,6 +36,7 @@ const TenantsLogin: React.FC<LoginProps> = ({ navigation }) => {
   const [employeeId, setEmployeeId] = useState('');
   const [password, setPassword] = useState('');
   const [hide, setHide] = useState(true);
+   const [isLoading, setIsLoading] = useState<boolean>(false); 
   const [isChecked, setIsChecked] = useState<boolean>(false);
 
   const language = useSelector(
@@ -47,7 +49,7 @@ const TenantsLogin: React.FC<LoginProps> = ({ navigation }) => {
       Alert.alert('Missing Fields', 'Please enter both ID and Password');
       return;
     }
-
+    setIsLoading(true);
     try {
       const tenants = await fetch_Tenant_Data();
       const matchedTenant = tenants.find(
@@ -64,6 +66,7 @@ const TenantsLogin: React.FC<LoginProps> = ({ navigation }) => {
 
         console.log('✅ Tenant Login Success:', matchedTenant);
         navigation.navigate('TenantsTab', { userData: matchedTenant });
+        setIsLoading(false)
       } else {
         Alert.alert('Login Failed', 'Invalid ID or Password');
       }
@@ -71,6 +74,7 @@ const TenantsLogin: React.FC<LoginProps> = ({ navigation }) => {
       console.error('❌ Login Error:', error);
       Alert.alert('Error', 'Something went wrong. Please try again.');
     }
+    setIsLoading(false)
   };
 
   return (
@@ -152,6 +156,10 @@ const TenantsLogin: React.FC<LoginProps> = ({ navigation }) => {
         title="Login"
         onPress={handleLogin}
       />
+
+{isLoading && (
+            <ActivityIndicatorModal visible={isLoading} />
+          )}
     </View>
   );
 };
@@ -210,11 +218,13 @@ const getStyles = (language: string) =>
       flex: 1,
       fontSize: 14,
       color: '#000',
+      height:45,
     },
     passwordinput: {
       flex: 1,
       fontSize: 14,
       color: '#000',
+      height:40,
     },
     HideIcon: {
       width: 24,

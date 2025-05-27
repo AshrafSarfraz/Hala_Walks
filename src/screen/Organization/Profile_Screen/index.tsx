@@ -1,30 +1,38 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Image, ScrollView, StatusBar } from 'react-native';
 import { styles } from './style';
 import CustomHeader from '../../../components/header/CustomHeader';
 import { Colors } from '../../../theme/Colors';
-
-type CorporationEmployeeProfile = {
-  name: string;
-  qid: string;
-  id: string;
-  role: string;
-  organizationName: string;
-  profileImage?: string;
-  status: 'Active' | 'Inactive' | 'Pending';
-};
-
-const employee: CorporationEmployeeProfile = {
-  name: 'Ahmed Ali',
-  qid: 'QID12345678',
-  id: 'EMP00123',
-  role: 'Sales Manager',
-  organizationName: 'Qatar Enterprises',
-  profileImage: 'https://i.pravatar.cc/300',
-  status: 'Active',
-};
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import ManIcon from '../../../assets/icons/man.png'; // Ensure this is correct path
+import { P_IMG } from '../../../theme/Images';
 
 const CorporationProfile: React.FC<{ navigation: any }> = ({ navigation }) => {
+  const [userData, setUserData] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const storedUserData = await AsyncStorage.getItem('org_emp_data');
+        if (storedUserData) {
+          setUserData(JSON.parse(storedUserData));
+        }
+      } catch (error) {
+        console.log('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  if (!userData) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.loadingText}>Loading profile...</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <StatusBar
@@ -35,17 +43,24 @@ const CorporationProfile: React.FC<{ navigation: any }> = ({ navigation }) => {
         barStyle="dark-content"
       />
       <CustomHeader title="Employee Profile" onBackPress={() => navigation.goBack()} />
+
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.Profile_container}
+        contentContainerStyle={styles.scrollContent}
       >
-        <Image source={{ uri: employee.profileImage }} style={styles.profileImage} />
-        <Text style={styles.name}>{employee.name}</Text>
-        <Text style={styles.staffId}>ID: {employee.id}</Text>
-        <Text style={styles.staffId}>QID: {employee.qid}</Text>
-        <Text style={styles.company}>Organization: {employee.organizationName}</Text>
-        <Text style={styles.company}>Role: {employee.role}</Text>
-        <Text style={styles.company}>Status: {employee.status}</Text>
+        <View style={styles.card}>
+          <Image
+            source={userData.profileImage ? { uri: userData.profileImage } : P_IMG}
+            style={styles.profileImage}
+          />
+          <Text style={styles.name}>{userData.name}</Text>
+          <Text style={styles.label}>Employee ID</Text>
+          <Text style={styles.value}>{userData.empId}</Text>
+          <Text style={styles.label}>QID</Text>
+          <Text style={styles.value}>{userData.qid}</Text>
+          <Text style={styles.label}>Organization</Text>
+          <Text style={styles.value}>{userData.companyName}</Text>
+        </View>
       </ScrollView>
     </View>
   );
