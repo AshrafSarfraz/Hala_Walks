@@ -31,6 +31,7 @@ import Splash_Screen from '../screen/Others/splash/SplashScreen';
 import RoleSelectionScreen from '../screen/Others/select_role';
 import EmployeeLogin from '../screen/Employee_Data/Authentication/login/Westwalk_Staff';
 import TenantsLogin from '../screen/Tenants_Data/Authentication/login/Tenants_Login';
+import PhoneDirectoryScreen from '../screen/Employee_Data/PhoneDirectory';
 
 
 
@@ -55,6 +56,8 @@ export default function StackNavigation() {
         <Stack.Screen name="SelectedVenue" component={SelectedCategories}   />
         <Stack.Screen name="WishlistScreen" component={WishlistScreen}   />
         <Stack.Screen name="PDFViewerScreen" component={PDFViewerScreen}   />
+        <Stack.Screen name="PhoneDirectory" component={PhoneDirectoryScreen}   />
+        
       
         {/* Staff Screen */}
         <Stack.Screen name="StaffLogin" component={EmployeeLogin}   />

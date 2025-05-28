@@ -4,7 +4,6 @@ import { styles } from './style';
 import CustomHeader from '../../../components/header/CustomHeader';
 import { Colors } from '../../../theme/Colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import ManIcon from '../../../assets/icons/man.png'; // Ensure this is correct path
 import { P_IMG } from '../../../theme/Images';
 
 const CorporationProfile: React.FC<{ navigation: any }> = ({ navigation }) => {

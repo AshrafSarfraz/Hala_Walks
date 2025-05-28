@@ -62,6 +62,9 @@ const Account:React.FC<AccountProps> = ({navigation}) => {
           <CustomButton2  title='Document' image={DocIcon} onPress={()=>{navigation.navigate('StaffDocumentControlScreen')}} />
           <CustomButton2  title='Redeem History' image={HistroyIcon} onPress={()=>{navigation.navigate('StaffHistroyScreen')}} />
           <CustomButton2  title='Contact Us' image={HistroyIcon} onPress={()=>{navigation.navigate('StaffContactUs')}} />
+          <CustomButton2  title='Directory' image={HistroyIcon} onPress={()=>{navigation.navigate('PhoneDirectory')}} />
+
+          
          </View>
           <View style={styles.Logout_Cont} >
             <CustomButton title='Logout' onPress={()=>{handleLogout(navigation)}}  />

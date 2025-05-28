@@ -5,31 +5,6 @@ import CustomHeader from '../../../components/header/CustomHeader';
 import { Colors } from '../../../theme/Colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-type TenantProfile = {
-  name: string;
-  qid: string;
-  mobile: string;
-  email?: string;
-  nationality: string;
-  dateOfBirth?: string;
-
-  roomNumber: string;
-  unitNumber: string;
-  buildingName: string;
-  tower?: string;
-
-  checkInDate: string;
-  contractStart: string;
-  contractEnd: string;
-
-  numberOfOccupants: number;
-  emergencyContactName?: string;
-  emergencyContactNumber?: string;
-
-  profileImage?: string;
-  contractFileUrl?: string;
-  status: 'Active' | 'Moved Out' | 'Notice Given';
-};
 
 
 
