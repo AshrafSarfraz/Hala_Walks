@@ -1,24 +1,18 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
-  SafeAreaView,
-  StatusBar,
-  ScrollView,
-  Platform,
-} from 'react-native';
+import { View,Text,TextInput,TouchableOpacity,StyleSheet, Alert,SafeAreaView,StatusBar, ScrollView, Platform,} from 'react-native';
 import CustomHeader from '../../../components/header/CustomHeader';
 import { Colors } from '../../../theme/Colors';
+import { languageData } from '../../../redux/language/languageSlice';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
 
 type ContactUsProps={
     navigation: any;
 }
 
 const TenantsContactUsScreen:React.FC<ContactUsProps> = ({ navigation }: any) => {
+  const language = useSelector((state: RootState) => state.language.language);
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [subject, setSubject] = useState('');
@@ -42,7 +36,7 @@ const TenantsContactUsScreen:React.FC<ContactUsProps> = ({ navigation }: any) =>
     <SafeAreaView style={styles.safeArea}   >
       <StatusBar backgroundColor={Colors.Bg} barStyle="dark-content" />
       <View style={{paddingHorizontal:20}} >
-      <CustomHeader title="Contact Us" onBackPress={() => navigation.goBack()} />
+      <CustomHeader title={languageData[language].Contact_Us} onBackPress={() => navigation.goBack()} />
       <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
         <Text style={styles.label}>Full Name</Text>
         <TextInput

@@ -142,7 +142,7 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
 
           <TouchableOpacity onPress={Contact} style={styles.call_cont}>
               <Image source={require('../../../assets/icons/man.png')}  style={styles.Phone_Icon} />
-              <Text style={styles.call_txt}>Call Now</Text>
+              <Text style={styles.call_txt}>{languageData[language].Call_Now}</Text>
           </TouchableOpacity>
           </View>
            <View style={styles.Loc_Cont}>
@@ -166,7 +166,7 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
             navigation.navigate('PDFViewerScreen', { pdfUrl: item.pdfUrl });
           } else { setModalVisible(true)}}}  >
                
-                <Text style={styles.menu_txt} >View Menu</Text>
+                <Text style={styles.menu_txt} >{languageData[language].View_Menu}</Text>
               </TouchableOpacity>
           </View>
 
@@ -183,7 +183,7 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
         </View>
 
         <CustomButton
-          title="Redeem"
+          title={languageData[language].Redeem}
           onPress={() => {
             openModal(item);
           }}
@@ -218,7 +218,7 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
 
         <View style={{marginBottom: Platform.OS === 'ios' ? '5%' : '4%'}} />
         <CustomButton
-          title="Open Map"
+          title={languageData[language].Open_Map}
           onPress={() => {
             handleOpenMaps();
           }}

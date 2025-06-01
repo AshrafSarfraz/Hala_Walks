@@ -3,9 +3,13 @@ import { SafeAreaView, StyleSheet, View,Image, Platform, Text, TouchableOpacity 
 import { Colors } from '../../../theme/Colors';
 import { Fonts } from '../../../theme/Fonts';
 import CustomButton2 from '../../../components/buttons/CustomButton2';
-import { DocIcon, HistroyIcon, ProfileIcon, Show } from '../../../theme/Images';
+import { Contact_us, DocIcon, HistroyIcon, ProfileIcon, Show } from '../../../theme/Images';
 import CustomButton from '../../../components/buttons/CustomButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { languageData } from '../../../redux/language/languageSlice';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
+import { getStyles } from './style';
 
 type AccountProps={
   navigation:any
@@ -13,7 +17,9 @@ type AccountProps={
 
 
 const TenantsAccount:React.FC<AccountProps> = ({navigation}) => {
-      const [userData, setUserData] = useState<any>(null);
+     const language = useSelector((state: RootState) => state.language.language);
+      const styles = getStyles(language);
+       const [userData, setUserData] = useState<any>(null);
       
       useEffect(() => {
         const fetchUserData = async () => {
@@ -23,9 +29,7 @@ const TenantsAccount:React.FC<AccountProps> = ({navigation}) => {
               setUserData(JSON.parse(storedUserData));
             }
           } catch (error) {
-            console.log('Error fetching user data:', error);
-          }
-        };
+            console.log('Error fetching user data:', error);}};
     
         fetchUserData();
       }, []);
@@ -52,62 +56,22 @@ const TenantsAccount:React.FC<AccountProps> = ({navigation}) => {
          <View style={styles.Header_Cont} >
          <Image source={{ uri:userData.profileImg }} style={styles.profileImage} />
           <Text style={styles.name}>{userData.name}</Text>
-               <Text style={styles.staffId}>Tenant ID: {userData.tenantId}</Text>
+               <Text style={styles.staffId}>{userData.tenantId}</Text>
          </View>
          <View style={styles.Button_Cont} >
-          <CustomButton2  title='Account Info' image={ProfileIcon} onPress={()=>{navigation.navigate('TenantsProfile')}} />
-          <CustomButton2  title='Document' image={DocIcon} onPress={()=>{navigation.navigate('TenantDocumentControlScreen')}} />
-          <CustomButton2  title='Redeem History' image={HistroyIcon} onPress={()=>{navigation.navigate('TenantsHistroyScreen')}} />
-          <CustomButton2  title='Contact Us' image={HistroyIcon} onPress={()=>{navigation.navigate('TenantsContactUs')}} />
+          <CustomButton2  title={languageData[language].Account_Info}   image={ProfileIcon} onPress={()=>{navigation.navigate('TenantsProfile')}} />
+          <CustomButton2  title={languageData[language].Documents} image={DocIcon} onPress={()=>{navigation.navigate('TenantDocumentControlScreen')}} />
+          <CustomButton2  title={languageData[language].Redeem_History}  image={HistroyIcon} onPress={()=>{navigation.navigate('TenantsHistroyScreen')}} />
+          <CustomButton2  title={languageData[language].Contact_Us}  image={Contact_us} onPress={()=>{navigation.navigate('TenantsContactUs')}} />
          </View>
           <View style={styles.Logout_Cont} >
-            <CustomButton title='Logout' onPress={()=>{handleLogout(navigation)}}  />
+            <CustomButton title={languageData[language].logout} onPress={()=>{handleLogout(navigation)}}  />
           </View>
 
        </SafeAreaView>
     );
 }
 
-const styles = StyleSheet.create({
-    Header_Cont:{
-        width:'100%',
-        height:Platform.OS==='ios'?300:270,
-        backgroundColor:Colors.PrimaryColor,
-        justifyContent:"flex-end",
-        alignItems:"center",
-        borderBottomLeftRadius:30,
-        borderBottomRightRadius:30,
 
-    },
-    profileImage: {
-        width: 120,
-        height: 120,
-        borderRadius: 60,
-        marginBottom:20,
-      },
-      name: {
-        fontSize: 20,
-        color: '#fff',
-        lineHeight:26,
-        fontFamily:Fonts.F_Bold
-      },
-      staffId: {
-        fontSize: 14,
-        color: '#fff',
-        marginVertical: 4,
-        lineHeight:18,
-        fontFamily:Fonts.F_Medium,
-        marginBottom: 40,
-      },
-      Button_Cont:{
-        marginVertical:20
-      },
-      Logout_Cont:{
-        width:'92%',
-        alignSelf:"center",
-        position:"absolute",
-        bottom:40
-      }
-})
 
 export default TenantsAccount;

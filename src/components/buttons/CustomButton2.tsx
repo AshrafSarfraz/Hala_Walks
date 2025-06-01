@@ -11,10 +11,8 @@ type Props = {
 };
 
 const CustomButton2: React.FC<Props> = ({ title, image, onPress }) => {
+  const language = useSelector((state: RootState) => state.language.language);
   const styles = getStyles(language);
-  const language = useSelector(
-    (state: RootState) => state.language.language
-  );
   return (
     <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.8}>
       <View style={styles.leftSection}>

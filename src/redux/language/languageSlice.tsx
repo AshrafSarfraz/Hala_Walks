@@ -6,6 +6,7 @@ const languageData = {
   en: {
     // login Screen
     Organization_Login:"Organization Login",
+    Tenants_Login:"Tenants Login",
     Enter_credentials :"Enter your credentials to continue",
     Enter_your_ID:"Enter your ID",
     Enter_your_Password: "Enter your Password",
@@ -18,6 +19,15 @@ const languageData = {
 
     //Account
     Redeem_History:"Redeem History",
+    Documents:"Documents",
+    Account_Info:"Account Info",
+    Contact_Us:"Contact Us",
+    Profile:"Profile",
+    Call_Now:"Call Now",
+    View_Menu:"View Menu",
+    Open_Map:"Open Map",
+    Redeem:"Redeem",
+    Wishlist:"Wishlist",
 
 
 
@@ -71,6 +81,7 @@ const languageData = {
 
   ar: {
     Organization_Login:"تسجيل دخول المؤسسة",
+    Tenants_Login:"تسجيل دخول السكان",
     Enter_credentials :"أدخل بيانات الاعتماد الخاصة بك للمتابعة",
     Enter_your_ID:"أدخل المعرف",
     Enter_your_Password: "أدخل كلمة المرور",
@@ -84,6 +95,15 @@ const languageData = {
     logout: "تسجيل الخروج",
     //Account
     Redeem_History:"سجل الاسترداد",
+    Documents:"المستندات",
+    Account_Info:" معلومات الحساب",
+    Contact_Us:"اتصل بنا",
+    Profile:"الملف الشخصي",
+    Call_Now:"اتصل الآن",
+    View_Menu:"عرض القائمة",
+    Open_Map :"افتح الخريطة",
+    Redeem:"استرداد",
+    Wishlist:"قائمة الرغبات",
 
 
     phone_number: "رقم الهاتف",

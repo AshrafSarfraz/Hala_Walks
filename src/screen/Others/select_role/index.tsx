@@ -10,10 +10,8 @@ import { languageData } from '../../../redux/language/languageSlice';
 
 const RoleSelectionScreen:React.FC= () => {
   const navigation=useNavigation()
+  const language = useSelector( (state: RootState) => state.language.language);
   const styles = getStyles(language);
-  const language = useSelector(
-    (state: RootState) => state.language.language
-  );
  
   return (
     <View style={styles.container}>

@@ -25,10 +25,8 @@ import { useSelector } from 'react-redux';
 
 const CorporationHistoryScreen: React.FC = () => {
   const navigation = useNavigation();
+  const language = useSelector( (state: RootState) => state.language.language);
   const styles = getStyles(language);
-  const language = useSelector(
-    (state: RootState) => state.language.language
-  );
   
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [modalVisible, setModalVisible] = useState(false);

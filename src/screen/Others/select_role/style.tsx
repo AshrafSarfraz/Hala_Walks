@@ -28,7 +28,7 @@ export const getStyles=(language:string) => StyleSheet.create({
       lineHeight:26
     },
     Btn_Cont:{
-    flex: Platform.OS === 'ios' ? 0.7 : 0.7,
+    flex: Platform.OS ==='ios' ? 0.7 : 0.7,
     paddingTop:40,
     marginHorizontal:20,
     },
@@ -38,7 +38,7 @@ export const getStyles=(language:string) => StyleSheet.create({
       lineHeight:20,
       fontFamily:Fonts.F_Medium,
       marginBottom:15,
-      textAlign:language==='en'?'left':"right"
+      textAlign:language==='en'?"left":"right",
     },
     button: {
       backgroundColor: '#ffffff',

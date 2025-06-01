@@ -17,10 +17,8 @@ type AccountProps={
 
 const CorporationAccount:React.FC<AccountProps> = ({navigation}) => {
   const [userData, setUserData] = useState<any>(null);
-  const styles = getStyles(language);
-  const language = useSelector(
-    (state: RootState) => state.language.language
-  );
+  const language = useSelector((state: RootState) => state.language.language);
+   const styles = getStyles(language);
       
   useEffect(() => {
     const fetchUserData = async () => {

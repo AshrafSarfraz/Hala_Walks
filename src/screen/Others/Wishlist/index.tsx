@@ -16,6 +16,7 @@ import { toggleItemInCart } from '../../../redux/cartSlice';
 import { Colors } from '../../../theme/Colors';
 import { styles } from './style';
 import { Dark_Heart, Light_Heart } from '../../../theme/Images';
+import { languageData } from '../../../redux/language/languageSlice';
 
 
 type WishlistProps = {
@@ -26,9 +27,8 @@ const WishlistScreen: React.FC<WishlistProps> = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
-  // Redux Toolkit: Get cart items from the store
+   const language = useSelector((state: RootState) => state.language.language);
   const cartItems = useSelector((state: RootState) => state.cart.items);
-
   // Check if an item is in the cart
   const isInCart = (itemId: string) =>
     cartItems.some(cartItem => cartItem.id === itemId);
@@ -43,7 +43,7 @@ const WishlistScreen: React.FC<WishlistProps> = () => {
         <StatusBar hidden={false} translucent={true} animated={true} backgroundColor={Colors.Bg} barStyle={'dark-content'} />
       <View style={styles.container}>
         
-        <Text style={styles.Header_Txt}>Wishlist</Text>
+        <Text style={styles.Header_Txt}>{languageData[language].Wishlist}</Text>
         <FlatList
           data={cartItems}
           keyExtractor={item => item.id}

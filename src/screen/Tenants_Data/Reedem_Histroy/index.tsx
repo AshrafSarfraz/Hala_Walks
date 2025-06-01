@@ -16,11 +16,16 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { firestore } from '../../../firebase/firebaseconfig';
 import RedeemHistoryModal2 from '../../../components/Modal/Tenant/RedeemhistoryModal2';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
+import { languageData } from '../../../redux/language/languageSlice';
 
 
 
 const TenantHistoryScreen: React.FC = () => {
   const navigation = useNavigation();
+  const language = useSelector((state: RootState) => state.language.language);
+
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -85,7 +90,7 @@ const TenantHistoryScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       <StatusBar hidden={false} backgroundColor={Colors.Bg} barStyle="dark-content" />
       <CustomHeader
-        title="Redeem History"
+        title={languageData[language].Redeem_History}
         onBackPress={() => {
           navigation.goBack();
         }}

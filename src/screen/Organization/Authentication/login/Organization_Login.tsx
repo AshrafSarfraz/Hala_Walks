@@ -17,10 +17,8 @@ interface LoginProps {
 }
 
 const OrgEmp_Login: React.FC<LoginProps> = ({ navigation }) => {
+  const language = useSelector( (state: RootState) => state.language.language);
   const styles = getStyles(language);
-  const language = useSelector(
-    (state: RootState) => state.language.language
-  );
   
   const [employeeId, setEmployeeId] = useState('');
   const [password, setPassword] = useState('');

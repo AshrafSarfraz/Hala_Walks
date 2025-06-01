@@ -5,8 +5,13 @@ import { Colors } from '../../../theme/Colors';
 import { Fonts } from '../../../theme/Fonts';
 import CustomHeader from '../../../components/header/CustomHeader';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
+import { languageData } from '../../../redux/language/languageSlice';
 
 const StaffDocumentControlScreen = ({navigation}) => {
+  const language = useSelector((state: RootState) => state.language.language);
+
   const [userData, setUserData] = useState(null);
 
   const getDataFromStorage = async () => {
@@ -34,7 +39,7 @@ const StaffDocumentControlScreen = ({navigation}) => {
       
       {userData?.documents && (
   <View style={{}}>
-   <CustomHeader title='Documents' onBackPress={()=>{navigation.goBack()}} />
+   <CustomHeader title={languageData[language].Documents} onBackPress={()=>{navigation.goBack()}} />
    
    <View style={{marginTop:15}} >
     {Object.entries(userData.documents).map(([key, value]) => (

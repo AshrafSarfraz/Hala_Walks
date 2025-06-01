@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, ScrollView, StatusBar } from 'react-native';
-import { styles } from './style';
+
 import CustomHeader from '../../../components/header/CustomHeader';
 import { Colors } from '../../../theme/Colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
+import { styles } from './style';
+import { languageData } from '../../../redux/language/languageSlice';
 
 
 
 
 const TenantsProfile: React.FC<{ navigation: any }> = ({ navigation }) => {
+  const language = useSelector((state: RootState) => state.language.language);
   const [userData, setUserData] = useState<any>(null);
 
   useEffect(() => {
@@ -42,7 +47,7 @@ const TenantsProfile: React.FC<{ navigation: any }> = ({ navigation }) => {
         backgroundColor={Colors.Bg}
         barStyle="dark-content"
       />
-      <CustomHeader title="Tenant Profile" onBackPress={() => navigation.goBack()} />
+      <CustomHeader title={languageData[language].Profile} onBackPress={() => navigation.goBack()} />
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.Profile_container}
