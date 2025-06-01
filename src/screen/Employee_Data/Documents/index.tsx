@@ -3,10 +3,19 @@ import { View, Text, ScrollView, StyleSheet, Button, Image, Linking, TouchableOp
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomHeader from '../../../components/header/CustomHeader';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { styles } from './style';
+import { getStyles } from './style';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
+import { useNavigation } from '@react-navigation/native';
+import { languageData } from '../../../redux/language/languageSlice';
 
-const StaffDocumentControlScreen = ({navigation}) => {
+
+const StaffDocumentControlScreen:React.FC = () => {
+  const navigation=useNavigation();
+  const language = useSelector((state: RootState) => state.language.language);
+  const styles = getStyles(language);
   const [userData, setUserData] = useState(null);
+
 
   const getDataFromStorage = async () => {
     try {
@@ -33,7 +42,7 @@ const StaffDocumentControlScreen = ({navigation}) => {
       
       {userData?.documents && (
   <View style={{}}>
-   <CustomHeader title='Documents' onBackPress={()=>{navigation.goBack()}} />
+   <CustomHeader title={languageData[language].Documents} onBackPress={()=>{navigation.goBack()}} />
    
    <View style={{marginTop:15}} >
     {Object.entries(userData.documents).map(([key, value]) => (

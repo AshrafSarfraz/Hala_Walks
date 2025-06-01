@@ -61,13 +61,15 @@ export const getStyles=(language:string) => StyleSheet.create({
     fontFamily: language==='en'?Fonts.F_Bold:'',
   },
   call_cont:{
-    flexDirection:'row',
+    flexDirection:language==='en'?'row':"row-reverse",
     alignItems:"center",
    },
    Phone_Icon:{
-     width:22,height:22,
+     width:16,height:16,
      resizeMode:"contain",
-
+     marginHorizontal:2,
+     tintColor:Colors.PrimaryColor,
+     transform:language==='en'?[{ scaleX:1}]:[{ scaleX:-1}]
    },
    
    call_txt: {
@@ -145,7 +147,7 @@ export const getStyles=(language:string) => StyleSheet.create({
     textAlign:language==='en'?'left':'right',
   },
   Loc_Cont: {
-    flexDirection: 'row',
+    flexDirection: language==='en'?'row':"row-reverse",
     alignItems: 'center',
     marginTop:'2%'
   },
@@ -154,6 +156,7 @@ export const getStyles=(language:string) => StyleSheet.create({
     height: 16,
     resizeMode: 'contain',
     marginRight:"1%",
+    tintColor:Colors.PrimaryColor
     
   },
 

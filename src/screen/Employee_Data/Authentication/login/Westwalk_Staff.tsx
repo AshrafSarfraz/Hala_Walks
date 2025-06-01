@@ -17,6 +17,7 @@ import { Hide, Lock, ManIcon, Show, West_NB } from '../../../../theme/Images';
 
 const EmployeeLogin: React.FC= () => {
   const navigation=useNavigation()
+  const language = useSelector((state: RootState) => state.language.language);
   const styles = getStyles(language);
   
   const [employeeId, setEmployeeId] = useState('');
@@ -34,10 +35,7 @@ const EmployeeLogin: React.FC= () => {
     setAlertVisible(true);
     setTimeout(() => setAlertVisible(false), 3000);
   };
-  const language = useSelector(
-    (state: RootState) => state.language.language
-  );
- 
+
 
 
   const handleLogin = async () => {
@@ -78,17 +76,17 @@ const EmployeeLogin: React.FC= () => {
       
       <CustomHeader title=' ' onBackPress={()=>{navigation.goBack()}} />
       <Image source={West_NB} style={styles.Logo} />
-      <Text style={styles.Title}>Staff Login</Text>
-      <Text style={styles.Subtitle}>Enter your credentials to continue</Text>
+      <Text style={styles.Title}>{languageData[language].Staff_Login}</Text>
+      <Text style={styles.Subtitle}>{languageData[language].Enter_credentials}</Text>
 
       <View style={[ styles.InputContainer,employeeId !== '' && styles.Active_Input_Field,]}>
         <Image source={ManIcon} style={[ styles.Icon,employeeId !== '' && styles.Active_Image, ]}/>
-        <TextInput  placeholder="Enter your Staff ID" value={employeeId} onChangeText={setEmployeeId}  style={styles.input} placeholderTextColor="#888"/>
+        <TextInput  placeholder={languageData[language].Enter_your_ID} value={employeeId} onChangeText={setEmployeeId}  style={styles.input} placeholderTextColor="#888"/>
       </View>
 
       <View style={[ styles.InputContainer, password !== '' && styles.Active_Input_Field, ]} >
         <Image  source={Lock} style={[ styles.Icon,  password !== '' && styles.Active_Image, ]} />
-        <TextInput  secureTextEntry={hide}  placeholder="Enter your Password" value={password}  onChangeText={setPassword}
+        <TextInput  secureTextEntry={hide}  placeholder={languageData[language].Enter_your_Password} value={password}  onChangeText={setPassword}
           style={styles.passwordinput}  placeholderTextColor="#888" />
        <TouchableOpacity onPress={() => setHide(!hide)}>
           <Image source={hide ? Hide : Show} style={[ styles.HideIcon, password !== '' && styles.Active_Image, ]}/>
@@ -111,7 +109,7 @@ const EmployeeLogin: React.FC= () => {
         </TouchableOpacity>
       </View>
 
-      <CustomButton title="Login" onPress={handleLogin}
+      <CustomButton title={languageData[language].login} onPress={handleLogin}
       />
       {isLoading && ( <ActivityIndicatorModal visible={isLoading} /> )}
       <AnimatedToast  message={alertMessage} visible={alertVisible} duration={2000} type={alertType} />

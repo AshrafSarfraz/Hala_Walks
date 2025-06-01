@@ -7,6 +7,7 @@ const languageData = {
     // login Screen
     Organization_Login:"Organization Login",
     Tenants_Login:"Tenants Login",
+    Staff_Login:"Staff Login",
     Enter_credentials :"Enter your credentials to continue",
     Enter_your_ID:"Enter your ID",
     Enter_your_Password: "Enter your Password",
@@ -29,7 +30,9 @@ const languageData = {
     Redeem:"Redeem",
     Wishlist:"Wishlist",
     Language_Format:"ENG",
-
+    forget_password:"Forget Password",
+    Directory:"Directory",
+  
 
 
 
@@ -63,7 +66,7 @@ const languageData = {
     No_Items_Found:"No Item Found ",
     Detail_Screen:"Detail Screen",
     Upcoming_event:"Upcoming Events",
-    forget_password: "Forget Password",
+
     
     next: "next",
    
@@ -83,6 +86,7 @@ const languageData = {
   ar: {
     Organization_Login:"تسجيل دخول المؤسسة",
     Tenants_Login:"تسجيل دخول السكان",
+    Staff_Login:"تسجيل دخول الموظفين",
     Enter_credentials :"أدخل بيانات الاعتماد الخاصة بك للمتابعة",
     Enter_your_ID:"أدخل المعرف",
     Enter_your_Password: "أدخل كلمة المرور",
@@ -106,6 +110,9 @@ const languageData = {
     Redeem:"استرداد",
     Wishlist:"قائمة الرغبات",
     Language_Format:"العربية",
+    forget_password: "نسيت كلمة المرور",
+    Directory:"دليل الهاتف",
+
 
 
 
@@ -137,7 +144,7 @@ const languageData = {
     No_Items_Found:"لم يتم العثور على عناصر"  ,    
     Detail_Screen:"شاشة التفاصيل",
     Upcoming_event : "الفعاليات القادمة",
-    forget_password: "نسيت كلمة المرور",
+
 
     confirm: "تأكيد",
     discount_history: "سجل الخصومات",

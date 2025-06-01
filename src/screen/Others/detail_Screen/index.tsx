@@ -20,7 +20,7 @@ import {RootState} from '../../../redux/store';
 import {toggleItemInCart} from '../../../redux/cartSlice';
 import CustomHeader from '../../../components/header/CustomHeader';
 import {languageData} from '../../../redux/language/languageSlice';
-import {Dark_Heart, Light_Heart} from '../../../theme/Images';
+import {Dark_Heart, Light_Heart, location, Phone} from '../../../theme/Images';
 import CustomButton from '../../../components/buttons/CustomButton';
 import {Colors} from '../../../theme/Colors';
 import RedeemReceiptModal from '../../../components/Modal/StaffModal/RedeemModal';
@@ -109,7 +109,7 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
 
           </View>
           <View style={styles.Loc_Cont}>
-            <Image  source={require('../../../assets/icons/man.png')} style={styles.Loc_Icon} />
+            <Image  source={Address} style={styles.Loc_Icon} />
             <Text style={styles.Loc_Txt}>{item.Address} </Text>
           </View>
 
@@ -141,12 +141,12 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
             {language === 'ar' ? ( <Text style={styles.title}>{item.nameArabic}</Text>) : ( <Text style={styles.title}>{item.nameEng}</Text> )}
 
           <TouchableOpacity onPress={Contact} style={styles.call_cont}>
-              <Image source={require('../../../assets/icons/man.png')}  style={styles.Phone_Icon} />
+              <Image source={Phone}  style={styles.Phone_Icon} />
               <Text style={styles.call_txt}>{languageData[language].Call_Now}</Text>
           </TouchableOpacity>
           </View>
            <View style={styles.Loc_Cont}>
-            <Image  source={require('../../../assets/icons/man.png')}  style={styles.Loc_Icon} />
+            <Image  source={location}  style={styles.Loc_Icon} />
             <Text style={styles.Loc_Txt}>{item.Address} </Text>
           </View>
 

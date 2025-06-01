@@ -1,7 +1,7 @@
 import { Dimensions, Platform, StyleSheet } from "react-native";
 
 
-export const styles = StyleSheet.create({
+export const getStyles=(language:String)=> StyleSheet.create({
     safeArea: {
       flex: 1,
       backgroundColor: 'white',

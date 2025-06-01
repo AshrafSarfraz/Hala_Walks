@@ -2,7 +2,7 @@ import { Platform, StyleSheet } from "react-native";
 import { Colors } from "../../../theme/Colors";
 import { Fonts } from "../../../theme/Fonts";
 
-export const styles = StyleSheet.create({
+export const getStyles=(language:String)=> StyleSheet.create({
     Header_Cont:{
         width:'100%',
         height:Platform.OS==='ios'?300:270,

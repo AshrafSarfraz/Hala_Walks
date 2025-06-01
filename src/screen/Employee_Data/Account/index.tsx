@@ -2,17 +2,23 @@ import React, {useEffect, useState} from 'react';
 import {
   SafeAreaView, View, Image,Text,} from 'react-native';
 import CustomButton2 from '../../../components/buttons/CustomButton2';
-import {DocIcon, HistroyIcon, ProfileIcon, Show} from '../../../theme/Images';
+import {Contact_us, DocIcon, HistroyIcon, Phone, ProfileIcon, Show} from '../../../theme/Images';
 import CustomButton from '../../../components/buttons/CustomButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {styles} from './style';
+
+import { languageData } from '../../../redux/language/languageSlice';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
+import { getStyles } from './style';
 
 type AccountProps = {
   navigation: any;
 };
 
 const Account: React.FC<AccountProps> = ({navigation}) => {
-    const [userData, setUserData] = useState<any>(null);
+  const language = useSelector((state: RootState) => state.language.language);
+  const styles = getStyles(language);
+  const [userData, setUserData] = useState<any>(null);
   
 
   useEffect(() => {
@@ -55,40 +61,40 @@ const Account: React.FC<AccountProps> = ({navigation}) => {
           style={styles.profileImage}
         />
         <Text style={styles.name}>{userData.name}</Text>
-        <Text style={styles.staffId}>Staff ID: {userData.staffId}</Text>
+        <Text style={styles.staffId}>{userData.staffId}</Text>
       </View>
       <View style={styles.Button_Cont}>
         <CustomButton2
-          title="Profile"
+          title={languageData[language].Account_Info}
           image={ProfileIcon}
           onPress={() => {
             navigation.navigate('ProfileScreen');
           }}
         />
         <CustomButton2
-          title="Document"
+          title={languageData[language].Documents}
           image={DocIcon}
           onPress={() => {
             navigation.navigate('StaffDocumentControlScreen');
           }}
         />
         <CustomButton2
-          title="Redeem History"
+          title={languageData[language].Redeem_History}
           image={HistroyIcon}
           onPress={() => {
             navigation.navigate('StaffHistroyScreen');
           }}
         />
         <CustomButton2
-          title="Contact Us"
-          image={HistroyIcon}
+          title={languageData[language].Contact_Us}
+          image={Contact_us}
           onPress={() => {
             navigation.navigate('StaffContactUs');
           }}
         />
         <CustomButton2
-          title="Directory"
-          image={HistroyIcon}
+          title={languageData[language].Directory}
+          image={Phone}
           onPress={() => {
             navigation.navigate('PhoneDirectory');
           }}
@@ -96,7 +102,7 @@ const Account: React.FC<AccountProps> = ({navigation}) => {
       </View>
       <View style={styles.Logout_Cont}>
         <CustomButton
-          title="Logout"
+          title={languageData[language].logout}
           onPress={() => {
             handleLogout(navigation);
           }}

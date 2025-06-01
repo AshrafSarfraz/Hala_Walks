@@ -30,7 +30,7 @@ export const getStyles = (language: string) =>
         marginBottom: 30,
       },
       InputContainer: {
-        flexDirection: 'row',
+        flexDirection: language==='en'?'row':'row-reverse',
         alignItems: 'center',
         borderWidth: 2,
         borderColor: '#CCC',
@@ -44,20 +44,23 @@ export const getStyles = (language: string) =>
         width: 20,
         height: 20,
         resizeMode: 'contain',
-        marginRight: 10,
+        marginRight: language==='en'?10:0,
+        marginLeft: language==='en'?0:10,
         tintColor: Colors.Grey,
       },
       input: {
         flex: 1,
         fontSize: 14,
         color: '#000',
-        height:40
+        height:45,
+        textAlign: language==='en'?'left':'right',
       },
       passwordinput: {
         flex: 1,
         fontSize: 14,
         color: '#000',
-        height:40
+        height:45,
+        textAlign: language==='en'?'left':'right',
       },
       HideIcon: {
         width: 24,
@@ -79,7 +82,7 @@ export const getStyles = (language: string) =>
        
       },
       forgotContainer: {
-        flexDirection: 'row',
+        flexDirection:language==='en'?'row':'row-reverse',
         alignItems: 'center',
         justifyContent: 'space-between',
         marginBottom: 30,

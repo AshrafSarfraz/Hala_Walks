@@ -4,16 +4,22 @@ import { View, StyleSheet, ActivityIndicator, Dimensions, SafeAreaView } from 'r
 import { WebView } from 'react-native-webview';
 import CustomHeader from '../../../components/header/CustomHeader';
 import { useNavigation } from '@react-navigation/native';
-import { styles } from './style';
+
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
+import { getStyles } from './style';
+import { languageData } from '../../../redux/language/languageSlice';
 
 const WebViewScreen = () => {
   const navigation=useNavigation()
+  const language = useSelector((state: RootState) => state.language.language);
+  const styles = getStyles(language);
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <CustomHeader title='Contact us' onBackPress={()=>{navigation.goBack()}} />
+        <CustomHeader title={languageData[language].Contact_Us} onBackPress={()=>{navigation.goBack()}} />
         <WebView
-          source={{ uri: 'http://localhost:5173/staff-contact-us' }} // ← replace with your IP
+          source={{ uri: 'https://www.loyalityprogram.com/maintaince-complaint' }} // ← replace with your IP
           startInLoadingState={true}
           
           onMessage={(event) => {

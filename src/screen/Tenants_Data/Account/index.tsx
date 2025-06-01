@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, StyleSheet, View,Image, Platform, Text, TouchableOpacity } from 'react-native';
+import { SafeAreaView,View,Image,Text,} from 'react-native';
 import { Colors } from '../../../theme/Colors';
-import { Fonts } from '../../../theme/Fonts';
 import CustomButton2 from '../../../components/buttons/CustomButton2';
 import { Contact_us, DocIcon, HistroyIcon, ProfileIcon, Show } from '../../../theme/Images';
 import CustomButton from '../../../components/buttons/CustomButton';

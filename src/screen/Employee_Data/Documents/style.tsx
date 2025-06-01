@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native";
 import { Fonts } from "../../../theme/Fonts";
 import { Colors } from "../../../theme/Colors";
 
-export const styles = StyleSheet.create({
+export const getStyles=(language:String) => StyleSheet.create({
     Maincontainer:{
       flex: 1,
       backgroundColor: '#F4F4F4',
