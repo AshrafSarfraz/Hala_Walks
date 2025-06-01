@@ -28,6 +28,7 @@ const languageData = {
     Open_Map:"Open Map",
     Redeem:"Redeem",
     Wishlist:"Wishlist",
+    Language_Format:"ENG",
 
 
 
@@ -104,6 +105,8 @@ const languageData = {
     Open_Map :"افتح الخريطة",
     Redeem:"استرداد",
     Wishlist:"قائمة الرغبات",
+    Language_Format:"العربية",
+
 
 
     phone_number: "رقم الهاتف",

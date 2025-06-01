@@ -10,6 +10,7 @@ import { getStyles } from './style';
 import { RootState } from '../../../redux/store';
 import { languageData } from '../../../redux/language/languageSlice';
 import CustomButton from '../../../components/buttons/CustomButton';
+import LanguageModal from '../../../components/Modal/Lan_Modal';
 
 
 const langData = {
@@ -32,13 +33,21 @@ type OnBoardingProps = {
 };
 
 const OnBoarding: React.FC<OnBoardingProps> = ({ navigation }) => {
+  const language = useSelector((state: RootState) => state.language.language); // Get the current language from Redux
+  const styles = getStyles(language);
+
   const [showRealApp, setShowRealApp] = useState(false);
   const sliderRef = useRef<AppIntroSlider<any>>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [alertVisible, setAlertVisible] = useState<boolean>(false);
 
-  const language = useSelector((state: RootState) => state.language.language); // Get the current language from Redux
- 
-  const styles = getStyles(language);
+  const showAlert = () => {
+    setAlertVisible(true);
+  };
+
+  const hideAlert = () => {
+    setAlertVisible(false);
+  };
  
   const slides = [
     {
@@ -71,8 +80,10 @@ const OnBoarding: React.FC<OnBoardingProps> = ({ navigation }) => {
 
     return (
       <SafeAreaView style={[styles.slide, { backgroundColor:'#ffffff' }]}>
-          <StatusBar hidden={true} translucent={true} animated={true} />
-  
+          <StatusBar hidden={false} translucent={true} animated={true} />
+          <TouchableOpacity style={styles.LanButton}  onPress={showAlert} >
+            <Text style={styles.LanText} >{languageData[language].Language_Format}</Text>
+          </TouchableOpacity>
         <Image source={item.image} style={styles.image} resizeMode="contain" />
         <View style={{ height: 170, justifyContent: 'center', alignItems: 'center', width: '85%' }}>
           <Text style={styles.title}>{item.Title}</Text>
@@ -83,6 +94,7 @@ const OnBoarding: React.FC<OnBoardingProps> = ({ navigation }) => {
         <View style={styles.buttonContainer}>
           <CustomButton title={languageData[language].next} onPress={isLastSlide ? () => navigation.navigate('Role') : handleNextSlide} />
         </View>
+        <LanguageModal visible={alertVisible} onClose={hideAlert} />
       </SafeAreaView>
     );
   };
@@ -102,6 +114,7 @@ const OnBoarding: React.FC<OnBoardingProps> = ({ navigation }) => {
           renderDoneButton={() => null}
           renderPagination={() => null}
         />
+
       </SafeAreaView>
     );
   }

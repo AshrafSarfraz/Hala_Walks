@@ -17,7 +17,27 @@ export const getStyles = (language: string) =>
       resizeMode: 'contain',
       tintColor: Colors.PrimaryColor,
       transform:language === 'en' ?  [{scaleX:1}] :  [{scaleX:-1}] 
-     
+    },
+    LanButton:{
+      position:"absolute",
+      width: 60,
+      alignItems:"center",
+      justifyContent:"center",
+      height:35,
+      alignSelf:"flex-end",
+      right:40,
+      top:20,
+      borderColor:'gray',
+      borderWidth:0.2,
+      borderRadius:6,
+      backgroundColor:Colors.White
+    },
+    LanText:{
+     fontSize:14,
+     lineHeight:20,
+     color:Colors.PrimaryColor,
+     fontFamily:Fonts.F_Medium,
+     textAlign:"center"
     },
     slide: {
       flex: 1,
