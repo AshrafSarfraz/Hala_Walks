@@ -74,8 +74,11 @@ const getStyles=(language:string) => StyleSheet.create({
     tintColor: Colors.White, // ✅ Ensuring green tick
   },
   label: {
-    fontSize: 14,
+    fontSize: 13,
     color: Colors.Black,
+    fontWeight:'400',
+    lineHeight:18
+
   },
   linkText: {
     color: Colors.Black, // ✅ Blue for privacy policy link

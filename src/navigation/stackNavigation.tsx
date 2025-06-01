@@ -38,8 +38,6 @@ import PhoneDirectoryScreen from '../screen/Employee_Data/PhoneDirectory';
 
 
 
-
-
 const Stack = createNativeStackNavigator();
 
 export default function StackNavigation() {
@@ -81,6 +79,10 @@ export default function StackNavigation() {
         <Stack.Screen name="CorporationTab" component={CorporationTab}   />
         <Stack.Screen name="CorporationProfile" component={CorporationProfile}   />
         <Stack.Screen name="CorporationHistroyScreen" component={CorporationHistoryScreen}   />
+
+
+      
+
 
       </Stack.Navigator>
     </NavigationContainer>

@@ -1,0 +1,63 @@
+import { StyleSheet } from "react-native";
+import { Colors } from "../../../../theme/Colors";
+
+// ===================== STYLES =====================
+export const getStyles = (language: string) =>
+    StyleSheet.create({
+      Container: {
+        flex: 1,
+        backgroundColor: '#ffffff',
+        paddingHorizontal: 24,
+        paddingTop: 60,
+      },
+      Logo: {
+        width: 180,
+        height: 100,
+        alignSelf: 'center',
+        resizeMode: 'contain',
+        marginBottom: 40,
+      },
+      Title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#222',
+        textAlign: 'center',
+        marginBottom: 8,
+      },
+      Subtitle: {
+        fontSize: 14,
+        color: '#666',
+        textAlign: 'center',
+        marginBottom: 30,
+      },
+      InputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderWidth: 2,
+        borderColor: '#CCC',
+        borderRadius: 10,
+        height: 50,
+        marginBottom: 16,
+        backgroundColor: '#fff',
+        paddingHorizontal: 10,
+      },
+      Icon: {
+        width: 20,
+        height: 20,
+        resizeMode: 'contain',
+        marginRight: 10,
+        tintColor: Colors.Grey,
+      },
+      input: {
+        flex: 1,
+        fontSize: 14,
+        color: '#000',
+        height: 40,
+      },
+      Active_Input_Field: {
+        borderColor: Colors.PrimaryColor,
+      },
+      Active_Image: {
+        tintColor: Colors.PrimaryColor,
+      },
+    });

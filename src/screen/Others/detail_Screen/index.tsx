@@ -57,7 +57,7 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
     setModalVisible(true);
   };
 
-  // Google Map and Mobile Number
+
   const handleOpenMaps = () => {
     const url = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
     Linking.openURL(url);
@@ -66,24 +66,17 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
     const url = `tel:${phoneNumber}`;
     Linking.openURL(url);
   };
-  // Google Map and Mobile Number
-
-
   const handleImageLoad = () => {
-    setImageLoading(false); // Stop shimmer effect once the image has loaded
+    setImageLoading(false); 
   };
 
-
-  // async_Storage Data  for Selection the Correct Modal 
     const [userType, setUserType] = useState<'staff' | 'tenant' | 'org' | null>(null);
-
     useEffect(() => {
       const getUserType = async () => {
         try {
           const staff = await AsyncStorage.getItem('staff_data');
           const tenant = await AsyncStorage.getItem('tenant_data');
           const org = await AsyncStorage.getItem('org_emp_data');
-    
           if (staff) {
             setUserType('staff');
           } else if (tenant) {
@@ -92,125 +85,52 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
             setUserType('org');
           }
         } catch (error) {
-          console.error('Error reading AsyncStorage:', error);
-        }
-      };
-    
-      getUserType();
-    }, []);
-    
-
-    useEffect(() => {
-      console.log("User type is:", userType);
-    }, [userType]);
-    
-
+          console.error('Error reading AsyncStorage:', error);}};
+         getUserType();
+          }, []);
 
   return (
     <SafeAreaView>
-      <StatusBar
-        hidden={false}
-        translucent={true}
-        animated={true}
-        backgroundColor={Colors.Bg}
-        barStyle={'dark-content'}
-      />
-     
-    
-      <ScrollView>
-      { source==='event'?
-      (
+      <StatusBar hidden={false} translucent={true}  animated={true} backgroundColor={Colors.Bg}  barStyle={'dark-content'}/>
+      <ScrollView> { source==='event'? (
         <View style={styles.container}>
         <View style={styles.HeaderCont}>
-          <CustomHeader
-            title={languageData[language].Detail_Screen}
-            onBackPress={() => {
-              navigation.goBack();
-            }}
-          />
-
+          <CustomHeader  title={languageData[language].Detail_Screen} onBackPress={() => {  navigation.goBack(); }} />
         </View>
 
-        <View style={styles.Body_Cont}>
-          <ShimmerPlaceholder
-            visible={!imageLoading}
-            LinearGradient={LinearGradient}
-            style={styles.image}>
-            <Image
-              source={
-                typeof item.img === 'string' ? {uri: item.img} : item.img
-              }
-              style={styles.image}
-              onLoad={handleImageLoad}
-            />
+        <View style={styles.Body_Cont}> 
+          <ShimmerPlaceholder visible={!imageLoading}  LinearGradient={LinearGradient}  style={styles.image}>
+            <Image source={   typeof item.img === 'string' ? {uri: item.img} : item.img  } style={styles.image}  onLoad={handleImageLoad}  />
           </ShimmerPlaceholder>
 
           <View style={styles.Title_Cont}>
-            {language === 'ar' ? (
-              <Text style={styles.title}>{item.nameArabic}</Text>
-            ) : (
-              <Text style={styles.title}>{item.nameEng}</Text>
-            )}
+            {language === 'ar' ? (  <Text style={styles.title}>{item.nameArabic}</Text>) :
+             ( <Text style={styles.title}>{item.nameEng}</Text> )}
 
           </View>
           <View style={styles.Loc_Cont}>
-            <Image
-              source={require('../../../assets/icons/man.png')}
-              style={styles.Loc_Icon}
-            />
+            <Image  source={require('../../../assets/icons/man.png')} style={styles.Loc_Icon} />
             <Text style={styles.Loc_Txt}>{item.Address} </Text>
           </View>
 
-        
-
           <View style={styles.Desc_Cont}>
-            <Text style={styles.Desc}>
-              {languageData[language].description}
-            </Text>
+            <Text style={styles.Desc}>  {languageData[language].description} </Text>
           </View>
-          {language === 'ar' ? (
-            <Text style={styles.Detail}>{item.descriptionArabic}</Text>
-          ) : (
-            <Text style={styles.Detail}>{item.descriptionEng}</Text>
-          )}
-        </View>
-
-      </View>
-      ):
+          {language === 'ar' ? (  <Text style={styles.Detail}>{item.descriptionArabic}</Text> ) : ( <Text style={styles.Detail}>{item.descriptionEng}</Text> )}
+          </View>
+           </View> ):
       (
         <View style={styles.container}>
         <View style={styles.HeaderCont}>
-          <CustomHeader
-            title={languageData[language].Detail_Screen}
-            onBackPress={() => {
-              navigation.goBack();
-            }}
-          />
-
-          <TouchableOpacity
-            onPress={() => {
-              handleToggleCart();
-            }}>
-            {isInCart ? (
-              <Image source={Dark_Heart} style={styles.HeartStyle} />
-            ) : (
-              <Image source={Light_Heart} style={styles.HeartStyle} />
-            )}
+        <CustomHeader title={languageData[language].Detail_Screen} onBackPress={() => { navigation.goBack();}} />
+          <TouchableOpacity onPress={() => { handleToggleCart(); }}>
+            {isInCart ? ( <Image source={Dark_Heart} style={styles.HeartStyle} />  ) : ( <Image source={Light_Heart} style={styles.HeartStyle} />  )}
           </TouchableOpacity>
         </View>
 
         <View style={styles.Body_Cont}>
-          <ShimmerPlaceholder
-            visible={!imageLoading}
-            LinearGradient={LinearGradient}
-            style={styles.image}>
-            <Image
-              source={
-                typeof item.img === 'string' ? {uri: item.img} : item.img
-              }
-              style={styles.image}
-              onLoad={handleImageLoad}
-            />
+          <ShimmerPlaceholder  visible={!imageLoading} LinearGradient={LinearGradient} style={styles.image}>
+            <Image source={   typeof item.img === 'string' ? {uri: item.img} : item.img  } style={styles.image} onLoad={handleImageLoad} />
           </ShimmerPlaceholder>
 
           <View style={styles.Type_Cont}>
@@ -218,25 +138,15 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
           </View>
 
           <View style={styles.Title_Cont}>
-            {language === 'ar' ? (
-              <Text style={styles.title}>{item.nameArabic}</Text>
-            ) : (
-              <Text style={styles.title}>{item.nameEng}</Text>
-            )}
+            {language === 'ar' ? ( <Text style={styles.title}>{item.nameArabic}</Text>) : ( <Text style={styles.title}>{item.nameEng}</Text> )}
 
-            <TouchableOpacity onPress={Contact} style={styles.call_cont}>
-              <Image
-                source={require('../../../assets/icons/man.png')}
-                style={styles.Phone_Icon}
-              />
+          <TouchableOpacity onPress={Contact} style={styles.call_cont}>
+              <Image source={require('../../../assets/icons/man.png')}  style={styles.Phone_Icon} />
               <Text style={styles.call_txt}>Call Now</Text>
-            </TouchableOpacity>
+          </TouchableOpacity>
           </View>
-          <View style={styles.Loc_Cont}>
-            <Image
-              source={require('../../../assets/icons/man.png')}
-              style={styles.Loc_Icon}
-            />
+           <View style={styles.Loc_Cont}>
+            <Image  source={require('../../../assets/icons/man.png')}  style={styles.Loc_Icon} />
             <Text style={styles.Loc_Txt}>{item.Address} </Text>
           </View>
 

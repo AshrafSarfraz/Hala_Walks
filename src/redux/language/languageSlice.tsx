@@ -5,9 +5,25 @@ import { createSlice } from '@reduxjs/toolkit';
 const languageData = {
   en: {
     // login Screen
+    Organization_Login:"Organization Login",
+    Enter_credentials :"Enter your credentials to continue",
+    Enter_your_ID:"Enter your ID",
+    Enter_your_Password: "Enter your Password",
+    Welcome_to:"Welcome to",
+    WestWalk_Family:"West Walk Family",
+    WestWalk_Employee:"West-Walk Employee",
+    WestWalk_Tenant:"West-Walk Tenant",
+    Organization_Emp:"Organization-Emp",
+    Select_your_role:"Select your role to continue",
+
+    //Account
+    Redeem_History:"Redeem History",
+
+
+
+
     welcome_back: "Welcome Back!",
     sign_in_message: "Sign in with your account",
-    full_name: "Full name",
     phone_number: "phone number",
     login: "login",
     logout: "logout",
@@ -51,9 +67,25 @@ const languageData = {
     you_got: "You got",
     save: "Save",
   },
+
+
   ar: {
+    Organization_Login:"تسجيل دخول المؤسسة",
+    Enter_credentials :"أدخل بيانات الاعتماد الخاصة بك للمتابعة",
+    Enter_your_ID:"أدخل المعرف",
+    Enter_your_Password: "أدخل كلمة المرور",
+    Welcome_to:" مرحبًا بك في ",
+    WestWalk_Family:"عائلة ويست ووك",
+    WestWalk_Employee:"موظف ويست ووك",
+    WestWalk_Tenant:"ساكن ويست ووك",
+    Organization_Emp:"موظف مؤسسة", 
+    Select_your_role:"اختر دورك للمتابعة",
     login: "تسجيل الدخول",
     logout: "تسجيل الخروج",
+    //Account
+    Redeem_History:"سجل الاسترداد",
+
+
     phone_number: "رقم الهاتف",
     agree_to: "أوافق على ",
     privacy_policy: "سياسة الخصوصية",

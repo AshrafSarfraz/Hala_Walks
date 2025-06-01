@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { SafeAreaView, StyleSheet, View,Image, Platform, Text, TouchableOpacity } from 'react-native';
 import { Colors } from '../../../theme/Colors';
-import { Fonts } from '../../../theme/Fonts';
 import CustomButton2 from '../../../components/buttons/CustomButton2';
-import { DocIcon, HistroyIcon, ManIcon, P_IMG, ProfileIcon, Show, West_Icon } from '../../../theme/Images';
+import {  HistroyIcon,P_IMG, } from '../../../theme/Images';
 import CustomButton from '../../../components/buttons/CustomButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
+import { getStyles } from './style';
+import { languageData } from '../../../redux/language/languageSlice';
 
 type AccountProps={
   navigation:any
@@ -14,6 +17,10 @@ type AccountProps={
 
 const CorporationAccount:React.FC<AccountProps> = ({navigation}) => {
   const [userData, setUserData] = useState<any>(null);
+  const styles = getStyles(language);
+  const language = useSelector(
+    (state: RootState) => state.language.language
+  );
       
   useEffect(() => {
     const fetchUserData = async () => {
@@ -40,7 +47,7 @@ const CorporationAccount:React.FC<AccountProps> = ({navigation}) => {
 
   const handleLogout = async (navigation: any) => {
     try {
-      await AsyncStorage.removeItem('tenant_data'); // or AsyncStorage.clear()
+      await AsyncStorage.removeItem('org_emp_data'); // or AsyncStorage.clear()
       navigation.navigate('Role');
     } catch (error) {
       console.log('Error during logout:', error);
@@ -60,56 +67,16 @@ const CorporationAccount:React.FC<AccountProps> = ({navigation}) => {
          </View>
          <View style={styles.Button_Cont} >
           {/* <CustomButton2  title='Account Info' image={ProfileIcon} onPress={()=>{navigation.navigate('CorporationProfile')}} /> */}
-          <CustomButton2  title='Redeem History' image={HistroyIcon} onPress={()=>{navigation.navigate('CorporationHistroyScreen')}} />
+          <CustomButton2  title={languageData[language].Redeem_History} image={HistroyIcon} onPress={()=>{navigation.navigate('CorporationHistroyScreen')}} />
          </View>
           <View style={styles.Logout_Cont} >
-            <CustomButton title='Logout' onPress={()=>handleLogout(navigation)}  />
+            <CustomButton title={languageData[language].logout} onPress={()=>handleLogout(navigation)}  />
           </View>
 
        </SafeAreaView>
     );
 }
 
-const styles = StyleSheet.create({
-    Header_Cont:{
-        width:'100%',
-        height:Platform.OS==='ios'?300:270,
-        backgroundColor:Colors.PrimaryColor,
-        justifyContent:"flex-end",
-        alignItems:"center",
-        borderBottomLeftRadius:30,
-        borderBottomRightRadius:30,
 
-    },
-    profileImage: {
-        width: 120,
-        height: 120,
-        borderRadius: 60,
-        marginBottom:14,
-      },
-      name: {
-        fontSize: 20,
-        color: '#fff',
-        lineHeight:26,
-        fontFamily:Fonts.F_Bold
-      },
-      staffId: {
-        fontSize: 14,
-        color: '#fff',
-        marginVertical: 4,
-        lineHeight:18,
-        fontFamily:Fonts.F_Medium,
-        marginBottom: 40,
-      },
-      Button_Cont:{
-        marginVertical:20
-      },
-      Logout_Cont:{
-        width:'92%',
-        alignSelf:"center",
-        position:"absolute",
-        bottom:40
-      }
-})
 
 export default CorporationAccount;

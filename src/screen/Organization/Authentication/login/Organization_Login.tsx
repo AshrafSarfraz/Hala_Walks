@@ -1,22 +1,6 @@
 import React, { useState } from 'react';
-import {
-  TextInput,
-  StyleSheet,
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  Linking,
-  Alert,
-} from 'react-native';
-import {
-  Hide,
-  Lock,
-  ManIcon,
-  Show,
-  West_NB,
-} from '../../../../theme/Images';
-import { Colors } from '../../../../theme/Colors';
+import {TextInput, View, Text, Image, TouchableOpacity, Linking,Alert,} from 'react-native';
+import { Hide, Lock,ManIcon, Show,West_NB,} from '../../../../theme/Images';
 import CustomButton from '../../../../components/buttons/CustomButton';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../redux/store';
@@ -26,22 +10,24 @@ import CustomHeader from '../../../../components/header/CustomHeader';
 import { fetch_OrgEmp_Data } from '../../../../firebase/firebaseutils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ActivityIndicatorModal from '../../../../components/Loader/ActivityIndicator';
+import { getStyles } from './style';
 
 interface LoginProps {
   navigation: any;
 }
 
 const OrgEmp_Login: React.FC<LoginProps> = ({ navigation }) => {
-  const [employeeId, setEmployeeId] = useState('');
-  const [password, setPassword] = useState('');
-  const [hide, setHide] = useState(true);
-   const [isLoading, setIsLoading] = useState<boolean>(false); 
-  const [isChecked, setIsChecked] = useState<boolean>(false);
-
+  const styles = getStyles(language);
   const language = useSelector(
     (state: RootState) => state.language.language
   );
-  const styles = getStyles(language);
+  
+  const [employeeId, setEmployeeId] = useState('');
+  const [password, setPassword] = useState('');
+  const [hide, setHide] = useState(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false); 
+  const [isChecked, setIsChecked] = useState<boolean>(false);
+
 
   const handleLogin = async () => {
     if (!employeeId || !password) {
@@ -80,8 +66,9 @@ const OrgEmp_Login: React.FC<LoginProps> = ({ navigation }) => {
     <View style={styles.Container}>
        <CustomHeader title=' ' onBackPress={()=>{navigation.goBack()}} />
       <Image source={West_NB} style={styles.Logo} />
-      <Text style={styles.Title}>Organization Login</Text>
-      <Text style={styles.Subtitle}>Enter your credentials to continue</Text>
+      <Text style={styles.Title}>{languageData[language].Organization_Login}</Text>
+      <Text style={styles.Subtitle}>{languageData[language].Enter_credentials}</Text>
+      
 
       <View
         style={[
@@ -97,7 +84,7 @@ const OrgEmp_Login: React.FC<LoginProps> = ({ navigation }) => {
           ]}
         />
         <TextInput
-          placeholder="Enter Emp-ID"
+          placeholder={languageData[language].Enter_your_ID}
           value={employeeId}
           onChangeText={setEmployeeId}
           style={styles.input}
@@ -120,7 +107,7 @@ const OrgEmp_Login: React.FC<LoginProps> = ({ navigation }) => {
         />
         <TextInput
           secureTextEntry={hide}
-          placeholder="Enter your Password"
+          placeholder={languageData[language].Enter_your_Password}
           value={password}
           onChangeText={setPassword}
           style={styles.passwordinput}
@@ -153,7 +140,7 @@ const OrgEmp_Login: React.FC<LoginProps> = ({ navigation }) => {
       </View>
 
       <CustomButton
-        title="Login"
+        title={languageData[language].login}
         onPress={handleLogin}
       />
 
@@ -166,89 +153,4 @@ const OrgEmp_Login: React.FC<LoginProps> = ({ navigation }) => {
 
 export default OrgEmp_Login;
 
-// ===================== STYLES =====================
-const getStyles = (language: string) =>
-  StyleSheet.create({
-    Container: {
-      flex: 1,
-      backgroundColor: '#ffffff',
-      paddingHorizontal: 24,
-      paddingTop: 60,
-    },
-    Logo: {
-      width: 180,
-      height: 100,
-      alignSelf: 'center',
-      resizeMode: 'contain',
-      marginBottom: 40,
-    },
-    Title: {
-      fontSize: 24,
-      fontWeight: 'bold',
-      color: '#222',
-      textAlign: 'center',
-      marginBottom: 8,
-    },
-    Subtitle: {
-      fontSize: 14,
-      color: '#666',
-      textAlign: 'center',
-      marginBottom: 30,
-    },
-    InputContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      borderWidth: 2,
-      borderColor: '#CCC',
-      borderRadius: 10,
-      height: 50,
-      marginBottom: 16,
-      backgroundColor: '#fff',
-      paddingHorizontal: 10,
-    },
-    Icon: {
-      width: 20,
-      height: 20,
-      resizeMode: 'contain',
-      marginRight: 10,
-      tintColor: Colors.Grey,
-    },
-    input: {
-      flex: 1,
-      fontSize: 14,
-      color: '#000',
-      height:45,
-    },
-    passwordinput: {
-      flex: 1,
-      fontSize: 14,
-      color: '#000',
-      height:45,
-    },
-    HideIcon: {
-      width: 24,
-      height: 24,
-      tintColor: Colors.Grey,
-      resizeMode: 'contain',
-    },
-    Active_Input_Field: {
-      borderColor: Colors.PrimaryColor,
-    },
-    Active_Image: {
-      tintColor: Colors.PrimaryColor,
-    },
-    ForgotText: {
-      color: Colors.PrimaryColor,
-      fontSize: 13,
-      textDecorationLine: 'underline',
-    },
-    forgotContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      marginBottom: 30,
-    },
-    checkboxContainer: {
-      flex: 1,
-    },
-  });
+

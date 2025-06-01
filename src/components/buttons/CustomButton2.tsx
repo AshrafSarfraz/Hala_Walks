@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity,ImageSourcePropType } from 'react-native';
 import { Fonts } from '../../theme/Fonts';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
 
 type Props = {
   title: string;
@@ -9,6 +11,10 @@ type Props = {
 };
 
 const CustomButton2: React.FC<Props> = ({ title, image, onPress }) => {
+  const styles = getStyles(language);
+  const language = useSelector(
+    (state: RootState) => state.language.language
+  );
   return (
     <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.8}>
       <View style={styles.leftSection}>
@@ -19,7 +25,7 @@ const CustomButton2: React.FC<Props> = ({ title, image, onPress }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const getStyles=(language:string) => StyleSheet.create({
   container: {
     backgroundColor: '#ffffff',
     paddingHorizontal: 15,
@@ -27,7 +33,7 @@ const styles = StyleSheet.create({
     height:50,
     marginHorizontal: 16,
     borderRadius: 8,
-    flexDirection: 'row',
+    flexDirection:language==='en'?"row":"row-reverse",
     alignItems: 'center',
     justifyContent: 'space-between',
     elevation:1,
@@ -36,16 +42,18 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0,height: 5,},
     shadowOpacity: 0.2,
     shadowRadius: 4,
-    borderWidth:0.2
+    borderWidth:0.2,
+
   },
   leftSection: {
-    flexDirection: 'row',
+    flexDirection: language==='en'?'row':"row-reverse",
     alignItems: 'center',
   },
   image: {
     width: 20,
     height: 20,
-    marginRight: 12,
+    marginRight:language==='en'?12:0,
+    marginLeft:language==='en'?0:12,
     resizeMode:"contain"
   },
   title: {
