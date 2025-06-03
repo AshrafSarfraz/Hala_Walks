@@ -10,7 +10,7 @@ import { Info, Success, Warning, Error } from '../../../theme/Images'; // ✅ Fi
 
 const { width } = Dimensions.get('window');
 
-const AnimatedToast = ({ message, visible, duration = 3000, type }) => {
+const AnimatedToast = ({ message, visible, duration = 5000, type }) => {
   const translateY = useSharedValue(-150); // ✅ Start off-screen
 
   useEffect(() => {
@@ -22,7 +22,7 @@ const AnimatedToast = ({ message, visible, duration = 3000, type }) => {
 
       const hideTimeout = setTimeout(() => {
         translateY.value = withTiming(-150, {
-          duration: 300,
+          duration: 6000,
           easing: Easing.in(Easing.ease),
         });
       }, duration);

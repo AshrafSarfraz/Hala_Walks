@@ -95,12 +95,12 @@ const EmployeeLogin: React.FC= () => {
           
       <View style={styles.forgotContainer}>
         <View style={styles.checkboxContainer}>
-          <CustomCheckbox
+          {/* <CustomCheckbox
             label={languageData[language].agree_to}
             isChecked={isChecked}
             onPress={() => setIsChecked(!isChecked)}
             linkText={languageData[language].privacy_policy}
-            onLinkPress={() =>  Linking.openURL('https://halabsaudi.com/privacy-policy-2/') }/>
+            onLinkPress={() =>  Linking.openURL('https://halabsaudi.com/privacy-policy-2/') }/> */}
         </View>
         <TouchableOpacity onPress={() => {navigation.navigate("StaffForgetPassword")}  } >
           <Text style={styles.ForgotText}>

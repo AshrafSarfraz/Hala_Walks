@@ -124,7 +124,7 @@ const OrgEmp_Login: React.FC<LoginProps> = ({ navigation }) => {
 
       <View style={styles.forgotContainer}>
         <View style={styles.checkboxContainer}>
-          <CustomCheckbox
+          {/* <CustomCheckbox
             label={languageData[language].agree_to}
             isChecked={isChecked}
             onPress={() => setIsChecked(!isChecked)}
@@ -132,7 +132,7 @@ const OrgEmp_Login: React.FC<LoginProps> = ({ navigation }) => {
             onLinkPress={() =>
               Linking.openURL('https://halabsaudi.com/privacy-policy-2/')
             }
-          />
+          /> */}
         </View>
 
       </View>

@@ -92,13 +92,13 @@ const Account: React.FC<AccountProps> = ({navigation}) => {
             navigation.navigate('StaffContactUs');
           }}
         />
-        <CustomButton2
+        {/* <CustomButton2
           title={languageData[language].Directory}
           image={Phone}
           onPress={() => {
             navigation.navigate('PhoneDirectory');
           }}
-        />
+        /> */}
       </View>
       <View style={styles.Logout_Cont}>
         <CustomButton

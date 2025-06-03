@@ -19,8 +19,7 @@ const WebViewScreen = () => {
       <View style={styles.container}>
         <CustomHeader title={languageData[language].Contact_Us} onBackPress={()=>{navigation.goBack()}} />
         <WebView
-          source={{ uri: 'https://loyalityprogram.com/contact_us_form_staff' }} // ← replace with your IP
-          startInLoadingState={true}
+          source={{ uri: 'https://loyalityprogram.com/contact_us_form_staff' }} 
           
           onMessage={(event) => {
             const message = event.nativeEvent.data;

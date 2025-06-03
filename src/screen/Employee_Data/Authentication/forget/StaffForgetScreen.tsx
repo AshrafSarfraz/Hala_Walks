@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TextInput, View,Text,Image,Alert } from 'react-native';
 import { ManIcon, West_NB } from '../../../../theme/Images';
 import CustomButton from '../../../../components/buttons/CustomButton';
@@ -17,6 +17,9 @@ interface LoginProps {
 }
 
 const StaffForgetPassword: React.FC<LoginProps> = ({ navigation }) => {
+  const language = useSelector((state: RootState) => state.language.language);
+  const styles = getStyles(language);
+
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [alertVisible, setAlertVisible] = useState(false);
@@ -30,9 +33,8 @@ const StaffForgetPassword: React.FC<LoginProps> = ({ navigation }) => {
     setTimeout(() => setAlertVisible(false), 3000);
   };
 
-  const language = useSelector((state: RootState) => state.language.language);
-  const styles = getStyles(language);
 
+ 
 
   const handlePasswordReset = async () => {
     if (!email) {
@@ -58,7 +60,9 @@ const StaffForgetPassword: React.FC<LoginProps> = ({ navigation }) => {
 
       await auth().sendPasswordResetEmail(email.trim());
       showToast(language === 'ar' ? 'تم إرسال البريد بنجاح' : 'Password reset email sent. Please check your inbox.', 'SUCCESS');
-      navigation.goBack();
+      
+      setTimeout(() => { navigation.goBack();}, 3000);
+      
     } catch (error: any) {
       showToast(language === 'ar' ? 'فشل في إرسال البريد' : 'Failed to send reset email.', 'ERROR');
     } finally {

@@ -49,6 +49,7 @@ const StaffHistoryScreen: React.FC = () => {
       <FlatList
         data={history}
         keyExtractor={item => item.id}
+        showsVerticalScrollIndicator={false}
         renderItem={({ item }) => (
           <TouchableOpacity style={styles.item} onPress={() => openModal(item)}>
             <Text style={styles.itemCode}>Brand: {item.brandName}</Text>
