@@ -4,13 +4,13 @@ import { Dimensions, Platform, StyleSheet } from "react-native";
 export const getStyles=(language:String)=> StyleSheet.create({
     safeArea: {
       flex: 1,
-      backgroundColor: 'white',
+      backgroundColor: "#ffffff",
     },
     container: {
       flex: 1,
-      backgroundColor:'white',
+      backgroundColor: "#ffffff",
       paddingHorizontal:'4%',
-      paddingTop:Platform.OS==='ios'?0:25,
+      paddingTop:Platform.OS==='ios'?0:20,
     
     },
     loading: {

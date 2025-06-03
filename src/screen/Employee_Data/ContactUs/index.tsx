@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, StyleSheet, ActivityIndicator, Dimensions, SafeAreaView } from 'react-native';
+import React, { useState } from 'react';
+import { View, ActivityIndicator,  SafeAreaView } from 'react-native';
 
 import { WebView } from 'react-native-webview';
 import CustomHeader from '../../../components/header/CustomHeader';
@@ -19,7 +19,7 @@ const WebViewScreen = () => {
       <View style={styles.container}>
         <CustomHeader title={languageData[language].Contact_Us} onBackPress={()=>{navigation.goBack()}} />
         <WebView
-          source={{ uri: 'https://www.loyalityprogram.com/maintaince-complaint' }} // ← replace with your IP
+          source={{ uri: 'https://loyalityprogram.com/contact_us_form_staff' }} // ← replace with your IP
           startInLoadingState={true}
           
           onMessage={(event) => {
@@ -29,13 +29,13 @@ const WebViewScreen = () => {
             }
           }}
 
-          renderLoading={() => (
-            <ActivityIndicator
-              color="#009688"
-              size="large"
-              style={styles.loading}
-            />
-          )}
+          // renderLoading={() => (
+          //   <ActivityIndicator
+          //     color="#009688"
+          //     size="large"
+          //     style={styles.loading}
+          //   />
+          // )}
         />
       </View>
     </SafeAreaView>
