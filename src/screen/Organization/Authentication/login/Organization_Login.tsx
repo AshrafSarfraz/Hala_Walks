@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {TextInput, View, Text, Image, TouchableOpacity, Linking,Alert,} from 'react-native';
+import {TextInput, View, Text, Image, TouchableOpacity, Linking,Alert, StatusBar,} from 'react-native';
 import { Hide, Lock,ManIcon, Show,West_NB,} from '../../../../theme/Images';
 import CustomButton from '../../../../components/buttons/CustomButton';
 import { useSelector } from 'react-redux';
@@ -11,6 +11,7 @@ import { fetch_OrgEmp_Data } from '../../../../firebase/firebaseutils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ActivityIndicatorModal from '../../../../components/Loader/ActivityIndicator';
 import { getStyles } from './style';
+import AnimatedToast from '../../../../components/Modal/CustomAlert/CustomAlert';
 
 interface LoginProps {
   navigation: any;
@@ -25,11 +26,21 @@ const OrgEmp_Login: React.FC<LoginProps> = ({ navigation }) => {
   const [hide, setHide] = useState(true);
   const [isLoading, setIsLoading] = useState<boolean>(false); 
   const [isChecked, setIsChecked] = useState<boolean>(false);
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertType, setAlertType] = useState<'SUCCESS' | 'ERROR'>('SUCCESS');
+    
+    const showToast = (message: string, type: 'SUCCESS' | 'ERROR') => {
+      setAlertMessage(message);
+      setAlertType(type);
+      setAlertVisible(true);
+      setTimeout(() => setAlertVisible(false), 3000);
+    };
 
 
   const handleLogin = async () => {
     if (!employeeId || !password) {
-      Alert.alert('Missing Fields', 'Please enter both ID and Password');
+      showToast('Missing Fields, Please enter both ID and Password', 'ERROR');
       return;
     }
      setIsLoading(true);
@@ -47,21 +58,22 @@ const OrgEmp_Login: React.FC<LoginProps> = ({ navigation }) => {
           JSON.stringify(matchedTenant)
         );
 
-        console.log('✅ Tenant Login Success:', matchedTenant);
+        showToast('✅ Tenant Login Success:','SUCCESS' );
         navigation.navigate('CorporationTab', { userData: matchedTenant });
         setIsLoading(false)
       } else {
-        Alert.alert('Login Failed', 'Invalid ID or Password');
+        showToast('Login Failed, Invalid ID or Password', 'ERROR');
       }
     } catch (error) {
-      console.error('❌ Login Error:', error);
-      Alert.alert('Error', 'Something went wrong. Please try again.');
+     // console.error('❌ Login Error:', error);
+      showToast('Something went wrong. Please try again.','ERROR');
     }
     setIsLoading(false)
   };
 
   return (
     <View style={styles.Container}>
+      <StatusBar hidden={false} translucent={true} animated={true}  barStyle="dark-content" />
        <CustomHeader title=' ' onBackPress={()=>{navigation.goBack()}} />
       <Image source={West_NB} style={styles.Logo} />
       <Text style={styles.Title}>{languageData[language].Organization_Login}</Text>
@@ -137,14 +149,11 @@ const OrgEmp_Login: React.FC<LoginProps> = ({ navigation }) => {
 
       </View>
 
-      <CustomButton
-        title={languageData[language].login}
-        onPress={handleLogin}
-      />
+      <CustomButton title={languageData[language].login}  onPress={handleLogin} />
 
-       {isLoading && (
-            <ActivityIndicatorModal visible={isLoading} />
-          )}
+       {isLoading && ( <ActivityIndicatorModal visible={isLoading} /> )}
+       <AnimatedToast  message={alertMessage} visible={alertVisible} duration={2000} type={alertType} />
+   
     </View>
   );
 };

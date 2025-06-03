@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, ActivityIndicator,  SafeAreaView } from 'react-native';
+import { View, ActivityIndicator,  SafeAreaView, StatusBar } from 'react-native';
 
 import { WebView } from 'react-native-webview';
 import CustomHeader from '../../../components/header/CustomHeader';
@@ -16,6 +16,7 @@ const WebViewScreen = () => {
   const styles = getStyles(language);
   return (
     <SafeAreaView style={styles.safeArea}>
+         <StatusBar hidden={false} translucent={true} animated={true} barStyle={'dark-content'} />
       <View style={styles.container}>
         <CustomHeader title={languageData[language].Contact_Us} onBackPress={()=>{navigation.goBack()}} />
         <WebView

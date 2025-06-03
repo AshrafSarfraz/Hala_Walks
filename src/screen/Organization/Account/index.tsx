@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, StyleSheet, View,Image, Platform, Text, TouchableOpacity } from 'react-native';
+import { SafeAreaView, StyleSheet, View,Image, Platform, Text, TouchableOpacity, StatusBar } from 'react-native';
 import { Colors } from '../../../theme/Colors';
 import CustomButton2 from '../../../components/buttons/CustomButton2';
 import {  HistroyIcon,P_IMG, } from '../../../theme/Images';
@@ -55,6 +55,7 @@ const CorporationAccount:React.FC<AccountProps> = ({navigation}) => {
   
     return (
        <SafeAreaView style={{flex:1,backgroundColor:Colors.Bg}} >
+            <StatusBar hidden={false} translucent={true} animated={true} barStyle={'light-content'} />
          <View style={styles.Header_Cont} >
          {userData?.profileImg ? (
        <Image   source={{ uri: userData.profileImg }}style={styles.profileImage}/>) : (

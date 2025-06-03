@@ -109,7 +109,7 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
 
           </View>
           <View style={styles.Loc_Cont}>
-            <Image  source={Address} style={styles.Loc_Icon} />
+            <Image  source={location} style={styles.Loc_Icon} />
             <Text style={styles.Loc_Txt}>{item.Address} </Text>
           </View>
 

@@ -28,9 +28,10 @@ export const getStyles = (language: string) =>
       right:40,
       top:20,
       borderColor:'gray',
-      borderWidth:0.2,
+      borderWidth:1,
       borderRadius:6,
-      backgroundColor:Colors.White
+      backgroundColor:Colors.White,
+      zIndex:1
     },
     LanText:{
      fontSize:14,

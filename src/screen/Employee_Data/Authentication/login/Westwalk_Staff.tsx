@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {TextInput,View, Text, Image,TouchableOpacity,Linking,} from 'react-native';
+import {TextInput,View, Text, Image,TouchableOpacity,Linking, StatusBar, SafeAreaView,} from 'react-native';
 import CustomButton from '../../../../components/buttons/CustomButton';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../redux/store';
@@ -72,8 +72,9 @@ const EmployeeLogin: React.FC= () => {
   
 
   return (
+    <SafeAreaView style={styles.SafeViewCont} >
     <View style={styles.Container}>
-      
+     <StatusBar hidden={false} translucent={true} animated={true}  barStyle="dark-content" />
       <CustomHeader title=' ' onBackPress={()=>{navigation.goBack()}} />
       <Image source={West_NB} style={styles.Logo} />
       <Text style={styles.Title}>{languageData[language].Staff_Login}</Text>
@@ -114,6 +115,7 @@ const EmployeeLogin: React.FC= () => {
       {isLoading && ( <ActivityIndicatorModal visible={isLoading} /> )}
       <AnimatedToast  message={alertMessage} visible={alertVisible} duration={2000} type={alertType} />
     </View>
+    </SafeAreaView>
   );
 };
 

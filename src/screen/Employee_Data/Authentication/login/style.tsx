@@ -1,13 +1,17 @@
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 import { Colors } from "../../../../theme/Colors";
 
 export const getStyles = (language: string) =>
     StyleSheet.create({
+      SafeViewCont:{
+        flex: 1,
+        backgroundColor: '#ffffff',
+      },
       Container: {
         flex: 1,
         backgroundColor: '#ffffff',
         paddingHorizontal: 24,
-        paddingTop: 60,
+        paddingTop:Platform.OS==='ios'?10:45,
       },
       Logo: {
         width: 180,

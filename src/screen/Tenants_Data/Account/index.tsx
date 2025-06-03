@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView,View,Image,Text,} from 'react-native';
+import { SafeAreaView,View,Image,Text, StatusBar,} from 'react-native';
 import { Colors } from '../../../theme/Colors';
 import CustomButton2 from '../../../components/buttons/CustomButton2';
 import { Contact_us, DocIcon, HistroyIcon, ProfileIcon, Show } from '../../../theme/Images';
@@ -52,6 +52,7 @@ const TenantsAccount:React.FC<AccountProps> = ({navigation}) => {
 
     return (
        <SafeAreaView style={{flex:1,backgroundColor:Colors.Bg}} >
+          <StatusBar hidden={false} translucent={true} animated={true} barStyle={'light-content'} />
          <View style={styles.Header_Cont} >
          <Image source={{ uri:userData.profileImg }} style={styles.profileImage} />
           <Text style={styles.name}>{userData.name}</Text>

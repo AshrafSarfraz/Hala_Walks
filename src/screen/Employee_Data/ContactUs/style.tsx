@@ -10,7 +10,7 @@ export const getStyles=(language:String)=> StyleSheet.create({
       flex: 1,
       backgroundColor: "#ffffff",
       paddingHorizontal:'4%',
-      paddingTop:Platform.OS==='ios'?0:20,
+      paddingTop:Platform.OS==='ios'?5:50,
     
     },
     loading: {

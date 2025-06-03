@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Image,} from 'react-native';
+import { View, Text, TouchableOpacity, Image, StatusBar,} from 'react-native';
 import { Emp_User, ManIcon, Tenants, User, West_Icon } from '../../../theme/Images';
 import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
@@ -15,6 +15,7 @@ const RoleSelectionScreen:React.FC= () => {
  
   return (
     <View style={styles.container}>
+          <StatusBar hidden={false} translucent={true} animated={true}  barStyle='light-content' />
       <View style={styles.Header_Cont} >
       <Image source={West_Icon}  style={styles.logo} />
       <Text style={styles.heading}>{languageData[language].Welcome_to}{"\n"}{languageData[language].WestWalk_Family}</Text>

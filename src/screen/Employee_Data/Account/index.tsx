@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {
-  SafeAreaView, View, Image,Text,} from 'react-native';
+  SafeAreaView, View, Image,Text,
+  StatusBar,} from 'react-native';
 import CustomButton2 from '../../../components/buttons/CustomButton2';
 import {Contact_us, DocIcon, HistroyIcon, Phone, ProfileIcon, Show} from '../../../theme/Images';
 import CustomButton from '../../../components/buttons/CustomButton';
@@ -55,6 +56,7 @@ const Account: React.FC<AccountProps> = ({navigation}) => {
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#f4f4f4'}}>
+      <StatusBar hidden={false} translucent={true} animated={true} barStyle={'light-content'} />
       <View style={styles.Header_Cont}>
         <Image
           source={{uri: userData.profileImg}}

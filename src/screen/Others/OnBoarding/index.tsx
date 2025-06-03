@@ -80,7 +80,7 @@ const OnBoarding: React.FC<OnBoardingProps> = ({ navigation }) => {
 
     return (
       <SafeAreaView style={[styles.slide, { backgroundColor:'#ffffff' }]}>
-          <StatusBar hidden={false} translucent={true} animated={true} />
+          <StatusBar hidden={false} translucent={true} animated={true}  barStyle="dark-content" />
           <TouchableOpacity style={styles.LanButton}  onPress={showAlert} >
             <Text style={styles.LanText} >{languageData[language].Language_Format}</Text>
           </TouchableOpacity>

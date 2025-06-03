@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, Button, Image, Linking, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Button, Image, Linking, TouchableOpacity, Alert, StatusBar, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors } from '../../../theme/Colors';
 import { Fonts } from '../../../theme/Fonts';
@@ -35,6 +35,7 @@ const StaffDocumentControlScreen = ({navigation}) => {
 
   return (
     <SafeAreaView style={styles.Maincontainer} >
+        <StatusBar hidden={false} translucent={true} animated={true} barStyle={'dark-content'} />
     <ScrollView style={styles.container}>
       
       {userData?.documents && (
@@ -78,7 +79,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F4F4F4',
-    paddingHorizontal:20
+    paddingHorizontal:20,
+    paddingTop:Platform.OS==='ios'?0:20
   },
   item: {
     marginVertical: 4,

@@ -17,6 +17,9 @@ const languageData = {
     WestWalk_Tenant:"West-Walk Tenant",
     Organization_Emp:"Organization-Emp",
     Select_your_role:"Select your role to continue",
+    login: "Login",
+    logout: "Logout",
+    next: "Next",
 
     //Account
     Redeem_History:"Redeem History",
@@ -32,27 +35,8 @@ const languageData = {
     Language_Format:"ENG",
     forget_password:"Forget Password",
     Directory:"Directory",
-  
 
-
-
-    welcome_back: "Welcome Back!",
-    sign_in_message: "Sign in with your account",
-    phone_number: "phone number",
-    login: "login",
-    logout: "logout",
-    country: "country",
-    agree_to: "I agree to the ",
-    privacy_policy: "Privacy Policy",
-    terms_of_use: "Terms of Use",
-    and: "and",
-  //  otp Screeb
-    enter_otp: "Enter the 6-digit OTP sent to you at",
-    verify_otp: "Verify OTP",
-    incorrect_otp: "The OTP passcode you’ve entered is incorrect",
-    no_code_received: "I haven’t received a code",
-    resend: "RESEND",
-     // home Screen
+   // home Screen
     categories: "Categories",
     venues_collection: "Venues Collection",
     best_sellers: "Best Sellers",
@@ -67,9 +51,28 @@ const languageData = {
     Detail_Screen:"Detail Screen",
     Upcoming_event:"Upcoming Events",
 
+  
+
+
+
+    welcome_back: "Welcome Back!",
+    sign_in_message: "Sign in with your account",
+    phone_number: "phone number",
     
-    next: "next",
+    country: "country",
+    agree_to: "I agree to the ",
+    privacy_policy: "Privacy Policy",
+    terms_of_use: "Terms of Use",
+    and: "and",
+  //  otp Screeb
+    enter_otp: "Enter the 6-digit OTP sent to you at",
+    verify_otp: "Verify OTP",
+    incorrect_otp: "The OTP passcode you’ve entered is incorrect",
+    no_code_received: "I haven’t received a code",
+    resend: "RESEND",
    
+
+  
     Search_for_anything :"Search for anything you need",
     confirm: "Confirm",
     hello: "Hello",

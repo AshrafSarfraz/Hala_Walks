@@ -34,13 +34,12 @@ const getStyles=(language:string) => StyleSheet.create({
     flexDirection:language==='en'?"row":"row-reverse",
     alignItems: 'center',
     justifyContent: 'space-between',
-    elevation:1,
     overflow:'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0,height: 5,},
     shadowOpacity: 0.2,
     shadowRadius: 4,
-    borderWidth:0.2,
+    borderWidth:0.3,
 
   },
   leftSection: {

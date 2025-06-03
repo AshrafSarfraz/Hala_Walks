@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, Button, Image, Linking, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Button, Image, Linking, TouchableOpacity, Alert, StatusBar } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomHeader from '../../../components/header/CustomHeader';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -38,8 +38,8 @@ const StaffDocumentControlScreen:React.FC = () => {
 
   return (
     <SafeAreaView style={styles.Maincontainer} >
+         <StatusBar hidden={false} translucent={true} animated={true} barStyle={'dark-content'} />
     <ScrollView style={styles.container}>
-      
       {userData?.documents && (
   <View style={{}}>
    <CustomHeader title={languageData[language].Documents} onBackPress={()=>{navigation.goBack()}} />
