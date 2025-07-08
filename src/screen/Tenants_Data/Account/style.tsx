@@ -18,6 +18,7 @@ export const getStyles=(language:string) => StyleSheet.create({
         height: 120,
         borderRadius: 60,
         marginBottom:20,
+        resizeMode:'contain'
       },
       name: {
         fontSize: 20,

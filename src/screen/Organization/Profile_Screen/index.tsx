@@ -5,6 +5,7 @@ import CustomHeader from '../../../components/header/CustomHeader';
 import { Colors } from '../../../theme/Colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { P_IMG } from '../../../theme/Images';
+import NoDataFound from '../../../components/NoDataFound/No_data_found';
 
 const CorporationProfile: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [userData, setUserData] = useState<any>(null);
@@ -26,9 +27,7 @@ const CorporationProfile: React.FC<{ navigation: any }> = ({ navigation }) => {
 
   if (!userData) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.loadingText}>Loading profile...</Text>
-      </View>
+    <NoDataFound/>
     );
   }
 

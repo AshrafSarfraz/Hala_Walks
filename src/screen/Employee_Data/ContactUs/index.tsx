@@ -9,14 +9,15 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
 import { getStyles } from './style';
 import { languageData } from '../../../redux/language/languageSlice';
+import { Colors } from '../../../theme/Colors';
 
-const WebViewScreen = () => {
+const WebViewScreen:React.FC = () => {
   const navigation=useNavigation()
   const language = useSelector((state: RootState) => state.language.language);
   const styles = getStyles(language);
   return (
     <SafeAreaView style={styles.safeArea}>
-         <StatusBar hidden={false} translucent={true} animated={true} barStyle={'dark-content'} />
+         <StatusBar hidden={false} translucent={true} animated={true} backgroundColor={"#FFF"}  barStyle={'dark-content'} />
       <View style={styles.container}>
         <CustomHeader title={languageData[language].Contact_Us} onBackPress={()=>{navigation.goBack()}} />
         <WebView
@@ -29,13 +30,13 @@ const WebViewScreen = () => {
             }
           }}
 
-          // renderLoading={() => (
-          //   <ActivityIndicator
-          //     color="#009688"
-          //     size="large"
-          //     style={styles.loading}
-          //   />
-          // )}
+          renderLoading={() => (
+            <ActivityIndicator
+              color={Colors.PrimaryColor}
+              size="large"
+              style={styles.loading}
+            />
+          )}
         />
       </View>
     </SafeAreaView>

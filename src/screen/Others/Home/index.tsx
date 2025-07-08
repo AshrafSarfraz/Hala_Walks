@@ -35,7 +35,7 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
   return (
     <View style={{flex:1, backgroundColor:Colors.Bg}} >
     {/* <ImageBackground source={BackgroundImg} style={{flex:1,}}  imageStyle={{width:'100%',height:"100%",opacity:0.2}} > */}
-       <StatusBar hidden={false} translucent={true} animated={true} barStyle={'light-content'} />
+       <StatusBar hidden={false} translucent={true} animated={true} backgroundColor={Colors.PrimaryColor} barStyle={'light-content'} />
       <View style={styles.Header_container}>
       <View style={styles.header}>
             <Image source={Westwalk} style={styles.logo} />

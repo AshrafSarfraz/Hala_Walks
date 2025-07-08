@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
 import { languageData } from '../../../redux/language/languageSlice';
 
-const StaffDocumentControlScreen = ({navigation}) => {
+const StaffDocumentControlScreen:React.FC = ({navigation}) => {
   const language = useSelector((state: RootState) => state.language.language);
 
   const [userData, setUserData] = useState(null);
@@ -35,7 +35,7 @@ const StaffDocumentControlScreen = ({navigation}) => {
 
   return (
     <SafeAreaView style={styles.Maincontainer} >
-        <StatusBar hidden={false} translucent={true} animated={true} barStyle={'dark-content'} />
+        <StatusBar hidden={false} translucent={true} animated={true} backgroundColor={Colors.Bg} barStyle={'dark-content'} />
     <ScrollView style={styles.container}>
       
       {userData?.documents && (

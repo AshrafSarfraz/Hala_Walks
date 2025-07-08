@@ -10,19 +10,19 @@ import { Info, Success, Warning, Error } from '../../../theme/Images'; // ✅ Fi
 
 const { width } = Dimensions.get('window');
 
-const AnimatedToast = ({ message, visible, duration = 5000, type }) => {
+const AnimatedToast = ({ message, visible, duration = 6000, type }) => {
   const translateY = useSharedValue(-150); // ✅ Start off-screen
 
   useEffect(() => {
     if (visible) {
-      translateY.value = withTiming(60, {
-        duration: 300,
+      translateY.value = withTiming(45, {
+        duration: 500,
         easing: Easing.out(Easing.ease),
       });
 
       const hideTimeout = setTimeout(() => {
         translateY.value = withTiming(-150, {
-          duration: 6000,
+          duration: 500,
           easing: Easing.in(Easing.ease),
         });
       }, duration);
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     elevation: 10,
-    zIndex: 9999,
+    zIndex: 10,
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },

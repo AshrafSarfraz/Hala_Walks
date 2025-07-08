@@ -8,6 +8,8 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
 import { languageData } from '../../../redux/language/languageSlice';
 import { styles } from './style';
+import { P_IMG } from '../../../theme/Images';
+import NoDataFound from '../../../components/NoDataFound/No_data_found';
 
 type ProfileProps = {
   navigation: any;
@@ -34,9 +36,7 @@ const ProfileScreen: React.FC<ProfileProps> = ({ navigation }) => {
 
   if (!userData) {
     return (
-      <View style={styles.container}>
-        <Text>Loading profile...</Text>
-      </View>
+     <NoDataFound/>
     );
   }
 
@@ -54,7 +54,7 @@ const ProfileScreen: React.FC<ProfileProps> = ({ navigation }) => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.Profile_container}
       >
-        <Image source={{ uri: userData.profileImg }} style={styles.profileImage} />
+        <Image  source={ userData?.profileImg ? { uri: userData.profileImg } : P_IMG}style={styles.profileImage}/>
         <Text style={styles.name}>{userData.name}</Text>
         <Text style={styles.staffId}>Staff ID: {userData.staffId}</Text>
         <Text style={styles.company}>Company: {userData.company}</Text>

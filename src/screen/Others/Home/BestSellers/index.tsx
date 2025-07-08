@@ -7,7 +7,6 @@ import LinearGradient from 'react-native-linear-gradient';
 
 import { getStyles } from './style';
 import { RootState } from '../../../../redux/store';
-import { dummyDataList } from './dummyData';
 import { fetchBrandsFromFirebase } from '../../../../firebase/firebaseutils';
 
 
@@ -24,7 +23,7 @@ const BestSeller: React.FC = () => {
     const getBrands = async () => {
       setLoading(true);
       const fetchedBrands = await fetchBrandsFromFirebase();
-      const bestSellers = fetchedBrands.filter((item: any) => item.bestSeller === "Yes");
+      const bestSellers = fetchedBrands.filter((item: any) => item.isBestSeller === "yes");
       setBrands(bestSellers);
       setLoading(false);
     };

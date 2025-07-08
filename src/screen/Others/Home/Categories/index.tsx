@@ -10,13 +10,13 @@ import { RootState } from '../../../../redux/store';
 
 
 const images = [
-  { id: '1', text: 'Food and Drink', category: 'Food and Drink', categoryArabic: 'المأكولات والمشروبات', source: require('../../../../assets/images/Food.png') },
-  { id: '2', text: 'Chocolate and Gifts', category: 'Chocolate and Gifts', categoryArabic:  'الخدمات والتجزئة' , source: require('../../../../assets/images/chocolates.png') },
-  { id: '3', text: 'Beauty and Spa', category: 'Beauty and Spa',categoryArabic:  'الجمال والمنتجعات'  ,source: require('../../../../assets/images/Beauty.png') },
-  { id: '4', text: 'Health and Fitness', category: 'Health and Fitness',categoryArabic:  'الصحة واللياقة' , source: require('../../../../assets/images/Health.png') },
-  { id: '5', text: 'Fun and Leisure', category: 'Fun and Leisure', categoryArabic:  'الترفيه والتسلية' , source: require('../../../../assets/images/Fun.png') },
-  { id: '6', text: 'Room Nights', category: 'Room Nights', categoryArabic:  'الإقامة الفندقية' , source: require('../../../../assets/images/Room.png') },
-  { id: '7', text: 'Services and Retail', category: 'Services and Retail', categoryArabic:  'الخدمات والتجزئة' , source: require('../../../../assets/images/Services.png') },
+  { id: '1', text: 'Food and Drink', category: 'Food and Drink', categoryArabic: 'المأكولات والمشروبات', source: require('../../../../assets/images/food_&_drinks.jpg') },
+  { id: '2', text: 'Shop and Retail', category: 'Shop and Retail', categoryArabic:  'الخدمات والتجزئة' , source: require('../../../../assets/images/shop.png') },
+  { id: '3', text: 'Beauty and Spa', category: 'Beauty and Spa',categoryArabic:  'الجمال والمنتجعات'  ,source: require('../../../../assets/images/beauty_&_spa.jpg') },
+  { id: '4', text: 'Health and Fitness', category: 'Health and Fitness',categoryArabic:  'الصحة واللياقة' , source: require('../../../../assets/images/health_fitness.png') },
+  { id: '5', text: 'Entertainment', category: 'Entertain ment', categoryArabic:  'الترفيه والتسلية' , source: require('../../../../assets/images/entertainment.png') },
+  { id: '6', text: 'Hotel', category: 'Hotel', categoryArabic:  'الإقامة الفندقية' , source: require('../../../../assets/images/hotel.png') },
+  { id: '7', text: 'Services', category: 'Services', categoryArabic:  'الخدمات والتجزئة' , source: require('../../../../assets/images/service.png') },
 ];
 
 

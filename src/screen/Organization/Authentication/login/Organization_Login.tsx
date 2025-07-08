@@ -24,7 +24,6 @@ const OrgEmp_Login: React.FC<LoginProps> = ({ navigation }) => {
   const [employeeId, setEmployeeId] = useState('');
   const [password, setPassword] = useState('');
   const [hide, setHide] = useState(true);
-  const [isLoading, setIsLoading] = useState<boolean>(false); 
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
@@ -43,7 +42,6 @@ const OrgEmp_Login: React.FC<LoginProps> = ({ navigation }) => {
       showToast('Missing Fields, Please enter both ID and Password', 'ERROR');
       return;
     }
-     setIsLoading(true);
     try {
       const employees = await fetch_OrgEmp_Data();
       const matchedTenant = employees.find(
@@ -59,8 +57,10 @@ const OrgEmp_Login: React.FC<LoginProps> = ({ navigation }) => {
         );
 
         showToast('✅ Tenant Login Success:','SUCCESS' );
-        navigation.navigate('CorporationTab', { userData: matchedTenant });
-        setIsLoading(false)
+        setTimeout(()=>{
+          navigation.navigate('CorporationTab', { userData: matchedTenant });
+        },1000)
+
       } else {
         showToast('Login Failed, Invalid ID or Password', 'ERROR');
       }
@@ -68,12 +68,11 @@ const OrgEmp_Login: React.FC<LoginProps> = ({ navigation }) => {
      // console.error('❌ Login Error:', error);
       showToast('Something went wrong. Please try again.','ERROR');
     }
-    setIsLoading(false)
   };
 
   return (
     <View style={styles.Container}>
-      <StatusBar hidden={false} translucent={true} animated={true}  barStyle="dark-content" />
+      <StatusBar hidden={false} translucent={true} animated={true} backgroundColor={'#FFFFFF'}  barStyle="dark-content" />
        <CustomHeader title=' ' onBackPress={()=>{navigation.goBack()}} />
       <Image source={West_NB} style={styles.Logo} />
       <Text style={styles.Title}>{languageData[language].Organization_Login}</Text>
@@ -150,8 +149,6 @@ const OrgEmp_Login: React.FC<LoginProps> = ({ navigation }) => {
       </View>
 
       <CustomButton title={languageData[language].login}  onPress={handleLogin} />
-
-       {isLoading && ( <ActivityIndicatorModal visible={isLoading} /> )}
        <AnimatedToast  message={alertMessage} visible={alertVisible} duration={2000} type={alertType} />
    
     </View>

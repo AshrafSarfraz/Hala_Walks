@@ -3,7 +3,7 @@ import {
   SafeAreaView, View, Image,Text,
   StatusBar,} from 'react-native';
 import CustomButton2 from '../../../components/buttons/CustomButton2';
-import {Contact_us, DocIcon, HistroyIcon, Phone, ProfileIcon, Show} from '../../../theme/Images';
+import {Contact_us, DocIcon, HistroyIcon, P_IMG, Phone, ProfileIcon, Show} from '../../../theme/Images';
 import CustomButton from '../../../components/buttons/CustomButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -11,6 +11,8 @@ import { languageData } from '../../../redux/language/languageSlice';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
 import { getStyles } from './style';
+import { Colors } from '../../../theme/Colors';
+import NoDataFound from '../../../components/NoDataFound/No_data_found';
 
 type AccountProps = {
   navigation: any;
@@ -39,16 +41,14 @@ const Account: React.FC<AccountProps> = ({navigation}) => {
 
   if (!userData) {
     return (
-      <View style={{flex:1, justifyContent:'center', alignItems:"center"}}>
-        <Text>Loading ....</Text>
-      </View>
+    <NoDataFound/>
     );
   }
 
   const handleLogout = async (navigation: any) => {
     try {
       await AsyncStorage.removeItem('staff_data');
-      navigation.navigate('Role');
+      navigation.replace('Role');
     } catch (error) {
        console.log('Error during logout:', error);
     }
@@ -56,12 +56,9 @@ const Account: React.FC<AccountProps> = ({navigation}) => {
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#f4f4f4'}}>
-      <StatusBar hidden={false} translucent={true} animated={true} barStyle={'light-content'} />
+      <StatusBar hidden={false} translucent={true} animated={true} backgroundColor={Colors.PrimaryColor} barStyle={'light-content'} />
       <View style={styles.Header_Cont}>
-        <Image
-          source={{uri: userData.profileImg}}
-          style={styles.profileImage}
-        />
+        <Image  source={ userData?.profileImg ? { uri: userData.profileImg } : P_IMG}style={styles.profileImage}/>
         <Text style={styles.name}>{userData.name}</Text>
         <Text style={styles.staffId}>{userData.staffId}</Text>
       </View>

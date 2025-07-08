@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
 import { getStyles } from './style';
 import { languageData } from '../../../redux/language/languageSlice';
+import NoDataFound from '../../../components/NoDataFound/No_data_found';
 
 type AccountProps={
   navigation:any
@@ -37,16 +38,14 @@ const CorporationAccount:React.FC<AccountProps> = ({navigation}) => {
 
   if (!userData) {
     return (
-      <View style={styles.container}>
-        <Text>Loading profile...</Text>
-      </View>
+     <NoDataFound/>
     );
   }
 
   const handleLogout = async (navigation: any) => {
     try {
       await AsyncStorage.removeItem('org_emp_data'); // or AsyncStorage.clear()
-      navigation.navigate('Role');
+      navigation.replace('Role');
     } catch (error) {
       console.log('Error during logout:', error);
     }}
@@ -55,12 +54,9 @@ const CorporationAccount:React.FC<AccountProps> = ({navigation}) => {
   
     return (
        <SafeAreaView style={{flex:1,backgroundColor:Colors.Bg}} >
-            <StatusBar hidden={false} translucent={true} animated={true} barStyle={'light-content'} />
+            <StatusBar hidden={false} translucent={true} animated={true}  backgroundColor={Colors.PrimaryColor} barStyle={'light-content'} />
          <View style={styles.Header_Cont} >
-         {userData?.profileImg ? (
-       <Image   source={{ uri: userData.profileImg }}style={styles.profileImage}/>) : (
-       <Image source={P_IMG} style={styles.profileImage} />)}
-
+      <Image  source={ userData?.profileImg ? { uri: userData.profileImg } : P_IMG}style={styles.profileImage}/>
           <Text style={styles.name}>{userData.name}</Text>
                <Text style={styles.staffId}>{userData.empId}</Text>
          </View>

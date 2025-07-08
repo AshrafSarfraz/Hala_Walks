@@ -11,6 +11,7 @@ import { RootState } from '../../../redux/store';
 import { languageData } from '../../../redux/language/languageSlice';
 import CustomButton from '../../../components/buttons/CustomButton';
 import LanguageModal from '../../../components/Modal/Lan_Modal';
+import { Colors } from '../../../theme/Colors';
 
 
 const langData = {
@@ -80,7 +81,7 @@ const OnBoarding: React.FC<OnBoardingProps> = ({ navigation }) => {
 
     return (
       <SafeAreaView style={[styles.slide, { backgroundColor:'#ffffff' }]}>
-          <StatusBar hidden={false} translucent={true} animated={true}  barStyle="dark-content" />
+          <StatusBar hidden={false} translucent={true} animated={true} backgroundColor={Colors.White}   barStyle="dark-content" />
           <TouchableOpacity style={styles.LanButton}  onPress={showAlert} >
             <Text style={styles.LanText} >{languageData[language].Language_Format}</Text>
           </TouchableOpacity>

@@ -98,18 +98,24 @@ const CorporationHistoryScreen: React.FC = () => {
         }}
       />
 
-      <FlatList
-        data={history}
-        keyExtractor={item => item.id}
-        renderItem={({item}) => (
-          <TouchableOpacity style={styles.item} onPress={() => openModal(item)}>
-            <Text style={styles.itemCode}>Code: {item.brandName}</Text>
-            <Text>{item.code}</Text>
-            <Text>{item.discount}</Text>
-            <Text>{item.eligibility}</Text>
-          </TouchableOpacity>
-        )}
-      />
+{!loading && history.length === 0 ? (
+  <View style={styles.No_Data_Found_Cont} >
+    <Text style={styles.No_Data_Found_Txt} >No Data Found</Text>
+  </View>
+) : (
+  <FlatList
+    data={history}
+    keyExtractor={item => item.id}
+    renderItem={({item}) => (
+      <TouchableOpacity style={styles.item} onPress={() => openModal(item)}>
+        <Text style={styles.itemCode}>Code: {item.brandName}</Text>
+        <Text>{item.code}</Text>
+        <Text>{item.discount}</Text>
+        <Text>{item.eligibility}</Text>
+      </TouchableOpacity>
+    )}
+  />
+)}
 
       <RedeemHistoryModal3
         visible={modalVisible}

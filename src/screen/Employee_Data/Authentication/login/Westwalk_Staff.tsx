@@ -24,7 +24,6 @@ const EmployeeLogin: React.FC= () => {
   const [password, setPassword] = useState('');
   const [hide, setHide] = useState(true);
   const [isChecked, setIsChecked] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false); 
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
   const [alertType, setAlertType] = useState<'SUCCESS' | 'ERROR'>('SUCCESS');
@@ -40,41 +39,54 @@ const EmployeeLogin: React.FC= () => {
 
   const handleLogin = async () => {
     if (!employeeId || !password) {
-      showToast('Please enter Staff ID and Password',"ERROR")
-      return;  }
-     setIsLoading(true);
+      showToast('Please enter Staff ID and Password', 'ERROR');
+      return;
+    }
+  
+    // setIsLoading(true); // loader starts
     try {
-      const snapshot = await firestore().collection('Westwalk_Staff') 
-      .where('staffId', '==', employeeId).limit(1).get();
+      const snapshot = await firestore()
+        .collection('Westwalk_Staff')
+        .where('staffId', '==', employeeId)
+        .limit(1)
+        .get();
+  
       if (snapshot.empty) {
-        showToast('Staff ID not found',"ERROR");
-        setIsLoading(false)
-        return;}
+        showToast('Staff ID not found', 'ERROR');
+        // setIsLoading(false);
+        return;
+      }
       const userDoc = snapshot.docs[0];
       const userData = userDoc.data();
       const { email } = userDoc.data();
+  
       if (!email) {
-        showToast('Email not found for this Staff ID',"ERROR");
-        setIsLoading(false)
+        showToast('Email not found for this Staff ID', 'ERROR');
+        // setIsLoading(false);
         return;
       }
       await auth().signInWithEmailAndPassword(email, password);
       await AsyncStorage.setItem('staff_data', JSON.stringify(userData));
-      navigation.navigate('EmployeeTab');
-      showToast('Successfully Login',"SUCCESS");
-      setIsLoading(false)
+      showToast('Successfully Login', 'SUCCESS');
+      setTimeout(()=>{
+          navigation.navigate('EmployeeTab');
+        },1000)
+    
+       
     } catch (error) {
       console.error('Login error:', error);
-      showToast('Login failed. Please check your credentials.',"ERROR");
+      showToast('Login failed. Please check your credentials.', 'ERROR');
+  
     }
-    setIsLoading(false)
   };
+  
+  
   
 
   return (
     <SafeAreaView style={styles.SafeViewCont} >
     <View style={styles.Container}>
-     <StatusBar hidden={false} translucent={true} animated={true}  barStyle="dark-content" />
+     <StatusBar hidden={false} translucent={true} animated={true} backgroundColor={'#FFFFFF'}  barStyle="dark-content" />
       <CustomHeader title=' ' onBackPress={()=>{navigation.goBack()}} />
       <Image source={West_NB} style={styles.Logo} />
       <Text style={styles.Title}>{languageData[language].Staff_Login}</Text>
@@ -112,9 +124,9 @@ const EmployeeLogin: React.FC= () => {
 
       <CustomButton title={languageData[language].login} onPress={handleLogin}
       />
-      {isLoading && ( <ActivityIndicatorModal visible={isLoading} /> )}
-      <AnimatedToast  message={alertMessage} visible={alertVisible} duration={2000} type={alertType} />
+
     </View>
+       <AnimatedToast  message={alertMessage} visible={alertVisible} duration={3000} type={alertType} />
     </SafeAreaView>
   );
 };

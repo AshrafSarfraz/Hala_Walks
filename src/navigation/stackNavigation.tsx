@@ -26,12 +26,12 @@ import OnBoarding from '../screen/Others/OnBoarding';
 import OrgEmp_Login from '../screen/Organization/Authentication/login/Organization_Login';
 import StaffForgetPassword from '../screen/Employee_Data/Authentication/forget/StaffForgetScreen';
 import PDFViewerScreen from '../screen/Others/pdfViewer';
-import Splash_Blank from '../screen/Others/splash/Splash_Blank';
 import Splash_Screen from '../screen/Others/splash/SplashScreen';
 import RoleSelectionScreen from '../screen/Others/select_role';
 import EmployeeLogin from '../screen/Employee_Data/Authentication/login/Westwalk_Staff';
 import TenantsLogin from '../screen/Tenants_Data/Authentication/login/Tenants_Login';
 import PhoneDirectoryScreen from '../screen/Employee_Data/PhoneDirectory';
+import AuthLoadingScreen from '../screen/Others/auth_loading_screen/Auth_Loading';
 
 
 
@@ -43,8 +43,8 @@ const Stack = createNativeStackNavigator();
 export default function StackNavigation() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="SplashBlank" screenOptions={{headerShown:false}} >
-        <Stack.Screen name="SplashBlank" component={Splash_Blank}   />
+      <Stack.Navigator initialRouteName="Auth_Loading" screenOptions={{headerShown:false}} >
+       <Stack.Screen name="Auth_Loading" component={AuthLoadingScreen}   />
         <Stack.Screen name="SplashScreen" component={Splash_Screen}   />
         <Stack.Screen name="Role" component={RoleSelectionScreen}   />
         <Stack.Screen name="onBoarding" component={OnBoarding}   />
@@ -79,11 +79,6 @@ export default function StackNavigation() {
         <Stack.Screen name="CorporationTab" component={CorporationTab}   />
         <Stack.Screen name="CorporationProfile" component={CorporationProfile}   />
         <Stack.Screen name="CorporationHistroyScreen" component={CorporationHistoryScreen}   />
-
-
-      
-
-
       </Stack.Navigator>
     </NavigationContainer>
   );

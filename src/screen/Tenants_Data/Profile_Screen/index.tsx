@@ -8,6 +8,8 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
 import { styles } from './style';
 import { languageData } from '../../../redux/language/languageSlice';
+import { P_IMG } from '../../../theme/Images';
+import NoDataFound from '../../../components/NoDataFound/No_data_found';
 
 
 
@@ -33,9 +35,7 @@ const TenantsProfile: React.FC<{ navigation: any }> = ({ navigation }) => {
 
   if (!userData) {
     return (
-      <View style={styles.container}>
-        <Text>Loading profile...</Text>
-      </View>
+     <NoDataFound/>
     );
   }
   return (
@@ -50,9 +50,8 @@ const TenantsProfile: React.FC<{ navigation: any }> = ({ navigation }) => {
       <CustomHeader title={languageData[language].Profile} onBackPress={() => navigation.goBack()} />
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.Profile_container}
-      >
-          <Image source={{ uri: userData.profileImg }} style={styles.profileImage} />
+        contentContainerStyle={styles.Profile_container}>
+         <Image  source={ userData?.profileImg ? { uri: userData.profileImg } : P_IMG}style={styles.profileImage}/>
         <Text style={styles.name}>{userData.name}</Text>
         <Text style={styles.staffId}>QID: {userData.qid}</Text>
         <Text style={styles.company}>Status: {userData.status}</Text>

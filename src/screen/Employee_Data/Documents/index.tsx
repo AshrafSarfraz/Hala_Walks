@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
 import { useNavigation } from '@react-navigation/native';
 import { languageData } from '../../../redux/language/languageSlice';
+import { Colors } from '../../../theme/Colors';
 
 
 const StaffDocumentControlScreen:React.FC = () => {
@@ -38,7 +39,7 @@ const StaffDocumentControlScreen:React.FC = () => {
 
   return (
     <SafeAreaView style={styles.Maincontainer} >
-         <StatusBar hidden={false} translucent={true} animated={true} barStyle={'dark-content'} />
+         <StatusBar hidden={false} translucent={true} animated={true} backgroundColor={Colors.Bg} barStyle={'dark-content'} />
     <ScrollView style={styles.container}>
       {userData?.documents && (
   <View style={{}}>

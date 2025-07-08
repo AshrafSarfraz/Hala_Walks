@@ -24,7 +24,7 @@ const ActivityIndicatorModal = ({ visible }) => {
     >
       <View style={styles.container}>
        <StatusBar hidden={true} translucent={true} animated={true} />
-         <BarIndicator color={Colors.White} size='30' />
+         <BarIndicator color={Colors.PrimaryColor} size='30' />
       
          
       </View>
@@ -38,6 +38,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    zIndex:99999
   },
 });
 

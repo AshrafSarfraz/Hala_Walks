@@ -23,7 +23,6 @@ const TenantsLogin: React.FC<LoginProps> = ({ navigation }) => {
   const [employeeId, setEmployeeId] = useState('');
   const [password, setPassword] = useState('');
   const [hide, setHide] = useState(true);
-  const [isLoading, setIsLoading] = useState<boolean>(false); 
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
@@ -43,7 +42,6 @@ const TenantsLogin: React.FC<LoginProps> = ({ navigation }) => {
       showToast('Missing Fields, Please enter both ID and Password', 'ERROR');
       return;
     }
-    setIsLoading(true);
     try {
       const tenants = await fetch_Tenant_Data();
       const matchedTenant = tenants.find(
@@ -53,9 +51,10 @@ const TenantsLogin: React.FC<LoginProps> = ({ navigation }) => {
       );
       if (matchedTenant) {
         await AsyncStorage.setItem( 'tenant_data', JSON.stringify(matchedTenant) );
-        showToast('✅ Tenant Login Success',"SUCCESS");
-        navigation.navigate('TenantsTab', { userData: matchedTenant });
-        setIsLoading(false)
+        showToast('Login Success',"SUCCESS");
+        setTimeout(()=>{
+          navigation.navigate('TenantsTab', { userData: matchedTenant });
+        },1000)   
       } else {
         showToast('Login Failed, Invalid ID or Password ', 'ERROR');
       }
@@ -63,14 +62,13 @@ const TenantsLogin: React.FC<LoginProps> = ({ navigation }) => {
       console.error('❌ Login Error:', error);
       showToast('Something went wrong',"ERROR");
     }
-    setIsLoading(false)
   };
 
   return (
    
    <View style={styles.Container}>
       <CustomHeader title=" " onBackPress={() => navigation.goBack()} />
-      <StatusBar hidden={false} translucent={true} animated={true}  barStyle="dark-content" />
+      <StatusBar hidden={false} translucent={true} animated={true} backgroundColor={'#FFFFFF'}  barStyle="dark-content" />
       <Image source={West_NB} style={styles.Logo} />
       <Text style={styles.Title}>{languageData[language].Tenants_Login}</Text>
       <Text style={styles.Subtitle}>{languageData[language].Enter_credentials}</Text>
@@ -148,8 +146,7 @@ const TenantsLogin: React.FC<LoginProps> = ({ navigation }) => {
         onPress={handleLogin}
       />
 
-{isLoading && (   <ActivityIndicatorModal visible={isLoading} />  )}
-<AnimatedToast  message={alertMessage} visible={alertVisible} duration={2000} type={alertType} />
+<AnimatedToast  message={alertMessage} visible={alertVisible} duration={3000} type={alertType} />
    
     </View>
   );

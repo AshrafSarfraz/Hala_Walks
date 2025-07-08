@@ -22,4 +22,13 @@ export const getStyles=(language:String) => StyleSheet.create({
       fontWeight: '600',
       fontSize: 16,
     },
+    No_Data_Found_Cont:{
+      justifyContent:'center',
+      alignItems:"center",
+      flex:1
+    },
+    No_Data_Found_Txt:{
+      color:'black',
+      fontSize:14
+    }
   });
