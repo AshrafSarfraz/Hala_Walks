@@ -100,7 +100,8 @@ const RedeemReceiptModal: React.FC<Props> = ({ visible, onClose, data }) => {
       const redeemData = {
         brandName: data.nameEng || data.BrandName,
         employeeId: userData.staffId || userData.tenantId || userData.orgEmpId,
-        qid: userData.qid,
+        // qid: userData.qid,
+        qid:12345678,
         code: pin,
         date: currentDate,
         discount: data.discount || data.percentage,
@@ -148,7 +149,7 @@ const RedeemReceiptModal: React.FC<Props> = ({ visible, onClose, data }) => {
 
             <Detail label="Brand Name" value={data.nameEng || data.BrandName} />
             <Detail label="Employee ID" value={userData.staffId || userData.tenantId || userData.orgEmpId || 'N/A'} />
-            <Detail label="QID" value={userData.qid || 'N/A'} />
+            <Detail label="QID" value={userData.qid || 122812782} />
             <Detail label="Code" value={pin} />
             <Detail label="Date" value={currentDate} />
             <Detail label="Discount" value={data.discount || data.percentage || 'N/A'} />

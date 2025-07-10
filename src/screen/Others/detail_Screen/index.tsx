@@ -27,6 +27,9 @@ import RedeemReceiptModal from '../../../components/Modal/StaffModal/RedeemModal
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RedeemReceiptModal2 from '../../../components/Modal/Tenant/RedeemModal2';
 import RedeemReceiptModal3 from '../../../components/Modal/OrgEmp/RedeemModal3';
+import FastImage from 'react-native-fast-image';
+import Pin_Modal from '../../../components/Modal/CustomAlert/Pin_Modal';
+import IncorrectPin from '../../../components/Modal/CustomAlert/IncorrectPin';
 
 
 
@@ -41,21 +44,44 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
   const navigation = useNavigation();
   const [imageLoading, setImageLoading] = useState(true);
 
+  //New Feactures
+  const [discountAlert, setdiscountAlert] = useState<boolean>(false);
+  const [alertVisible, setAlertVisible] = useState<boolean>(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [incorrectPinModal, setIncorrectPinModal] = useState(false);
+  const [showTimings, setShowTimings] = useState(false);
+
+
   // Redux Toolkit
   const language = useSelector((state: RootState) => state.language.language);
   const styles = getStyles(language);
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const isInCart = cartItems.some(cartItem => cartItem.id === item.id);
   const [selectedItem, setSelectedItem] = useState<any>(null);
-  const [modalVisible, setModalVisible] = useState(false);
+
   const handleToggleCart = () => {
     dispatch(toggleItemInCart(item));
   };
+// redux
 
   const openModal = (item: any) => {
     setSelectedItem(item);
     setModalVisible(true);
   };
+
+  const showAlert = () => {
+    setAlertVisible(true);
+  };
+  const hideAlert = () => {
+   setAlertVisible(false);
+ };
+  const showDiscount_Alert = () => {
+   setdiscountAlert(true);
+ };
+  const hideDiscount_Alert = () => {
+   setdiscountAlert(false);
+ };
+
 
 
   const handleOpenMaps = () => {
@@ -129,16 +155,23 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
         </View>
 
         <View style={styles.Body_Cont}>
-          <ShimmerPlaceholder  visible={!imageLoading} LinearGradient={LinearGradient} style={styles.image}>
-            <Image source={   typeof item.img === 'string' ? {uri: item.img} : item.img  } style={styles.image} onLoad={handleImageLoad} />
+        <ShimmerPlaceholder visible={!imageLoading} LinearGradient={LinearGradient}  style={styles.image} >
+          {Platform.OS==='ios'?
+             <FastImage source={{ uri: item.img, priority:FastImage.priority.high}}
+             style={styles.image}   onLoad={handleImageLoad} resizeMode='cover'    />:
+             <Image source={{ uri: item.img}}
+             style={styles.image}   onLoad={handleImageLoad} resizeMode='cover'    />
+        }
           </ShimmerPlaceholder>
 
           <View style={styles.Type_Cont}>
-            <Text style={styles.Type_Text}>{item.selectedCategory}</Text>
+          <Text style={styles.Type_Text}>{item.selectedCategory}</Text>
           </View>
 
           <View style={styles.Title_Cont}>
-            {language === 'ar' ? ( <Text style={styles.title}>{item.nameArabic}</Text>) : ( <Text style={styles.title}>{item.nameEng}</Text> )}
+           {language==='ar'?<Text style={styles.title}>{item.nameArabic}</Text>:
+          <Text style={styles.title}>{item.nameEng}</Text>}
+
 
           <TouchableOpacity onPress={Contact} style={styles.call_cont}>
               <Image source={Phone}  style={styles.Phone_Icon} />
@@ -147,9 +180,27 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
           </View>
            <View style={styles.Loc_Cont}>
             <Image  source={location}  style={styles.Loc_Icon} />
-            <Text style={styles.Loc_Txt}>{item.Address} </Text>
+            <Text style={styles.Loc_Txt}>{item.address} </Text>
           </View>
 
+ {/* Working Hours */}
+        <View style={{ marginTop: 5 }}>
+        <TouchableOpacity onPress={() => setShowTimings(!showTimings)} style={styles.timing_dropdown}>
+        <Text style={styles.working_hour_txt}> {languageData[language].workingHours || 'Working Hours'} </Text>
+        <Text style={styles.dropdown_icon}>{showTimings ? '▲' : '▼'}</Text>
+       </TouchableOpacity>
+
+     {showTimings && item.timings && (
+    <View style={{ padding: 10, backgroundColor: '#fff', borderRadius: 8, marginTop: 6 }}>
+      {Object.entries(item.timings).map(([day, time]) => (
+        <View key={day}style={styles.item_cont} >
+          <Text style={{ textTransform: 'capitalize', fontSize: 15, color: '#333' }}>{day}</Text>
+          <Text style={{ fontSize: 15, color: '#000' }}>{time}</Text>
+        </View>
+      ))}
+    </View>
+  )}
+       </View>
           <View style={styles.Dis_Cont}>
             <View style={styles.Dis_txt_cont}>
               <Text style={styles.Total_Discount}>
@@ -160,15 +211,49 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
                 {languageData[language].discount}{' '}
               </Text>
             </View>
+            <TouchableOpacity
+  style={styles.Menu_Btn}
+  onPress={() => {
+    const url = item.pdfUrl || item.menuUrl;
 
-            <TouchableOpacity style={styles.Menu_Btn} onPress={() => {
-          if (item.pdfUrl) {
-            navigation.navigate('PDFViewerScreen', { pdfUrl: item.pdfUrl });
-          } else { setModalVisible(true)}}}  >
-               
-                <Text style={styles.menu_txt} >{languageData[language].View_Menu}</Text>
-              </TouchableOpacity>
+    if (url) {
+      // Agar URL http ya https se start hota hai to external link open karo
+      if (url.startsWith('http')) {
+        Linking.openURL(url);
+      } else {
+        navigation.navigate('PDFViewerScreen', { pdfUrl: url });
+      }
+    } else {
+      // Dono URLs nahi hain to modal show karo ya alert do
+      setModalVisible(true);
+    }
+  }}
+>
+  <Text style={styles.menu_txt}>
+    {item.selectedCategory?.toLowerCase() === 'food and drink'
+      ? language === 'en' ? 'View Menu' : 'عرض القائمة'
+      : item.selectedCategory?.toLowerCase() === 'shop and retail'
+      ? language === 'en' ? 'View Products' : 'عرض المنتجات'
+      : language === 'en' ? 'View Services' : 'عرض الخدمات'}
+  </Text>
+</TouchableOpacity>
+
           </View>
+
+          <View>
+          <View style={styles.Desc_Cont}>
+            <Text style={styles.Desc}>
+              Term and Condition
+            </Text>
+          </View>
+          {language === 'ar' ? (
+            <Text style={styles.Detail}>{item.descriptionArabic}</Text>
+          ) : (
+            <Text style={styles.Detail}>{item.descriptionEng}</Text>
+          )}
+        </View>
+
+
 
           <View style={styles.Desc_Cont}>
             <Text style={styles.Desc}>
@@ -182,12 +267,30 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
           )}
         </View>
 
+
+
         <CustomButton
           title={languageData[language].Redeem}
           onPress={() => {
-            openModal(item);
+            showAlert();
           }}
         />
+          <Pin_Modal
+  visible={alertVisible}
+  correctPin={item.pin}
+  onSubmit={(userPin) => {
+    if (userPin === item.pin) {
+      openModal(item);
+    } else {
+     setIncorrectPinModal(true); // or use console.warn()
+    }
+    hideAlert(); // Close pin modal in both cases
+  }}
+  onClose={() => hideAlert()}
+/>
+
+
+{/* //  openModal(item); */}
 
 {userType==='staff' && (
         <RedeemReceiptModal
@@ -225,6 +328,9 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
         />
       </View>
       )}
+
+<       IncorrectPin visible={incorrectPinModal} onClose={() => setIncorrectPinModal(false)}/>
+      
      
       </ScrollView>
     </SafeAreaView>

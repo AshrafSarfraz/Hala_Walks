@@ -4,43 +4,57 @@ import {
   Text,
   TextInput,
   FlatList,
-  Image,
   TouchableOpacity,
   SafeAreaView,
   StatusBar,
+  Image,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
-import { getStyles } from './style';
 import LinearGradient from 'react-native-linear-gradient';
-import { RootState } from '../../../redux/store';
+import FastImage from 'react-native-fast-image';
+
+import { getStyles } from './style';
 import { languageData } from '../../../redux/language/languageSlice';
 import CustomHeader from '../../../components/header/CustomHeader';
-import {  Scope } from '../../../theme/Images';
+import { Scope } from '../../../theme/Images';
 import { Colors } from '../../../theme/Colors';
 import { fetchBrandsFromFirebase } from '../../../firebase/firebaseutils';
+import { RootState } from '../../../redux/store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SearchScreen: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [brands, setBrands] = useState<any[]>([]);
   const [imageLoaded, setImageLoaded] = useState<{ [key: string]: boolean }>({});
-  const navigation = useNavigation();
   const [loading, setLoading] = useState(true);
+
+  const navigation = useNavigation();
   const language = useSelector((state: RootState) => state.language.language);
   const styles = getStyles(language);
 
   useEffect(() => {
-    const getBrands = async () => {
-      setLoading(true);
-      const fetchedBrands = await fetchBrandsFromFirebase();
-      setBrands(fetchedBrands);
-      setLoading(false);
+    const getBrandsFromCache = async () => {
+      try {
+        setLoading(true);
+        const cached = await AsyncStorage.getItem('brands_cache');
+        if (cached) {
+          setBrands(JSON.parse(cached));
+        } else {
+          console.warn('⚠️ No brands_cache found in AsyncStorage');
+          setBrands([]);
+        }
+      } catch (error) {
+        console.error('❌ Error reading brands from AsyncStorage:', error);
+        setBrands([]);
+      } finally {
+        setLoading(false);
+      }
     };
-
-    getBrands();
+  
+    getBrandsFromCache();
   }, []);
-
   
 
   const filteredData = brands.filter(item =>
@@ -48,21 +62,26 @@ const SearchScreen: React.FC = () => {
   );
 
   const handleImageLoad = (id: string) => {
-    setImageLoaded(prev => ({
-      ...prev,
-      [id]: true,
-    }));
+    setImageLoaded(prev => ({ ...prev, [id]: true }));
   };
 
   const renderEmptyState = () => (
     <View style={styles.emptyStateContainer}>
-      <Text style={styles.emptyStateText}>{languageData[language].No_Items_Found}</Text>
+      <Text style={styles.emptyStateText}>
+        {languageData[language].No_Items_Found}
+      </Text>
     </View>
   );
 
   return (
     <View style={styles.container}>
-      <StatusBar hidden={false} translucent={true} animated={true}  backgroundColor={Colors.Bg} barStyle={'dark-content'} />
+      <StatusBar
+        hidden={false}
+        translucent
+        animated
+        backgroundColor={Colors.Bg}
+        barStyle={'dark-content'}
+      />
       <SafeAreaView style={{ flex: 1 }}>
         <CustomHeader
           title={language === 'en' ? 'Search Screen' : 'شاشة البحث'}
@@ -82,9 +101,11 @@ const SearchScreen: React.FC = () => {
         </View>
 
         <View style={styles.FlatlistContainer}>
-          {filteredData.length > 0 && !loading ? (
-            <Text style={styles.FoundItem_Txt}>{languageData[language].Found_Items}</Text>
-          ) : null}
+          {filteredData.length > 0 && !loading && (
+            <Text style={styles.FoundItem_Txt}>
+              {languageData[language].Found_Items}
+            </Text>
+          )}
 
           {loading ? (
             <FlatList
@@ -92,11 +113,27 @@ const SearchScreen: React.FC = () => {
               keyExtractor={(item, index) => index.toString()}
               renderItem={() => (
                 <View style={styles.itemContainer}>
-                  <ShimmerPlaceholder  visible={false}    LinearGradient={LinearGradient}  style={styles.itemImage} />
+                  <ShimmerPlaceholder
+                    visible={false}
+                    LinearGradient={LinearGradient}
+                    style={styles.itemImage}
+                  />
                   <View style={styles.itemInfo}>
-                    <ShimmerPlaceholder visible={false}    LinearGradient={LinearGradient} style={{ height: 20, marginBottom: 6 }} />
-                    <ShimmerPlaceholder visible={false}    LinearGradient={LinearGradient} style={{ height: 15, marginBottom: 6 }} />
-                    <ShimmerPlaceholder visible={false}    LinearGradient={LinearGradient} style={{ height: 15, width: 80 }} />
+                    <ShimmerPlaceholder
+                      visible={false}
+                      LinearGradient={LinearGradient}
+                      style={{ height: 20, marginBottom: 6 }}
+                    />
+                    <ShimmerPlaceholder
+                      visible={false}
+                      LinearGradient={LinearGradient}
+                      style={{ height: 15, marginBottom: 6 }}
+                    />
+                    <ShimmerPlaceholder
+                      visible={false}
+                      LinearGradient={LinearGradient}
+                      style={{ height: 15, width: 80 }}
+                    />
                   </View>
                 </View>
               )}
@@ -110,41 +147,41 @@ const SearchScreen: React.FC = () => {
               contentContainerStyle={{ flexGrow: 1, paddingBottom: 20 }}
               showsVerticalScrollIndicator={false}
               renderItem={({ item }) => {
-  const isLoaded = imageLoaded[item.id] || false;
+                const isLoaded = imageLoaded[item.id] ?? false;
+
                 return (
                   <TouchableOpacity
                     style={styles.itemContainer}
                     onPress={() => navigation.navigate('DetailScreen', { item })}
                   >
-                 <ShimmerPlaceholder
+                    <ShimmerPlaceholder
                       visible={isLoaded}
                       LinearGradient={LinearGradient}
                       style={styles.itemImage}
                     >
-                      <Image
+                      <FastImage
                         source={{ uri: item.img }}
                         style={styles.itemImage}
+                        resizeMode={FastImage.resizeMode.cover}
                         onLoad={() => handleImageLoad(item.id)}
+                        onError={() => handleImageLoad(item.id)}
                       />
-                      </ShimmerPlaceholder>
+                    </ShimmerPlaceholder>
 
-
-
-                      <View style={styles.itemInfo}>
-                        <Text style={styles.itemTitle}>
-                          {language === 'en' ? item.nameEng : item.nameArabic}
-                        </Text>
-                        <Text style={styles.itemLocation}>
-                          {language === 'en'
-                            ? item.descriptionEng?.length > 70
-                              ? item.descriptionEng.substring(0, 70) + '...'
-                              : item.descriptionEng
-                            : item.descriptionArabic?.length > 70
-                            ? item.descriptionArabic.substring(0, 70) + '...'
-                            : item.descriptionArabic}
-                        </Text>
-                        <Text style={styles.itemCity}>{item.selectedCity}</Text>
-                      </View>
+                    <View style={styles.itemInfo}>
+                      <Text style={styles.itemTitle}>
+                        {language === 'en' ? item.nameEng : item.nameArabic}
+                      </Text>
+                      <Text style={styles.itemLocation}>
+                        {language === 'en'
+                          ? item.descriptionEng?.length > 70
+                            ? item.descriptionEng.substring(0, 70) + '...'
+                            : item.descriptionEng
+                          : item.descriptionArabic?.length > 70
+                          ? item.descriptionArabic.substring(0, 70) + '...'
+                          : item.descriptionArabic}
+                      </Text>
+                    </View>
                   </TouchableOpacity>
                 );
               }}

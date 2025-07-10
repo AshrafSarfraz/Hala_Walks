@@ -33,13 +33,7 @@ Flatlist_Cont: {
     shadowOffset: { width: 1, height: 1 },
   
   },
-    image: {
-      width: '100%', // Adjust image size according to screen width
-      height: 120,
-      resizeMode: 'cover',
-      borderRadius:10,
-      
-    },
+
     cate_txt: {
       width:"90%",
       fontSize: 14,

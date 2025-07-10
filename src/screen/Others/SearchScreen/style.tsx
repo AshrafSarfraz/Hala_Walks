@@ -85,40 +85,33 @@ export const getStyles=(language:String) => StyleSheet.create({
     height: 60,
     borderRadius: 8,
     marginRight: language==='en'?10:10,
-    marginLeft: language==='ar'?10:0,
-    resizeMode:"cover"
+    resizeMode:"cover",
   },
   itemInfo: {
     flex: 1,
+    marginRight:10,
+   justifyContent:'center',
   },
   itemTitle: {
     fontSize: language==='en'?16:16,
     fontFamily: language==='en'?Fonts.F_Bold:"",
-    lineHeight: language==='en'?22:30,
+    lineHeight: language==='en'?24:26,
     fontWeight:'500',
     color: Colors.Black,
-    marginLeft:language==='ar'?"2%":0,
-    textAlign:language==='en'?'left':'right'
+    marginLeft:language==='ar'?"5%":0,
+    textAlign:language==='en'?'left':'right',
   },
   itemLocation: {
     fontSize: language==='en'?11:13,
     fontFamily: language==='en'?Fonts.F_Medium:"",
-    lineHeight: language==='en'?14:24,
+    lineHeight: language==='en'?16:20,
     fontWeight:'300',
     color: Colors.Black,
     marginLeft:language==='ar'?"2%":0,
-     textAlign:language==='en'?'left':'right'
+    textAlign:language==='en'?'left':'right'
   
   },
-  itemCity: {
-    fontSize: language==='en'?12:12,
-    fontFamily: language==='en'?Fonts.F_Bold:"",
-    lineHeight: language==='en'?14:24,
-    fontWeight:'500',
-    color: Colors.Black,
-    marginLeft:language==='ar'?"2%":0,
-     textAlign:language==='en'?'left':'right'
-  },
+
   shimmerItem: {
     width: '100%',
     height: 60,

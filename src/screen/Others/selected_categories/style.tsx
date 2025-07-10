@@ -86,11 +86,12 @@ export const getStyles=(language:String) => StyleSheet.create({
     height: 60,
     borderRadius: 8,
    marginRight: language==='en'?10:10,
-    marginLeft:language==='ar'?10:0, 
+    marginLeft:language==='ar'?0:0, 
 
   },
   itemInfo: {
     flex: 1,
+    marginRight:10
   },
   itemTitle: {
     fontSize: language==='en'?16:16,

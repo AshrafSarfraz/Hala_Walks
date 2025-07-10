@@ -1,19 +1,20 @@
-import { firestore } from "./firebaseconfig";
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { firestore } from './firebaseconfig';
 
 export const fetchBrandsFromFirebase = async () => {
   try {
-    // Fetch data directly from Firestore
     const snapshot = await firestore().collection('Brands').get();
     const data = snapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data(),
     }));
-    return data; // Return freshly fetched data from Firebase
+    // Save fresh data in AsyncStorage for next time
+    await AsyncStorage.setItem("brands_cache", JSON.stringify(data));
+    return data;
   } catch (error) {
-    // Handle errors if any
-    console.error('❌ Error fetching brands:', error);
-    return []; // Return empty array if error occurs
+    console.error('❌ Error fetching fresh brands:', error);
+    return [];
   }
 };
 

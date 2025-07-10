@@ -1,24 +1,23 @@
 import {StyleSheet, Dimensions, Platform} from 'react-native';
-import { Colors } from '../../../theme/Colors';
 import { Fonts } from '../../../theme/Fonts';
+import { Colors } from '../../../theme/Colors';
 
 const {width} = Dimensions.get('screen');
 
-export const styles =  StyleSheet.create({
+ const styles= StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
     backgroundColor: Colors.Bg,
-    marginTop: Platform.OS === 'ios' ? '12%' : '8%',
+    marginTop: Platform.OS === 'ios' ? 50 : '8%',
   },
   Header_Txt: {
     marginHorizontal: '5%',
-    marginBottom: 18,
+    marginBottom: 20,
     fontSize: 22,
     fontFamily: Fonts.F_Bold,
     color: Colors.PrimaryColor,
     textAlign: 'center',
-
   },
   row: {
     justifyContent: 'space-between', // Ensures even spacing
@@ -111,4 +110,21 @@ export const styles =  StyleSheet.create({
     resizeMode: 'contain',
     tintColor: 'red',
   },
+  emptyStateContainer:{
+    marginTop:90,
+    alignItems:"center",
+   justifyContent:"center",
+  },
+  emptyStateImage:{
+   width:200,
+   height:200
+  },
+  emptyStateText:{
+   fontSize:16,
+   marginTop:12,
+   fontWeight:'bold',
+   color:Colors.Black
+  }
 });
+
+export default styles;

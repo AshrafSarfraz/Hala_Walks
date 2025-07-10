@@ -1,59 +1,120 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, Image, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Platform, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import LinearGradient from 'react-native-linear-gradient';
-
+import FastImage from 'react-native-fast-image';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector } from 'react-redux';
+
 import { getStyles } from './style';
 import { RootState } from '../../../../redux/store';
 import { firestore } from '../../../../firebase/firebaseconfig';
 
+const STORAGE_KEY = 'recently_added_brands';
+
 const RecentlyAdded = () => {
   const navigation = useNavigation();
+  const language = useSelector((state: RootState) => state.language.language);
+  const styles = getStyles(language);
+
   const [recentItems, setRecentItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [imageLoading, setImageLoading] = useState(true); // State to track image loading
-  const language = useSelector((state: RootState) => state.language.language); // Get the current language from Redux
-  const styles = getStyles(language);
+  const [imageLoaded, setImageLoaded] = useState<{ [key: string]: boolean }>({});
 
   useEffect(() => {
     const fetchRecentlyAdded = async () => {
       try {
+        // 1. Get from cache first
+        const cached = await AsyncStorage.getItem(STORAGE_KEY);
+        if (cached) {
+          setRecentItems(JSON.parse(cached));
+        }
+
+        // 2. Fetch fresh from Firebase
         const snapshot = await firestore().collection('Brands').get();
         const data = snapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data(),
         }));
 
-        // 🕒 Get current time and subtract 1 month
         const oneMonthAgo = new Date();
         oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
 
         const filtered = data.filter(item => {
-          const createdAt = item.time?.toDate?.(); // Convert Firestore Timestamp to JS Date
+          const createdAt = item.time?.toDate?.();
           return createdAt && createdAt > oneMonthAgo;
         });
+
         setRecentItems(filtered);
-        setLoading(false);  // Set loading to false when data is fetched
+        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
       } catch (error) {
         console.error('❌ Error fetching recently added items:', error);
-        setLoading(false);  // Set loading to false if error occurs
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchRecentlyAdded();
   }, []);
 
+  const handleImageLoad = (id: string) => {
+    setImageLoaded(prev => ({ ...prev, [id]: true }));
+  };
 
-  const handleImageLoad = () => {
-    setImageLoading(false); // Stop shimmer effect once the image has loaded
+  const renderItem = ({ item }: { item: any }) => {
+    const isLoaded = imageLoaded[item.id] ?? false;
+
+    return (
+      <TouchableOpacity
+        style={styles.Flatlist_Cont}
+        onPress={() => navigation.navigate('DetailScreen', { item })}
+      >
+        <ShimmerPlaceholder
+          visible={isLoaded}
+          LinearGradient={LinearGradient}
+          style={{ width: '100%', height: 120 }}
+        >
+          {Platform.OS === 'ios' ? (
+            <FastImage
+              source={{ uri: item.img }}
+              style={{ width: '100%', height: 120 }}
+              resizeMode={FastImage.resizeMode.cover}
+              onLoad={() => handleImageLoad(item.id)}
+              onError={() => handleImageLoad(item.id)}
+            />
+          ) : (
+            <Image
+              source={{ uri: item.img }}
+              style={{ width: '100%', height: 120 }}
+              onLoad={() => handleImageLoad(item.id)}
+              onError={() => handleImageLoad(item.id)}
+            />
+          )}
+        </ShimmerPlaceholder>
+
+        <Text style={styles.cate_txt}>
+          {language === 'en'
+            ? item.nameEng?.length > 20
+              ? item.nameEng.substring(0, 20) + '...'
+              : item.nameEng
+            : item.nameArabic}
+        </Text>
+
+        <View style={styles.Type_Cont}>
+          <Text style={styles.Type_Text}>{item.selectedCategory}</Text>
+        </View>
+
+        <View style={styles.Loc_Status_Cont}>
+          <Text style={styles.Status_Txt}>{item.status}</Text>
+        </View>
+      </TouchableOpacity>
+    );
   };
 
   return (
     <View style={styles.container}>
       {loading ? (
-        // Shimmer placeholder when loading
         <ShimmerPlaceholder
           visible={false}
           LinearGradient={LinearGradient}
@@ -63,41 +124,10 @@ const RecentlyAdded = () => {
         <FlatList
           data={recentItems}
           keyExtractor={(item) => item.id}
-          numColumns={2} // Display 2 items in a row
-          columnWrapperStyle={styles.row} // Apply styles for spacing between columns
+          numColumns={2}
+          columnWrapperStyle={styles.row}
           showsVerticalScrollIndicator={false}
-          renderItem={({ item }) => (
-            <TouchableOpacity style={styles.Flatlist_Cont} onPress={() => navigation.navigate('DetailScreen', { item })}>
-              {/* Shimmer effect for the image */}
-              <ShimmerPlaceholder
-                visible={!imageLoading}
-                LinearGradient={LinearGradient}
-                style={styles.image}
-              >
-                <Image
-                  source={{ uri: item.img }} // Image source
-                  style={styles.image}
-                  onLoad={handleImageLoad} // Trigger shimmer removal once image loads
-                />
-              </ShimmerPlaceholder>
-              <Text style={styles.cate_txt}>
-                {language === 'en' ?    <Text> {item.nameEng.length > 20 ? item.nameEng.substring(0, 20) + '...' : item.nameEng}</Text> : item.nameArabic}
-              </Text>
-
-              <View style={styles.Type_Cont}>
-                <Text style={styles.Type_Text}>{item.selectedCategory}</Text>
-              </View>
-
-              <View style={styles.Loc_Status_Cont}>
-       
-                {item.status === 'Yes' ? (
-                  <Text style={styles.Status_Txt}>Active</Text>
-                ) : (
-                  <Text style={styles.Status_Txt}>In-active</Text>
-                )}
-              </View>
-            </TouchableOpacity>
-          )}
+          renderItem={renderItem}
         />
       )}
     </View>

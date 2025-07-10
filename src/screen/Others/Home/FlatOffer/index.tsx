@@ -1,61 +1,92 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, Image, Dimensions, TouchableOpacity } from 'react-native';
+import { View, FlatList, Dimensions, TouchableOpacity } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import LinearGradient from 'react-native-linear-gradient';
-
+import FastImage from 'react-native-fast-image';
 
 import { useSelector } from 'react-redux';
-
-
 import { getStyles } from './style';
-
-
 import { RootState } from '../../../../redux/store';
 import { fetchFlatOfferFromFirebase } from '../../../../firebase/firebaseutils';
-import { languageData } from '../../../../redux/language/languageSlice';
 
 const { width } = Dimensions.get('screen');
 
 const ImageSlider: React.FC<{ navigation: any }> = () => {
   const navigation = useNavigation();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [offers, setOffers] = useState<any[]>([]); // State to store Firestore data
+  const [offers, setOffers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [imageLoading, setImageLoading] = useState(true);
-  
-  const language = useSelector((state: RootState) => state.language.language); // Get the current language from Redux
+  const [imageLoaded, setImageLoaded] = useState<{ [key: string]: boolean }>({});
+
+  const language = useSelector((state: RootState) => state.language.language);
   const styles = getStyles(language);
 
   useEffect(() => {
-    const getFlatOffer = async () => {
+    const loadOffers = async () => {
       setLoading(true);
-      const fetchedOffers = await fetchFlatOfferFromFirebase();
-      setOffers(fetchedOffers);
-      setLoading(false);
+      try {
+        // Try to load cached data first
+        const cachedData = await AsyncStorage.getItem('offers');
+        if (cachedData) {
+          setOffers(JSON.parse(cachedData));
+          setLoading(false);
+        }
+
+        // Fetch fresh data from Firebase
+        const freshOffers = await fetchFlatOfferFromFirebase();
+        setOffers(freshOffers);
+        setLoading(false);
+
+        // Save fresh data to AsyncStorage
+        await AsyncStorage.setItem('offers', JSON.stringify(freshOffers));
+      } catch (error) {
+        console.error('Error loading offers:', error);
+        setLoading(false);
+      }
     };
 
-    getFlatOffer();
+    loadOffers();
   }, []);
-
- 
 
   const handleScroll = (event: any) => {
     const slideIndex = Math.round(event.nativeEvent.contentOffset.x / width);
     setCurrentIndex(slideIndex);
   };
 
-  const handleImageLoad = () => {
-    setImageLoading(false); // Stop the shimmer when image has loaded
+  const handleImageLoad = (id: string) => {
+    setImageLoaded(prev => ({ ...prev, [id]: true }));
   };
 
-  const handleImageError = () => {
-    setImageLoading(false); // Stop the shimmer in case of an error
+  const renderItem = ({ item }: { item: any }) => {
+    const isLoaded = imageLoaded[item.id] ?? false;
+
+    return (
+      <TouchableOpacity
+        style={styles.imageContainer}
+        onPress={() => navigation.navigate('DetailScreen', { item })}
+      >
+        <ShimmerPlaceholder
+          visible={isLoaded}
+          LinearGradient={LinearGradient}
+          style={styles.image}
+        >
+          <FastImage
+            source={{ uri: item.img, priority: FastImage.priority.normal }}
+            style={styles.image}
+            resizeMode={FastImage.resizeMode.cover}
+            onLoad={() => handleImageLoad(item.id)}
+            onError={() => handleImageLoad(item.id)}
+          />
+        </ShimmerPlaceholder>
+      </TouchableOpacity>
+    );
   };
 
   return (
     <View style={styles.container}>
-      {loading ? (
+      {loading && offers.length === 0 ? (
         <ShimmerPlaceholder
           visible={false}
           LinearGradient={LinearGradient}
@@ -63,34 +94,13 @@ const ImageSlider: React.FC<{ navigation: any }> = () => {
         />
       ) : (
         <FlatList
-          data={offers} // Use Firestore data
+          data={offers}
           keyExtractor={(item) => item.id}
           horizontal
           pagingEnabled
           showsHorizontalScrollIndicator={false}
           onScroll={handleScroll}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={styles.imageContainer}
-              onPress={() => navigation.navigate('DetailScreen', { item })}
-            >
-              {/* Shimmer effect for image */}
-              <ShimmerPlaceholder
-                visible={!imageLoading}
-                LinearGradient={LinearGradient}
-                style={styles.image}
-              >
-                <Image
-                source={{uri: item.img}} // Use URI for Firestore images
-                  style={styles.image}
-                  onLoad={handleImageLoad}
-                  onError={handleImageError}
-                />
-              </ShimmerPlaceholder>
-
-               
-            </TouchableOpacity>
-          )}
+          renderItem={renderItem}
         />
       )}
 
@@ -102,7 +112,7 @@ const ImageSlider: React.FC<{ navigation: any }> = () => {
             style={[
               styles.dot,
               {
-                backgroundColor: index === currentIndex ? "#31386A" : '#A2A2A2',
+                backgroundColor: index === currentIndex ? '#31386A' : '#A2A2A2',
                 width: index === currentIndex ? 30 : 8,
               },
             ]}
