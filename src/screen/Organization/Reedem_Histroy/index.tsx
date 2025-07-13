@@ -17,6 +17,7 @@ import { firestore } from '../../../firebase/firebaseconfig';
 import RedeemHistoryModal from '../../../components/Modal/StaffModal/RedeemhistoryModal';
 import { styles } from './style';
 import { NoDataFound } from '../../../theme/Images';
+import EmptyStateScreen from '../../../components/NoDataFound/No_data_found';
 
 
 interface StoredStaff {
@@ -88,26 +89,7 @@ const CorporationHistoryScreen: React.FC = () => {
             <Text>{new Date(item.createdAt).toLocaleString()}</Text>
           </TouchableOpacity>
         )}
-        ListEmptyComponent={
-          <View style={{ flex: 1,  alignItems: 'center', justifyContent: 'center', paddingTop: 200 }}>
-            {staff === null ? (
-              <>
-                <Text style={{ fontSize: 16, color: '#555' }}>
-                  Data is loading, please wait…
-                </Text>
-                <ActivityIndicator size="large" color={Colors.PrimaryColor} style={{ marginTop: 20 }} />
-              </>
-            ) : (
-              <>
-                <Image
-                  source={NoDataFound}
-                  style={{ width: 120, height: 120, resizeMode: 'contain', marginBottom: 20 }}
-                />
-                <Text style={{ fontSize: 16, color: '#888' }}>No data found</Text>
-              </>
-            )}
-          </View>
-        }
+        ListEmptyComponent={<EmptyStateScreen/> }
       />
 
       <RedeemHistoryModal

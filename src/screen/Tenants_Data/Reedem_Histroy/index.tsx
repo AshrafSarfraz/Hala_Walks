@@ -18,6 +18,7 @@ import { firestore } from '../../../firebase/firebaseconfig';
 import { styles } from './style';
 import { NoDataFound } from '../../../theme/Images';
 import { Colors } from '../../../theme/Colors';
+import EmptyStateScreen from '../../../components/NoDataFound/No_data_found';
 
 interface StoredTenant {
   uid: string;
@@ -76,28 +77,7 @@ const TenantHistoryScreen: React.FC = () => {
     </TouchableOpacity>
   );
 
-  const renderEmptyComponent = () => (
-    <View style={styles.emptyContainer}>
-      {tenant === null ? (
-        <>
-          <Text style={styles.loadingText}>Data is loading, please wait…</Text>
-          <ActivityIndicator
-            size="large"
-            color={Colors.PrimaryColor}
-            style={styles.loader}
-          />
-        </>
-      ) : (
-        <>
-          <Image
-            source={NoDataFound}
-            style={styles.noDataImage}
-          />
-          <Text style={styles.noDataText}>No data found</Text>
-        </>
-      )}
-    </View>
-  );
+ 
 
   return (
     <SafeAreaView style={styles.container}>
@@ -117,7 +97,7 @@ const TenantHistoryScreen: React.FC = () => {
         keyExtractor={item => item.id}
         renderItem={renderHistoryItem}
         showsVerticalScrollIndicator={false}
-        ListEmptyComponent={renderEmptyComponent}
+        ListEmptyComponent={<EmptyStateScreen/>}
       />
 
       <RedeemHistoryModal

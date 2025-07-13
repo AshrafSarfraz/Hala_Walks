@@ -19,6 +19,7 @@ import { Dark_Heart, Light_Heart, NoDataFound } from '../../../theme/Images';
 import { languageData } from '../../../redux/language/languageSlice';
 import styles from './style';
 import FastImage from 'react-native-fast-image';
+import EmptyStateScreen from '../../../components/NoDataFound/No_data_found';
 
 const WishlistScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -34,34 +35,7 @@ const WishlistScreen: React.FC = () => {
     dispatch(toggleItemInCart(item));
   };
 
-  const renderEmptyComponent = () => {
-    const isLoading = cartItems === null || cartItems === undefined;
-
-    return (
-      <View style={styles.emptyContainer}>
-        {isLoading ? (
-          <>
-            <Text style={styles.loadingText}>
-              Data is loading, please wait…
-            </Text>
-            <ActivityIndicator
-              size="large"
-              color={Colors.PrimaryColor}
-              style={{ marginTop: 20 }}
-            />
-          </>
-        ) : (
-          <>
-            <Image
-              source={NoDataFound}
-              style={styles.noDataImage}
-            />
-            <Text style={styles.noDataText}>No data found</Text>
-          </>
-        )}
-      </View>
-    );
-  };
+ 
 
   const renderWishlistItem = ({ item }: { item: any }) => (
     <TouchableOpacity
@@ -117,7 +91,7 @@ const WishlistScreen: React.FC = () => {
           numColumns={2}
           columnWrapperStyle={styles.row}
           showsVerticalScrollIndicator={false}
-          ListEmptyComponent={renderEmptyComponent}
+          ListEmptyComponent={<EmptyStateScreen/>}
           renderItem={renderWishlistItem}
         />
       </View>
