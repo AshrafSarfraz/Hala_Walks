@@ -43,7 +43,7 @@ export const getStyles=(language:String) => StyleSheet.create({
      Menu_Btn:{
         justifyContent:'center',
         alignItems:"center",
-        width:'48%',
+        width:'100%',
         borderRadius:4,
         height:24
       },

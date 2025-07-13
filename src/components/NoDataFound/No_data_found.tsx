@@ -1,34 +1,46 @@
-import React from 'react';
-import {Platform, StyleSheet, Text, View} from 'react-native';
-import CustomHeader from '../header/CustomHeader';
-import {useNavigation} from '@react-navigation/native';
+// components/common/EmptyStateScreen.tsx
 
-const NoDataFound: React.FC = () => {
-  const navigation = useNavigation();
+import React from 'react';
+import { View, Text, Image, StyleSheet } from 'react-native';
+import { useSelector } from 'react-redux';
+import { NoDataFound } from '../../theme/Images';
+import { languageData } from '../../redux/language/languageSlice';
+import { RootState } from '../../redux/store';
+
+const EmptyStateScreen: React.FC = () => {
+  const language = useSelector((state: RootState) => state.language.language);
+
   return (
-    <View style={styles.Container}>
-      <CustomHeader title=" " onBackPress={navigation.goBack} />
-      <View style={styles.Body}>
-        <Text>No Data Found</Text>
-      </View>
+    <View style={styles.emptyContainer}>
+      <Image
+        source={NoDataFound}
+        style={styles.noDataImage}
+      />
+      <Text style={styles.noDataText}>
+        {languageData[language].No_Items_Found}
+      </Text>
     </View>
   );
 };
 
+export default EmptyStateScreen;
+
 const styles = StyleSheet.create({
-  Container: {
-    flex:1,
-    marginTop: Platform.OS === 'ios' ? 40 : 30,
-    paddingVertical: 20,
-    backgroundColor: '#f4f4f4',
-    width: '90%',
-    alignSelf: 'center',
-  },
-  Body: {
-    flex:1,
+  emptyContainer: {
+    flex: 1,
+    alignItems: 'center',
     justifyContent: 'center',
-    alignItems:"center"
+    paddingTop: 100,
+  },
+  noDataImage: {
+    width: 200,
+    height: 200,
+    resizeMode: 'contain',
+    marginBottom: 20,
+  },
+  noDataText: {
+    fontSize: 16,
+    color: '#888',
+    textAlign: 'center',
   },
 });
-
-export default NoDataFound;

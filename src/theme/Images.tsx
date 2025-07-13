@@ -6,7 +6,7 @@ export const West_Logo=require(ImgPath+'westwalk_logo.png')
 export const West_NB=require(ImgPath+'westwalk_NB.png')
 export const West_NW=require(ImgPath+'westwalk_NW.png')
 export const BackgroundImg=require(ImgPath+'image.png')
-
+export const NoDataFound=require(ImgPath+'NodataFound.jpg')
 
 
 

@@ -37,38 +37,46 @@ const OrgEmp_Login: React.FC<LoginProps> = ({ navigation }) => {
     };
 
 
-  const handleLogin = async () => {
-    if (!employeeId || !password) {
-      showToast('Missing Fields, Please enter both ID and Password', 'ERROR');
-      return;
-    }
-    try {
-      const employees = await fetch_OrgEmp_Data();
-      const matchedTenant = employees.find(
-        OrgEmp =>
-        OrgEmp.empId === employeeId &&
-        OrgEmp.password === password
-      );
-
-      if (matchedTenant) {
-        await AsyncStorage.setItem(
-          'org_emp_data',
-          JSON.stringify(matchedTenant)
-        );
-
-        showToast('✅ Tenant Login Success:','SUCCESS' );
-        setTimeout(()=>{
-          navigation.navigate('CorporationTab', { userData: matchedTenant });
-        },1000)
-
-      } else {
-        showToast('Login Failed, Invalid ID or Password', 'ERROR');
+    const handleLogin = async () => {
+      if (!employeeId || !password) {
+        showToast('Missing Fields, Please enter both ID and Password', 'ERROR');
+        return;
       }
-    } catch (error) {
-     // console.error('❌ Login Error:', error);
-      showToast('Something went wrong. Please try again.','ERROR');
-    }
-  };
+      try {
+        const employees = await fetch_OrgEmp_Data();
+    
+        const matchedTenant = employees.find(
+          OrgEmp =>
+            OrgEmp.empId === employeeId &&
+            OrgEmp.password === password
+        );
+    
+        if (matchedTenant) {
+          const empWithDocId = {
+            ...matchedTenant,
+            docId: matchedTenant.id, // ✅ Add Firestore doc ID
+          };
+    
+          await AsyncStorage.setItem(
+            'org_emp_data',
+            JSON.stringify(empWithDocId)
+          );
+    
+          console.log('Org Employee Saved in AsyncStorage:', empWithDocId); // ✅ See what's saved
+    
+          showToast('Login Success', 'SUCCESS');
+          setTimeout(() => {
+            navigation.navigate('CorporationTab', { userData: empWithDocId });
+          }, 1000);
+        } else {
+          showToast('Login Failed, Invalid ID or Password', 'ERROR');
+        }
+      } catch (error) {
+        console.error('❌ Login Error:', error);
+        showToast('Something went wrong. Please try again.', 'ERROR');
+      }
+    };
+    
 
   return (
     <View style={styles.Container}>

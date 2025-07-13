@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {
   SafeAreaView, View, Image,Text,
-  StatusBar,} from 'react-native';
+  StatusBar,
+  Alert,} from 'react-native';
 import CustomButton2 from '../../../components/buttons/CustomButton2';
 import {Contact_us, DocIcon, HistroyIcon, P_IMG, Phone, ProfileIcon, Show} from '../../../theme/Images';
 import CustomButton from '../../../components/buttons/CustomButton';
@@ -67,7 +68,8 @@ const Account: React.FC<AccountProps> = ({navigation}) => {
           title={languageData[language].Account_Info}
           image={ProfileIcon}
           onPress={() => {
-            navigation.navigate('ProfileScreen');
+            Alert.alert('Waiting for Accessing the data from Hr System')
+            // navigation.navigate('ProfileScreen');
           }}
         />
         <CustomButton2

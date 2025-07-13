@@ -1,16 +1,17 @@
-import {StyleSheet, Dimensions, Platform} from 'react-native';
+import { StyleSheet, Dimensions, Platform } from 'react-native';
 import { Fonts } from '../../../theme/Fonts';
 import { Colors } from '../../../theme/Colors';
 
-const {width} = Dimensions.get('screen');
+const { width } = Dimensions.get('screen');
 
- const styles= StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
     backgroundColor: Colors.Bg,
     marginTop: Platform.OS === 'ios' ? 50 : '8%',
   },
+
   Header_Txt: {
     marginHorizontal: '5%',
     marginBottom: 20,
@@ -19,72 +20,80 @@ const {width} = Dimensions.get('screen');
     color: Colors.PrimaryColor,
     textAlign: 'center',
   },
+
   row: {
-    justifyContent: 'space-between', // Ensures even spacing
-    marginBottom: 10, // Adds spacing between rows
+    justifyContent: 'space-between',
+    marginBottom: 10,
   },
+
   Flatlist_Cont: {
     flex: 1,
-    width: width * 0.45, // Reduced width for better spacing
+    width: width * 0.45,
     margin: 8,
     borderRadius: 10,
     backgroundColor: Colors.White,
-    height: Platform.OS === 'ios' ? 240 : 240,
-    alignItems:'flex-start',
+    height: 240,
+    alignItems: 'flex-start',
     borderColor: '#E0E0E0',
     overflow: 'hidden',
-    shadowColor: '#000', // Adding shadow effect for iOS
+    shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 10,
-    elevation: 5, // For Android shadow
+    elevation: 5,
   },
+
   image: {
-    width: '100%', // Adjust image size according to screen width
+    width: '100%',
     height: 150,
     resizeMode: 'cover',
-    borderRadius:10,
+    borderRadius: 10,
   },
+
   cate_txt: {
     fontSize: 15,
-    marginVertical: Platform.OS==='ios'?7:2,
+    marginVertical: Platform.OS === 'ios' ? 7 : 2,
     fontFamily: Fonts.F_Bold,
     color: Colors.PrimaryColor,
-    marginHorizontal:"4%",
+    marginHorizontal: '4%',
   },
+
   Type_Cont: {
     backgroundColor: '#D0A700',
     paddingHorizontal: '4%',
     paddingVertical: 4,
     borderRadius: 3,
-    marginHorizontal:"6%",
+    marginHorizontal: '6%',
   },
+
   Type_Text: {
     fontSize: 11,
     lineHeight: 13,
     color: Colors.White,
     fontFamily: Fonts.F_Medium,
   },
+
   Loc_Status_Cont: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '100%',
     marginTop: 8,
-    alignSelf:"center",
-    paddingHorizontal:"6%"
-    
+    alignSelf: 'center',
+    paddingHorizontal: '6%',
   },
+
   Loc_Cont: {
     flexDirection: 'row',
     alignItems: 'center',
-    
   },
+
   LocationIcon: {
     width: 12,
     height: 12,
     resizeMode: 'contain',
     tintColor: Colors.PrimaryColor,
   },
+
   location_txt: {
     fontSize: 10,
     color: 'green',
@@ -92,6 +101,7 @@ const {width} = Dimensions.get('screen');
     lineHeight: 14,
     marginLeft: 2,
   },
+
   Status_Txt: {
     fontSize: 11,
     color: 'green',
@@ -99,32 +109,45 @@ const {width} = Dimensions.get('screen');
     lineHeight: 16,
     marginLeft: 5,
   },
+
   HeaderCont: {
-    alignItems:'flex-end',
+    alignItems: 'flex-end',
     marginBottom: '3%',
-    margin:10
+    margin: 10,
   },
+
   HeartStyle: {
     width: 40,
     height: 40,
     resizeMode: 'contain',
     tintColor: 'red',
   },
-  emptyStateContainer:{
-    marginTop:90,
-    alignItems:"center",
-   justifyContent:"center",
+
+  emptyContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 200,
   },
-  emptyStateImage:{
-   width:200,
-   height:200
+
+  loadingText: {
+    fontSize: 16,
+    color: '#555',
+    textAlign: 'center',
   },
-  emptyStateText:{
-   fontSize:16,
-   marginTop:12,
-   fontWeight:'bold',
-   color:Colors.Black
-  }
+
+  noDataImage: {
+    width: 150,
+    height: 150,
+    resizeMode: 'contain',
+    marginBottom: 20,
+  },
+
+  noDataText: {
+    fontSize: 16,
+    color: '#888',
+    textAlign: 'center',
+  },
 });
 
 export default styles;

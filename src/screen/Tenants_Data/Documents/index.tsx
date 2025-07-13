@@ -51,12 +51,12 @@ const StaffDocumentControlScreen:React.FC = ({navigation}) => {
          onPress={() => {  if (value) { navigation.navigate('PDFViewerScreen', { pdfUrl: value});} else { }}}  >
         <Text style={[styles.menu_txt,{color:"#005029"}]} >View </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.Menu_Btn,{backgroundColor:'#EAEBF0'}]} 
+        {/* <TouchableOpacity style={[styles.Menu_Btn,{backgroundColor:'#EAEBF0'}]} 
           onPress={() => {
             Alert.alert(`Download ${key} from:\n${value}`);
            }}  >
         <Text style={[styles.menu_txt,{color:"#31386A"}]} >Download </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
          
         </View>
       </View>
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
    Menu_Btn:{
       justifyContent:'center',
       alignItems:"center",
-      width:'48%',
+      width:'100%',
       borderRadius:4,
       height:24
     },

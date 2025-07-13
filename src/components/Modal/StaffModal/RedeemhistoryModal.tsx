@@ -81,7 +81,7 @@ const RedeemHistoryModal: React.FC<Props> = ({ visible, onClose, data }) => {
             }}
           >
             <Image source={West_NB} style={styles.logo} resizeMode="contain" />
-            <Text style={styles.heading}>Redeem Details</Text>
+            <Text style={styles.heading}>Redeem</Text>
             <Text style={[styles.Status,]}>{getStatusText()}</Text> 
 
             <Detail label="Brand Name" value={data.nameEng || data.brandName} />

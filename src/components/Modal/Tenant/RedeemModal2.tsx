@@ -20,6 +20,10 @@ type Props = {
   data: {
     code: string;
     createdAt: string;
+    validity?: string;
+    eligibility?: string;
+    staffId?: string;
+    qid?: string;
     BrandName: string;
     nameEng?: string;
     discount?: string;
@@ -36,9 +40,11 @@ const RedeemReceiptModal2: React.FC<Props> = ({ visible, onClose, data }) => {
     const fetchUserData = async () => {
       try {
         const storedUserData = await AsyncStorage.getItem('tenant_data');
+       console.log('📦 Data read from AsyncStorage:', JSON.parse(storedUserData || '{}'));
         if (storedUserData) {
           const parsed = JSON.parse(storedUserData);
           setUserData(parsed);
+          console.log(parsed.id)
         }
       } catch (error) {
         console.log('Error fetching user data:', error);
@@ -69,65 +75,39 @@ const RedeemReceiptModal2: React.FC<Props> = ({ visible, onClose, data }) => {
     setPin(result);
   };
 
+  const getEligibility = () => {
+    if (userData?.staffId) return 'Staff & Family';
+    if (userData?.tenantId) return 'Husband & Wife';
+    if (userData?.orgEmpId) return '1 Person Only';
+    return 'N/A';
+  };
+
   const handleClose = async () => {
-    if (!data) {
-      Alert.alert('Error', 'Data missing');
-      return;
-    }
+    if (!userData || !data) return;
   
     try {
-      // tenant_data se pura data uthao
-      const storedTenantData = await AsyncStorage.getItem('tenant_data');
-      if (!storedTenantData) {
-        Alert.alert('Error', 'Tenant data not found in storage');
-        return;
-      }
+      // Generate eligibility text
+      let eligibility = '';
+      if (userData.staffId) eligibility = 'Staff & Family';
+      else if (userData.tenantId) eligibility = 'Husband & Wife';
+      else if (userData.orgEmpId) eligibility = '1 Person Only';
   
-      const tenantData = JSON.parse(storedTenantData);
-  
-      // tenantId ko uthao tenantData se
-      const tenantId = tenantData.tenantId;
-      if (!tenantId) {
-        Alert.alert('Error', 'Tenant ID missing');
-        return;
-      }
-  
-      // tenantId se Firestore me query lagao
-      const querySnapshot = await firestore()
-        .collection('Tenants')
-        .where('tenantId', '==', tenantId)
-        .get();
-  
-      if (querySnapshot.empty) {
-        Alert.alert('Error', 'Tenant not found in Firestore');
-        return;
-      }
-  
-      // Pehla document select karo (assuming unique tenantId)
-      const tenantDoc = querySnapshot.docs[0];
-      const tenantDocId = tenantDoc.id;
-  
-      // Redeem data prepare karo
       const redeemData = {
         brandName: data.nameEng || data.BrandName,
-        employeeId: tenantId,
-        qid: tenantData.qid || 'N/A',
+        employeeId: userData.staffId || userData.tenantId || userData.orgEmpId || 'Unknown',
+        qid: userData.qid || NaN,
         code: pin,
         date: currentDate,
         discount: data.discount || data.percentage || 'N/A',
-        validity: '7 days',
-        eligibility: 'Husband & Wife',
+        validity: '3 days',
+        eligibility: eligibility,
+        userId: userData.id || 'N/A', 
         createdAt: new Date().toISOString(),
       };
   
-      // Firestore me subcollection me add karo
-      await firestore()
-        .collection('Tenants')
-        .doc(tenantDocId)
-        .collection('redeemed_discounts')
-        .add(redeemData);
-  
-      Alert.alert('Success', 'Redeem history saved successfully.');
+      // Save to new global collection
+      await firestore().collection('redeem_history').add(redeemData);
+      // Alert.alert('Success', 'Redeem history saved successfully.');
       onClose();
     } catch (error) {
       console.error('Error saving redeem history:', error);
@@ -137,7 +117,9 @@ const RedeemReceiptModal2: React.FC<Props> = ({ visible, onClose, data }) => {
   
   
 
-  if (!data || !userData) return null;
+  if (!data || !userData) {
+    return null;
+  }
 
   return (
     <Modal visible={visible} animationType="slide" transparent>
@@ -154,16 +136,15 @@ const RedeemReceiptModal2: React.FC<Props> = ({ visible, onClose, data }) => {
             }}
           >
             <Image source={West_NB} style={styles.logo} resizeMode="contain" />
-            <Text style={styles.heading}>Tenant Redeem Details</Text>
+            <Text style={styles.heading}>Redeem</Text>
 
             <Detail label="Brand Name" value={data.nameEng || data.BrandName} />
-            <Detail label="Employee ID" value={userData.tenantId || 'N/A'} />
-            <Detail label="QID" value={userData.qid || 'N/A'} />
-            <Detail label="Code" value={pin} />
+            <Detail label="Employee ID" value={userData.staffId || userData.tenantId || userData.orgEmpId || 'N/A'} />
+            <Detail label="QID" value={userData.qid || NaN} />
+            <Detail label="Discount"value={data.discount || data.percentage ? `${String(data.discount || data.percentage).replace('%', '')}%` : 'N/A'}/>
             <Detail label="Date" value={currentDate} />
-            <Detail label="Discount" value={data.discount || data.percentage || 'N/A'} />
-            <Detail label="Valid for" value="7 days" />
-            <Detail label="Eligibility" value="Husband & Wife" />
+            <Detail label="Valid for" value="3 days" />
+            <Detail label="Eligibility" value={getEligibility()} />
 
             <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
               <Text style={styles.closeButtonText}>Close</Text>
@@ -250,3 +231,5 @@ const styles = StyleSheet.create({
 });
 
 export default RedeemReceiptModal2;
+
+

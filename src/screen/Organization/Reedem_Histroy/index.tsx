@@ -1,123 +1,116 @@
-import React, {useEffect, useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  View,
   Text,
   FlatList,
   TouchableOpacity,
-  StyleSheet,
-  Platform,
   StatusBar,
+  View,
+  ActivityIndicator,
+  Image,
 } from 'react-native';
-
-import CustomHeader from '../../../components/header/CustomHeader';
-import {useNavigation} from '@react-navigation/native';
-import {Colors} from '../../../theme/Colors';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CustomHeader from '../../../components/header/CustomHeader';
+import { useNavigation } from '@react-navigation/native';
+import { Colors } from '../../../theme/Colors';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { firestore } from '../../../firebase/firebaseconfig';
-import RedeemHistoryModal3 from '../../../components/Modal/OrgEmp/RedeemhistoryModal3';
-import { languageData } from '../../../redux/language/languageSlice';
-import { RootState } from '../../../redux/store';
-import { getStyles } from './style';
-import { useSelector } from 'react-redux';
+import RedeemHistoryModal from '../../../components/Modal/StaffModal/RedeemhistoryModal';
+import { styles } from './style';
+import { NoDataFound } from '../../../theme/Images';
 
 
+interface StoredStaff {
+  uid: string;
+  qid: string;
+}
 
 const CorporationHistoryScreen: React.FC = () => {
   const navigation = useNavigation();
-  const language = useSelector( (state: RootState) => state.language.language);
-  const styles = getStyles(language);
-  
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [history, setHistory] = useState<any[]>([]);
+  const [staff, setStaff] = useState<StoredStaff | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const stored = await AsyncStorage.getItem('org_emp_data');
+        const parsedStaff = stored ? JSON.parse(stored) : null;
+        console.log(parsedStaff)
+        if (!parsedStaff) return;
+  
+        setStaff(parsedStaff);
+  
+        const snapshot = await firestore()
+          .collection('redeem_history')
+          .where('qid', '==', parsedStaff.qid) // filter here
+          .get();
+  
+        const data = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+  
+        setHistory(data);
+      } catch (error) {
+        console.error('Error fetching history:', error);
+      }
+    };
+  
+    fetchData();
+  }, []);
+  
 
   const openModal = (item: any) => {
     setSelectedItem(item);
     setModalVisible(true);
   };
 
-  const [history, setHistory] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchRedeemHistory();
-  }, []);
-
-  const fetchRedeemHistory = async () => {
-    
-    try {
-      const stored = await AsyncStorage.getItem('org_emp_data');
-      if (!stored) return;
-
-      const parsed = JSON.parse(stored);
-      const EmpId = parsed.empId;
-
-      const OrgEmpSnapshot = await firestore()
-        .collection('Employees')
-        .where('empId', '==', EmpId)
-        .get();
-
-      if (OrgEmpSnapshot.empty) {
-        console.warn('Tenant not found');
-        return;
-      }
-
-      const OrgEmpDocId = OrgEmpSnapshot.docs[0].id;
-
-      const redeemSnapshot = await firestore()
-        .collection('Employees')
-        .doc(OrgEmpDocId)
-        .collection('redeemed_discounts')
-        .orderBy('createdAt', 'desc')
-        .get();
-
-      const data = redeemSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-
-      setHistory(data);
-    } catch (error) {
-      console.error('Error fetching redeem history:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-
-
-
-
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar hidden={false} backgroundColor={Colors.Bg} barStyle="dark-content" />
+      <StatusBar
+        hidden={false}
+        backgroundColor={Colors.Bg}
+        barStyle="dark-content"
+      />
       <CustomHeader
-        title={languageData[language].discount_history}
-        onBackPress={() => {
-          navigation.goBack();
-        }}
+        title="Redeem History"
+        onBackPress={() => navigation.goBack()}
+      />
+      <FlatList
+        data={history}
+        keyExtractor={item => item.id}
+        showsVerticalScrollIndicator={false}
+        renderItem={({ item }) => (
+          <TouchableOpacity style={styles.item} onPress={() => openModal(item)}>
+            <Text style={styles.itemCode}>Brand: {item.brandName}</Text>
+            <Text>{item.discount}%</Text>
+            <Text>{new Date(item.createdAt).toLocaleString()}</Text>
+          </TouchableOpacity>
+        )}
+        ListEmptyComponent={
+          <View style={{ flex: 1,  alignItems: 'center', justifyContent: 'center', paddingTop: 200 }}>
+            {staff === null ? (
+              <>
+                <Text style={{ fontSize: 16, color: '#555' }}>
+                  Data is loading, please wait…
+                </Text>
+                <ActivityIndicator size="large" color={Colors.PrimaryColor} style={{ marginTop: 20 }} />
+              </>
+            ) : (
+              <>
+                <Image
+                  source={NoDataFound}
+                  style={{ width: 120, height: 120, resizeMode: 'contain', marginBottom: 20 }}
+                />
+                <Text style={{ fontSize: 16, color: '#888' }}>No data found</Text>
+              </>
+            )}
+          </View>
+        }
       />
 
-{!loading && history.length === 0 ? (
-  <View style={styles.No_Data_Found_Cont} >
-    <Text style={styles.No_Data_Found_Txt} >No Data Found</Text>
-  </View>
-) : (
-  <FlatList
-    data={history}
-    keyExtractor={item => item.id}
-    renderItem={({item}) => (
-      <TouchableOpacity style={styles.item} onPress={() => openModal(item)}>
-        <Text style={styles.itemCode}>Code: {item.brandName}</Text>
-        <Text>{item.code}</Text>
-        <Text>{item.discount}</Text>
-        <Text>{item.eligibility}</Text>
-      </TouchableOpacity>
-    )}
-  />
-)}
-
-      <RedeemHistoryModal3
+      <RedeemHistoryModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         data={selectedItem}
@@ -126,8 +119,8 @@ const CorporationHistoryScreen: React.FC = () => {
   );
 };
 
-
-
 export default CorporationHistoryScreen;
+
+
 
 

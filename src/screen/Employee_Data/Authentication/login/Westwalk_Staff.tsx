@@ -1,5 +1,14 @@
 import React, { useState } from 'react';
-import {TextInput,View, Text, Image,TouchableOpacity,Linking, StatusBar, SafeAreaView,} from 'react-native';
+import {
+  TextInput,
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  Linking,
+  StatusBar,
+  SafeAreaView,
+} from 'react-native';
 import CustomButton from '../../../../components/buttons/CustomButton';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../redux/store';
@@ -14,12 +23,11 @@ import { useNavigation } from '@react-navigation/native';
 import { getStyles } from './style';
 import { Hide, Lock, ManIcon, Show, West_NB } from '../../../../theme/Images';
 
-
-const EmployeeLogin: React.FC= () => {
-  const navigation=useNavigation()
+const EmployeeLogin: React.FC = () => {
+  const navigation = useNavigation();
   const language = useSelector((state: RootState) => state.language.language);
   const styles = getStyles(language);
-  
+
   const [employeeId, setEmployeeId] = useState('');
   const [password, setPassword] = useState('');
   const [hide, setHide] = useState(true);
@@ -27,7 +35,7 @@ const EmployeeLogin: React.FC= () => {
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
   const [alertType, setAlertType] = useState<'SUCCESS' | 'ERROR'>('SUCCESS');
-  
+
   const showToast = (message: string, type: 'SUCCESS' | 'ERROR') => {
     setAlertMessage(message);
     setAlertType(type);
@@ -35,102 +43,134 @@ const EmployeeLogin: React.FC= () => {
     setTimeout(() => setAlertVisible(false), 3000);
   };
 
-
-
   const handleLogin = async () => {
     if (!employeeId || !password) {
       showToast('Please enter Staff ID and Password', 'ERROR');
       return;
     }
-  
-    // setIsLoading(true); // loader starts
+
     try {
       const snapshot = await firestore()
         .collection('Westwalk_Staff')
         .where('staffId', '==', employeeId)
         .limit(1)
         .get();
-  
+
       if (snapshot.empty) {
         showToast('Staff ID not found', 'ERROR');
-        // setIsLoading(false);
         return;
       }
+
       const userDoc = snapshot.docs[0];
       const userData = userDoc.data();
-      const { email } = userDoc.data();
-  
+      const userId = userDoc.id; // Firestore document ID
+
+      const { email } = userData;
       if (!email) {
         showToast('Email not found for this Staff ID', 'ERROR');
-        // setIsLoading(false);
         return;
       }
       await auth().signInWithEmailAndPassword(email, password);
-      await AsyncStorage.setItem('staff_data', JSON.stringify(userData));
+      // Add userId to userData before saving
+      const userDataWithId = { ...userData, userId };
+      await AsyncStorage.setItem('staff_data', JSON.stringify(userDataWithId));
       showToast('Successfully Login', 'SUCCESS');
-      setTimeout(()=>{
-          navigation.navigate('EmployeeTab');
-        },1000)
-    
-       
+      setTimeout(() => {
+        navigation.navigate('EmployeeTab');
+      }, 1000);
     } catch (error) {
       console.error('Login error:', error);
       showToast('Login failed. Please check your credentials.', 'ERROR');
-  
     }
   };
-  
-  
-  
 
   return (
-    <SafeAreaView style={styles.SafeViewCont} >
-    <View style={styles.Container}>
-     <StatusBar hidden={false} translucent={true} animated={true} backgroundColor={'#FFFFFF'}  barStyle="dark-content" />
-      <CustomHeader title=' ' onBackPress={()=>{navigation.goBack()}} />
-      <Image source={West_NB} style={styles.Logo} />
-      <Text style={styles.Title}>{languageData[language].Staff_Login}</Text>
-      <Text style={styles.Subtitle}>{languageData[language].Enter_credentials}</Text>
+    <SafeAreaView style={styles.SafeViewCont}>
+      <View style={styles.Container}>
+        <StatusBar
+          hidden={false}
+          translucent={true}
+          animated={true}
+          backgroundColor={'#FFFFFF'}
+          barStyle="dark-content"
+        />
+        <CustomHeader title=" " onBackPress={() => navigation.goBack()} />
+        <Image source={West_NB} style={styles.Logo} />
+        <Text style={styles.Title}>{languageData[language].Staff_Login}</Text>
+        <Text style={styles.Subtitle}>{languageData[language].Enter_credentials}</Text>
 
-      <View style={[ styles.InputContainer,employeeId !== '' && styles.Active_Input_Field,]}>
-        <Image source={ManIcon} style={[ styles.Icon,employeeId !== '' && styles.Active_Image, ]}/>
-        <TextInput  placeholder={languageData[language].Enter_your_ID} value={employeeId} onChangeText={setEmployeeId}  style={styles.input} placeholderTextColor="#888"/>
-      </View>
-
-      <View style={[ styles.InputContainer, password !== '' && styles.Active_Input_Field, ]} >
-        <Image  source={Lock} style={[ styles.Icon,  password !== '' && styles.Active_Image, ]} />
-        <TextInput  secureTextEntry={hide}  placeholder={languageData[language].Enter_your_Password} value={password}  onChangeText={setPassword}
-          style={styles.passwordinput}  placeholderTextColor="#888" />
-       <TouchableOpacity onPress={() => setHide(!hide)}>
-          <Image source={hide ? Hide : Show} style={[ styles.HideIcon, password !== '' && styles.Active_Image, ]}/>
-      </TouchableOpacity>
-      </View>
-          
-      <View style={styles.forgotContainer}>
-        <View style={styles.checkboxContainer}>
-          {/* <CustomCheckbox
-            label={languageData[language].agree_to}
-            isChecked={isChecked}
-            onPress={() => setIsChecked(!isChecked)}
-            linkText={languageData[language].privacy_policy}
-            onLinkPress={() =>  Linking.openURL('https://halabsaudi.com/privacy-policy-2/') }/> */}
+        <View
+          style={[
+            styles.InputContainer,
+            employeeId !== '' && styles.Active_Input_Field,
+          ]}
+        >
+          <Image
+            source={ManIcon}
+            style={[styles.Icon, employeeId !== '' && styles.Active_Image]}
+          />
+          <TextInput
+            placeholder={languageData[language].Enter_your_ID}
+            value={employeeId}
+            onChangeText={setEmployeeId}
+            style={styles.input}
+            placeholderTextColor="#888"
+          />
         </View>
-        <TouchableOpacity onPress={() => {navigation.navigate("StaffForgetPassword")}  } >
-          <Text style={styles.ForgotText}>
-            {languageData[language]?.forget_password || 'Forgot Password?'}
-          </Text>
-        </TouchableOpacity>
+
+        <View
+          style={[styles.InputContainer, password !== '' && styles.Active_Input_Field]}
+        >
+          <Image
+            source={Lock}
+            style={[styles.Icon, password !== '' && styles.Active_Image]}
+          />
+          <TextInput
+            secureTextEntry={hide}
+            placeholder={languageData[language].Enter_your_Password}
+            value={password}
+            onChangeText={setPassword}
+            style={styles.passwordinput}
+            placeholderTextColor="#888"
+          />
+          <TouchableOpacity onPress={() => setHide(!hide)}>
+            <Image
+              source={hide ? Hide : Show}
+              style={[styles.HideIcon, password !== '' && styles.Active_Image]}
+            />
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.forgotContainer}>
+          <View style={styles.checkboxContainer}>
+            {/* Uncomment and customize if you want to enable checkbox */}
+            {/* <CustomCheckbox
+              label={languageData[language].agree_to}
+              isChecked={isChecked}
+              onPress={() => setIsChecked(!isChecked)}
+              linkText={languageData[language].privacy_policy}
+              onLinkPress={() =>
+                Linking.openURL('https://halabsaudi.com/privacy-policy-2/')
+              }
+            /> */}
+          </View>
+          <TouchableOpacity onPress={() => navigation.navigate('StaffForgetPassword')}>
+            <Text style={styles.ForgotText}>
+              {languageData[language]?.forget_password || 'Forgot Password?'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        <CustomButton title={languageData[language].login} onPress={handleLogin} />
       </View>
-
-      <CustomButton title={languageData[language].login} onPress={handleLogin}
+      <AnimatedToast
+        message={alertMessage}
+        visible={alertVisible}
+        duration={3000}
+        type={alertType}
       />
-
-    </View>
-       <AnimatedToast  message={alertMessage} visible={alertVisible} duration={3000} type={alertType} />
     </SafeAreaView>
   );
 };
 
 export default EmployeeLogin;
-
-

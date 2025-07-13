@@ -40,6 +40,7 @@ const RedeemReceiptModal: React.FC<Props> = ({ visible, onClose, data }) => {
     const fetchUserData = async () => {
       try {
         const storedUserData = await AsyncStorage.getItem('staff_data');
+        console.log(storedUserData)
         if (storedUserData) {
           const parsed = JSON.parse(storedUserData);
           setUserData(parsed);
@@ -82,16 +83,9 @@ const RedeemReceiptModal: React.FC<Props> = ({ visible, onClose, data }) => {
 
   const handleClose = async () => {
     if (!userData || !data) return;
+  
     try {
-      const user = auth().currentUser;
-  
-      if (!user) {
-        Alert.alert('Error', 'No user is logged in');
-        onClose();
-        return;
-      }
-  
-      // Determine eligibility based on user type
+      // Generate eligibility text
       let eligibility = '';
       if (userData.staffId) eligibility = 'Staff & Family';
       else if (userData.tenantId) eligibility = 'Husband & Wife';
@@ -99,31 +93,27 @@ const RedeemReceiptModal: React.FC<Props> = ({ visible, onClose, data }) => {
   
       const redeemData = {
         brandName: data.nameEng || data.BrandName,
-        employeeId: userData.staffId || userData.tenantId || userData.orgEmpId,
-        // qid: userData.qid,
-        qid:12345678,
+        employeeId: userData.staffId || userData.tenantId || userData.orgEmpId || 'Unknown',
+        qid: userData.qid || NaN,
         code: pin,
         date: currentDate,
-        discount: data.discount || data.percentage,
+        discount: data.discount || data.percentage || 'N/A',
         validity: '3 days',
         eligibility: eligibility,
+        userId: userData.userId || 'N/A', 
         createdAt: new Date().toISOString(),
       };
   
-      if (user) {// Save under the current user's Firestore document
-      await firestore()
-        .collection('Westwalk_Staff')
-        .doc(user.uid)
-        .collection('redeemed_discounts')
-        .add(redeemData);
-      Alert.alert('Success', 'Redeem history saved successfully.');
+      // Save to new global collection
+      await firestore().collection('redeem_history').add(redeemData);
+      // Alert.alert('Success', 'Redeem history saved successfully.');
       onClose();
-    }}
-    catch (error) {
+    } catch (error) {
       console.error('Error saving redeem history:', error);
       Alert.alert('Error', 'Failed to save redeem history.');
     }
   };
+  
   
 
   if (!data || !userData) {
@@ -145,15 +135,14 @@ const RedeemReceiptModal: React.FC<Props> = ({ visible, onClose, data }) => {
             }}
           >
             <Image source={West_NB} style={styles.logo} resizeMode="contain" />
-            <Text style={styles.heading}>Redeem Details</Text>
+            <Text style={styles.heading}>Redeem</Text>
 
             <Detail label="Brand Name" value={data.nameEng || data.BrandName} />
             <Detail label="Employee ID" value={userData.staffId || userData.tenantId || userData.orgEmpId || 'N/A'} />
-            <Detail label="QID" value={userData.qid || 122812782} />
-            <Detail label="Code" value={pin} />
+            <Detail label="QID" value={userData.qid || NaN} />
+            <Detail label="Discount"value={data.discount || data.percentage ? `${String(data.discount || data.percentage).replace('%', '')}%` : 'N/A'}/>
             <Detail label="Date" value={currentDate} />
-            <Detail label="Discount" value={data.discount || data.percentage || 'N/A'} />
-            <Detail label="Valid for" value="7 days" />
+            <Detail label="Valid for" value="3 days" />
             <Detail label="Eligibility" value={getEligibility()} />
 
             <TouchableOpacity style={styles.closeButton} onPress={handleClose}>

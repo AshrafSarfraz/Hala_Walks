@@ -35,26 +35,30 @@ const SearchScreen: React.FC = () => {
   const styles = getStyles(language);
 
   useEffect(() => {
-    const getBrandsFromCache = async () => {
+    const getBrands = async () => {
       try {
         setLoading(true);
+  
         const cached = await AsyncStorage.getItem('brands_cache');
         if (cached) {
+          console.log('🗃️ Using cached brand data');
           setBrands(JSON.parse(cached));
         } else {
-          console.warn('⚠️ No brands_cache found in AsyncStorage');
-          setBrands([]);
+          console.warn('⚠️ No cache found, fetching from Firebase...');
+          const fresh = await fetchBrandsFromFirebase();
+          setBrands(fresh);
         }
       } catch (error) {
-        console.error('❌ Error reading brands from AsyncStorage:', error);
+        console.error('❌ Error loading brands:', error);
         setBrands([]);
       } finally {
         setLoading(false);
       }
     };
   
-    getBrandsFromCache();
+    getBrands();
   }, []);
+  
   
 
   const filteredData = brands.filter(item =>

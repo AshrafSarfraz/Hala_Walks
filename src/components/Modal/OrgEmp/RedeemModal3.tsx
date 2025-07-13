@@ -20,6 +20,10 @@ type Props = {
   data: {
     code: string;
     createdAt: string;
+    validity?: string;
+    eligibility?: string;
+    staffId?: string;
+    qid?: string;
     BrandName: string;
     nameEng?: string;
     discount?: string;
@@ -36,9 +40,11 @@ const RedeemReceiptModal3: React.FC<Props> = ({ visible, onClose, data }) => {
     const fetchUserData = async () => {
       try {
         const storedUserData = await AsyncStorage.getItem('org_emp_data');
+       console.log('📦 Data read from AsyncStorage:', JSON.parse(storedUserData || '{}'));
         if (storedUserData) {
           const parsed = JSON.parse(storedUserData);
           setUserData(parsed);
+          console.log(parsed.id)
         }
       } catch (error) {
         console.log('Error fetching user data:', error);
@@ -69,69 +75,51 @@ const RedeemReceiptModal3: React.FC<Props> = ({ visible, onClose, data }) => {
     setPin(result);
   };
 
+  const getEligibility = () => {
+    if (userData?.staffId) return 'Staff & Family';
+    if (userData?.tenantId) return 'Husband & Wife';
+    if (userData?.empId) return '1 Person Only';
+    return 'N/A';
+  };
+
   const handleClose = async () => {
-    if (!data) {
-      Alert.alert('Error', 'Data missing');
-      return;
-    }
-
+    if (!userData || !data) return;
+  
     try {
-      const storedEmpData = await AsyncStorage.getItem('org_emp_data');
-      if (!storedEmpData) {
-        Alert.alert('Error', 'Organization data not found in storage');
-        return;
-      }
-
-      const empData = JSON.parse(storedEmpData);
-
-      const employeeId = empData.empId;
-      const qid = empData.qid;
-
-      if (!employeeId) {
-        Alert.alert('Error', 'Employee ID missing');
-        return;
-      }
-
-      const querySnapshot = await firestore()
-        .collection('Employees')
-        .where('empId', '==', employeeId)
-        .get();
-
-      if (querySnapshot.empty) {
-        Alert.alert('Error', 'Employee not found in Firestore');
-        return;
-      }
-
-      const employeeDoc = querySnapshot.docs[0];
-      const employeeDocId = employeeDoc.id;
-
+      // Generate eligibility text
+      let eligibility = '';
+      if (userData.staffId) eligibility = 'Staff & Family';
+      else if (userData.tenantId) eligibility = 'Husband & Wife';
+      else if (userData.empId) eligibility = '1 Person Only';
+  
       const redeemData = {
         brandName: data.nameEng || data.BrandName,
-        employeeId: employeeId,
-        qid: qid || 'N/A',
+        employeeId: userData.staffId || userData.tenantId || userData.empId || 'Unknown',
+        qid: userData.qid || NaN,
         code: pin,
         date: currentDate,
         discount: data.discount || data.percentage || 'N/A',
         validity: '3 days',
-        eligibility: 'One Person',
+        eligibility: eligibility,
+        userId: userData.id || 'N/A', 
         createdAt: new Date().toISOString(),
       };
-
-      await firestore()
-        .collection('Employees')
-        .doc(employeeDocId)
-        .collection('redeemed_discounts')
-        .add(redeemData);
-
-      Alert.alert('Success', 'Redeem history saved successfully.');
+  
+      // Save to new global collection
+      await firestore().collection('redeem_history').add(redeemData);
+      // Alert.alert('Success', 'Redeem history saved successfully.');
       onClose();
     } catch (error) {
       console.error('Error saving redeem history:', error);
       Alert.alert('Error', 'Failed to save redeem history.');
     }
   };
+  
+  
 
-  if (!data || !userData) return null;
+  if (!data || !userData) {
+    return null;
+  }
 
   return (
     <Modal visible={visible} animationType="slide" transparent>
@@ -148,16 +136,15 @@ const RedeemReceiptModal3: React.FC<Props> = ({ visible, onClose, data }) => {
             }}
           >
             <Image source={West_NB} style={styles.logo} resizeMode="contain" />
-            <Text style={styles.heading}>Organization Redeem Details</Text>
+            <Text style={styles.heading}>Redeem</Text>
 
             <Detail label="Brand Name" value={data.nameEng || data.BrandName} />
-            <Detail label="Employee ID" value={userData.empId || 'N/A'} />
-            <Detail label="QID" value={userData.qid || 'N/A'} />
-            <Detail label="Code" value={pin} />
+            <Detail label="Employee ID" value={userData.staffId || userData.tenantId || userData.orgEmpId || 'N/A'} />
+            <Detail label="QID" value={userData.qid || NaN} />
+            <Detail label="Discount"value={data.discount || data.percentage ? `${String(data.discount || data.percentage).replace('%', '')}%` : 'N/A'}/>
             <Detail label="Date" value={currentDate} />
-            <Detail label="Discount" value={data.discount || data.percentage || 'N/A'} />
             <Detail label="Valid for" value="3 days" />
-            <Detail label="Eligibility" value="One Person" />
+            <Detail label="Eligibility" value={getEligibility()} />
 
             <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
               <Text style={styles.closeButtonText}>Close</Text>
@@ -175,8 +162,6 @@ const Detail = ({ label, value }: { label: string; value: string }) => (
     <Text style={styles.value}>{value}</Text>
   </View>
 );
-
-export default RedeemReceiptModal3;
 
 const styles = StyleSheet.create({
   overlay: {
@@ -244,3 +229,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
+export default RedeemReceiptModal3;
+
+

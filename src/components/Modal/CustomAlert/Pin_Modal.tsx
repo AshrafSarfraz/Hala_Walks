@@ -96,8 +96,8 @@ const styles = StyleSheet.create({
 
    },
    use_txt:{
-     fontSize:14,
-     fontFamily:Fonts.F_Bold,
+     fontSize:12,
+     fontFamily:Fonts.F_Medium,
      textDecorationLine:"underline",
      marginBottom:20
 

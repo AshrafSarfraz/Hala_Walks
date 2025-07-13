@@ -240,18 +240,7 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
 
           </View>
 
-          <View>
-          <View style={styles.Desc_Cont}>
-            <Text style={styles.Desc}>
-              Term and Condition
-            </Text>
-          </View>
-          {language === 'ar' ? (
-            <Text style={styles.Detail}>{item.descriptionArabic}</Text>
-          ) : (
-            <Text style={styles.Detail}>{item.descriptionEng}</Text>
-          )}
-        </View>
+
 
 
 

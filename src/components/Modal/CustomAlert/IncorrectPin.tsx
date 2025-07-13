@@ -46,8 +46,8 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   messageText: {
-    fontSize: 18,
-    fontFamily: Fonts.F_Bold,
+    fontSize: 14,
+    fontFamily: Fonts.F_Medium,
     color: Colors.Black,
     marginBottom: 20,
     textAlign: 'center',

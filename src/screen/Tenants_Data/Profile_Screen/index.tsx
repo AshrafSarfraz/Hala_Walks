@@ -69,7 +69,6 @@ const TenantsProfile: React.FC<{ navigation: any }> = ({ navigation }) => {
           <Text style={styles.sectionTitle}>Residence Info</Text>
 
           <InfoItem label="Category" value={userData.tenantCategory} />
-          <InfoItem label="Room Number" value={userData.roomNumber} />
           <InfoItem label="Unit Number" value={userData.unitNumber} />
           <InfoItem label="Building" value={userData.buildingNo} />
           {userData.tower && <InfoItem label="Tower" value={userData.tower} />}
@@ -79,7 +78,7 @@ const TenantsProfile: React.FC<{ navigation: any }> = ({ navigation }) => {
           <Text style={styles.sectionTitle}>Contract Info</Text>
           <InfoItem label="Contract Start" value={userData.joiningDate} />
           <InfoItem label="Contract End" value={userData.contractExpiry} />
-        <InfoItem label="Occupants" value={userData.occupants} />
+        <InfoItem label="RoomInfo" value={userData.occupants} />
         </View>
 
       

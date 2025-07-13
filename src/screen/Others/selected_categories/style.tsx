@@ -134,5 +134,6 @@ export const getStyles=(language:String) => StyleSheet.create({
    marginTop:12,
    fontWeight:'bold',
    color:Colors.Black
-  }
+  },
+ 
 });
