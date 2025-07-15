@@ -50,8 +50,9 @@ const languageData = {
     No_Items_Found:"No Item Found ",
     Detail_Screen:"Detail Screen",
     Upcoming_event:"Upcoming Events",
-
-  
+   
+    // detail Screen
+    workingHours:"workingHours",
 
 
 
@@ -116,6 +117,8 @@ const languageData = {
     forget_password: "نسيت كلمة المرور",
     Directory:"دليل الهاتف",
 
+    // Detail Screen 
+    workingHours:'ساعات العمل',
 
 
 

@@ -28,6 +28,8 @@ export const fetchFlatOfferFromFirebase = async () => {
       id: doc.id,
       ...doc.data(),
     }));
+    // Save fresh data in AsyncStorage for next time
+    await AsyncStorage.setItem("flatoffer_cache", JSON.stringify(data));
     return data; // Return freshly fetched data from Firebase
   } catch (error) {
     // Handle the error appropriately (console log, show error message, etc.)
@@ -45,6 +47,8 @@ export const fetchEventsFromFirebase = async () => {
       id: doc.id,
       ...doc.data(),
     }));
+    // Save fresh data in AsyncStorage for next time
+    await AsyncStorage.setItem("events_cache", JSON.stringify(data));
     return data; // Return freshly fetched data from Firebase
   } catch (error) {
     // Handle the error appropriately (console log, show error message, etc.)

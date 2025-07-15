@@ -51,7 +51,9 @@ const TenantsProfile: React.FC<{ navigation: any }> = ({ navigation }) => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.Profile_container}>
-         <Image  source={ userData?.profileImg ? { uri: userData.profileImg } : P_IMG}style={styles.profileImage}/>
+         {/* <Image  source={ userData?.profileImg ? { uri: userData.profileImg } : P_IMG}style={styles.profileImage}/> */}
+        
+        <Image  source={P_IMG}style={styles.profileImage}/>
         <Text style={styles.name}>{userData.name}</Text>
         <Text style={styles.staffId}>QID: {userData.qid}</Text>
         <Text style={styles.company}>Status: {userData.status}</Text>

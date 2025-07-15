@@ -53,7 +53,8 @@ const TenantsAccount: React.FC<AccountProps> = ({ navigation }) => {
         barStyle={'light-content'}
       />
       <View style={styles.Header_Cont}>
-      <Image  source={ userData?.profileImg ? { uri: userData.profileImg } : P_IMG}style={styles.profileImage}/>
+      {/* <Image  source={ userData?.profileImg ? { uri: userData.profileImg } : P_IMG}style={styles.profileImage}/> */}
+      <Image  source={P_IMG}style={styles.profileImage}/>
         <Text style={styles.name}>{userData?.name || 'Guest'}</Text>
         <Text style={styles.staffId}>{userData?.tenantId || 'N/A'}</Text>
       </View>

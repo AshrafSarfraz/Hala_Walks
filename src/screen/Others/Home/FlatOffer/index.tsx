@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, Dimensions, TouchableOpacity } from 'react-native';
+import { View, FlatList, Dimensions, TouchableOpacity, Platform, Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
@@ -72,13 +72,26 @@ const ImageSlider: React.FC<{ navigation: any }> = () => {
           LinearGradient={LinearGradient}
           style={styles.image}
         >
-          <FastImage
-            source={{ uri: item.img, priority: FastImage.priority.normal }}
-            style={styles.image}
-            resizeMode={FastImage.resizeMode.cover}
-            onLoad={() => handleImageLoad(item.id)}
-            onError={() => handleImageLoad(item.id)}
-          />
+          {Platform.OS==='ios'?
+          (
+             <FastImage
+             source={{ uri: item.img, priority: FastImage.priority.normal }}
+             style={styles.image}
+             resizeMode={FastImage.resizeMode.cover}
+             onLoad={() => handleImageLoad(item.id)}
+             onError={() => handleImageLoad(item.id)}
+           />
+          ):
+          <Image
+          source={{ uri: item.img}}
+          style={styles.image}
+          resizeMode='cover'
+          onLoad={() => handleImageLoad(item.id)}
+          onError={() => handleImageLoad(item.id)}
+        />
+
+          }
+         
         </ShimmerPlaceholder>
       </TouchableOpacity>
     );

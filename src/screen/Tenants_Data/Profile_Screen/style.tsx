@@ -18,9 +18,14 @@ export const styles = StyleSheet.create({
       height: 120,
       borderRadius: 60,
       marginBottom: 15,
+      borderWidth:1,
+      borderColor: '#666',
     },
     name: {
-      fontSize: 24,
+       width:'90%',
+       alignSelf:"center",
+       textAlign:"center",
+      fontSize: 20,
       fontWeight: 'bold',
     },
     staffId: {

@@ -1,4 +1,5 @@
 import { Platform, StyleSheet } from "react-native";
+import { Colors } from "../../../theme/Colors";
 
 
 export const styles= StyleSheet.create({
@@ -19,20 +20,29 @@ export const styles= StyleSheet.create({
       height: 120,
       borderRadius: 60,
       marginBottom: 15,
+      borderWidth:1,
+      borderColor:'#666',
     },
     name: {
-      fontSize: 24,
+      fontSize: 20,
       fontWeight: 'bold',
+      color:Colors.PrimaryColor,
+      width:'90%',
+      alignSelf:"center",
+      textAlign:'center',
+
     },
     staffId: {
       fontSize: 16,
       color: '#666',
       marginTop: 4,
+      lineHeight:22,
     },
     company: {
       fontSize: 16,
       color: '#666',
       marginBottom: 20,
+      marginTop:4
     },
     section: {
       width: '100%',

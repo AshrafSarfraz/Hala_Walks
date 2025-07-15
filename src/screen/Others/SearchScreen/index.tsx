@@ -36,28 +36,24 @@ const SearchScreen: React.FC = () => {
 
   useEffect(() => {
     const getBrands = async () => {
-      try {
-        setLoading(true);
+      setLoading(true);
   
-        const cached = await AsyncStorage.getItem('brands_cache');
-        if (cached) {
-          console.log('🗃️ Using cached brand data');
-          setBrands(JSON.parse(cached));
-        } else {
-          console.warn('⚠️ No cache found, fetching from Firebase...');
-          const fresh = await fetchBrandsFromFirebase();
-          setBrands(fresh);
-        }
-      } catch (error) {
-        console.error('❌ Error loading brands:', error);
-        setBrands([]);
-      } finally {
-        setLoading(false);
+      // Step 1: Show cache quickly
+      const cached = await AsyncStorage.getItem('brands_cache');
+      if (cached) {
+        setBrands(JSON.parse(cached));
       }
+  
+      // Step 2: Fetch fresh from Firebase anyway
+      const fresh = await fetchBrandsFromFirebase();
+      setBrands(fresh);
+  
+      setLoading(false);
     };
   
     getBrands();
   }, []);
+  
   
   
 
@@ -113,7 +109,7 @@ const SearchScreen: React.FC = () => {
 
           {loading ? (
             <FlatList
-              data={[1, 2, 3, 4, 5, 6]}
+              data={[1, 2, 3, 4, 5, 6,7,8,9,10]}
               keyExtractor={(item, index) => index.toString()}
               renderItem={() => (
                 <View style={styles.itemContainer}>
@@ -126,7 +122,7 @@ const SearchScreen: React.FC = () => {
                     <ShimmerPlaceholder
                       visible={false}
                       LinearGradient={LinearGradient}
-                      style={{ height: 20, marginBottom: 6 }}
+                      style={{ height: 20, marginBottom: 6}}
                     />
                     <ShimmerPlaceholder
                       visible={false}
@@ -142,7 +138,8 @@ const SearchScreen: React.FC = () => {
                 </View>
               )}
             />
-          ) : filteredData.length === 0 ? (
+          ) :
+           filteredData.length === 0 ? (
             renderEmptyState()
           ) : (
             <FlatList

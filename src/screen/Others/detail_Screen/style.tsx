@@ -57,20 +57,31 @@ export const getStyles = (language: string) =>
     },
     title: {
       width: '80%',
-      fontSize: 20,
+      fontSize: 18,
       lineHeight: language === 'en' ? 26 : 32,
       color: Colors.Black,
       letterSpacing: 0.5,
       fontWeight: language === 'en' ? '400' : 'bold',
       fontFamily: language === 'en' ? Fonts.F_Bold : '',
+      textAlign:language === 'en' ? 'left' : 'right',
+    },
+    title1:{
+      width: '100%',
+      fontSize: 18,
+      lineHeight: language === 'en' ? 26 : 32,
+      color: Colors.Black,
+      letterSpacing: 0.5,
+      fontWeight: language === 'en' ? '400' : 'bold',
+      fontFamily: language === 'en' ? Fonts.F_Bold : '',
+      textAlign:language === 'en' ? 'left' : 'right',
     },
     call_cont: {
       flexDirection: 'row',
       alignItems: 'center',
     },
     Phone_Icon: {
-      width: 22,
-      height: 22,
+      width: 18,
+      height: 18,
       resizeMode: 'contain',
     },
 
@@ -79,6 +90,7 @@ export const getStyles = (language: string) =>
       lineHeight: 15,
       color: Colors.Black,
       fontFamily: Fonts.F_Bold,
+      marginHorizontal:5
     },
 
     Dis_Cont: {
@@ -110,7 +122,7 @@ export const getStyles = (language: string) =>
       color: Colors.PrimaryColor,
       fontFamily: language === 'en' ? Fonts.F_Bold : '',
       letterSpacing: 0.4,
-      lineHeight: language === 'en' ? 26 : 36,
+      lineHeight: language === 'en' ? 26 : 26,
       fontWeight: language === 'en' ? '400' : 'bold',
     },
     Total_Discount: {
@@ -130,23 +142,59 @@ export const getStyles = (language: string) =>
       color: Colors.Black,
       fontWeight: '500',
       fontFamily: language === 'en' ? Fonts.F_Bold : '',
-      marginTop: '2%',
       marginBottom: language === 'en' ? '2%' : '0.5%',
     },
 
     Detail: {
       fontSize: 14,
-      lineHeight: language === 'en' ? 17 : 26,
+      lineHeight: language === 'en' ? 18 : 26,
       color: Colors.Black,
       fontFamily: language === 'en' ? Fonts.F_Regular : '',
       fontWeight: '400',
       marginBottom: '3%',
       textAlign: language === 'en' ? 'left' : 'right',
     },
+    Date_Cont:{
+     flexDirection: 'row',
+     height:60,
+     width:'100%',
+     backgroundColor:Colors.White,
+     borderRadius:10,
+     marginBottom:10,
+     alignItems:"center",
+    },
+    Start_date:{
+    width:'50%',
+    alignItems:'center',
+    justifyContent:'center',
+    borderColor:Colors.PrimaryColor,
+    borderRightWidth:2,
+    height:40
+    },
+    End_date:{
+   width:'50%',
+    alignItems:'center',
+    justifyContent:'center',
+    },
+    Date_txt:{
+      fontFamily:Fonts.F_Bold,
+      fontSize:14,
+      marginBottom:5,
+      color:Colors.PrimaryColor
+    },
+    date:{
+      fontFamily:Fonts.F_Medium,
+      fontSize:12,
+      color:Colors.Black,
+      lineHeight:16
+    },
     Loc_Cont: {
-      flexDirection: 'row',
+      flexDirection: language=='en'?'row':'row-reverse',
       alignItems: 'center',
       marginTop: '2%',
+    },
+    Loc_Cont1:{
+    flexDirection:language=='en'?'row':'row-reverse',
     },
     Loc_Icon: {
       width: 16,
@@ -157,9 +205,11 @@ export const getStyles = (language: string) =>
 
     Loc_Txt: {
       fontSize: 10,
+      color: Colors.Black,
+      lineHeight:14
     },
     timing_dropdown: {
-      flexDirection: 'row',
+      flexDirection: language=='en'?'row':'row-reverse',
       alignItems: 'center',
     },
     working_hour_txt: {
@@ -175,7 +225,7 @@ export const getStyles = (language: string) =>
       color: Colors.PrimaryColor,
     },
     item_cont: {
-      flexDirection: 'row',
+      flexDirection: language=='en'?'row':'row-reverse',
       justifyContent: 'space-between',
       paddingVertical: 6,
       borderBottomWidth: 0.5,

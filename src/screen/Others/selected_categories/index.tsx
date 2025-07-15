@@ -21,7 +21,7 @@ import { fetchBrandsFromFirebase } from '../../../firebase/firebaseutils';
 import { getStyles } from './style';
 import { RootState } from '../../../redux/store';
 import { languageData } from '../../../redux/language/languageSlice';
-import { Scope, NoDataFound } from '../../../theme/Images';
+import { Scope } from '../../../theme/Images';
 import { Colors } from '../../../theme/Colors';
 import EmptyStateScreen from '../../../components/NoDataFound/No_data_found';
 
@@ -37,31 +37,38 @@ const SelectedCategories: React.FC<{ route: any }> = ({ route }) => {
   const [loading, setLoading] = useState(true);
   const [imageLoaded, setImageLoaded] = useState<{ [key: string]: boolean }>({});
 
-  useEffect(() => {
-    const getBrandsFromCache = async () => {
-      try {
-        setLoading(true);
-        const cachedBrands = await AsyncStorage.getItem('brands_cache');
-        if (cachedBrands) {
-          const parsedBrands = JSON.parse(cachedBrands);
-          const matchedItems = parsedBrands.filter(data =>
-            data.selectedCategory?.toLowerCase() === item.text?.toLowerCase()
-          );
-          setFilteredItems(matchedItems);
-        } else {
-          console.warn('⚠️ No brands_cache found in AsyncStorage');
-          setFilteredItems([]);
-        }
-      } catch (error) {
-        console.error('❌ Error reading brands from AsyncStorage:', error);
-        setFilteredItems([]);
-      } finally {
-        setLoading(false);
-      }
-    };
+ 
+useEffect(() => {
+  const loadBrands = async () => {
+    try {
+      setLoading(true);
 
-    getBrandsFromCache();
-  }, []);
+      // 1️⃣ Pehle cache se dikhao (fast UI)
+      const cachedBrands = await AsyncStorage.getItem('brands_cache');
+      if (cachedBrands) {
+        const parsed = JSON.parse(cachedBrands);
+        const matched = parsed.filter(data =>
+          data.selectedCategory?.toLowerCase() === item.text?.toLowerCase()
+        );
+        setFilteredItems(matched);
+      }
+
+      // 2️⃣ Phir fresh data laao
+      const freshBrands = await fetchBrandsFromFirebase(); // <-- fresh data
+      const matchedFresh = freshBrands.filter(data =>
+        data.selectedCategory?.toLowerCase() === item.text?.toLowerCase()
+      );
+      setFilteredItems(matchedFresh);
+    } catch (error) {
+      console.error('❌ Error loading brands:', error);
+      setFilteredItems([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  loadBrands();
+}, [item.text]);
 
   const handleImageLoad = (id: string) => {
     setImageLoaded(prev => ({ ...prev, [id]: true }));
@@ -178,7 +185,7 @@ const SelectedCategories: React.FC<{ route: any }> = ({ route }) => {
 
           {/* Main FlatList */}
           <FlatList
-            data={loading ? [1, 2, 3, 4, 5, 6] : searchFiltered}
+            data={loading ? [1, 2, 3, 4, 5,6,7,8,9]: searchFiltered}
             keyExtractor={(item, index) =>
               loading ? index.toString() : item.id
             }

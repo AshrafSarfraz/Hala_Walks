@@ -7,7 +7,6 @@ import CustomButton2 from '../../../components/buttons/CustomButton2';
 import {Contact_us, DocIcon, HistroyIcon, P_IMG, Phone, ProfileIcon, Show} from '../../../theme/Images';
 import CustomButton from '../../../components/buttons/CustomButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
 import { languageData } from '../../../redux/language/languageSlice';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
@@ -59,7 +58,8 @@ const Account: React.FC<AccountProps> = ({navigation}) => {
     <SafeAreaView style={{flex: 1, backgroundColor: '#f4f4f4'}}>
       <StatusBar hidden={false} translucent={true} animated={true} backgroundColor={Colors.PrimaryColor} barStyle={'light-content'} />
       <View style={styles.Header_Cont}>
-        <Image  source={ userData?.profileImg ? { uri: userData.profileImg } : P_IMG}style={styles.profileImage}/>
+        {/* <Image  source={ userData?.profileImg ? { uri: userData.profileImg1 } : P_IMG}style={styles.profileImage}/> */}
+        <Image  source={P_IMG}style={styles.profileImage}/>
         <Text style={styles.name}>{userData.name}</Text>
         <Text style={styles.staffId}>{userData.staffId}</Text>
       </View>
@@ -68,8 +68,8 @@ const Account: React.FC<AccountProps> = ({navigation}) => {
           title={languageData[language].Account_Info}
           image={ProfileIcon}
           onPress={() => {
-            Alert.alert('Waiting for Accessing the data from Hr System')
-            // navigation.navigate('ProfileScreen');
+            // Alert.alert('Waiting for Accessing the data from Hr System')
+            navigation.navigate('ProfileScreen');
           }}
         />
         <CustomButton2
@@ -93,13 +93,13 @@ const Account: React.FC<AccountProps> = ({navigation}) => {
             navigation.navigate('StaffContactUs');
           }}
         />
-        {/* <CustomButton2
+        <CustomButton2
           title={languageData[language].Directory}
           image={Phone}
           onPress={() => {
             navigation.navigate('PhoneDirectory');
           }}
-        /> */}
+        />
       </View>
       <View style={styles.Logout_Cont}>
         <CustomButton

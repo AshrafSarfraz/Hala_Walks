@@ -96,6 +96,14 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
     setImageLoading(false); 
   };
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Month is 0-indexed
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
     const [userType, setUserType] = useState<'staff' | 'tenant' | 'org' | null>(null);
     useEffect(() => {
       const getUserType = async () => {
@@ -131,20 +139,33 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
 
           <View style={styles.Title_Cont}>
             {language === 'ar' ? (  <Text style={styles.title}>{item.nameArabic}</Text>) :
-             ( <Text style={styles.title}>{item.nameEng}</Text> )}
+             ( <Text style={styles.title1}>{item.nameEng}</Text> )}
 
           </View>
-          <View style={styles.Loc_Cont}>
+          <View style={styles.Loc_Cont1}>
             <Image  source={location} style={styles.Loc_Icon} />
-            <Text style={styles.Loc_Txt}>{item.Address} </Text>
+            <Text style={styles.Loc_Txt}>{item.address} </Text>
           </View>
 
-          <View style={styles.Desc_Cont}>
-            <Text style={styles.Desc}>  {languageData[language].description} </Text>
+        
+         </View>
+           <View style={styles.Date_Cont} >
+            <View style={styles.Start_date} >
+             <Text style={styles.Date_txt} >Starting Date</Text>
+              <Text style={styles.date} >{formatDate(item.startAt)}</Text>
+            </View>
+            <View style={styles.End_date} >
+            <Text style={styles.Date_txt} >Ending Date</Text>
+              <Text style={styles.date} >{formatDate(item.endAt)}</Text>
+            </View>
+           </View>
+           <View style={styles.Desc_Cont}>
+            <Text style={styles.Desc}>{languageData[language].description} </Text>
           </View>
           {language === 'ar' ? (  <Text style={styles.Detail}>{item.descriptionArabic}</Text> ) : ( <Text style={styles.Detail}>{item.descriptionEng}</Text> )}
-          </View>
-           </View> ):
+         <CustomButton title={languageData[language].Call_Now} onPress={Contact} />
+         </View> 
+           ):
       (
         <View style={styles.container}>
         <View style={styles.HeaderCont}>
@@ -201,44 +222,58 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
     </View>
   )}
        </View>
-          <View style={styles.Dis_Cont}>
-            <View style={styles.Dis_txt_cont}>
-              <Text style={styles.Total_Discount}>
-                {' '}
-                {'' + item.discount + '%'}{' '}
-              </Text>
-              <Text style={styles.Discount}>
-                {languageData[language].discount}{' '}
-              </Text>
-            </View>
-            <TouchableOpacity
-  style={styles.Menu_Btn}
-  onPress={() => {
-    const url = item.pdfUrl || item.menuUrl;
+       <View style={styles.Dis_Cont}>
+  {item.isLimited ? (
+    <View style={styles.Dis_txt_cont}>
+      <Text style={styles.Total_Discount}>
+        {item.isLimited }
+      </Text>
+    </View>
+  ) : (
+    <>
+      <View style={styles.Dis_txt_cont}>
+        <Text style={styles.Total_Discount}>
+          {item.discount + '%'}
+        </Text>
+        <Text style={styles.Discount}>
+          {languageData[language].discount}
+        </Text>
+      </View>
 
-    if (url) {
-      // Agar URL http ya https se start hota hai to external link open karo
-      if (url.startsWith('http')) {
-        Linking.openURL(url);
-      } else {
-        navigation.navigate('PDFViewerScreen', { pdfUrl: url });
-      }
-    } else {
-      // Dono URLs nahi hain to modal show karo ya alert do
-      setModalVisible(true);
-    }
-  }}
->
-  <Text style={styles.menu_txt}>
-    {item.selectedCategory?.toLowerCase() === 'food and drink'
-      ? language === 'en' ? 'View Menu' : 'عرض القائمة'
-      : item.selectedCategory?.toLowerCase() === 'shop and retail'
-      ? language === 'en' ? 'View Products' : 'عرض المنتجات'
-      : language === 'en' ? 'View Services' : 'عرض الخدمات'}
-  </Text>
-</TouchableOpacity>
+      <TouchableOpacity
+        style={styles.Menu_Btn}
+        onPress={() => {
+          const url = item.pdfUrl || item.menuUrl;
 
-          </View>
+          if (url) {
+            if (url.startsWith('http')) {
+              Linking.openURL(url);
+            } else {
+              navigation.navigate('PDFViewerScreen', { pdfUrl: url });
+            }
+          } else {
+            setModalVisible(true);
+          }
+        }}
+      >
+        <Text style={styles.menu_txt}>
+          {item.selectedCategory?.toLowerCase() === 'food and drink'
+            ? language === 'en'
+              ? 'View Menu'
+              : 'عرض القائمة'
+            : item.selectedCategory?.toLowerCase() === 'shop and retail'
+            ? language === 'en'
+              ? 'View Products'
+              : 'عرض المنتجات'
+            : language === 'en'
+            ? 'View Services'
+            : 'عرض الخدمات'}
+        </Text>
+      </TouchableOpacity>
+    </>
+  )}
+</View>
+
 
 
 

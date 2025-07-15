@@ -21,23 +21,23 @@ const WebViewScreen:React.FC = () => {
       <View style={styles.container}>
         <CustomHeader title={languageData[language].Contact_Us} onBackPress={()=>{navigation.goBack()}} />
         <WebView
-          source={{ uri: 'https://loyalityprogram.com/contact_us_form_staff' }} 
-          
-          onMessage={(event) => {
-            const message = event.nativeEvent.data;
-            if (message === 'navigate-to-some-screen') {
-              navigation.goBack(); // or any screen you want
-            }
-          }}
+  source={{ uri: 'https://loyalityprogram.com/contact_us_form_staff' }}
+  startInLoadingState={true} // 👈 yeh zaroori hai
+  onMessage={(event) => {
+    const message = event.nativeEvent.data;
+    if (message === 'navigate-to-some-screen') {
+      navigation.goBack();
+    }
+  }}
+  renderLoading={() => (
+    <ActivityIndicator
+      color={Colors.PrimaryColor}
+      size="large"
+      style={styles.loading}
+    />
+  )}
+/>
 
-          renderLoading={() => (
-            <ActivityIndicator
-              color={Colors.PrimaryColor}
-              size="large"
-              style={styles.loading}
-            />
-          )}
-        />
       </View>
     </SafeAreaView>
   );

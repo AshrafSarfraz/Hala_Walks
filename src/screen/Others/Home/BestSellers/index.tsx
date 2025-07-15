@@ -8,7 +8,6 @@ import FastImage from 'react-native-fast-image';
 
 import { getStyles } from './style';
 import { RootState } from '../../../../redux/store';
-import { fetchBrandsFromFirebase } from '../../../../firebase/firebaseutils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const BestSeller: React.FC = () => {
