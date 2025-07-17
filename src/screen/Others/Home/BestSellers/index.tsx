@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, Dimensions, TouchableOpacity } from 'react-native';
+import {
+  View, Text, FlatList, Dimensions, TouchableOpacity,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
@@ -9,6 +11,7 @@ import FastImage from 'react-native-fast-image';
 import { getStyles } from './style';
 import { RootState } from '../../../../redux/store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { fetchBrandsFromFirebase } from '../../../../firebase/firebaseutils'; // ✅ Make sure this exists
 
 const BestSeller: React.FC = () => {
   const navigation = useNavigation();
@@ -17,28 +20,37 @@ const BestSeller: React.FC = () => {
 
   const [brands, setBrands] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    const getBrandsFromCache = async () => {
+    const loadBrands = async () => {
       try {
         setLoading(true);
+        let bestSellers: any[] = [];
+
         const cachedBrands = await AsyncStorage.getItem('brands_cache');
+
         if (cachedBrands) {
           const parsedBrands = JSON.parse(cachedBrands);
-          const bestSellers = parsedBrands.filter((item: any) => item.isBestSeller === "yes");
-          setBrands(bestSellers);
-        } else {
-          console.warn('⚠️ No brands_cache found in AsyncStorage');
-          setBrands([]);
+          bestSellers = parsedBrands.filter((item: any) => item.isBestSeller === "yes");
         }
+
+        // If no cache or empty, fetch from Firebase
+        if (!cachedBrands || bestSellers.length === 0) {
+          const freshBrands = await fetchBrandsFromFirebase();
+          await AsyncStorage.setItem('brands_cache', JSON.stringify(freshBrands));
+          bestSellers = freshBrands.filter((item: any) => item.isBestSeller === "yes");
+        }
+
+        setBrands(bestSellers);
       } catch (error) {
-        console.error("❌ Error reading brands from AsyncStorage:", error);
+        console.error("❌ Error loading brands:", error);
         setBrands([]);
       } finally {
         setLoading(false);
       }
     };
-  
-    getBrandsFromCache();
+
+    loadBrands();
   }, []);
 
   const getDescription = (item: any) =>

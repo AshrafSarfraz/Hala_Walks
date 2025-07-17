@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, CommonActions } from '@react-navigation/native';
 import { Colors } from '../../../theme/Colors';
 
 const AuthLoadingScreen: React.FC = () => {
@@ -15,26 +15,39 @@ const AuthLoadingScreen: React.FC = () => {
         AsyncStorage.getItem('org_emp_data'),
       ]);
 
-      if (staffData) {
-        navigation.replace('EmployeeTab');
-      } else if (tenantData) {
-        navigation.replace('TenantsTab');
-      } else if (orgEmpData) {
-        navigation.replace('CorporationTab');
-      } else {
-        navigation.replace('SplashScreen');
-      }
+      let targetScreen = 'SplashScreen';
+      if (staffData) targetScreen = 'EmployeeTab';
+      else if (tenantData) targetScreen = 'TenantsTab';
+      else if (orgEmpData) targetScreen = 'CorporationTab';
+
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: targetScreen }],
+        })
+      );
     };
 
     checkUserType().catch((error) => {
       console.error('Error checking user type:', error);
-      navigation.replace('SplashScreen');
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: 'SplashScreen' }],
+        })
+      );
     });
   }, []);
 
   return (
-    <View style={{ flex: 1, backgroundColor: Colors.PrimaryColor, justifyContent: 'center', alignItems: 'center' }}>
-    </View>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: Colors.PrimaryColor,
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    />
   );
 };
 

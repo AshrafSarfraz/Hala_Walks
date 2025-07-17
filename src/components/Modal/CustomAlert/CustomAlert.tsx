@@ -10,27 +10,30 @@ import { Info, Success, Warning, Error } from '../../../theme/Images'; // ✅ Fi
 
 const { width } = Dimensions.get('window');
 
-const AnimatedToast = ({ message, visible, duration = 6000, type }) => {
+const AnimatedToast = ({ message, visible, duration = 500, type }) => {
   const translateY = useSharedValue(-150); // ✅ Start off-screen
 
   useEffect(() => {
     if (visible) {
-      translateY.value = withTiming(45, {
-        duration: 500,
-        easing: Easing.out(Easing.ease),
-      });
-
-      const hideTimeout = setTimeout(() => {
-        translateY.value = withTiming(-150, {
-          duration: 500,
-          easing: Easing.in(Easing.ease),
+      requestAnimationFrame(() => {
+        translateY.value = withTiming(45, {
+          duration: 100,
+          easing: Easing.out(Easing.ease),
         });
-      }, duration);
-
-      return () => clearTimeout(hideTimeout); // ✅ Clean up timeout
+  
+        const hideTimeout = setTimeout(() => {
+          translateY.value = withTiming(-150, {
+            duration: 100,
+            easing: Easing.in(Easing.ease),
+          });
+        }, duration);
+  
+        // Cleanup
+        return () => clearTimeout(hideTimeout);
+      });
     }
   }, [visible]);
-
+  
   const animatedStyle = useAnimatedStyle(() => {
     return {
       transform: [{ translateY: translateY.value }],

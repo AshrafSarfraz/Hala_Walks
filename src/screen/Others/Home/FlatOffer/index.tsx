@@ -25,30 +25,27 @@ const ImageSlider: React.FC<{ navigation: any }> = () => {
 
   useEffect(() => {
     const loadOffers = async () => {
-      setLoading(true);
       try {
-        // Try to load cached data first
+        // Show cached data immediately
         const cachedData = await AsyncStorage.getItem('offers');
         if (cachedData) {
           setOffers(JSON.parse(cachedData));
           setLoading(false);
         }
-
-        // Fetch fresh data from Firebase
+  
+        // Then fetch in background
         const freshOffers = await fetchFlatOfferFromFirebase();
         setOffers(freshOffers);
-        setLoading(false);
-
-        // Save fresh data to AsyncStorage
         await AsyncStorage.setItem('offers', JSON.stringify(freshOffers));
       } catch (error) {
         console.error('Error loading offers:', error);
         setLoading(false);
       }
     };
-
+  
     loadOffers();
   }, []);
+  
 
   const handleScroll = (event: any) => {
     const slideIndex = Math.round(event.nativeEvent.contentOffset.x / width);
@@ -75,7 +72,7 @@ const ImageSlider: React.FC<{ navigation: any }> = () => {
           {Platform.OS==='ios'?
           (
              <FastImage
-             source={{ uri: item.img, priority: FastImage.priority.normal }}
+             source={{ uri: item.img, priority: FastImage.priority.high }}
              style={styles.image}
              resizeMode={FastImage.resizeMode.cover}
              onLoad={() => handleImageLoad(item.id)}

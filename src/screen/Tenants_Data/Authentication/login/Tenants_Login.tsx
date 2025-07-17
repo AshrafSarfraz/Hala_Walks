@@ -23,6 +23,7 @@ import CustomHeader from '../../../../components/header/CustomHeader';
 import { fetch_Tenant_Data } from '../../../../firebase/firebaseutils';
 import { getStyles } from './style';
 import AnimatedToast from '../../../../components/Modal/CustomAlert/CustomAlert';
+import { CommonActions } from '@react-navigation/native';
 
 interface LoginProps {
   navigation: any;
@@ -43,7 +44,7 @@ const TenantsLogin: React.FC<LoginProps> = ({ navigation }) => {
     setAlertMessage(message);
     setAlertType(type);
     setAlertVisible(true);
-    setTimeout(() => setAlertVisible(false), 3000);
+    setTimeout(() => setAlertVisible(false), 1000);
   };
 
   const handleLogin = async () => {
@@ -77,12 +78,17 @@ const TenantsLogin: React.FC<LoginProps> = ({ navigation }) => {
         );
   
         // ✅ Log the stored data to console
-        console.log('✅ Saved to AsyncStorage (tenant_data):', tenantWithDocId);
+        // console.log('✅ Saved to AsyncStorage (tenant_data):', tenantWithDocId);
   
         showToast('Login successful', 'SUCCESS');
-        setTimeout(() => {
-          navigation.navigate('TenantsTab', { userData: tenantWithDocId });
-        }, 1000);
+            setTimeout(() => {
+              navigation.dispatch(
+                CommonActions.reset({
+                  index: 0,
+                  routes: [{ name: 'TenantsTab' }],
+                })
+              );
+            }, 1000);
       } else {
         showToast('Invalid ID or Password', 'ERROR');
       }

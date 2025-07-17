@@ -12,14 +12,12 @@ import {
 import CustomButton from '../../../../components/buttons/CustomButton';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../redux/store';
-import CustomCheckbox from '../../../../components/checkbox/checkbox';
 import { languageData } from '../../../../redux/language/languageSlice';
 import CustomHeader from '../../../../components/header/CustomHeader';
 import { auth, firestore } from '../../../../firebase/firebaseconfig';
-import ActivityIndicatorModal from '../../../../components/Loader/ActivityIndicator';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AnimatedToast from '../../../../components/Modal/CustomAlert/CustomAlert';
-import { useNavigation } from '@react-navigation/native';
+import { CommonActions, useNavigation } from '@react-navigation/native';
 import { getStyles } from './style';
 import { Hide, Lock, ManIcon, Show, West_NB } from '../../../../theme/Images';
 
@@ -76,7 +74,12 @@ const EmployeeLogin: React.FC = () => {
       await AsyncStorage.setItem('staff_data', JSON.stringify(userDataWithId));
       showToast('Successfully Login', 'SUCCESS');
       setTimeout(() => {
-        navigation.navigate('EmployeeTab');
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: 'EmployeeTab' }],
+          })
+        );
       }, 1000);
     } catch (error) {
       console.error('Login error:', error);
@@ -143,16 +146,7 @@ const EmployeeLogin: React.FC = () => {
 
         <View style={styles.forgotContainer}>
           <View style={styles.checkboxContainer}>
-            {/* Uncomment and customize if you want to enable checkbox */}
-            {/* <CustomCheckbox
-              label={languageData[language].agree_to}
-              isChecked={isChecked}
-              onPress={() => setIsChecked(!isChecked)}
-              linkText={languageData[language].privacy_policy}
-              onLinkPress={() =>
-                Linking.openURL('https://halabsaudi.com/privacy-policy-2/')
-              }
-            /> */}
+    
           </View>
           <TouchableOpacity onPress={() => navigation.navigate('StaffForgetPassword')}>
             <Text style={styles.ForgotText}>

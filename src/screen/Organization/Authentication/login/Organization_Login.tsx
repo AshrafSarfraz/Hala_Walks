@@ -12,6 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import ActivityIndicatorModal from '../../../../components/Loader/ActivityIndicator';
 import { getStyles } from './style';
 import AnimatedToast from '../../../../components/Modal/CustomAlert/CustomAlert';
+import { CommonActions } from '@react-navigation/native';
 
 interface LoginProps {
   navigation: any;
@@ -62,12 +63,17 @@ const OrgEmp_Login: React.FC<LoginProps> = ({ navigation }) => {
             JSON.stringify(empWithDocId)
           );
     
-          console.log('Org Employee Saved in AsyncStorage:', empWithDocId); // ✅ See what's saved
+          // console.log('Org Employee Saved in AsyncStorage:', empWithDocId); // ✅ See what's saved
     
           showToast('Login Success', 'SUCCESS');
-          setTimeout(() => {
-            navigation.navigate('CorporationTab', { userData: empWithDocId });
-          }, 1000);
+           setTimeout(() => {
+                       navigation.dispatch(
+                         CommonActions.reset({
+                           index: 0,
+                           routes: [{ name: 'TenantsTab' }],
+                         })
+                       );
+                     }, 1000);
         } else {
           showToast('Login Failed, Invalid ID or Password', 'ERROR');
         }
