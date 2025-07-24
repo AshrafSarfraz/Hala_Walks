@@ -8,33 +8,52 @@
 
 /* Begin PBXBuildFile section */
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		15C9C4AD56D24FB3A46120D3 /* FilsonProMedium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 8672CC93B20E4DB0BFDE8278 /* FilsonProMedium.otf */; };
-		180126910AD8484D9D59540B /* FilsonProLight.otf in Resources */ = {isa = PBXBuildFile; fileRef = 027A6F2AEC664383B664D14E /* FilsonProLight.otf */; };
-		38E36D77B7824C80AA548197 /* FilsonProRegular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 25126016F9FE458EA812EA3C /* FilsonProRegular.otf */; };
+		1B8027859A9A4A638AF11E24 /* SF-Pro-Rounded-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4D491D1A51FD4560A02AC677 /* SF-Pro-Rounded-Regular.otf */; };
+		36BBC685FD0B4CF1902A6E28 /* FilsonProLight.otf in Resources */ = {isa = PBXBuildFile; fileRef = 9901091BACFA49A8868C562C /* FilsonProLight.otf */; };
+		4CFF4D73C8124AA59C11D08E /* SF-Pro-Rounded-Ultralight.otf in Resources */ = {isa = PBXBuildFile; fileRef = A9DF4983B1AB49259B8E6EA6 /* SF-Pro-Rounded-Ultralight.otf */; };
 		4DF0BAB693831BCD5011BF13 /* Pods_Westwalk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF83A73E5308D9B56AA008CB /* Pods_Westwalk.framework */; };
 		529C7657EC2280C95DBDECCB /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
-		553A5612126543DAA16FA15E /* FilsonProBlack.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2173345C10524C5DA0416C87 /* FilsonProBlack.otf */; };
+		57130E59170C4E25BC996BEE /* SF-Pro-Rounded-Heavy.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1920815042CC49D58DC16D19 /* SF-Pro-Rounded-Heavy.otf */; };
+		58764492A9184C1C98F2541D /* SF-Pro-Rounded-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1040638182F74B3880D49853 /* SF-Pro-Rounded-Light.otf */; };
+		74263F4A838B47AEA1D6291D /* SF-Pro-Rounded-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = A8BE0C2E238C42A58B47E3C6 /* SF-Pro-Rounded-Medium.otf */; };
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		A7B22735BB7841E990136571 /* FilsonProBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = B0AD4D8CB2284B4999866744 /* FilsonProBold.otf */; };
+		88DB634D800D4EFE8675D6A7 /* FilsonProRegular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 94F86D2113BE460C9939AEF4 /* FilsonProRegular.otf */; };
+		A2671C1D519049678D95277E /* SF-Pro-Rounded-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2920B3D2045B446EBE09089B /* SF-Pro-Rounded-Thin.otf */; };
+		A31F106FC9314E30B088D28A /* SF-Pro-Rounded-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = 450B2B81FD5F46248106CB9F /* SF-Pro-Rounded-Black.otf */; };
+		B3F662FB186F4316AB5C12C5 /* FilsonProBlack.otf in Resources */ = {isa = PBXBuildFile; fileRef = 67BDC230A9E0453CB52E96FF /* FilsonProBlack.otf */; };
 		BDD91F122DDB24C90092B747 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BDD91F112DDB24C90092B747 /* GoogleService-Info.plist */; };
+		CE1D82AB19BA41B49B9F97CE /* FilsonProMedium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C6E5EDD06CD4D64B63DB738 /* FilsonProMedium.otf */; };
+		CFDDEDE69E244AE493A3DC25 /* FilsonProBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4CBB26C89EBB4631993DB5D1 /* FilsonProBold.otf */; };
+		D77CCC1251334577965C59EA /* SF-Pro-Rounded-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = C4E7041BDE5045E09764C83B /* SF-Pro-Rounded-Bold.otf */; };
+		F8C1D80A53D44A28AC2D5321 /* SF-Pro-Rounded-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = B802058C2F824751ACA6720A /* SF-Pro-Rounded-Semibold.otf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		027A6F2AEC664383B664D14E /* FilsonProLight.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FilsonProLight.otf; path = ../src/assets/fonts/FilsonProLight.otf; sourceTree = "<group>"; };
+		1040638182F74B3880D49853 /* SF-Pro-Rounded-Light.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Rounded-Light.otf"; path = "../src/halabsaudi/assets/Fonts/SF-Pro-Rounded-Light.otf"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Westwalk.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Westwalk.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Westwalk/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Westwalk/Info.plist; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = Westwalk/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		2173345C10524C5DA0416C87 /* FilsonProBlack.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FilsonProBlack.otf; path = ../src/assets/fonts/FilsonProBlack.otf; sourceTree = "<group>"; };
-		25126016F9FE458EA812EA3C /* FilsonProRegular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FilsonProRegular.otf; path = ../src/assets/fonts/FilsonProRegular.otf; sourceTree = "<group>"; };
+		1920815042CC49D58DC16D19 /* SF-Pro-Rounded-Heavy.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Rounded-Heavy.otf"; path = "../src/halabsaudi/assets/Fonts/SF-Pro-Rounded-Heavy.otf"; sourceTree = "<group>"; };
+		2920B3D2045B446EBE09089B /* SF-Pro-Rounded-Thin.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Rounded-Thin.otf"; path = "../src/halabsaudi/assets/Fonts/SF-Pro-Rounded-Thin.otf"; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-Westwalk.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Westwalk.debug.xcconfig"; path = "Target Support Files/Pods-Westwalk/Pods-Westwalk.debug.xcconfig"; sourceTree = "<group>"; };
+		450B2B81FD5F46248106CB9F /* SF-Pro-Rounded-Black.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Rounded-Black.otf"; path = "../src/halabsaudi/assets/Fonts/SF-Pro-Rounded-Black.otf"; sourceTree = "<group>"; };
+		4C6E5EDD06CD4D64B63DB738 /* FilsonProMedium.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FilsonProMedium.otf; path = ../src/westwalk/assets/fonts/FilsonProMedium.otf; sourceTree = "<group>"; };
+		4CBB26C89EBB4631993DB5D1 /* FilsonProBold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FilsonProBold.otf; path = ../src/westwalk/assets/fonts/FilsonProBold.otf; sourceTree = "<group>"; };
+		4D491D1A51FD4560A02AC677 /* SF-Pro-Rounded-Regular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Rounded-Regular.otf"; path = "../src/halabsaudi/assets/Fonts/SF-Pro-Rounded-Regular.otf"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-Westwalk.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Westwalk.release.xcconfig"; path = "Target Support Files/Pods-Westwalk/Pods-Westwalk.release.xcconfig"; sourceTree = "<group>"; };
+		67BDC230A9E0453CB52E96FF /* FilsonProBlack.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FilsonProBlack.otf; path = ../src/westwalk/assets/fonts/FilsonProBlack.otf; sourceTree = "<group>"; };
 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Westwalk/AppDelegate.swift; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = Westwalk/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		8672CC93B20E4DB0BFDE8278 /* FilsonProMedium.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FilsonProMedium.otf; path = ../src/assets/fonts/FilsonProMedium.otf; sourceTree = "<group>"; };
-		B0AD4D8CB2284B4999866744 /* FilsonProBold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FilsonProBold.otf; path = ../src/assets/fonts/FilsonProBold.otf; sourceTree = "<group>"; };
+		94F86D2113BE460C9939AEF4 /* FilsonProRegular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FilsonProRegular.otf; path = ../src/westwalk/assets/fonts/FilsonProRegular.otf; sourceTree = "<group>"; };
+		9901091BACFA49A8868C562C /* FilsonProLight.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FilsonProLight.otf; path = ../src/westwalk/assets/fonts/FilsonProLight.otf; sourceTree = "<group>"; };
+		A8BE0C2E238C42A58B47E3C6 /* SF-Pro-Rounded-Medium.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Rounded-Medium.otf"; path = "../src/halabsaudi/assets/Fonts/SF-Pro-Rounded-Medium.otf"; sourceTree = "<group>"; };
+		A9DF4983B1AB49259B8E6EA6 /* SF-Pro-Rounded-Ultralight.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Rounded-Ultralight.otf"; path = "../src/halabsaudi/assets/Fonts/SF-Pro-Rounded-Ultralight.otf"; sourceTree = "<group>"; };
+		B802058C2F824751ACA6720A /* SF-Pro-Rounded-Semibold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Rounded-Semibold.otf"; path = "../src/halabsaudi/assets/Fonts/SF-Pro-Rounded-Semibold.otf"; sourceTree = "<group>"; };
+		BD3690F72E312457000F887F /* Westwalk.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Westwalk.entitlements; path = Westwalk/Westwalk.entitlements; sourceTree = "<group>"; };
 		BDD91F112DDB24C90092B747 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		C4E7041BDE5045E09764C83B /* SF-Pro-Rounded-Bold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Rounded-Bold.otf"; path = "../src/halabsaudi/assets/Fonts/SF-Pro-Rounded-Bold.otf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		EF83A73E5308D9B56AA008CB /* Pods_Westwalk.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Westwalk.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -54,6 +73,7 @@
 		13B07FAE1A68108700A75B9A /* Westwalk */ = {
 			isa = PBXGroup;
 			children = (
+				BD3690F72E312457000F887F /* Westwalk.entitlements */,
 				BDD91F112DDB24C90092B747 /* GoogleService-Info.plist */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				761780EC2CA45674006654EE /* AppDelegate.swift */,
@@ -106,11 +126,20 @@
 		98B693921C6A49AE8E52327F /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				2173345C10524C5DA0416C87 /* FilsonProBlack.otf */,
-				B0AD4D8CB2284B4999866744 /* FilsonProBold.otf */,
-				027A6F2AEC664383B664D14E /* FilsonProLight.otf */,
-				8672CC93B20E4DB0BFDE8278 /* FilsonProMedium.otf */,
-				25126016F9FE458EA812EA3C /* FilsonProRegular.otf */,
+				67BDC230A9E0453CB52E96FF /* FilsonProBlack.otf */,
+				4CBB26C89EBB4631993DB5D1 /* FilsonProBold.otf */,
+				9901091BACFA49A8868C562C /* FilsonProLight.otf */,
+				4C6E5EDD06CD4D64B63DB738 /* FilsonProMedium.otf */,
+				94F86D2113BE460C9939AEF4 /* FilsonProRegular.otf */,
+				450B2B81FD5F46248106CB9F /* SF-Pro-Rounded-Black.otf */,
+				C4E7041BDE5045E09764C83B /* SF-Pro-Rounded-Bold.otf */,
+				1920815042CC49D58DC16D19 /* SF-Pro-Rounded-Heavy.otf */,
+				1040638182F74B3880D49853 /* SF-Pro-Rounded-Light.otf */,
+				A8BE0C2E238C42A58B47E3C6 /* SF-Pro-Rounded-Medium.otf */,
+				4D491D1A51FD4560A02AC677 /* SF-Pro-Rounded-Regular.otf */,
+				B802058C2F824751ACA6720A /* SF-Pro-Rounded-Semibold.otf */,
+				2920B3D2045B446EBE09089B /* SF-Pro-Rounded-Thin.otf */,
+				A9DF4983B1AB49259B8E6EA6 /* SF-Pro-Rounded-Ultralight.otf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -192,11 +221,20 @@
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				BDD91F122DDB24C90092B747 /* GoogleService-Info.plist in Resources */,
 				529C7657EC2280C95DBDECCB /* PrivacyInfo.xcprivacy in Resources */,
-				553A5612126543DAA16FA15E /* FilsonProBlack.otf in Resources */,
-				A7B22735BB7841E990136571 /* FilsonProBold.otf in Resources */,
-				180126910AD8484D9D59540B /* FilsonProLight.otf in Resources */,
-				15C9C4AD56D24FB3A46120D3 /* FilsonProMedium.otf in Resources */,
-				38E36D77B7824C80AA548197 /* FilsonProRegular.otf in Resources */,
+				B3F662FB186F4316AB5C12C5 /* FilsonProBlack.otf in Resources */,
+				CFDDEDE69E244AE493A3DC25 /* FilsonProBold.otf in Resources */,
+				36BBC685FD0B4CF1902A6E28 /* FilsonProLight.otf in Resources */,
+				CE1D82AB19BA41B49B9F97CE /* FilsonProMedium.otf in Resources */,
+				88DB634D800D4EFE8675D6A7 /* FilsonProRegular.otf in Resources */,
+				A31F106FC9314E30B088D28A /* SF-Pro-Rounded-Black.otf in Resources */,
+				D77CCC1251334577965C59EA /* SF-Pro-Rounded-Bold.otf in Resources */,
+				57130E59170C4E25BC996BEE /* SF-Pro-Rounded-Heavy.otf in Resources */,
+				58764492A9184C1C98F2541D /* SF-Pro-Rounded-Light.otf in Resources */,
+				74263F4A838B47AEA1D6291D /* SF-Pro-Rounded-Medium.otf in Resources */,
+				1B8027859A9A4A638AF11E24 /* SF-Pro-Rounded-Regular.otf in Resources */,
+				F8C1D80A53D44A28AC2D5321 /* SF-Pro-Rounded-Semibold.otf in Resources */,
+				A2671C1D519049678D95277E /* SF-Pro-Rounded-Thin.otf in Resources */,
+				4CFF4D73C8124AA59C11D08E /* SF-Pro-Rounded-Ultralight.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -308,6 +346,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Westwalk/Westwalk.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 76MDZ9JX2N;
 				ENABLE_BITCODE = NO;
@@ -337,6 +376,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Westwalk/Westwalk.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 76MDZ9JX2N;
 				INFOPLIST_FILE = Westwalk/Info.plist;
@@ -438,10 +478,7 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
@@ -521,10 +558,7 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;

@@ -2665,6 +2665,8 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - react-native-geolocation-service (5.3.1):
+    - React
   - react-native-pdf (6.7.7):
     - DoubleConversion
     - glog
@@ -3340,6 +3342,7 @@ DEPENDENCIES:
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
   - React-microtasksnativemodule (from `../node_modules/react-native/ReactCommon/react/nativemodule/microtasks`)
   - react-native-blob-util (from `../node_modules/react-native-blob-util`)
+  - react-native-geolocation-service (from `../node_modules/react-native-geolocation-service`)
   - react-native-pdf (from `../node_modules/react-native-pdf`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-webview (from `../node_modules/react-native-webview`)
@@ -3489,6 +3492,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/react/nativemodule/microtasks"
   react-native-blob-util:
     :path: "../node_modules/react-native-blob-util"
+  react-native-geolocation-service:
+    :path: "../node_modules/react-native-geolocation-service"
   react-native-pdf:
     :path: "../node_modules/react-native-pdf"
   react-native-safe-area-context:
@@ -3632,6 +3637,7 @@ SPEC CHECKSUMS:
   React-Mapbuffer: 9fbb496e7d6f7c34d5e617365ee778bf96d14eae
   React-microtasksnativemodule: 36adde22631838680d1be62776e8ccb83186c06a
   react-native-blob-util: 775b994555980f1687e3fd918a4e6d0044aaeb39
+  react-native-geolocation-service: 32b2c2a3b91e70ce2a8d0c684801aaeb0a07e0ec
   react-native-pdf: 735ad8762c0631325147539df7e5d4d7087d8b53
   react-native-safe-area-context: 0472f170cbc594668dc7923724f679b066ac75b7
   react-native-webview: 005cf4cfde4e2688d222e1fe962d638bc2acc07d
