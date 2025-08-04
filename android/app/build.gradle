@@ -93,11 +93,11 @@ android {
 
     namespace "com.westwalk"
     defaultConfig {
-        applicationId "com.westwalk"
+        applicationId "com.halabsaudiappreactnativeversion"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 3
-        versionName "1.2"
+        versionCode 20
+        versionName "1.1.1"
     }
     signingConfigs {
         debug {
@@ -106,13 +106,12 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
-        release {
-        storeFile file('westwalk.keystore')
-        storePassword 'Westwalk--key'
-        keyAlias 'my-key-alias'
-        keyPassword 'Westwalk--key'
-    }
-
+    release {
+            storeFile file('my-release-key.keystore')
+            storePassword 'Hala--key'
+            keyAlias 'my-key-alias'
+            keyPassword 'Hala--key'
+        }
 
     }
     buildTypes {

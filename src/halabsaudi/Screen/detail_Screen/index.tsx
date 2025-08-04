@@ -192,7 +192,7 @@ const DetailScreen: React.FC<{route:any}> = ({route}) => {
   onClose={() => hideAlert()}
 />
 
-        <Discount_Redeem visible={discountAlert} discount={item.discount} onClose={() => {hideDiscount_Alert();}}/>
+        <Discount_Redeem visible={discountAlert} brand={item.nameEng}  discount={item.discount} onClose={() => {hideDiscount_Alert();}}/>
         <MenuUnavailableModal visible={modalVisible} onClose={() => setModalVisible(false)}/>
         <IncorrectPin visible={incorrectPinModal} onClose={() => setIncorrectPinModal(false)}/>
       

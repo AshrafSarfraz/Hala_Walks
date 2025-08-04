@@ -7,53 +7,125 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0CA6A65BEA9D4FA0BE9DEDC5 /* bgImg.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 9C808CA66C3E49DBB96C698C /* bgImg.jpeg */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		15D820F22476435590D4E149 /* partner.png in Resources */ = {isa = PBXBuildFile; fileRef = 95EEDF4D026D4C989091C7A5 /* partner.png */; };
+		18245D27D20B4DE086C768E9 /* westwalk_nw.png in Resources */ = {isa = PBXBuildFile; fileRef = 154416DF881D415FA4DC92A6 /* westwalk_nw.png */; };
+		1AF6D63447FE46E19FADA59A /* health.png in Resources */ = {isa = PBXBuildFile; fileRef = 2A616C99BF55415D9A0672FD /* health.png */; };
 		1B8027859A9A4A638AF11E24 /* SF-Pro-Rounded-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4D491D1A51FD4560A02AC677 /* SF-Pro-Rounded-Regular.otf */; };
+		1E32280F2080473D9FA2499C /* research.png in Resources */ = {isa = PBXBuildFile; fileRef = 0127F4C0636540D5AB65E133 /* research.png */; };
+		241C1F1444AD4145A63341B4 /* splash2.png in Resources */ = {isa = PBXBuildFile; fileRef = 4EB979B26EE54A66B114A367 /* splash2.png */; };
+		272C3B4BC20245D5A89DF835 /* hotel.png in Resources */ = {isa = PBXBuildFile; fileRef = DC55AF61888F43B9B19A0CD2 /* hotel.png */; };
 		36BBC685FD0B4CF1902A6E28 /* FilsonProLight.otf in Resources */ = {isa = PBXBuildFile; fileRef = 9901091BACFA49A8868C562C /* FilsonProLight.otf */; };
+		3B4D68AE525345E7B35F6E42 /* slider2.png in Resources */ = {isa = PBXBuildFile; fileRef = 73AB8A54EF4E42E2BD25B3C1 /* slider2.png */; };
+		3C866B0902674B8AB7E6E5F4 /* health_fitness.png in Resources */ = {isa = PBXBuildFile; fileRef = 57E02F48F6C14B71B3D06882 /* health_fitness.png */; };
+		4673828FA38D440E9B320A4F /* searchImg.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F72F95770C5449393B4FDD4 /* searchImg.png */; };
 		4CFF4D73C8124AA59C11D08E /* SF-Pro-Rounded-Ultralight.otf in Resources */ = {isa = PBXBuildFile; fileRef = A9DF4983B1AB49259B8E6EA6 /* SF-Pro-Rounded-Ultralight.otf */; };
 		4DF0BAB693831BCD5011BF13 /* Pods_Westwalk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF83A73E5308D9B56AA008CB /* Pods_Westwalk.framework */; };
+		50ABBE3A22664138AEC18C14 /* westwalk_nb.png in Resources */ = {isa = PBXBuildFile; fileRef = 364E64AB720C4DAD9165D4B3 /* westwalk_nb.png */; };
 		529C7657EC2280C95DBDECCB /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
+		56BAB149AE3A4F7E9C9E38E5 /* food2.png in Resources */ = {isa = PBXBuildFile; fileRef = 75DD4605EF3048A4BBD47B6A /* food2.png */; };
 		57130E59170C4E25BC996BEE /* SF-Pro-Rounded-Heavy.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1920815042CC49D58DC16D19 /* SF-Pro-Rounded-Heavy.otf */; };
 		58764492A9184C1C98F2541D /* SF-Pro-Rounded-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1040638182F74B3880D49853 /* SF-Pro-Rounded-Light.otf */; };
+		60A5F6DE92A94FFE8DECA793 /* ww_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 86CD6311A46F4E95A7528A2D /* ww_icon.png */; };
+		60FE65F77CBE4CF5898DF4B6 /* food_drinks.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 17835638C2D74F5EBA486A9E /* food_drinks.jpg */; };
+		665F40134F23475CBBA47057 /* logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 08A62FDAB06F4C68BE98CE09 /* logo.png */; };
+		6AAB5BFE80D441B5A2BCD115 /* food__drinks.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1E9328A234034EFDAE7224D1 /* food__drinks.jpg */; };
+		722FF895AEBD482E832B902A /* nodata_found.jpg in Resources */ = {isa = PBXBuildFile; fileRef = B33EC84BD3984E0ABBC5B6BF /* nodata_found.jpg */; };
 		74263F4A838B47AEA1D6291D /* SF-Pro-Rounded-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = A8BE0C2E238C42A58B47E3C6 /* SF-Pro-Rounded-Medium.otf */; };
+		74E1CFC695BE451DB41F157F /* westwalk_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 16116D115E99497EA80BCB4F /* westwalk_icon.png */; };
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
+		7B4A330A99F841898E7D7FBF /* image.png in Resources */ = {isa = PBXBuildFile; fileRef = 7D2868482B74462D925DDBFF /* image.png */; };
+		7D005149FBE9418CACEEA069 /* beauty_spa.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 0C61A142981D407A9AF87936 /* beauty_spa.jpg */; };
+		7D93085E42904727BBDA4BDE /* giftpack.png in Resources */ = {isa = PBXBuildFile; fileRef = 548F9F843265409C8AE55ED1 /* giftpack.png */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		88DB634D800D4EFE8675D6A7 /* FilsonProRegular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 94F86D2113BE460C9939AEF4 /* FilsonProRegular.otf */; };
+		8C3277055556424D8870C21B /* splash.png in Resources */ = {isa = PBXBuildFile; fileRef = 13130A10F20C459C9F156908 /* splash.png */; };
+		9135A9C0F7D84A8DA4F2F906 /* logo_w.png in Resources */ = {isa = PBXBuildFile; fileRef = BDAD7AB62FCB49B9BF444605 /* logo_w.png */; };
+		9E87102ECB004F43A5E5AF06 /* logo_b.png in Resources */ = {isa = PBXBuildFile; fileRef = 90D0234A82AC4A1CBE21E158 /* logo_b.png */; };
 		A2671C1D519049678D95277E /* SF-Pro-Rounded-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2920B3D2045B446EBE09089B /* SF-Pro-Rounded-Thin.otf */; };
 		A31F106FC9314E30B088D28A /* SF-Pro-Rounded-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = 450B2B81FD5F46248106CB9F /* SF-Pro-Rounded-Black.otf */; };
+		A493DD5BAFE44F518891C5EB /* service.png in Resources */ = {isa = PBXBuildFile; fileRef = B80BCC734C604616840A969B /* service.png */; };
+		A5743B3E5B2F4CF8BB777E01 /* entertainment.png in Resources */ = {isa = PBXBuildFile; fileRef = 9C5349FBA0F5422F96FF400F /* entertainment.png */; };
+		AE044C3E1E4B4D4BBB81D393 /* no_data.png in Resources */ = {isa = PBXBuildFile; fileRef = B29AE0C316C74641B2F49A1D /* no_data.png */; };
+		B1E57AD50B86413C96D2B5D8 /* shop.png in Resources */ = {isa = PBXBuildFile; fileRef = 9A547F9A53BB46D98A4E27E0 /* shop.png */; };
 		B3F662FB186F4316AB5C12C5 /* FilsonProBlack.otf in Resources */ = {isa = PBXBuildFile; fileRef = 67BDC230A9E0453CB52E96FF /* FilsonProBlack.otf */; };
+		B5C5B0B12B74431C84802880 /* services.png in Resources */ = {isa = PBXBuildFile; fileRef = 952F93DF63B540F68895F7C4 /* services.png */; };
 		BDD91F122DDB24C90092B747 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BDD91F112DDB24C90092B747 /* GoogleService-Info.plist */; };
+		C421005060B7412281F0E0DA /* wel_logo.png in Resources */ = {isa = PBXBuildFile; fileRef = CE994BCB2BD04E4E95C9F1AF /* wel_logo.png */; };
+		CC9FD6896EBC4D9C86FDC1D7 /* slider3.png in Resources */ = {isa = PBXBuildFile; fileRef = B9FE6ADF0CFE478F9FF47740 /* slider3.png */; };
 		CE1D82AB19BA41B49B9F97CE /* FilsonProMedium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C6E5EDD06CD4D64B63DB738 /* FilsonProMedium.otf */; };
+		CF4A452D899A4ACCACCE4006 /* beauty__spa.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 3399BBC3C3D8452B9DDD5564 /* beauty__spa.jpg */; };
 		CFDDEDE69E244AE493A3DC25 /* FilsonProBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4CBB26C89EBB4631993DB5D1 /* FilsonProBold.otf */; };
 		D77CCC1251334577965C59EA /* SF-Pro-Rounded-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = C4E7041BDE5045E09764C83B /* SF-Pro-Rounded-Bold.otf */; };
+		D92023B314A840198B3FDE29 /* westwalk.png in Resources */ = {isa = PBXBuildFile; fileRef = A115ED707C1C4A8DBF9F6E51 /* westwalk.png */; };
+		E534CB2FA0BB47B0A1D42558 /* slider1.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F23DBF8E2D84676A67E2995 /* slider1.png */; };
 		F8C1D80A53D44A28AC2D5321 /* SF-Pro-Rounded-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = B802058C2F824751ACA6720A /* SF-Pro-Rounded-Semibold.otf */; };
+		FDA240A56D06423DB8208F4F /* nodata.png in Resources */ = {isa = PBXBuildFile; fileRef = 14E4CBEA49B04478BAB16B8A /* nodata.png */; };
+		FE9BB7034B604BC48DF3D42E /* westwalk_logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 0F1377F887D14E8CA0DFC414 /* westwalk_logo.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0127F4C0636540D5AB65E133 /* research.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = research.png; path = ../src/halabsaudi/assets/images/research.png; sourceTree = "<group>"; };
+		08A62FDAB06F4C68BE98CE09 /* logo.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = logo.png; path = ../src/halabsaudi/assets/images/logo.png; sourceTree = "<group>"; };
+		0C61A142981D407A9AF87936 /* beauty_spa.jpg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = beauty_spa.jpg; path = ../src/westwalk/assets/images/beauty_spa.jpg; sourceTree = "<group>"; };
+		0F1377F887D14E8CA0DFC414 /* westwalk_logo.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = westwalk_logo.png; path = ../src/westwalk/assets/images/westwalk_logo.png; sourceTree = "<group>"; };
 		1040638182F74B3880D49853 /* SF-Pro-Rounded-Light.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Rounded-Light.otf"; path = "../src/halabsaudi/assets/Fonts/SF-Pro-Rounded-Light.otf"; sourceTree = "<group>"; };
+		13130A10F20C459C9F156908 /* splash.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = splash.png; path = ../src/westwalk/assets/images/splash.png; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Westwalk.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Westwalk.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Westwalk/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Westwalk/Info.plist; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = Westwalk/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		14E4CBEA49B04478BAB16B8A /* nodata.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = nodata.png; path = ../src/halabsaudi/assets/images/nodata.png; sourceTree = "<group>"; };
+		154416DF881D415FA4DC92A6 /* westwalk_nw.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = westwalk_nw.png; path = ../src/westwalk/assets/images/westwalk_nw.png; sourceTree = "<group>"; };
+		16116D115E99497EA80BCB4F /* westwalk_icon.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = westwalk_icon.png; path = ../src/westwalk/assets/images/westwalk_icon.png; sourceTree = "<group>"; };
+		17835638C2D74F5EBA486A9E /* food_drinks.jpg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = food_drinks.jpg; path = ../src/westwalk/assets/images/food_drinks.jpg; sourceTree = "<group>"; };
 		1920815042CC49D58DC16D19 /* SF-Pro-Rounded-Heavy.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Rounded-Heavy.otf"; path = "../src/halabsaudi/assets/Fonts/SF-Pro-Rounded-Heavy.otf"; sourceTree = "<group>"; };
+		1E9328A234034EFDAE7224D1 /* food__drinks.jpg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = food__drinks.jpg; path = ../src/halabsaudi/assets/images/food__drinks.jpg; sourceTree = "<group>"; };
 		2920B3D2045B446EBE09089B /* SF-Pro-Rounded-Thin.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Rounded-Thin.otf"; path = "../src/halabsaudi/assets/Fonts/SF-Pro-Rounded-Thin.otf"; sourceTree = "<group>"; };
+		2A616C99BF55415D9A0672FD /* health.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = health.png; path = ../src/halabsaudi/assets/images/health.png; sourceTree = "<group>"; };
+		3399BBC3C3D8452B9DDD5564 /* beauty__spa.jpg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = beauty__spa.jpg; path = ../src/halabsaudi/assets/images/beauty__spa.jpg; sourceTree = "<group>"; };
+		364E64AB720C4DAD9165D4B3 /* westwalk_nb.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = westwalk_nb.png; path = ../src/westwalk/assets/images/westwalk_nb.png; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-Westwalk.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Westwalk.debug.xcconfig"; path = "Target Support Files/Pods-Westwalk/Pods-Westwalk.debug.xcconfig"; sourceTree = "<group>"; };
+		3F72F95770C5449393B4FDD4 /* searchImg.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = searchImg.png; path = ../src/halabsaudi/assets/images/searchImg.png; sourceTree = "<group>"; };
 		450B2B81FD5F46248106CB9F /* SF-Pro-Rounded-Black.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Rounded-Black.otf"; path = "../src/halabsaudi/assets/Fonts/SF-Pro-Rounded-Black.otf"; sourceTree = "<group>"; };
 		4C6E5EDD06CD4D64B63DB738 /* FilsonProMedium.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FilsonProMedium.otf; path = ../src/westwalk/assets/fonts/FilsonProMedium.otf; sourceTree = "<group>"; };
 		4CBB26C89EBB4631993DB5D1 /* FilsonProBold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FilsonProBold.otf; path = ../src/westwalk/assets/fonts/FilsonProBold.otf; sourceTree = "<group>"; };
 		4D491D1A51FD4560A02AC677 /* SF-Pro-Rounded-Regular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Rounded-Regular.otf"; path = "../src/halabsaudi/assets/Fonts/SF-Pro-Rounded-Regular.otf"; sourceTree = "<group>"; };
+		4EB979B26EE54A66B114A367 /* splash2.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = splash2.png; path = ../src/westwalk/assets/images/splash2.png; sourceTree = "<group>"; };
+		548F9F843265409C8AE55ED1 /* giftpack.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = giftpack.png; path = ../src/halabsaudi/assets/images/giftpack.png; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-Westwalk.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Westwalk.release.xcconfig"; path = "Target Support Files/Pods-Westwalk/Pods-Westwalk.release.xcconfig"; sourceTree = "<group>"; };
+		57E02F48F6C14B71B3D06882 /* health_fitness.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = health_fitness.png; path = ../src/westwalk/assets/images/health_fitness.png; sourceTree = "<group>"; };
+		5F23DBF8E2D84676A67E2995 /* slider1.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = slider1.png; path = ../src/westwalk/assets/images/slider1.png; sourceTree = "<group>"; };
 		67BDC230A9E0453CB52E96FF /* FilsonProBlack.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FilsonProBlack.otf; path = ../src/westwalk/assets/fonts/FilsonProBlack.otf; sourceTree = "<group>"; };
+		73AB8A54EF4E42E2BD25B3C1 /* slider2.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = slider2.png; path = ../src/halabsaudi/assets/images/slider2.png; sourceTree = "<group>"; };
+		75DD4605EF3048A4BBD47B6A /* food2.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = food2.png; path = ../src/westwalk/assets/images/food2.png; sourceTree = "<group>"; };
 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Westwalk/AppDelegate.swift; sourceTree = "<group>"; };
+		7D2868482B74462D925DDBFF /* image.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = image.png; path = ../src/westwalk/assets/images/image.png; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = Westwalk/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		86CD6311A46F4E95A7528A2D /* ww_icon.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = ww_icon.png; path = ../src/halabsaudi/assets/images/ww_icon.png; sourceTree = "<group>"; };
+		90D0234A82AC4A1CBE21E158 /* logo_b.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = logo_b.png; path = ../src/halabsaudi/assets/images/logo_b.png; sourceTree = "<group>"; };
 		94F86D2113BE460C9939AEF4 /* FilsonProRegular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FilsonProRegular.otf; path = ../src/westwalk/assets/fonts/FilsonProRegular.otf; sourceTree = "<group>"; };
+		952F93DF63B540F68895F7C4 /* services.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = services.png; path = ../src/halabsaudi/assets/images/services.png; sourceTree = "<group>"; };
+		95EEDF4D026D4C989091C7A5 /* partner.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = partner.png; path = ../src/halabsaudi/assets/images/partner.png; sourceTree = "<group>"; };
 		9901091BACFA49A8868C562C /* FilsonProLight.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FilsonProLight.otf; path = ../src/westwalk/assets/fonts/FilsonProLight.otf; sourceTree = "<group>"; };
+		9A547F9A53BB46D98A4E27E0 /* shop.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = shop.png; path = ../src/westwalk/assets/images/shop.png; sourceTree = "<group>"; };
+		9C5349FBA0F5422F96FF400F /* entertainment.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = entertainment.png; path = ../src/westwalk/assets/images/entertainment.png; sourceTree = "<group>"; };
+		9C808CA66C3E49DBB96C698C /* bgImg.jpeg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = bgImg.jpeg; path = ../src/halabsaudi/assets/images/bgImg.jpeg; sourceTree = "<group>"; };
+		A115ED707C1C4A8DBF9F6E51 /* westwalk.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = westwalk.png; path = ../src/westwalk/assets/images/westwalk.png; sourceTree = "<group>"; };
 		A8BE0C2E238C42A58B47E3C6 /* SF-Pro-Rounded-Medium.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Rounded-Medium.otf"; path = "../src/halabsaudi/assets/Fonts/SF-Pro-Rounded-Medium.otf"; sourceTree = "<group>"; };
 		A9DF4983B1AB49259B8E6EA6 /* SF-Pro-Rounded-Ultralight.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Rounded-Ultralight.otf"; path = "../src/halabsaudi/assets/Fonts/SF-Pro-Rounded-Ultralight.otf"; sourceTree = "<group>"; };
+		B29AE0C316C74641B2F49A1D /* no_data.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = no_data.png; path = ../src/halabsaudi/assets/images/no_data.png; sourceTree = "<group>"; };
+		B33EC84BD3984E0ABBC5B6BF /* nodata_found.jpg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = nodata_found.jpg; path = ../src/westwalk/assets/images/nodata_found.jpg; sourceTree = "<group>"; };
 		B802058C2F824751ACA6720A /* SF-Pro-Rounded-Semibold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Rounded-Semibold.otf"; path = "../src/halabsaudi/assets/Fonts/SF-Pro-Rounded-Semibold.otf"; sourceTree = "<group>"; };
+		B80BCC734C604616840A969B /* service.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = service.png; path = ../src/westwalk/assets/images/service.png; sourceTree = "<group>"; };
+		B9FE6ADF0CFE478F9FF47740 /* slider3.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = slider3.png; path = ../src/halabsaudi/assets/images/slider3.png; sourceTree = "<group>"; };
 		BD3690F72E312457000F887F /* Westwalk.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Westwalk.entitlements; path = Westwalk/Westwalk.entitlements; sourceTree = "<group>"; };
+		BDAD7AB62FCB49B9BF444605 /* logo_w.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = logo_w.png; path = ../src/halabsaudi/assets/images/logo_w.png; sourceTree = "<group>"; };
 		BDD91F112DDB24C90092B747 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C4E7041BDE5045E09764C83B /* SF-Pro-Rounded-Bold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Rounded-Bold.otf"; path = "../src/halabsaudi/assets/Fonts/SF-Pro-Rounded-Bold.otf"; sourceTree = "<group>"; };
+		CE994BCB2BD04E4E95C9F1AF /* wel_logo.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = wel_logo.png; path = ../src/halabsaudi/assets/images/wel_logo.png; sourceTree = "<group>"; };
+		DC55AF61888F43B9B19A0CD2 /* hotel.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = hotel.png; path = ../src/westwalk/assets/images/hotel.png; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		EF83A73E5308D9B56AA008CB /* Pods_Westwalk.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Westwalk.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -140,6 +212,42 @@
 				B802058C2F824751ACA6720A /* SF-Pro-Rounded-Semibold.otf */,
 				2920B3D2045B446EBE09089B /* SF-Pro-Rounded-Thin.otf */,
 				A9DF4983B1AB49259B8E6EA6 /* SF-Pro-Rounded-Ultralight.otf */,
+				0C61A142981D407A9AF87936 /* beauty_spa.jpg */,
+				9C5349FBA0F5422F96FF400F /* entertainment.png */,
+				75DD4605EF3048A4BBD47B6A /* food2.png */,
+				17835638C2D74F5EBA486A9E /* food_drinks.jpg */,
+				57E02F48F6C14B71B3D06882 /* health_fitness.png */,
+				DC55AF61888F43B9B19A0CD2 /* hotel.png */,
+				7D2868482B74462D925DDBFF /* image.png */,
+				B33EC84BD3984E0ABBC5B6BF /* nodata_found.jpg */,
+				B80BCC734C604616840A969B /* service.png */,
+				9A547F9A53BB46D98A4E27E0 /* shop.png */,
+				5F23DBF8E2D84676A67E2995 /* slider1.png */,
+				13130A10F20C459C9F156908 /* splash.png */,
+				4EB979B26EE54A66B114A367 /* splash2.png */,
+				A115ED707C1C4A8DBF9F6E51 /* westwalk.png */,
+				16116D115E99497EA80BCB4F /* westwalk_icon.png */,
+				0F1377F887D14E8CA0DFC414 /* westwalk_logo.png */,
+				364E64AB720C4DAD9165D4B3 /* westwalk_nb.png */,
+				154416DF881D415FA4DC92A6 /* westwalk_nw.png */,
+				3399BBC3C3D8452B9DDD5564 /* beauty__spa.jpg */,
+				9C808CA66C3E49DBB96C698C /* bgImg.jpeg */,
+				1E9328A234034EFDAE7224D1 /* food__drinks.jpg */,
+				548F9F843265409C8AE55ED1 /* giftpack.png */,
+				2A616C99BF55415D9A0672FD /* health.png */,
+				08A62FDAB06F4C68BE98CE09 /* logo.png */,
+				90D0234A82AC4A1CBE21E158 /* logo_b.png */,
+				BDAD7AB62FCB49B9BF444605 /* logo_w.png */,
+				B29AE0C316C74641B2F49A1D /* no_data.png */,
+				14E4CBEA49B04478BAB16B8A /* nodata.png */,
+				95EEDF4D026D4C989091C7A5 /* partner.png */,
+				0127F4C0636540D5AB65E133 /* research.png */,
+				3F72F95770C5449393B4FDD4 /* searchImg.png */,
+				952F93DF63B540F68895F7C4 /* services.png */,
+				73AB8A54EF4E42E2BD25B3C1 /* slider2.png */,
+				B9FE6ADF0CFE478F9FF47740 /* slider3.png */,
+				CE994BCB2BD04E4E95C9F1AF /* wel_logo.png */,
+				86CD6311A46F4E95A7528A2D /* ww_icon.png */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -235,6 +343,42 @@
 				F8C1D80A53D44A28AC2D5321 /* SF-Pro-Rounded-Semibold.otf in Resources */,
 				A2671C1D519049678D95277E /* SF-Pro-Rounded-Thin.otf in Resources */,
 				4CFF4D73C8124AA59C11D08E /* SF-Pro-Rounded-Ultralight.otf in Resources */,
+				7D005149FBE9418CACEEA069 /* beauty_spa.jpg in Resources */,
+				A5743B3E5B2F4CF8BB777E01 /* entertainment.png in Resources */,
+				56BAB149AE3A4F7E9C9E38E5 /* food2.png in Resources */,
+				60FE65F77CBE4CF5898DF4B6 /* food_drinks.jpg in Resources */,
+				3C866B0902674B8AB7E6E5F4 /* health_fitness.png in Resources */,
+				272C3B4BC20245D5A89DF835 /* hotel.png in Resources */,
+				7B4A330A99F841898E7D7FBF /* image.png in Resources */,
+				722FF895AEBD482E832B902A /* nodata_found.jpg in Resources */,
+				A493DD5BAFE44F518891C5EB /* service.png in Resources */,
+				B1E57AD50B86413C96D2B5D8 /* shop.png in Resources */,
+				E534CB2FA0BB47B0A1D42558 /* slider1.png in Resources */,
+				8C3277055556424D8870C21B /* splash.png in Resources */,
+				241C1F1444AD4145A63341B4 /* splash2.png in Resources */,
+				D92023B314A840198B3FDE29 /* westwalk.png in Resources */,
+				74E1CFC695BE451DB41F157F /* westwalk_icon.png in Resources */,
+				FE9BB7034B604BC48DF3D42E /* westwalk_logo.png in Resources */,
+				50ABBE3A22664138AEC18C14 /* westwalk_nb.png in Resources */,
+				18245D27D20B4DE086C768E9 /* westwalk_nw.png in Resources */,
+				CF4A452D899A4ACCACCE4006 /* beauty__spa.jpg in Resources */,
+				0CA6A65BEA9D4FA0BE9DEDC5 /* bgImg.jpeg in Resources */,
+				6AAB5BFE80D441B5A2BCD115 /* food__drinks.jpg in Resources */,
+				7D93085E42904727BBDA4BDE /* giftpack.png in Resources */,
+				1AF6D63447FE46E19FADA59A /* health.png in Resources */,
+				665F40134F23475CBBA47057 /* logo.png in Resources */,
+				9E87102ECB004F43A5E5AF06 /* logo_b.png in Resources */,
+				9135A9C0F7D84A8DA4F2F906 /* logo_w.png in Resources */,
+				AE044C3E1E4B4D4BBB81D393 /* no_data.png in Resources */,
+				FDA240A56D06423DB8208F4F /* nodata.png in Resources */,
+				15D820F22476435590D4E149 /* partner.png in Resources */,
+				1E32280F2080473D9FA2499C /* research.png in Resources */,
+				4673828FA38D440E9B320A4F /* searchImg.png in Resources */,
+				B5C5B0B12B74431C84802880 /* services.png in Resources */,
+				3B4D68AE525345E7B35F6E42 /* slider2.png in Resources */,
+				CC9FD6896EBC4D9C86FDC1D7 /* slider3.png in Resources */,
+				C421005060B7412281F0E0DA /* wel_logo.png in Resources */,
+				60A5F6DE92A94FFE8DECA793 /* ww_icon.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -347,8 +491,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Westwalk/Westwalk.entitlements;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 76MDZ9JX2N;
+				CURRENT_PROJECT_VERSION = 121;
+				DEVELOPMENT_TEAM = BL7628DU9X;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Westwalk/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
@@ -356,13 +500,13 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.2.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.Westwalk;
+				PRODUCT_BUNDLE_IDENTIFIER = com.halabsaudiappreactnativeversion;
 				PRODUCT_NAME = Westwalk;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -377,21 +521,21 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Westwalk/Westwalk.entitlements;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 76MDZ9JX2N;
+				CURRENT_PROJECT_VERSION = 121;
+				DEVELOPMENT_TEAM = BL7628DU9X;
 				INFOPLIST_FILE = Westwalk/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.2.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.Westwalk;
+				PRODUCT_BUNDLE_IDENTIFIER = com.halabsaudiappreactnativeversion;
 				PRODUCT_NAME = Westwalk;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -478,7 +622,10 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
@@ -558,7 +705,10 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;

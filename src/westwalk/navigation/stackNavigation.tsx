@@ -1,6 +1,6 @@
 // App.js or MainNavigation.js
 import * as React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 
@@ -26,7 +26,6 @@ import OnBoarding from '../screen/Others/OnBoarding';
 import OrgEmp_Login from '../screen/Organization/Authentication/login/Organization_Login';
 import StaffForgetPassword from '../screen/Employee_Data/Authentication/forget/StaffForgetScreen';
 import PDFViewerScreen from '../screen/Others/pdfViewer';
-import Splash_Screen from '../screen/Others/splash/SplashScreen';
 import RoleSelectionScreen from '../screen/Others/select_role';
 import EmployeeLogin from '../screen/Employee_Data/Authentication/login/Westwalk_Staff';
 import TenantsLogin from '../screen/Tenants_Data/Authentication/login/Tenants_Login';

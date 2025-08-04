@@ -3,11 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>561032764465-c81rf571nmbrpe5m5qfkcs4g3frhcqe4.apps.googleusercontent.com</string>
+	<string>561032764465-8832baelei6iir78ksu7j8rpt873hvl6.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.561032764465-c81rf571nmbrpe5m5qfkcs4g3frhcqe4</string>
+	<string>com.googleusercontent.apps.561032764465-8832baelei6iir78ksu7j8rpt873hvl6</string>
 	<key>ANDROID_CLIENT_ID</key>
-	<string>561032764465-5gvata42631k0f6vrpabng803muk3h8g.apps.googleusercontent.com</string>
+	<string>561032764465-0ojei0ossj2suim3jbk8o9dh65edlfj8.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
 	<string>AIzaSyBFGN7C-bVQBSTIToj-9zRkoWa2Lax2XfI</string>
 	<key>GCM_SENDER_ID</key>
@@ -15,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.Westwalk</string>
+	<string>com.halabsaudiappreactnativeversion</string>
 	<key>PROJECT_ID</key>
 	<string>west-walk-163cb</string>
 	<key>STORAGE_BUCKET</key>
@@ -31,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:561032764465:ios:72c70a51e91a1ce16bc910</string>
+	<string>1:561032764465:ios:4df4bc4d4fc382996bc910</string>
 </dict>
 </plist>

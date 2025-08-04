@@ -1,18 +1,5 @@
 import React, { useState } from 'react';
-import {
-  View,
-  StyleSheet,
-  StatusBar,
-  Image,
-  TouchableOpacity,
-  Text,
-  TextInput,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  TouchableWithoutFeedback,
-  Keyboard,
-} from 'react-native';
+import { View, StyleSheet, StatusBar, Image, TouchableOpacity, Text, TextInput,KeyboardAvoidingView, Platform, ScrollView, TouchableWithoutFeedback,Keyboard,Alert,} from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Colors } from '../../../Themes/Colors';
 import { Bank, Profile_Img, W_logo, WW_Icon } from '../../../Themes/Images';
@@ -32,9 +19,13 @@ const WelcomeScreen: React.FC<SplashBlankProps> = ({ navigation }) => {
 
   const handleContinue = () => {
     if (selected === 'customer') {
-      navigation.navigate('Onboarding');
-    } else if (selected === 'community' && code.trim() !== '') {
-      navigation.navigate('WestwalkStack');
+      navigation.navigate('Login');
+    } else if (selected === 'community') {
+      if (code.trim() === '24680') {
+        navigation.navigate('WestwalkStack');
+      } else {
+        Alert.alert('Invalid community code. Please enter the correct code.');
+      }
     }
   };
 
@@ -98,7 +89,7 @@ const WelcomeScreen: React.FC<SplashBlankProps> = ({ navigation }) => {
               <View style={styles.inputContainer}>
                 {selected === 'community' && (
                   <TextInput
-                    placeholder="Enter code e.g. 12345"
+                    placeholder="Community code e.g. 12345"
                     placeholderTextColor="#ccc"
                     style={styles.input}
                     value={code}
@@ -170,7 +161,8 @@ const styles = StyleSheet.create({
   },
   buttonImage2:{
     width: 80,
-    height: 0,
+    height: 80,
+
   },
   buttonText: {
     color: 'white',

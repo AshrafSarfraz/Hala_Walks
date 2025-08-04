@@ -13,7 +13,7 @@ const languageData = {
     logout: "logout",
     country: "country",
     agree_to: "I agree to the ",
-    privacy_policy: "Privacy Policy",
+    privacy_policy: "privacy policy and term of condition",
     terms_of_use: "Terms of Use",
     and: "and",
   //  otp Screeb

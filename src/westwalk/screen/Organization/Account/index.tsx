@@ -61,7 +61,6 @@ const CorporationAccount:React.FC<AccountProps> = ({navigation}) => {
                <Text style={styles.staffId}>{userData.empId}</Text>
          </View>
          <View style={styles.Button_Cont} >
-          {/* <CustomButton2  title='Account Info' image={ProfileIcon} onPress={()=>{navigation.navigate('CorporationProfile')}} /> */}
           <CustomButton2  title={languageData[language].Redeem_History} image={HistroyIcon} onPress={()=>{navigation.navigate('CorporationHistroyScreen')}} />
          </View>
           <View style={styles.Logout_Cont} >

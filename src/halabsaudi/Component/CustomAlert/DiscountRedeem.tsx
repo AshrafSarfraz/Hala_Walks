@@ -13,14 +13,16 @@ import {Giftpack} from '../../Themes/Images';
 import CustomButton from '../CustomButton/CustomButton';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type LanProps = {
   visible: boolean;
   onClose: () => void;
   discount: number; 
+  brand:string;
 };
 
-const Discount_Redeem: React.FC<LanProps> = ({visible, onClose,discount}) => {
+const Discount_Redeem: React.FC<LanProps> = ({visible, onClose,discount,brand}) => {
   const [discountCode, setDiscountCode] = useState('');
 
   useEffect(() => {
@@ -36,14 +38,20 @@ const Discount_Redeem: React.FC<LanProps> = ({visible, onClose,discount}) => {
     ).join('');
   };
 
+  
   const handleRedeem = async () => {
     const user = auth().currentUser;
+    const userDataString = await AsyncStorage.getItem('hala_user_data');
+    if (!userDataString) throw new Error('User data not found');
+    const userData = JSON.parse(userDataString);
     if (user) {
       await firestore()
-        .collection('users')
-        .doc(user.uid)
-        .collection('redeemed_discounts')
+        .collection('hala_redeemed_discounts')
         .add({
+          Username: userData.name || 'N/A',
+          phoneNumber: userData.phoneNumber || 'N/A',
+          countryCode: userData.countryCode || 'N/A',
+          brand:brand,
           code: discountCode,
           percentage: `-${discount}%`,
           createdAt: firestore.FieldValue.serverTimestamp(),

@@ -1,12 +1,16 @@
-// src/screens/LauncherScreen.tsx
 import React from 'react';
-import { View, Button, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 const LauncherScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      <Button title="Open Halab Saudi" onPress={() => navigation.navigate('HalabStack')} />
-      <Button title="Open Westwalk" onPress={() => navigation.navigate('WestwalkStack')} />
+      <Text style={styles.title}>Select App</Text>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('HalaStack')}>
+        <Text style={styles.buttonText}>Go to Hala B Saudi</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('WestwalkStack')}>
+        <Text style={styles.buttonText}>Go to Westwalk</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -15,6 +19,15 @@ export default LauncherScreen;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1, justifyContent: 'center', alignItems: 'center',
+    flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff'
   },
+  title: {
+    fontSize: 22, marginBottom: 30
+  },
+  button: {
+    backgroundColor: '#333', paddingVertical: 12, paddingHorizontal: 30, borderRadius: 10, marginVertical: 10
+  },
+  buttonText: {
+    color: '#fff', fontSize: 16
+  }
 });

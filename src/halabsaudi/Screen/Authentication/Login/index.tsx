@@ -110,9 +110,7 @@ const Login: React.FC<NativeStackScreenProps<any>> = ({ navigation }) => {
             isChecked={isChecked}
             onPress={() => setIsChecked(!isChecked)}
             linkText={languageData[language].privacy_policy}
-            linkTerm={languageData[language].terms_of_use}
-            onLinkPress={() => Linking.openURL('https://halabsaudi.com/privacy-policy-2/')}
-            onLinkPress1={() => Linking.openURL('https://halabsaudi.com/terms-of-use/')}
+            onLinkPress={() => Linking.openURL('https://halabsaudi.com/privacy-policies/')}
           />
             {error && <Text style={styles.Error}>{error}</Text>}
           <View style={{height:10}} />
@@ -128,12 +126,7 @@ const Login: React.FC<NativeStackScreenProps<any>> = ({ navigation }) => {
               <Text style={styles.Partner_Txt} >Become a Partner</Text>
             </TouchableOpacity>
           </View>
-          <View style={{marginTop:100,alignSelf:"center",}} >
-            <TouchableOpacity style={styles.Partner_Btn} onPress={()=>{navigation.navigate('WestwalkStack')}} >
-              <Text style={styles.Partner_Txt} >Loyalty Program</Text>
-            </TouchableOpacity>
-          </View>
-
+        
           {isLoading && (
             <ActivityIndicatorModal visible={isLoading} />
           )}

@@ -13,12 +13,11 @@ type CheckboxProps = {
   onPress: () => void;
   isChecked: boolean;
   linkText: string;
-  linkTerm:string;
   onLinkPress: () => void;
-  onLinkPress1: () => void;
+
 };
 
-const CustomCheckbox: React.FC<CheckboxProps> = ({ label, onPress, isChecked, linkText, onLinkPress,linkTerm, onLinkPress1 }) => {
+const CustomCheckbox: React.FC<CheckboxProps> = ({ label, onPress, isChecked, linkText, onLinkPress }) => {
   const language = useSelector((state: RootState) => state.language.language); // Get the current language from Redux
  
   const styles = getStyles(language);
@@ -35,12 +34,7 @@ const CustomCheckbox: React.FC<CheckboxProps> = ({ label, onPress, isChecked, li
         <Text style={styles.linkText} onPress={onLinkPress}>
           {linkText} 
         </Text>
-        <Text style={styles.label} onPress={onLinkPress}>
-           {language === 'ar' ? ' و ' : ' and '}
-           </Text>
-        <Text style={styles.linkText} onPress={onLinkPress1}>
-          {linkTerm} 
-        </Text>
+       
 
      
       
@@ -54,7 +48,7 @@ const getStyles=(language:string) => StyleSheet.create({
     flexDirection: language==='en'?'row':'row-reverse',
     alignItems: 'center',
     marginTop: 5,
-    marginBottom:5
+    marginBottom:20
   },
   checkbox: {
     width: 20,
@@ -65,7 +59,7 @@ const getStyles=(language:string) => StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginRight:language==='en'? 10:0,
-    marginLeft:language==='ar'?10:0
+    marginLeft:language==='ar'?10:0,
   },
   checked: {
     borderColor: Colors.Green,
@@ -82,7 +76,7 @@ const getStyles=(language:string) => StyleSheet.create({
   },
   linkText: {
     color: Colors.Black, // ✅ Blue for privacy policy link
-    textDecorationLine: 'underline',
+
   },
 });
 

@@ -1,14 +1,15 @@
+// src/screens/Redeem/Redeem_His.tsx
+
 import React, { useEffect, useState } from 'react';
-import { Text, View,SafeAreaView,FlatList,StatusBar,Image,} from 'react-native';
-import CustomHeader from '../../Component/CustomHeader/CustomHeader';
-import { useNavigation } from '@react-navigation/native';
+import { Text, View, SafeAreaView, FlatList, StatusBar, Image, TouchableOpacity } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors } from '../../Themes/Colors';
 import firestore from '@react-native-firebase/firestore';
-import auth from '@react-native-firebase/auth';
-import { languageData } from '../../redux_toolkit/language/languageSlice';
-import { RootState } from '../../redux_toolkit/store';
-import { useSelector } from 'react-redux';
+import CustomHeader from '../../Component/CustomHeader/CustomHeader';
+import { useNavigation } from '@react-navigation/native';
+
 import { styles } from './style';
+import Discount_Redeem2 from '../../Component/CustomAlert/DiscountRedeem2';
 
 type RedeemItem = {
   code: string;
@@ -17,69 +18,73 @@ type RedeemItem = {
   id: string;
 };
 
-const Reedem_His: React.FC = () => {
+const Redeem_His: React.FC = () => {
   const navigation = useNavigation();
   const [history, setHistory] = useState<RedeemItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const language = useSelector((state: RootState) => state.language.language);
+  const [selectedItem, setSelectedItem] = useState<RedeemItem | null>(null);
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
-    const fetchHistory = async () => {
+    const fetchData = async () => {
       try {
-        const user = auth().currentUser;
-        if (user) {
-          const snapshot = await firestore()
-            .collection('users')
-            .doc(user.uid)
-            .collection('redeemed_discounts')
-            .orderBy('createdAt', 'desc')
-            .get();
+        setLoading(true);
+        const userDataString = await AsyncStorage.getItem('hala_user_data');
+        if (!userDataString) return;
 
-          const data = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data(),
-          })) as RedeemItem[];
+        const userData = JSON.parse(userDataString);
+        const phoneNumber = userData.phoneNumber;
+         console.log('Your number is   :  ',phoneNumber)
+        const snapshot = await firestore()
+        .collection('hala_redeemed_discounts') // ✅ correct
+        .where('phoneNumber', '==', phoneNumber)
+        .get();
+      
 
-          setHistory(data);
-        }
+        const data = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as RedeemItem[];
+
+        setHistory(data);
       } catch (error) {
-        console.error('Error fetching history:', error);
+        console.error('❌ Firestore fetch error:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchHistory();
+    fetchData();
   }, []);
 
   const renderItem = ({ item }: { item: RedeemItem }) => {
     const date = item.createdAt?.toDate?.().toLocaleString() ?? 'Unknown';
     return (
-      <View style={styles.itemContainer}>
-        <Text style={styles.codeText}>Code: {item.code}</Text>
-        <Text style={styles.percentageText}>{item.percentage}</Text>
-        <Text style={styles.dateText}>Used on: {date}</Text>
-      </View>
+      <TouchableOpacity onPress={() => {
+        setSelectedItem(item);
+        setModalVisible(true);
+      }}>
+        <View style={styles.itemContainer}>
+          <Text style={styles.codeText}>{item.brand}</Text>
+          <Text style={styles.percentageText}>{item.percentage}</Text>
+          <Text style={styles.dateText}>Used on:{date}</Text>
+        </View>
+      </TouchableOpacity>
     );
   };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-     <StatusBar hidden={false} translucent={true} animated={true} backgroundColor={Colors.White4} barStyle='dark-content' />
-        
+      <StatusBar translucent backgroundColor={Colors.White4} barStyle="dark-content" />
       <View style={styles.Container}>
-        <CustomHeader
-          title="Redeem History"
-          onBackPress={() => navigation.goBack()}
-        />
-          <View style={{marginBottom:"7%"}} />
+        <CustomHeader title="Redeem History" onBackPress={() => navigation.goBack()} />
         {loading ? (
           <Text style={styles.loadingText}>Loading...</Text>
         ) : history.length === 0 ? (
           <View style={styles.emptyStateContainer}>
-          <Image source={require('../../assets/Images/no_data.png')} style={styles.emptyStateImage} />
-          <Text style={styles.emptyStateText}>{languageData[language].No_Items_Found}</Text>
-       </View>
+            <Image source={require('../../assets/Images/no_data.png')} style={styles.emptyStateImage} />
+            <Text style={styles.emptyStateText}>No Redeem Codes Found</Text>
+          </View>
         ) : (
           <FlatList
             data={history}
@@ -88,11 +93,15 @@ const Reedem_His: React.FC = () => {
             contentContainerStyle={{ paddingBottom: 20 }}
           />
         )}
+
+        <Discount_Redeem2
+          visible={modalVisible}
+          item={selectedItem}
+          onClose={() => setModalVisible(false)}
+        />
       </View>
     </SafeAreaView>
   );
 };
 
-
-
-export default Reedem_His;
+export default Redeem_His;

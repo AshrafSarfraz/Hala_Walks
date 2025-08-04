@@ -9,11 +9,12 @@ import {
   StatusBar,
   Platform,
 } from 'react-native';
+import Clipboard from '@react-native-clipboard/clipboard';
 import { Back_Icon, Logo_W } from '../../../Themes/Images';
 import CustomButton from '../../../Component/CustomButton/CustomButton';
 import { Colors } from '../../../Themes/Colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { getStyles} from './style';
+import { getStyles } from './style';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import firestore from '@react-native-firebase/firestore';
 import { auth } from '../../../firebase/firebaseconfig';
@@ -21,62 +22,69 @@ import ActivityIndicatorModal from '../../../Component/Loader/ActivityIndicator'
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux_toolkit/store';
 import { languageData } from '../../../redux_toolkit/language/languageSlice';
-
+import { CommonActions } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface OtpProps extends NativeStackScreenProps<any> {}
 
-
-
 const Otp: React.FC<OtpProps> = ({ route, navigation }) => {
-  const { Phone, Confirmation, Name, CountryCode } = route.params || {}; // Receiving params from navigation
+  const { Phone, Confirmation, Name, CountryCode } = route.params || {};
   const [otp, setOtp] = useState<string[]>(['', '', '', '', '', '']);
   const inputRef = useRef<Array<TextInput | null>>([]);
   const [showError, setShowError] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false); 
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-
-  const language = useSelector((state: RootState) => state.language.language); // Get the current language from Redux
+  const language = useSelector((state: RootState) => state.language.language);
   const styles = getStyles(language);
 
   useEffect(() => {
     setShowError(otp.some(pin => pin === ''));
   }, [otp]);
 
-  const handleOtpChange = (value: string, index: number) => {
-    setOtp(prevOtp => {
-      const newOtp = [...prevOtp];
-      newOtp[index] = value;
-
-      if (value && index < inputRef.current.length - 1) {
-        inputRef.current[index + 1]?.focus();
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      const clipboard = await Clipboard.getString();
+      const isValid = /^\d{6}$/.test(clipboard);
+  
+      if (isValid) {
+        const digits = clipboard.split('');
+        if (otp.join('') !== clipboard) {
+          setOtp(digits);
+          setTimeout(() => {
+            inputRef.current[5]?.focus();
+          }, 100);
+          await Clipboard.setString(''); // clear it to prevent re-pasting
+        }
       }
-      return newOtp;
-    });
+    }, 3000);
+  
+    return () => clearInterval(interval);
+  }, [otp]);
+  
+  
+
+  const handleOtpChange = (value: string, index: number) => {
+    const newOtp = [...otp];
+    newOtp[index] = value;
+    setOtp(newOtp);
+
+    if (value && index < inputRef.current.length - 1) {
+      inputRef.current[index + 1]?.focus();
+    }
   };
 
   const handleOtpKeyPress = (event: { nativeEvent: { key: string } }, index: number) => {
-    if (event.nativeEvent.key === 'Backspace' && index > 0) {
+    if (event.nativeEvent.key === 'Backspace' && index > 0 && !otp[index]) {
       inputRef.current[index - 1]?.focus();
     }
   };
 
-  // Save user data to Firestore
-const saveUserData = async () => {
-  try {
-    const user = auth().currentUser;
-
-    if (!user) {
-      // console.log('No user is currently signed in');
-      return;
-    }
-
-    const userRef = firestore().collection('H-users').doc(user.uid);
-
-    // Check if user already exists
-    const doc = await userRef.get();
-    if (!doc.exists) {
-      // Create new user doc
+  
+  const saveUserData = async () => {
+    try {
+      const userRef = firestore().collection('hala_users').doc(Phone); // Use phone as doc ID
+  
       await userRef.set({
         name: Name,
         phoneNumber: Phone,
@@ -84,57 +92,60 @@ const saveUserData = async () => {
         createdAt: firestore.FieldValue.serverTimestamp(),
         verified: true,
       });
-      // console.log('New user added to Firestore');
-    } else {
-      // Update name if needed (e.g., for re-login)
-      await userRef.update({
+  
+      // ✅ Save to AsyncStorage
+      await AsyncStorage.setItem('hala_user', 'true');
+      await AsyncStorage.setItem('hala_user_data', JSON.stringify({
         name: Name,
-        lastLogin: firestore.FieldValue.serverTimestamp(),
-      });
-      // console.log('Existing user updated');
+        phoneNumber: Phone,
+        countryCode: CountryCode,
+      }));
+  
+      console.log('✅ User data saved to Firestore & AsyncStorage');
+    } catch (e) {
+      console.log('❌ Error saving data:', e);
+      setError('Error saving user data.');
     }
-
-  } catch (error: any) {
-      setError('Error saving user data: ');
-    // setError('Error saving user data: ' + error.message);
-    // console.error('Firestore Error:', error.message);
-  }
-};
-
-  async function confirmCode() {
-    setIsLoading(true); // Show loader
-    setError(null); // Clear previous errors
-
+  };
+  
+  
+  
+  const confirmCode = async () => {
+    setIsLoading(true);
+    setError(null);
     try {
       await Confirmation.confirm(otp.join(''));
-      // console.log('OTP verified successfully');
-
-      // Save user data to Firestore after successful verification
+  
       await saveUserData();
-      navigation.navigate('BottomTab'); // Navigate to next screen
-    } catch (error: any) {
-      // console.log('Invalid code:', error.message);
-      setError('Invalid OTP. Please check the OTP and try again.');
+  
+      // Navigate to Hala main stack
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: 'HalabStack' }],
+        })
+      );
+    } catch (err: any) {
+      console.log('❌ OTP failed:', err.message);
+      setError('Invalid OTP. Please try again.');
     } finally {
-      setIsLoading(false); // Hide loader
+      setIsLoading(false);
     }
-  }
-
+  };
+  
+  
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.Bg }}>
-                 <StatusBar hidden={false} translucent={true} animated={true} backgroundColor={Colors.White4} barStyle='dark-content' />
+      <StatusBar hidden={false} translucent={true} animated={true} backgroundColor={Colors.White4} barStyle="dark-content" />
       <ScrollView contentContainerStyle={styles.MainCont}>
         <View>
-          <TouchableOpacity
-            style={styles.Header}
-            onPress={() => navigation.goBack()}
-          >
+          <TouchableOpacity style={styles.Header} onPress={() => navigation.goBack()}>
             <Image source={Back_Icon} style={styles.BackIcon} />
           </TouchableOpacity>
         </View>
         <Image source={Logo_W} style={styles.Logo} />
         <Text style={styles.digit_Txt}>{languageData[language].enter_otp}</Text>
-       <Text style={styles.PhoneNumber}>{Phone}</Text>
+        <Text style={styles.PhoneNumber}>{Phone}</Text>
 
         <View style={styles.inputContainer}>
           {otp.map((pin, index) => (
@@ -146,24 +157,20 @@ const saveUserData = async () => {
               onChangeText={value => handleOtpChange(value, index)}
               onKeyPress={event => handleOtpKeyPress(event, index)}
               maxLength={1}
-              keyboardType="numeric"
+              keyboardType="number-pad"
               autoFocus={index === 0}
+              textContentType={index === 0 ? 'oneTimeCode' : 'none'} // ✅ iOS autofill only on first input
+              autoComplete={index === 0 ? 'sms-otp' : 'off'}          // ✅ Android autofill
             />
           ))}
         </View>
+
         {error && <Text style={styles.Error}>{error}</Text>}
 
-            <View style={{height:100}} />
-        <CustomButton
-          title={languageData[language].verify_otp}
-          onPress={confirmCode}// Disable button while loading or if OTP is incomplete
-        />
+        <View style={{ height: 100 }} />
+        <CustomButton title={languageData[language].verify_otp} onPress={confirmCode} />
 
-        {isLoading && (
-          <ActivityIndicatorModal
-            visible={isLoading}
-          />
-        )}
+        {isLoading && <ActivityIndicatorModal visible={isLoading} />}
       </ScrollView>
     </SafeAreaView>
   );

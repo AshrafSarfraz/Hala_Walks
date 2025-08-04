@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>Westwalk</string>
+	<string>Hala B Saudi</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -27,7 +27,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.561032764465-c81rf571nmbrpe5m5qfkcs4g3frhcqe4</string>
+				<string>com.googleusercontent.apps.561032764465-8832baelei6iir78ksu7j8rpt873hvl6</string>
 			</array>
 		</dict>
 	</array>

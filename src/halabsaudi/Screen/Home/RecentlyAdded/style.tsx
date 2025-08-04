@@ -37,7 +37,7 @@ Flatlist_Cont: {
     },
     cate_txt: {
       width:"90%",
-      fontSize: 14,
+      fontSize: 12,
       marginVertical: Platform.OS==='ios'?3:2,
       fontFamily: Fonts.SF_Bold,
       color: Colors.Green,

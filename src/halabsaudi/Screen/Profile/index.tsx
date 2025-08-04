@@ -26,7 +26,10 @@ const Profile:React.FC<ProfileProps> = () => {
     try {
       await auth().signOut();
       console.log('User signed out!');
-      navigation.navigate('Login')
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Login' }],
+      });
     } catch (error) {
       console.error('Error signing out: ', error);
     }
