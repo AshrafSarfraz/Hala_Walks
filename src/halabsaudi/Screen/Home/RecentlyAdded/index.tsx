@@ -117,11 +117,9 @@ const RecentlyAdded = () => {
 
                 <DetectCountry onCountryDetect={(value) => setCountry(value)} />
            
-                {item.status === 'Active' ? (
-                  <Text style={styles.Status_Txt}>Active</Text>
-                ) : (
-                  <Text style={styles.Status_Txt}>In-active</Text>
-                )}
+
+                  <Text style={styles.Status_Txt}>{item.selectedVenue}</Text>
+
               </View>
             </TouchableOpacity>
           )}

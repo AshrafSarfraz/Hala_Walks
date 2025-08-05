@@ -161,7 +161,7 @@ const SelectedCategories: React.FC<{ route: any }> = ({ route }) => {
                         </Text>
      
                        <Text style={styles.itemCity}>
-                          {item.selectedCity}
+                          {item.selectedVenue}
                         </Text>
                       </View>
                   </TouchableOpacity>

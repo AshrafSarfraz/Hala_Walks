@@ -149,7 +149,10 @@ const SearchScreen: React.FC = () => {
                             ? item.descriptionArabic.substring(0, 70) + '...'
                             : item.descriptionArabic}
                         </Text>
-                        <Text style={styles.itemCity}>{item.selectedCity}</Text>
+              
+                        <Text style={styles.itemCity}>{item.selectedVenue}</Text>
+                        {/* <Text style={styles.itemCity}>{item.selectedCity}</Text> */}
+           
                       </View>
                   </TouchableOpacity>
                 );

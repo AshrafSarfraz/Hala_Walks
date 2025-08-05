@@ -112,11 +112,12 @@ export const getStyles=(language:String) => StyleSheet.create({
   itemCity: {
     fontSize: language==='en'?12:12,
     fontFamily: language==='en'?Fonts.SF_Bold:"",
-    lineHeight: language==='en'?14:20,
+    lineHeight: language==='en'?16:20,
     fontWeight:'500',
-    color: Colors.Black,
+    color: Colors.Green,
     marginLeft:language==='ar'?"2%":0,
-     textAlign:language==='en'?'left':'right'
+     textAlign:language==='en'?'left':'right',
+     marginTop:4
   },
   emptyStateContainer:{
     marginTop:90,

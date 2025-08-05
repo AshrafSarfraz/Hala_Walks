@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Splash_Blank from '../../Screen/Authentication/Splash/welcome_screen';
 import Splash_Screen from '../../Screen/Authentication/Splash/SplashScreen';
 import OnBoarding from '../../Screen/OnBoarding';
 import Home from '../../Screen/Home';

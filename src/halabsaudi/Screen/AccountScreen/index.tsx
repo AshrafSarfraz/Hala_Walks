@@ -13,6 +13,10 @@ import auth from '@react-native-firebase/auth';
 import { Colors } from '../../Themes/Colors';
 import CustomHeader from '../../Component/CustomHeader/CustomHeader';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
+
 type AccountProps = {
   navigation: any;
 };
@@ -23,34 +27,58 @@ const AccountScreen: React.FC<AccountProps> = ({ navigation }) => {
   const [redeemCount, setRedeemCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const user = auth().currentUser;
+useEffect(() => {
+  let isMounted = true;
 
-        if (user) {
-          const userDoc = await firestore().collection('H-users').doc(user.uid).get();
-          const data = userDoc.data();
-          setName(data?.name ?? '');
-          setEmail(user.email ?? '');
+  const fetchUserData = async () => {
+    try {
+      const user = auth().currentUser;
+      let phone = user?.phoneNumber || null; // E.164 e.g. +9665...
 
-          const redeemedSnapshot = await firestore()
-            .collection('H-users')
-            .doc(user.uid)
-            .collection('redeemed_discounts')
-            .get();
-
-          setRedeemCount(redeemedSnapshot.size);
+      // Fallback: use cached phone you saved earlier
+      if (!phone) {
+        const cached = await AsyncStorage.getItem('hala_user_data');
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          phone = parsed?.phoneNumber || null;
         }
-      } catch (err) {
-        console.error('Error loading account info:', err);
-      } finally {
-        setLoading(false);
       }
-    };
 
-    fetchUserData();
-  }, []);
+      if (!phone) {
+        console.log('No phone number on user; cannot load hala_users doc');
+        return;
+      }
+
+      // Primary: doc ID == phone number
+      let snap = await firestore().collection('hala_users').doc(phone).get();
+
+      // Fallback: if someone saved different docId but has phoneNumber field
+      if (!snap.exists) {
+        const q = await firestore()
+          .collection('hala_users')
+          .where('phoneNumber', '==', phone)
+          .limit(1)
+          .get();
+        if (!q.empty) snap = q.docs[0];
+      }
+
+      const data = snap.exists ? snap.data() : null;
+
+      if (isMounted) {
+        setName(data?.name ?? '');
+        setEmail(user?.email ?? '');
+      }
+    } catch (err) {
+      console.error('Error loading account info:', err);
+    } finally {
+      if (isMounted) setLoading(false);
+    }
+  };
+
+  fetchUserData();
+  return () => { isMounted = false; };
+}, []);
+
 
   if (loading) {
     return (
@@ -74,8 +102,6 @@ const AccountScreen: React.FC<AccountProps> = ({ navigation }) => {
           <Text style={styles.label}>Phone Number</Text>
           <Text style={styles.value}>{auth().currentUser?.phoneNumber ?? 'Not Available'}</Text>
 
-          <Text style={styles.label}>Total Redeems</Text>
-          <Text style={styles.value}>{redeemCount}</Text>
         </View>
         </View>
       </View>
