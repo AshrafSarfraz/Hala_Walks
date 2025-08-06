@@ -1,8 +1,9 @@
 # OSX
 #
 .DS_Store
-
 *.aab
+*.ipa
+*.apk 
 # Xcode
 #
 build/
