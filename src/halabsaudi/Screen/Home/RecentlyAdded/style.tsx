@@ -16,11 +16,11 @@ export const getStyles=(language:String)=>  StyleSheet.create({
   },
 Flatlist_Cont: {
     flex: 1,
-    width: width * 0.45, // Reduced width for better spacing
+    width: width * 0.70, // Reduced width for better spacing
     margin:6,
     borderRadius: 10,
     backgroundColor: Colors.White,
-    height: Platform.OS === 'ios' ? 200 : 200,
+    height: Platform.OS === 'ios' ? 250 : 250,
     alignItems:'flex-start',
     borderColor: '#E0E0E0',
     overflow: 'hidden',
@@ -30,7 +30,7 @@ Flatlist_Cont: {
     elevation: 5,},
     image: {
       width: '100%', // Adjust image size according to screen width
-      height: 120,
+      height: 170,
       resizeMode: 'cover',
       borderRadius:10,
       

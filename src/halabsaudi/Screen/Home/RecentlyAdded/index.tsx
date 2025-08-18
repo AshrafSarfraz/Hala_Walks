@@ -19,6 +19,7 @@ const RecentlyAdded = () => {
   const [country, setCountry] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [imageLoading, setImageLoading] = useState(true); // State to track image loading
+  const countryName = useSelector((s: RootState) => s.country?.countryName ?? null);
   const language = useSelector((state: RootState) => state.language.language); // Get the current language from Redux
   const styles = getStyles(language);
 
@@ -69,17 +70,19 @@ const RecentlyAdded = () => {
         <FlatList
         data={
           recentItems.filter(item => {
-            if (country) {
-              return item.selectedCountry?.toLowerCase() === country.toLowerCase();
+            if (countryName) {
+              return item.selectedCountry?.toLowerCase() === countryName.toLowerCase();
             }
             return true; // agar country detect na ho to sab items dikhao
           })
         }
       
           keyExtractor={(item) => item.id}
-          numColumns={2} // Display 2 items in a row
-          columnWrapperStyle={styles.row} // Apply styles for spacing between columns
-          showsVerticalScrollIndicator={false}
+          horizontal={true}
+          // numColumns={2} // Display 2 items in a row
+          // columnWrapperStyle={styles.row} // Apply styles for spacing between columns
+          // showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
           renderItem={({ item,index }) => (
             <TouchableOpacity style={styles.Flatlist_Cont} onPress={() => navigation.navigate('DetailScreen', { item })}>
               {/* Shimmer effect for the image */}

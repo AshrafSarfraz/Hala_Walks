@@ -4,15 +4,19 @@ import { persistStore, persistReducer } from 'redux-persist';
 import { combineReducers } from 'redux';
 import languageReducer from './language/languageSlice';
 import cartReducer from './cartSlice';
+import countryReducer from './selectcountry.tsx/countrySlice';
+
 // ✅ Persist config
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
 };
 
+
 const rootReducer = combineReducers({
   language: languageReducer,
   cart: cartReducer,
+  country: countryReducer, 
 
 });
 

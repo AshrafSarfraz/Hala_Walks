@@ -31,6 +31,8 @@ const SearchScreen: React.FC = () => {
   const [imageLoaded, setImageLoaded] = useState<{ [key: string]: boolean }>({});
   const navigation = useNavigation();
   const [loading, setLoading] = useState(true);
+
+  const countryName = useSelector((s: RootState) => s.country?.countryName ?? null);
   const language = useSelector((state: RootState) => state.language.language);
   const styles = getStyles(language);
 
@@ -110,8 +112,8 @@ const SearchScreen: React.FC = () => {
             <FlatList
             data={
               filteredData.filter(item => {
-                if (country) {
-                  return item.selectedCountry?.toLowerCase() === country.toLowerCase();
+                if (countryName) {
+                  return item.selectedCountry?.toLowerCase() === countryName.toLowerCase();
                 }
                 return true; // agar country detect na ho to sab items dikhao
               })
@@ -161,7 +163,7 @@ const SearchScreen: React.FC = () => {
           )}
         </View>
       </SafeAreaView>
-      <DetectCountry onCountryDetect={(value) => setCountry(value)} />
+   
     </View>
   );
 };

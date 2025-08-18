@@ -33,6 +33,7 @@ const SelectedCategories: React.FC<{ route: any }> = ({ route }) => {
   const [loading, setLoading] = useState(true);
   const [imageLoaded, setImageLoaded] = useState<{ [key: string]: boolean }>({});
 
+    const countryName = useSelector((s: RootState) => s.country?.countryName ?? null);
   const language = useSelector((state: RootState) => state.language.language);
   const styles = getStyles(language);
 
@@ -116,8 +117,8 @@ const SelectedCategories: React.FC<{ route: any }> = ({ route }) => {
             <FlatList
             data={
               searchFiltered.filter(item => {
-                if (country) {
-                  return item.selectedCountry?.toLowerCase() === country.toLowerCase();
+                if (countryName) {
+                  return item.selectedCountry?.toLowerCase() === countryName.toLowerCase();
                 }
                 return true; // agar country detect na ho to sab items dikhao
               })

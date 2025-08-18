@@ -8,7 +8,7 @@ import { fetchFlatOfferFromFirebase } from '../../../firebase/firebaseutils';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux_toolkit/store';
 import { getStyles } from './style';
-import DetectCountry from '../../../Component/distanceCalculate/DetectCountry';
+
 import FastImage from 'react-native-fast-image';
 
 const { width } = Dimensions.get('screen');
@@ -20,6 +20,7 @@ const ImageSlider: React.FC<{ navigation: any }> = () => {
    const [country, setCountry] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [imageLoading, setImageLoading] = useState(true);
+   const countryName = useSelector((s: RootState) => s.country?.countryName ?? null);
   const language = useSelector((state: RootState) => state.language.language); // Get the current language from Redux
   const styles = getStyles(language);
 
@@ -59,8 +60,8 @@ const ImageSlider: React.FC<{ navigation: any }> = () => {
         <FlatList
         data={
           offers.filter((item )=> {
-            if (country) {
-              return item.selectedCountry?.toLowerCase() === country.toLowerCase();
+            if (countryName) {
+              return item.selectedCountry?.toLowerCase() === countryName.toLowerCase();
             }
             return true; // agar country detect na ho to sab items dikhao
           })
@@ -116,7 +117,7 @@ const ImageSlider: React.FC<{ navigation: any }> = () => {
           />
         ))}
       </View>
-      <DetectCountry onCountryDetect={(value) => setCountry(value)} />
+
     </View>
   );
 };

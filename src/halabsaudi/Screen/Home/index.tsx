@@ -9,9 +9,11 @@ import LanguageModal from '../../Component/CustomAlert/Lan_Modal';
 import { Colors } from '../../Themes/Colors';
 import Venues from './Venues';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../redux_toolkit/store';
+
 import { getStyles } from './style';
 import { languageData } from '../../redux_toolkit/language/languageSlice';
+import CountryDropdown2 from '../../Component/Dropdown/Data_for_Country';
+import { RootState } from '../../redux_toolkit/store';
 
 type HomeProps = {
   navigation: any;
@@ -19,6 +21,7 @@ type HomeProps = {
 
 const Home: React.FC<HomeProps> = ({ navigation }) => {
   const [alertVisible, setAlertVisible] = useState<boolean>(false);
+  const countryName = useSelector((s: RootState) => s.country?.countryName ?? null);
   const language = useSelector((state: RootState) => state.language.language); // Get the current language from Redux
   const styles = getStyles(language);
 
@@ -41,16 +44,18 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
       <View style={styles.header}>
             <Image source={Full_logo_B} style={styles.logo} />
             <View style={styles.language_Cont}>
-              <TouchableOpacity style={styles.Btn} onPress={showAlert}>
+              {/* <TouchableOpacity style={styles.Btn} onPress={showAlert}>
                 <Image source={languageIcon} style={styles.language_Icon} />
-              </TouchableOpacity>
+              </TouchableOpacity> */}
               <TouchableOpacity style={styles.Btn} onPress={() => navigation.navigate('SearchScreen')}>
                 <Image source={Scope} style={styles.Scope_Icon} />
               </TouchableOpacity>
+              <CountryDropdown2 />
             </View>
           </View>
         <ScrollView  showsVerticalScrollIndicator={false} >
          
+        <Text>Selected Country: {countryName ?? 'None'}</Text>
       
           <ImageSlider navigation={navigation} />
 
@@ -58,6 +63,9 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
             <View style={styles.txt_cont} >
             <Text style={styles.Categories_Txt}>{languageData[language].categories}</Text>
             </View>
+
+
+           
   
             <Categories navigation={navigation} />
           </View>

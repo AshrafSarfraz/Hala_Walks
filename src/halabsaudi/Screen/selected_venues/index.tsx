@@ -20,7 +20,7 @@ import { languageData } from '../../redux_toolkit/language/languageSlice';
 import { Colors } from '../../Themes/Colors';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import LinearGradient from 'react-native-linear-gradient';
-import DetectCountry from '../../Component/distanceCalculate/DetectCountry';
+
 import FastImage from 'react-native-fast-image';
 
 const SelectedVenues: React.FC<{ route: any }> = ({ route }) => {
@@ -32,6 +32,7 @@ const SelectedVenues: React.FC<{ route: any }> = ({ route }) => {
   const [loading, setLoading] = useState(true);
   const [imageLoaded, setImageLoaded] = useState<{ [key: string]: boolean }>({});
 
+  const countryName = useSelector((s: RootState) => s.country?.countryName ?? null);
   const language = useSelector((state: RootState) => state.language.language);
   const styles = getStyles(language);
 
@@ -134,8 +135,8 @@ const SelectedVenues: React.FC<{ route: any }> = ({ route }) => {
             <FlatList
             data={
               searchFiltered.filter(item => {
-                if (country) {
-                  return item.selectedCountry?.toLowerCase() === country.toLowerCase();
+                if (countryName) {
+                  return item.selectedCountry?.toLowerCase() === countryName.toLowerCase();
                 }
                 return true; // agar country detect na ho to sab items dikhao
               })
@@ -186,7 +187,6 @@ const SelectedVenues: React.FC<{ route: any }> = ({ route }) => {
           )}
         </View>
       </SafeAreaView>
-      <DetectCountry onCountryDetect={(value) => setCountry(value)} />
     </View>
   );
 };

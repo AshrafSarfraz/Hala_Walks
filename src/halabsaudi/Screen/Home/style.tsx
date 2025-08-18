@@ -26,7 +26,7 @@ export const getStyles =(language:String)=> StyleSheet.create({
     resizeMode: 'contain',
   },
   language_Cont: {
-    width: 82,
+    width: 100,
     flexDirection:  language==='en'?'row':'row-reverse',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -45,8 +45,8 @@ export const getStyles =(language:String)=> StyleSheet.create({
   },
 
   Scope_Icon: {
-    width: 25,
-    height: 25,
+    width: 20,
+    height: 20,
     resizeMode: 'contain',
     tintColor: '#000',
   },

@@ -15,6 +15,7 @@ const { width } = Dimensions.get('screen');
 
 const BestSeller: React.FC = () => {
   const navigation = useNavigation();
+  const countryName = useSelector((s: RootState) => s.country?.countryName ?? null);
   const language = useSelector((state: RootState) => state.language.language);
   const styles = getStyles(language);
 
@@ -88,8 +89,8 @@ const BestSeller: React.FC = () => {
         <FlatList 
         data={
           brands.filter(item => {
-            if (country) {
-              return item.selectedCountry?.toLowerCase() === country.toLowerCase();
+            if (countryName) {
+              return item.selectedCountry?.toLowerCase() === countryName.toLowerCase();
             }
             return true; // agar country detect na ho to sab items dikhao
           })
