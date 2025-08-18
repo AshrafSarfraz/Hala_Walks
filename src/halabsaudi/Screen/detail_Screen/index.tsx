@@ -110,7 +110,7 @@ const DetailScreen: React.FC<{route:any}> = ({route}) => {
               
           <TouchableOpacity onPress={Contact} style={styles.call_cont}>
           <Image source={require('../../assets/Icons/phone.png')} style={styles.Phone_Icon}/>
-          <Text style={styles.call_txt}>Call Now</Text>
+          <Text style={styles.call_txt}>{languageData[language].Call_Now}</Text>
           </TouchableOpacity>
           </View>
 
@@ -122,7 +122,7 @@ const DetailScreen: React.FC<{route:any}> = ({route}) => {
  {/* Working Hours */}
         <View style={{ marginTop: 5 }}>
         <TouchableOpacity onPress={() => setShowTimings(!showTimings)} style={styles.timing_dropdown}>
-        <Text style={styles.working_hour_txt}> {languageData[language].workingHours || 'Working Hours'} </Text>
+        <Text style={styles.working_hour_txt}> {languageData[language].Working_Hours|| 'Working Hours'} </Text>
         <Text style={styles.dropdown_icon}>{showTimings ? '▲' : '▼'}</Text>
        </TouchableOpacity>
 
@@ -150,7 +150,7 @@ const DetailScreen: React.FC<{route:any}> = ({route}) => {
             navigation.navigate('PDFViewerScreen', { pdfUrl: item.pdfUrl });
           } else { setModalVisible(true)}}}  >
                
-                <Text style={styles.menu_txt} >View Menu</Text>
+              <Text style={styles.menu_txt} >{languageData[language].Avaliable_Offer}</Text>
               </TouchableOpacity>
             </View>
       

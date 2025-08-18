@@ -7,6 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import LanguageModal from '../../Component/CustomAlert/Lan_Modal';
 import { styles } from './style';
 import { Colors } from '../../Themes/Colors';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type ProfileProps={
     navigation:any
@@ -26,6 +27,7 @@ const Profile:React.FC<ProfileProps> = () => {
     try {
       await auth().signOut();
       console.log('User signed out!');
+      await AsyncStorage.clear(); 
       navigation.reset({
         index: 0,
         routes: [{ name: 'Login' }],

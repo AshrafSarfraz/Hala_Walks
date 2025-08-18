@@ -63,6 +63,7 @@ export const getStyles = (language: string) =>
       letterSpacing: 0.5,
       fontWeight: language === 'en' ? '400' : 'bold',
       fontFamily: language === 'en' ? Fonts.SF_Bold : '',
+      textAlign: language === 'en' ? 'left':"right",
     },
     call_cont: {
       flexDirection: 'row',
@@ -144,7 +145,7 @@ export const getStyles = (language: string) =>
       textAlign: language === 'en' ? 'left' : 'right',
     },
     Loc_Cont: {
-      flexDirection: 'row',
+      flexDirection: language==='en'?'row':'row-reverse',
       alignItems: 'center',
       marginTop: '2%',
     },
@@ -159,7 +160,7 @@ export const getStyles = (language: string) =>
       fontSize: 10,
     },
     timing_dropdown: {
-      flexDirection: 'row',
+      flexDirection: language==='en'?'row':'row-reverse',
       alignItems: 'center',
     },
     working_hour_txt: {
@@ -175,7 +176,7 @@ export const getStyles = (language: string) =>
       color: Colors.Green,
     },
     item_cont: {
-      flexDirection: 'row',
+      flexDirection: language==='en'?"row":"row-reverse",
       justifyContent: 'space-between',
       paddingVertical: 6,
       borderBottomWidth: 0.5,

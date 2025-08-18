@@ -14,6 +14,9 @@ import LinearGradient from 'react-native-linear-gradient';
 import { styles } from './style';
 import { fetchVenuFromFirebase } from '../../../firebase/firebaseutils';
 import FastImage from 'react-native-fast-image';
+import { RootState } from '../../../redux_toolkit/store';
+import { useSelector } from 'react-redux';
+import { languageData } from '../../../redux_toolkit/language/languageSlice';
 
 type VenuesProps = {
   navigation: any;
@@ -25,6 +28,10 @@ const Venues: React.FC<VenuesProps> = () => {
   const [venues, setVenues] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [imageLoading, setImageLoading] = useState(true);
+
+
+  const language = useSelector((state: RootState) => state.language.language); // Get the current language from Redux
+ 
 
   const handleImageLoad = () => {
     setImageLoading(false); // Stop loader when image is loaded
@@ -69,7 +76,9 @@ const Venues: React.FC<VenuesProps> = () => {
 
         {/* Shimmer effect for venue name */}
         <ShimmerPlaceholder visible={!imageLoading} LinearGradient={LinearGradient} style={{ width: '80%',  marginTop: 2,  height: 20, borderRadius: 5, }}>
-          <Text style={styles.cate_txt}>{item.venueName}</Text>
+        {language==='en'? 
+          <Text style={styles.cate_txt}>{item.venueName}</Text>:
+          <Text style={styles.cate_txt}>{item.venueNameAr}</Text>}
         </ShimmerPlaceholder>
       </TouchableOpacity>
     );
@@ -99,7 +108,7 @@ const Venues: React.FC<VenuesProps> = () => {
           onPress={() => setShowAll(!showAll)}
         >
           <Text style={styles.showMoreText}>
-            {showAll ? 'Hide' : 'Show More'}
+            {showAll ? languageData[language].Hide :  languageData[language].Show_More}
           </Text>
         </TouchableOpacity>
       )}

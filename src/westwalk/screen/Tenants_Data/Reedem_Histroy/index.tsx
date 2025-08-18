@@ -4,9 +4,7 @@ import {
   FlatList,
   TouchableOpacity,
   StatusBar,
-  View,
-  ActivityIndicator,
-  Image,
+
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
@@ -16,7 +14,6 @@ import CustomHeader from '../../../components/header/CustomHeader';
 import RedeemHistoryModal from '../../../components/Modal/StaffModal/RedeemhistoryModal';
 import { firestore } from '../../../firebase/firebaseconfig';
 import { styles } from './style';
-import { NoDataFound } from '../../../theme/Images';
 import { Colors } from '../../../theme/Colors';
 import EmptyStateScreen from '../../../components/NoDataFound/No_data_found';
 

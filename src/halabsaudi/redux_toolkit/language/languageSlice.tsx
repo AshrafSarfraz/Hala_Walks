@@ -1,6 +1,7 @@
 // redux_toolkit/slices/languageSlice.ts
 import { createSlice } from '@reduxjs/toolkit';
 
+
 // Language data for both English and Arabic
 const languageData = {
   en: {
@@ -24,26 +25,31 @@ const languageData = {
     resend: "RESEND",
      // home Screen
     categories: "Categories",
-    venues_collection: "Venues Collection",
+    Location: "Location",
     best_sellers: "Best Sellers",
     recently_added: "Recently Added",
     toggle_more: "Show More",
     toggle_less: "Hide",
-    discount: " Discount for the menu ",
+    discount: " Discount",
     description: "Description",
     region: "region",
     Found_Items:"Items Found",
     No_Items_Found:"No Item Found ",
     Detail_Screen:"Detail Screen",
-   
+    Show_More :"Show More ",
+    Hide:"Hide",
+    Avaliable_Offer:"Avaliable Offer",
+    Call_Now :"Call Now",
+    Working_Hours:"Working Hours",
+
+
+
     // Merchant Side
     heading: 'Welcome to Hala B Saudi!',
     description1: 
   'Hala B Saudi is a platform that connects Saudi visitors with trusted local businesses.' +
   'Join us as a partner and expand your reach with exclusive benefits!' + 'Whether you own a restaurant, spa, salon, or retail store — we help promote your business to the right audience.' +
-  'Get featured, receive marketing support, and track your customer engagement in real time.',
-
-    
+  'Get featured, receive marketing support, and track your customer engagement in real time.', 
     continue: 'Continue',
 
 
@@ -100,12 +106,19 @@ const languageData = {
     resend: "إعادة الإرسال",
     verify_otp: "تحقق من OTP",
     categories: "التصنيفات",
-    venues_collection: "مجموعة الأماكن",
+    Location: " الموقع",
+    Show_More:"عرض المزيد",
+    Hide:"إخفاء",
+    Avaliable_Offer :"العرض المتاح",
+    Call_Now:"اتصل الآن",
+   Working_Hours:"ساعات العمل",
+
+
     best_sellers: "الأكثر مبيعًا",
     recently_added: "المضافة حديثًا",
     toggle_more: "عرض المزيد",
     toggle_less: "إخفاء",
-    discount: " خصم على القائمة " ,
+    discount: " خصم  " ,
     description: "وصف:",
     country: "الدولة",
     region: "المنطقة",

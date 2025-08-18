@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, Image, Dimensions, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, Image, Dimensions, TouchableOpacity, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import LinearGradient from 'react-native-linear-gradient';
@@ -81,9 +81,15 @@ const ImageSlider: React.FC<{ navigation: any }> = () => {
                 LinearGradient={LinearGradient}
                 style={styles.image}
               >
-                <FastImage source={{ uri: item.img, priority: index <=2 ? FastImage.priority.high : index <= 4 ? FastImage.priority.normal : FastImage.priority.low }}
-                 style={styles.image}  onLoad={handleImageLoad}    onError={handleImageError}  />
-              </ShimmerPlaceholder>
+                {
+                  Platform.OS==='android'?(    <Image  source={{ uri: item.img}}   style={{width:'100%',height:200,}}  onLoad={handleImageLoad}    onError={handleImageError}    />
+                  ):(
+                    <FastImage source={{ uri: item.img, priority: index <=2 ? FastImage.priority.high : index <= 4 ? FastImage.priority.normal : FastImage.priority.low }}
+                    style={styles.image}  onLoad={handleImageLoad}    onError={handleImageError}  />
+                  )
+                }
+              
+                </ShimmerPlaceholder>
 
               {/* <View style={styles.overlay}>
                 <Text style={styles.imageText}>

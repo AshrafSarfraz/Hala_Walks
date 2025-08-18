@@ -66,13 +66,32 @@ const Otp: React.FC<OtpProps> = ({ route, navigation }) => {
 
   const handleOtpChange = (value: string, index: number) => {
     const newOtp = [...otp];
-    newOtp[index] = value;
-    setOtp(newOtp);
-
-    if (value && index < inputRef.current.length - 1) {
-      inputRef.current[index + 1]?.focus();
+  
+    if (value) {
+      newOtp[index] = value;
+  
+      // Clear the rest of the digits after current
+      for (let i = index + 1; i < newOtp.length; i++) {
+        newOtp[i] = '';
+      }
+  
+      setOtp(newOtp);
+  
+      // Move focus to next box if available
+      if (index < inputRef.current.length - 1) {
+        inputRef.current[index + 1]?.focus();
+      }
+    } else {
+      // If backspacing, clear current and focus previous
+      newOtp[index] = '';
+      setOtp(newOtp);
+  
+      if (index > 0) {
+        inputRef.current[index - 1]?.focus();
+      }
     }
   };
+  
 
   const handleOtpKeyPress = (event: { nativeEvent: { key: string } }, index: number) => {
     if (event.nativeEvent.key === 'Backspace' && index > 0 && !otp[index]) {

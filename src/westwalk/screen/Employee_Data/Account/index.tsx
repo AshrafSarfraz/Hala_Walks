@@ -1,21 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import {
-  SafeAreaView,
-  View,
-  Image,
-  Text,
-  StatusBar,
-  ScrollView,
-} from 'react-native';
+import { SafeAreaView, View, Image, Text, StatusBar, ScrollView,} from 'react-native';
 import CustomButton2 from '../../../components/buttons/CustomButton2';
-import {
-  Contact_us,
-  DocIcon,
-  HistroyIcon,
-  P_IMG,
-  Phone,
-  ProfileIcon,
-} from '../../../theme/Images';
+import { Contact_us, DocIcon, HistroyIcon,P_IMG,Phone,ProfileIcon,} from '../../../theme/Images';
 import CustomButton from '../../../components/buttons/CustomButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { languageData } from '../../../redux/language/languageSlice';
@@ -24,6 +10,7 @@ import { RootState } from '../../../redux/store';
 import { getStyles } from './style';
 import { Colors } from '../../../theme/Colors';
 import NoDataFound from '../../../components/NoDataFound/No_data_found';
+import { auth } from '../../../firebase/firebaseconfig';
 
 type AccountProps = {
   navigation: any;
@@ -55,6 +42,7 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
 
   const handleLogout = async () => {
     try {
+      await auth().signOut();
       await AsyncStorage.removeItem('staff_data');
       navigation.replace('Role');
     } catch (error) {

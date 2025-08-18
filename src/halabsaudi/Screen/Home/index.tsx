@@ -63,7 +63,7 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
           </View>
           <View style={[styles.Categories_Cont,{marginTop:'-1%'}]}>
           <View style={styles.txt_cont} >
-            <Text style={styles.Categories_Txt}>{languageData[language].venues_collection}</Text>
+            <Text style={styles.Categories_Txt}>{languageData[language].Location}</Text>
            </View>
             <Venues navigation={navigation} />
           </View>

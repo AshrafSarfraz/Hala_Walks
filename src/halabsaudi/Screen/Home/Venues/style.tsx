@@ -35,15 +35,15 @@ export const styles = StyleSheet.create({
     width:"100%"
   },
   showMoreButton: {
-    marginTop: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    marginTop:8,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
     backgroundColor: Colors.Green,
-    borderRadius: 8,
+    borderRadius: 6,
   },
   showMoreText: {
     color: '#fff',
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: 'bold',
   },
   loaderContainer: {
