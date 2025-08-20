@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "android": "react-native run-android",
-    "ios": "npx react-native run-ios --udid  EF1094CF-BF20-4F69-8E08-008F42F23715",
+    "ios": "npx react-native run-ios --udid  293FFE35-A2A5-421C-8DAD-0E2359960F64",
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest"
@@ -13,6 +13,7 @@
     "@emailjs/react-native": "^4.2.2",
     "@react-native-async-storage/async-storage": "^2.1.2",
     "@react-native-clipboard/clipboard": "^1.16.3",
+    "@react-native-community/datetimepicker": "^8.4.4",
     "@react-native-firebase/app": "^22.2.0",
     "@react-native-firebase/auth": "^22.2.0",
     "@react-native-firebase/firestore": "^22.2.0",

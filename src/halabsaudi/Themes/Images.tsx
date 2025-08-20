@@ -8,6 +8,7 @@ export const Logo_W=require(ImgPath+'logo.png')
 export const Food2=require(ImgPath+'food2.png')
 export const Giftpack=require(ImgPath+'giftpack.png')
 export const WW_Icon=require(ImgPath+'ww_icon.png')
+export const HBS_Logo=require(ImgPath+'HBS_Logo.png')
 
 
 
@@ -16,6 +17,7 @@ export const WW_Icon=require(ImgPath+'ww_icon.png')
 const IconPath='../assets/Icons/'
 export const Back_Icon=require(IconPath+'Back.png')
 export const Profile_Img=require(IconPath+'profile.png')
+export const Message=require(IconPath+'Message.png')
 export const Bank=require(IconPath+'bank.png')
 export const DropdownIcon=require(IconPath+'dropdown.png')
 export const Tick=require(IconPath+'Tick.png')

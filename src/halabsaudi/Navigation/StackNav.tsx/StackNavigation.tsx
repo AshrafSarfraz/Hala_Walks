@@ -18,6 +18,7 @@ import PDFViewerScreen from '../../Screen/pdfViewer';
 import HalaInfoScreen from '../../Screen/Merchant_Screen/Hala_Info';
 import BrandFormScreen from '../../Screen/Merchant_Screen/PartnerForm';
 import WelcomeScreen from '../../Screen/Authentication/Splash/welcome_screen';
+import SignuP from '../../Screen/Authentication/SignUp/signUp';
 
 
 
@@ -37,7 +38,7 @@ const HalaStack: React.FC = () => {
       if (user) {
         setInitialRoute('BottomTab'); // User is logged in
       } else {
-        setInitialRoute('Splash'); // User not logged in
+        setInitialRoute('Login'); // User not logged in
       }
     });
 
@@ -55,6 +56,7 @@ const HalaStack: React.FC = () => {
         <Stack.Screen name='WelcomeScreen' component={WelcomeScreen} />
         <Stack.Screen name='Onboarding' component={OnBoarding} />
         <Stack.Screen name='Login' component={Login} />
+        <Stack.Screen name='SignUp' component={SignuP} />
         <Stack.Screen name='OTP' component={Otp} />
         <Stack.Screen name='BottomTab' component={Bottom} />
         <Stack.Screen name='Home' component={Home} />

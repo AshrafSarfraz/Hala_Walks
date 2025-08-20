@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   TextInput,
   StatusBar,
-  Platform,
+
 } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { Back_Icon, Logo_W } from '../../../Themes/Images';
@@ -17,7 +17,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { getStyles } from './style';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import firestore from '@react-native-firebase/firestore';
-import { auth } from '../../../firebase/firebaseconfig';
+
 import ActivityIndicatorModal from '../../../Component/Loader/ActivityIndicator';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux_toolkit/store';
@@ -28,7 +28,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 interface OtpProps extends NativeStackScreenProps<any> {}
 
 const Otp: React.FC<OtpProps> = ({ route, navigation }) => {
-  const { Phone, Confirmation, Name, CountryCode } = route.params || {};
+  const { Phone, Confirmation,CountryCode } = route.params || {};
   const [otp, setOtp] = useState<string[]>(['', '', '', '', '', '']);
   const inputRef = useRef<Array<TextInput | null>>([]);
   const [showError, setShowError] = useState<boolean>(false);
@@ -102,20 +102,10 @@ const Otp: React.FC<OtpProps> = ({ route, navigation }) => {
   
   const saveUserData = async () => {
     try {
-      const userRef = firestore().collection('hala_users').doc(Phone); // Use phone as doc ID
   
-      await userRef.set({
-        name: Name,
-        phoneNumber: Phone,
-        countryCode: CountryCode,
-        createdAt: firestore.FieldValue.serverTimestamp(),
-        verified: true,
-      });
-  
-      // ✅ Save to AsyncStorage
+
       await AsyncStorage.setItem('hala_user', 'true');
       await AsyncStorage.setItem('hala_user_data', JSON.stringify({
-        name: Name,
         phoneNumber: Phone,
         countryCode: CountryCode,
       }));

@@ -76,6 +76,28 @@ const DetailScreen: React.FC<{route:any}> = ({route}) => {
     setImageLoading(false); // Stop shimmer effect once the image has loaded
   };
 
+  const daysArabic = {
+    monday: "الاثنين",
+    tuesday: "الثلاثاء",
+    wednesday: "الأربعاء",
+    thursday: "الخميس",
+    friday: "الجمعة",
+    saturday: "السبت",
+    sunday: "الأحد",
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
   return (
     <SafeAreaView>
                 <StatusBar hidden={false} translucent={true} animated={true} backgroundColor={Colors.White4} barStyle='dark-content' />
@@ -126,16 +148,18 @@ const DetailScreen: React.FC<{route:any}> = ({route}) => {
         <Text style={styles.dropdown_icon}>{showTimings ? '▲' : '▼'}</Text>
        </TouchableOpacity>
 
-     {showTimings && item.timings && (
-    <View style={{ padding: 10, backgroundColor: '#fff', borderRadius: 8, marginTop: 6 }}>
-      {Object.entries(item.timings).map(([day, time]) => (
-        <View key={day}style={styles.item_cont} >
-          <Text style={{ textTransform: 'capitalize', fontSize: 15, color: '#333' }}>{day}</Text>
-          <Text style={{ fontSize: 15, color: '#000' }}>{time}</Text>
-        </View>
-      ))}
-    </View>
-  )}
+       {showTimings && item.timings && (
+  <View style={{ padding: 10, backgroundColor: '#fff', borderRadius: 8, marginTop: 6 }}>
+    {Object.entries(item.timings).map(([day, time]) => (
+      <View key={day} style={styles.item_cont}>
+        <Text style={{ fontSize: 15, color: '#333' }}>
+          {language === "ar" ? daysArabic[day.toLowerCase()] : day}
+        </Text>
+        <Text style={{ fontSize: 15, color: '#000' }}>{time}</Text>
+      </View>
+    ))}
+  </View>
+)}
        </View>
        {/* working Hours */}
             <View style={styles.Dis_Cont}>
@@ -165,14 +189,14 @@ const DetailScreen: React.FC<{route:any}> = ({route}) => {
           </View>
 
       <CustomButton
-            title="Redeem"
+            title={languageData[language].Redeem}
             onPress={() => {
               showAlert();
             }}
           />
           <View style={{marginBottom: Platform.OS === 'ios' ? '5%' : '4%'}} />
           <CustomButton
-            title="Open Map"
+            title={languageData[language].Open_Map}
             onPress={() => {
               handleOpenMaps();
             }}

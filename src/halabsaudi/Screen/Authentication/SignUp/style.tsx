@@ -7,12 +7,12 @@ export const getStyles =(language: string)=> StyleSheet.create({
       backgroundColor: Colors.White,
       padding: 10,
       paddingHorizontal:'5%',
-      paddingTop:'30%',
+      paddingTop:'10%',
       flexGrow: 1,
     },
     H_Logo: {
-      width: 100,
-      height:100,
+      width: '70%',
+      height:130,
       alignSelf: 'center',
     },
     Welcome_Txt: {
@@ -32,13 +32,15 @@ export const getStyles =(language: string)=> StyleSheet.create({
      
     },
     InputContainer: {
-      marginTop:50,
+      marginTop:'8%',
     },
     Input_Field: {
-      alignItems: 'flex-start',
-      height:60,
+      flexDirection:'row',
+      alignItems: 'center',
+
+      height:55,
       backgroundColor:Colors.White4,
-      borderWidth:2,
+      borderWidth:1,
       borderColor:Colors.grey1,
       borderRadius: 10,
       paddingHorizontal: 12,

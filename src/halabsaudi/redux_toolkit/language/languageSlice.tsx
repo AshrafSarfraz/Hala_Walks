@@ -41,6 +41,12 @@ const languageData = {
     Avaliable_Offer:"Avaliable Offer",
     Call_Now :"Call Now",
     Working_Hours:"Working Hours",
+    Redeem:"Redeem",
+    Open_Map:"Open Map",
+    Enter_Email:"Enter your email",
+    Create_account:"Create account",
+    Register_yourself:"Register yourself",
+    Join_Hala_to_Get_started:"Join Hala to get started",
 
 
 
@@ -111,7 +117,19 @@ const languageData = {
     Hide:"إخفاء",
     Avaliable_Offer :"العرض المتاح",
     Call_Now:"اتصل الآن",
-   Working_Hours:"ساعات العمل",
+    Working_Hours:"ساعات العمل",
+    Redeem :"استرداد",
+    Open_Map:"افتح الخريطة",
+    Enter_Email:"أدخل بريدك الإلكتروني",
+    Create_account:"إنشاء حساب",
+    Join_Hala_to_Get_started:"انضم إلى هلا للبدء",
+    Register_yourself:"سجّل نفسك",
+
+
+
+
+
+
 
 
     best_sellers: "الأكثر مبيعًا",

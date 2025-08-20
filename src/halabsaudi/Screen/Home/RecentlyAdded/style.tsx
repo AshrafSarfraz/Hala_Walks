@@ -9,6 +9,7 @@ export const getStyles=(language:String)=>  StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
+    marginBottom:60
   },
   row: {
     justifyContent: 'space-between', // Ensures even spacing

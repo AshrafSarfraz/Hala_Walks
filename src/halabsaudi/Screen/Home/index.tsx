@@ -37,7 +37,7 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: Colors.Bg }}>
+    <View style={{ flex: 1,  backgroundColor: Colors.Bg, }}>
               <StatusBar hidden={false} translucent={true} animated={true} backgroundColor={Colors.White4} barStyle='dark-content' />
 
       <SafeAreaView style={styles.Container}>
@@ -53,10 +53,7 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
               <CountryDropdown2 />
             </View>
           </View>
-        <ScrollView  showsVerticalScrollIndicator={false} >
-         
-        <Text>Selected Country: {countryName ?? 'None'}</Text>
-      
+        <ScrollView  showsVerticalScrollIndicator={false} >  
           <ImageSlider navigation={navigation} />
 
           <View style={[styles.Categories_Cont,{marginTop:7}]}>

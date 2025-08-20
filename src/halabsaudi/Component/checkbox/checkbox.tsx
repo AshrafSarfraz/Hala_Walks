@@ -66,8 +66,8 @@ const getStyles=(language:string) => StyleSheet.create({
     backgroundColor:Colors.Green // ✅ Green when checked
   },
   tickIcon: {
-    width: 15,
-    height: 15,
+    width: 10,
+    height: 10,
     tintColor: Colors.White, // ✅ Ensuring green tick
   },
   label: {
