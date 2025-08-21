@@ -27,7 +27,7 @@ import FastImage from 'react-native-fast-image';
 const SearchScreen: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [brands, setBrands] = useState<any[]>([]);
-    const [country, setCountry] = useState<string | null>(null);
+  const [country, setCountry] = useState<string | null>(null);
   const [imageLoaded, setImageLoaded] = useState<{ [key: string]: boolean }>({});
   const navigation = useNavigation();
   const [loading, setLoading] = useState(true);

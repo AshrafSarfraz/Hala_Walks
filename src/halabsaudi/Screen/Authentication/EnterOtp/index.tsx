@@ -16,7 +16,7 @@ import { Colors } from '../../../Themes/Colors';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { getStyles } from './style';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import firestore from '@react-native-firebase/firestore';
+
 
 import ActivityIndicatorModal from '../../../Component/Loader/ActivityIndicator';
 import { useSelector } from 'react-redux';

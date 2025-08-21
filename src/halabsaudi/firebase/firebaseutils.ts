@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { firestore } from './firebaseconfig';
 
 export const fetchBrandsFromFirebase = async () => {
@@ -8,6 +9,7 @@ export const fetchBrandsFromFirebase = async () => {
       id: doc.id,
       ...doc.data(),
     }));
+    await AsyncStorage.setItem("brands_cache", JSON.stringify(data));
     return data; // Return freshly fetched data from Firebase
   } catch (error) {
     // Handle errors if any

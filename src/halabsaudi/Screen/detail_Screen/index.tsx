@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import { View, Text, Image,SafeAreaView, TouchableOpacity,Platform,ScrollView,Linking,StatusBar,} from 'react-native';
 import CustomHeader from '../../Component/CustomHeader/CustomHeader';
 import {useNavigation} from '@react-navigation/native';
@@ -18,11 +18,13 @@ import MenuUnavailableModal from '../../Component/CustomAlert/MenuAlert';
 import IncorrectPin from '../../Component/CustomAlert/IncorrectPin';
 import { Colors } from '../../Themes/Colors';
 import FastImage from 'react-native-fast-image';
+import Branches from '../../Component/BottomSheet/Branches';
 
 
 const DetailScreen: React.FC<{route:any}> = ({route}) => {
   const {item} = route.params; 
   const dispatch = useDispatch();
+  const refRBSheet = useRef<RBSheet>();
   const latitude = item.latitude ? item.latitude : null;
   const longitude = item.longitude ? item.longitude : null;
   const Address = item.address ? item.address : null;
@@ -140,6 +142,9 @@ const DetailScreen: React.FC<{route:any}> = ({route}) => {
           <Image source={Location} style={styles.Loc_Icon}/>
           <Text style={styles.Loc_Txt} >{Address} </Text>
           </View>
+           <TouchableOpacity onPress={() => refRBSheet.current.open()}  style={styles.Redeem_btn} >
+            <Text style={styles.use_txt} > Other branch</Text>
+           </TouchableOpacity>
           
  {/* Working Hours */}
         <View style={{ marginTop: 5 }}>
@@ -219,7 +224,12 @@ const DetailScreen: React.FC<{route:any}> = ({route}) => {
         <Discount_Redeem visible={discountAlert} brand={item.nameEng}  discount={item.discount} onClose={() => {hideDiscount_Alert();}}/>
         <MenuUnavailableModal visible={modalVisible} onClose={() => setModalVisible(false)}/>
         <IncorrectPin visible={incorrectPinModal} onClose={() => setIncorrectPinModal(false)}/>
-      
+        <Branches
+        ref={refRBSheet}
+        brandName={item.nameEng}  // ← YAHAN se filter hoga (agar Arabic se aata hai to nameArabic bhej dein)
+        excludeId={item.id}       // ← current branch ko list se hata do
+        // onSelect={(branch) => console.log('Selected branch:', branch)}
+      />
       </ScrollView>
     </SafeAreaView>
   );
