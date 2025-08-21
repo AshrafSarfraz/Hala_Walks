@@ -7,7 +7,8 @@ export const styles = StyleSheet.create({
         flex:1,
         marginVertical:Platform.OS==='ios'?'3%':'8%',
         backgroundColor:Colors.Bg,
-        paddingHorizontal:'4%'
+        paddingHorizontal:'4%',
+        paddingBottom:Platform.OS==='ios'?60:95
 
     },
     Header_Txt:{

@@ -38,7 +38,7 @@ const HalaStack: React.FC = () => {
       if (user) {
         setInitialRoute('BottomTab'); // User is logged in
       } else {
-        setInitialRoute('Login'); // User not logged in
+        setInitialRoute('BottomTab'); // User not logged in
       }
     });
 

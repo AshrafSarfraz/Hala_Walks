@@ -58,7 +58,7 @@ const WelcomeScreen: React.FC<SplashBlankProps> = ({ navigation }) => {
                   resizeMode="contain"
                 />
                 <Text style={[styles.buttonText, selected === 'customer' && styles.selectedText]}>
-                  Customer / Saudi Visitor
+                  Saudi Visitor
                 </Text>
               </TouchableOpacity>
 
