@@ -2,7 +2,7 @@ import { Platform, StyleSheet } from "react-native";
 import { Fonts } from "../../Themes/Fonts";
 import { Colors } from "../../Themes/Colors";
 
-export const styles = StyleSheet.create({
+export const getStyles=(language:string) => StyleSheet.create({
     Container:{
         flex:1,
         marginVertical:Platform.OS==='ios'?'3%':'8%',

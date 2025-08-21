@@ -22,6 +22,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux_toolkit/store';
 import { getStyles } from './style';
 import ActivityIndicatorModal from '../../../Component/Loader/ActivityIndicator';
+import AccountNotFoundModal from '../../../Component/CustomAlert/NoAccountFound';
 
 // ───────────────────────────────────────────────────────────────────────────────
 // Helper: build full phone with secret Qatar override
@@ -48,6 +49,7 @@ const Login: React.FC<NativeStackScreenProps<any>> = ({ navigation }) => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [showNotFoundModal, setShowNotFoundModal] = useState(false);
 
   const language = useSelector((state: RootState) => state.language.language);
   const styles = getStyles(language);
@@ -75,14 +77,7 @@ const Login: React.FC<NativeStackScreenProps<any>> = ({ navigation }) => {
 
       if (snap.empty) {
         setIsLoading(false);
-        Alert.alert(
-          'No Account Found',
-          'Please create your account first.',
-          [
-            { text: 'Cancel', style: 'cancel' },
-            { text: 'Sign Up', onPress: () => navigation.navigate('SignUp') },
-          ]
-        );
+        setShowNotFoundModal(true); 
         return;
       }
 
@@ -105,7 +100,6 @@ const Login: React.FC<NativeStackScreenProps<any>> = ({ navigation }) => {
         },
       });
     } catch (error: any) {
-      console.error('Login Error:', error);
       setError('Error sending verification code: ' + (error?.message ?? 'Unknown error'));
     } finally {
       setIsLoading(false);
@@ -178,6 +172,7 @@ const Login: React.FC<NativeStackScreenProps<any>> = ({ navigation }) => {
       </View>
 
       {isLoading && <ActivityIndicatorModal visible={isLoading} />}
+      <AccountNotFoundModal  visible={showNotFoundModal}  onClose={() => setShowNotFoundModal(false)} />
     </ScrollView>
   );
 };

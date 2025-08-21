@@ -1,13 +1,24 @@
-import { Platform, StyleSheet } from "react-native";
-import { Colors } from "../../Themes/Colors";
+// src/screens/Redeem/style.ts
+import { Platform, StyleSheet } from 'react-native';
+import { Colors } from '../../Themes/Colors';
 
-export const styles = StyleSheet.create({
+export const getStyles = (language: 'en' | 'ar') =>
+  StyleSheet.create({
     Container: {
       flex: 1,
       backgroundColor: Colors.White4,
       marginVertical: Platform.OS === 'ios' ? '2%' : '10%',
       marginHorizontal: '3%',
     },
+
+    /* Helpers for direction */
+    dirRow: { flexDirection: language === 'ar' ? 'row-reverse' : 'row' },
+    textDir: {
+      textAlign: language === 'ar' ? 'right' : 'left',
+      // writingDirection helps iOS; textAlign covers Android
+      writingDirection: language === 'ar' ? 'rtl' : 'ltr',
+    },
+
     loadingText: {
       marginTop: 30,
       alignSelf: 'center',
@@ -19,13 +30,15 @@ export const styles = StyleSheet.create({
       alignSelf: 'center',
       marginTop: 30,
     },
+
     itemContainer: {
-      marginTop:"1%",
+      marginTop: '1%',
       backgroundColor: 'white',
       padding: 15,
       borderRadius: 10,
       marginBottom: 10,
     },
+
     codeText: {
       fontSize: 16,
       fontWeight: 'bold',
@@ -41,19 +54,21 @@ export const styles = StyleSheet.create({
       color: 'gray',
       marginTop: 5,
     },
-    emptyStateContainer:{
-      marginTop:90,
-      alignItems:"center",
-     justifyContent:"center",
+
+    emptyStateContainer: {
+      marginTop: 90,
+      alignItems: 'center',
+      justifyContent: 'center',
     },
-    emptyStateImage:{
-     width:200,
-     height:200
+    emptyStateImage: {
+      width: 200,
+      height: 200,
+      resizeMode: 'contain',
     },
-    emptyStateText:{
-     fontSize:16,
-     marginTop:12,
-     fontWeight:'bold',
-     color:Colors.Black
-    }
+    emptyStateText: {
+      fontSize: 16,
+      marginTop: 12,
+      fontWeight: 'bold',
+      color: Colors.Black,
+    },
   });

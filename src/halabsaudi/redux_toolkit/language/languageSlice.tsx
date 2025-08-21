@@ -47,9 +47,6 @@ const languageData = {
     Create_account:"Create account",
     Register_yourself:"Register yourself",
     Join_Hala_to_Get_started:"Join Hala to get started",
-
-
-
     // Merchant Side
     heading: 'Welcome to Hala B Saudi!',
     description1: 
@@ -57,23 +54,30 @@ const languageData = {
   'Join us as a partner and expand your reach with exclusive benefits!' + 'Whether you own a restaurant, spa, salon, or retail store — we help promote your business to the right audience.' +
   'Get featured, receive marketing support, and track your customer engagement in real time.', 
     continue: 'Continue',
-
+//Account 
+    account: 'Account',
+    redeem_history: 'Redeem History',
+    discount_history: 'Discount history', // keep if used anywhere; maps same idea
+    language: 'Language',
+    email: 'Email',
+    phone: 'Phone',
+    age: 'Age',
+    gender: 'Gender',
+    edit: 'Edit',
+    save: 'Save',
+    next: "next",
+    cancel: 'Cancel',                 // <-- added
+    personal_details: 'Personal details', 
+    Home :"Home",
+    Wishlist:"Wishlist",
+    Profile:"Profile",
+    Close:"Close",
 
     
-    privacy_policy_1: "I have read and accept the",
-    privacy_policy_2: "privacy policy",
-    privacy_policy_3: "and agree that my personal data will be processed by you",
-    terms_1: "I have read and accept the",
-    terms_2: "terms of use",
-    next: "next",
-    your_phone_number: "your phone number",
-    password: "password",
-    is_this_the_correct_number: "Is this the correct number?",
-    edit: "edit",
-    code_is_sent: "Code is sent.",
-    still_didnt_get_the_code_message: "If you still didn’t get the code, please make sure you’ve filled your phone number correctly.",
-    fill_the_code: "Fill the code",
-    didnt_get_the_code: "Didn’t get the code?",
+
+  
+
+
     km: "Km away",
     open: "open",
     closed: "closed",
@@ -87,14 +91,11 @@ const languageData = {
 
     confirm: "Confirm",
     hello: "Hello",
-    discount_history: "Discount history",
-    account: "Account",
-    language: "Language",
+    
     delete_my_account_and_data: "Delete my account and data",
     history: "History",
     load_more: "Load more",
     you_got: "You got",
-    save: "Save",
   },
   ar: {
     login: "تسجيل الدخول",
@@ -126,7 +127,26 @@ const languageData = {
     Register_yourself:"سجّل نفسك",
 
 
+    //Account Screen
 
+    account: 'الحساب',
+    redeem_history: 'سجل الاسترداد',
+    discount_history: 'سجل الخصومات', // same meaning as redeem history
+    language: 'اللغة',
+    full_name: 'الاسم الكامل',
+    email: 'البريد الإلكتروني',
+    phone: 'الهاتف',
+    age: 'العمر',
+    gender: 'الجنس',
+    edit: 'تعديل',
+    save: 'حفظ',
+    cancel: 'إلغاء',                    // <-- added
+    personal_details: 'البيانات الشخصية', // <-- added
+
+    Home:   "الرئيسية",
+    Wishlist:"قائمة الرغبات",
+    Profile:"الملف الشخصي",
+    Close :"إغلاق",
 
 
 
@@ -152,6 +172,12 @@ const languageData = {
     'احصل على ظهور مميز، دعم تسويقي، وتتبع تفاعل العملاء في الوقت الفعلي.',
     continue: 'استمرار',
     
+
+
+
+
+
+
     your_phone_number: "رقم هاتفك",
     code_is_sent: "تم إرسال الكود.",
     still_didnt_get_the_code_message: "إذا لم يصلك الكود، يرجى التأكد من إدخال رقم هاتفك بشكل صحيح.",
@@ -167,17 +193,14 @@ const languageData = {
     single_use_2: "احصل على رمز جديد في كل مرة تفتح فيها التطبيق.",
     get_a_new_code: "احصل على رمز جديد",
     your_full_name: "اسمك الكامل",
-    full_name: "الاسم الكامل",
+  
     confirm: "تأكيد",
     hello: "مرحبا",
-    discount_history: "سجل الخصومات",
-    account: "الحساب",
-    language: "اللغة",
     delete_my_account_and_data: "حذف حسابي وبياناتي",
     history: "التاريخ",
     load_more: "تحميل المزيد",
     you_got: "لقد حصلت على",
-    save: "حفظ",
+
   },
 };
 

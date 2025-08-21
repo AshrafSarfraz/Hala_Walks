@@ -8,8 +8,11 @@ import firestore from '@react-native-firebase/firestore';
 import CustomHeader from '../../Component/CustomHeader/CustomHeader';
 import { useNavigation } from '@react-navigation/native';
 
-import { styles } from './style';
 import Discount_Redeem2 from '../../Component/CustomAlert/DiscountRedeem2';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux_toolkit/store';
+import { getStyles } from './style';
+import { languageData } from '../../redux_toolkit/language/languageSlice';
 
 type RedeemItem = {
   code: string;
@@ -24,6 +27,8 @@ const Redeem_His: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [selectedItem, setSelectedItem] = useState<RedeemItem | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const language = useSelector((state: RootState) => state.language.language);
+  const styles = getStyles(language);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -77,7 +82,7 @@ const Redeem_His: React.FC = () => {
     <SafeAreaView style={{ flex: 1 }}>
       <StatusBar translucent backgroundColor={Colors.White4} barStyle="dark-content" />
       <View style={styles.Container}>
-        <CustomHeader title="Redeem History" onBackPress={() => navigation.goBack()} />
+        <CustomHeader title={languageData[language].redeem_history} onBackPress={() => navigation.goBack()} />
         {loading ? (
           <Text style={styles.loadingText}>Loading...</Text>
         ) : history.length === 0 ? (
@@ -90,7 +95,7 @@ const Redeem_His: React.FC = () => {
             data={history}
             keyExtractor={item => item.id}
             renderItem={renderItem}
-            contentContainerStyle={{ paddingBottom: 20 }}
+            contentContainerStyle={{ paddingBottom: 20,paddingTop:10 }}
           />
         )}
 

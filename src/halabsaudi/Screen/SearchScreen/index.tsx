@@ -21,7 +21,7 @@ import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import { getStyles } from './style';
 import { languageData } from '../../redux_toolkit/language/languageSlice';
 import LinearGradient from 'react-native-linear-gradient';
-import DetectCountry from '../../Component/distanceCalculate/DetectCountry';
+
 import FastImage from 'react-native-fast-image';
 
 const SearchScreen: React.FC = () => {

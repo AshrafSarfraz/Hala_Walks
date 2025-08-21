@@ -5,9 +5,13 @@ import CustomButton2 from '../../Component/CustomButton/CustomButton2';
 import CustomButton from '../../Component/CustomButton/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 import LanguageModal from '../../Component/CustomAlert/Lan_Modal';
-import { styles } from './style';
+
 import { Colors } from '../../Themes/Colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux_toolkit/store';
+import { getStyles } from './style';
+import { languageData } from '../../redux_toolkit/language/languageSlice';
 
 type ProfileProps={
     navigation:any
@@ -16,6 +20,9 @@ type ProfileProps={
 const Profile:React.FC<ProfileProps> = () => {
    const navigation=useNavigation()
    const [alertVisible, setAlertVisible] = useState<boolean>(false);
+   const language = useSelector((state: RootState) => state.language.language); // Get the current language from Redux
+   const styles = getStyles(language);
+  
     
   const showAlert = () => {
   setAlertVisible(true)};
@@ -44,9 +51,9 @@ const Profile:React.FC<ProfileProps> = () => {
        <View style={styles.Container} >
             <Text style={styles.Header_Txt} >Profile</Text>
             <View style={styles.Button_Cont} >
-              <CustomButton2 title='Account' onPress={() =>{navigation.navigate('AccountScreen')} } />
-              <CustomButton2 title='Reedem Histroy' onPress={() => {navigation.navigate('ReedemHistroy')}} />
-              <CustomButton2 title='Language' onPress={() =>{showAlert()}} />
+              <CustomButton2 title={languageData[language].account} onPress={() =>{navigation.navigate('AccountScreen')} } />
+              <CustomButton2 title={languageData[language].redeem_history} onPress={() => {navigation.navigate('ReedemHistroy')}} />
+              <CustomButton2 title={languageData[language].language} onPress={() =>{showAlert()}} />
             </View>
             <View style={styles.Logout_cont}>
             <CustomButton title='Logout' onPress={() => {handleLogout()}} />
