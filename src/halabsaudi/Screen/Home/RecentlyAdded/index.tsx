@@ -74,7 +74,7 @@ const RecentlyAdded = () => {
               return item.selectedCountry?.toLowerCase() === countryName.toLowerCase();
             }
             return true; // agar country detect na ho to sab items dikhao
-          })
+          }).slice(0,7)
         }
       
           keyExtractor={(item) => item.id}

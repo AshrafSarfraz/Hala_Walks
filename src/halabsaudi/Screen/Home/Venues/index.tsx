@@ -29,7 +29,7 @@ const Venues: React.FC<VenuesProps> = () => {
   const [loading, setLoading] = useState(true);
   const [imageLoading, setImageLoading] = useState(true);
 
-
+  const countryName = useSelector((s: RootState) => s.country?.countryName ?? null);
   const language = useSelector((state: RootState) => state.language.language); // Get the current language from Redux
  
 
@@ -54,11 +54,11 @@ const Venues: React.FC<VenuesProps> = () => {
 
   const renderShimmerItem = () => (
     <View style={styles.Flatlist_Cont}>
-      <ShimmerPlaceholder LinearGradient={LinearGradient} style={styles.image} />
+      {/* <ShimmerPlaceholder LinearGradient={LinearGradient} style={styles.image} />
       <View style={styles.bestSeller_Detail}>
         <ShimmerPlaceholder LinearGradient={LinearGradient} style={{ width: '80%', height: 20, marginBottom: 8, borderRadius: 5 }} />
         <ShimmerPlaceholder LinearGradient={LinearGradient} style={{ width: '100%', height: 15, borderRadius: 5 }} />
-      </View>
+      </View> */}
     </View>
   );
 
@@ -95,7 +95,12 @@ const Venues: React.FC<VenuesProps> = () => {
   return (
     <View style={styles.container}>
       <FlatList
-        data={visibleItems}
+        data={ visibleItems.filter(item => {
+          if (countryName) {
+            return item.country?.toLowerCase() === countryName.toLowerCase();
+          }
+          return true; // agar country detect na ho to sab items dikhao
+        })}
         keyExtractor={item => item.id}
         numColumns={4}
         renderItem={renderVenueItem}

@@ -13,7 +13,7 @@ const Splash_Screen: React.FC<SplashScreenProps> = ({ navigation }) => {
   useEffect(() => {
     const timeout = setTimeout(() => {
       navigation.navigate('WelcomeScreen');
-    }, 1000);
+    }, 200);
     return () => clearTimeout(timeout);
   }, [navigation]);
 

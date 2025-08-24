@@ -1,14 +1,5 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  TextInput,
-  Image,
-  StatusBar,
-  TouchableOpacity,
-  Alert,
-} from 'react-native';
+import {  View, Text, ScrollView, TextInput, Image, StatusBar,TouchableOpacity,} from 'react-native';
 import { HBS_Logo } from '../../../Themes/Images';
 import CustomButton from '../../../Component/CustomButton/CustomButton';
 import { Colors } from '../../../Themes/Colors';

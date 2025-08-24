@@ -19,6 +19,7 @@ import IncorrectPin from '../../Component/CustomAlert/IncorrectPin';
 import { Colors } from '../../Themes/Colors';
 import FastImage from 'react-native-fast-image';
 import Branches from '../../Component/BottomSheet/Branches';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const DetailScreen: React.FC<{route:any}> = ({route}) => {
@@ -36,7 +37,7 @@ const DetailScreen: React.FC<{route:any}> = ({route}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [incorrectPinModal, setIncorrectPinModal] = useState(false);
   const [showTimings, setShowTimings] = useState(false);
-  
+
 
   // Redux Toolkit
     const language = useSelector((state: RootState) => state.language.language); 
@@ -93,13 +94,6 @@ const DetailScreen: React.FC<{route:any}> = ({route}) => {
 
 
 
-
-
-
-
-
-
-
   return (
     <SafeAreaView>
                 <StatusBar hidden={false} translucent={true} animated={true} backgroundColor={Colors.White4} barStyle='dark-content' />
@@ -142,16 +136,19 @@ const DetailScreen: React.FC<{route:any}> = ({route}) => {
           <Image source={Location} style={styles.Loc_Icon}/>
           <Text style={styles.Loc_Txt} >{Address} </Text>
           </View>
-           <TouchableOpacity onPress={() => refRBSheet.current.open()}  style={styles.Redeem_btn} >
-            <Text style={styles.use_txt} > Other branch</Text>
-           </TouchableOpacity>
           
  {/* Working Hours */}
-        <View style={{ marginTop: 5 }}>
-        <TouchableOpacity onPress={() => setShowTimings(!showTimings)} style={styles.timing_dropdown}>
+ <View  style={{flexDirection:"row",alignItems:"center",justifyContent:"space-between",marginTop:5}}  >
+           <TouchableOpacity onPress={() => setShowTimings(!showTimings)} style={styles.timing_dropdown}>
         <Text style={styles.working_hour_txt}> {languageData[language].Working_Hours|| 'Working Hours'} </Text>
         <Text style={styles.dropdown_icon}>{showTimings ? '▲' : '▼'}</Text>
        </TouchableOpacity>
+       <TouchableOpacity onPress={() => refRBSheet.current.open()}  style={styles.Redeem_btn} >
+            <Text style={styles.use_txt} >List of Branch</Text>
+           </TouchableOpacity>
+ </View>
+        <View style={{}}>
+    
 
        {showTimings && item.timings && (
   <View style={{ padding: 10, backgroundColor: '#fff', borderRadius: 8, marginTop: 6 }}>
@@ -167,6 +164,7 @@ const DetailScreen: React.FC<{route:any}> = ({route}) => {
 )}
        </View>
        {/* working Hours */}
+   
             <View style={styles.Dis_Cont}>
               <View style={styles.Dis_txt_cont} >
               <Text style={styles.Total_Discount}> {''+ item.discount +'%'}  </Text>
@@ -221,7 +219,7 @@ const DetailScreen: React.FC<{route:any}> = ({route}) => {
   onClose={() => hideAlert()}
 />
 
-        <Discount_Redeem visible={discountAlert} brand={item.nameEng}  discount={item.discount} onClose={() => {hideDiscount_Alert();}}/>
+        <Discount_Redeem visible={discountAlert} brand={item.nameEng}  discount={item.discount} address={Address} onClose={() => {hideDiscount_Alert();}}/>
         <MenuUnavailableModal visible={modalVisible} onClose={() => setModalVisible(false)}/>
         <IncorrectPin visible={incorrectPinModal} onClose={() => setIncorrectPinModal(false)}/>
         <Branches

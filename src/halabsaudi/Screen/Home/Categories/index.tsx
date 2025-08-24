@@ -10,12 +10,14 @@ import { getStyles } from './style';
 
 const images = [
   { id: '1', text: 'Food and Drink', category: 'Food and Drink', categoryArabic: 'المأكولات والمشروبات', source: require('../../../assets/Images/food__drinks.jpg') },
-  { id: '2', text: 'Shop and Retail', category: 'Shop and Retail', categoryArabic:  'الخدمات والتجزئة' , source: require('../../../assets/Images/shop.png') },
-  { id: '3', text: 'Beauty and Spa', category: 'Beauty and Spa',categoryArabic:  'الجمال والمنتجعات'  ,source: require('../../../assets/Images/beauty__spa.jpg') },
-  { id: '4', text: 'Health and Fitness', category: 'Health and Fitness',categoryArabic:  'الصحة واللياقة' , source: require('../../../assets/Images/health_fitness.png') },
+  { id: '2', text: 'Shop and Service', category: 'Shop and Retail', categoryArabic:  'الخدمات والتجزئة' , source: require('../../../assets/Images/shop.png') },
+  { id: '3', text: 'Beauty, Spa & Fitness', category: 'Beauty and Spa',categoryArabic:  'الجمال والمنتجعات'  ,source: require('../../../assets/Images/beauty__spa.jpg') },
+  // { id: '4', text: 'Health and Fitness', category: 'Health and Fitness',categoryArabic:  'الصحة واللياقة' , source: require('../../../assets/Images/health_fitness.png') },
   { id: '5', text: 'Entertainment', category: 'Entertain ment', categoryArabic:  'الترفيه والتسلية' , source: require('../../../assets/Images/entertainment.png') },
   { id: '6', text: 'Hotel', category: 'Hotel', categoryArabic:  'الإقامة الفندقية' , source: require('../../../assets/Images/hotel.png') },
-  { id: '7', text: 'Services', category: 'Services', categoryArabic:  'الخدمات والتجزئة' , source: require('../../../assets/Images/services.png') },
+ 
+  // { id: '7', text: 'Services', category: 'Services', categoryArabic:  'الخدمات والتجزئة' , source: require('../../../assets/Images/services.png') },
+
 ];
 
 

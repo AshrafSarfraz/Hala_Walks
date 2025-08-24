@@ -159,6 +159,14 @@ export const getStyles = (language: string) =>
     Loc_Txt: {
       fontSize: 10,
     },
+    Redeem_btn:{
+    },
+    use_txt:{
+     color:Colors.Green,
+     fontSize:12,
+     fontFamily:Fonts.SF_Medium,
+
+    },
     timing_dropdown: {
       flexDirection: language==='en'?'row':'row-reverse',
       alignItems: 'center',
