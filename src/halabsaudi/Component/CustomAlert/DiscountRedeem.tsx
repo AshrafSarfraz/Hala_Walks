@@ -40,51 +40,44 @@ const Discount_Redeem: React.FC<LanProps> = ({visible, onClose,discount,brand,ad
     ).join('');
   };
 
-  
-  // const handleRedeem = async () => {
-  //   const user = auth().currentUser;
-  //   const userDataString = await AsyncStorage.getItem('hala_user_data');
-  //   if (!userDataString) throw new Error('User data not found');
-  //   const userData = JSON.parse(userDataString);
-  //   if (user) {
-  //     await firestore()
-  //       .collection('hala_redeemed_discounts')
-  //       .add({
-  //         Username: userData.name || 'N/A',
-  //         phoneNumber: userData.phoneNumber || 'N/A',
-  //         countryCode: userData.countryCode || 'N/A',
-  //         brand:brand,
-  //         address:address,
-  //         code: discountCode,
-  //         percentage: `-${discount}%`,
-  //         createdAt: firestore.FieldValue.serverTimestamp(),
-  //       });
-  //   }
-  //   onClose();
-  // };
-
-
   const handleRedeem = async () => {
     try {
       const user = auth().currentUser;
-      if (!user?.phoneNumber) {
-        throw new Error('No authenticated phone number found.');
-      }
-
-      // 🔹 Firestore me hala_users se user ka record lo
+      if (!user?.phoneNumber) throw new Error('No authenticated phone number found.');
+  
+      // 🔹 Firestore se hala_users me user ka record lo
       const snap = await firestore()
         .collection('hala_users')
         .where('phoneNumber', '==', user.phoneNumber)
         .limit(1)
         .get();
-
-      if (snap.empty) {
-        throw new Error('User not found in hala_users');
-      }
-
+  
+      if (snap.empty) throw new Error('User not found in hala_users');
+  
       const userDoc = snap.docs[0].data();
-
-      // 🔹 Redeem data store karo
+  
+      // 🔹 Today's date (YYYY-MM-DD format)
+      const today = new Date().toISOString().split('T')[0];
+  
+      // 🔹 Check if already redeemed today for this brand
+      const redeemedSnap = await firestore()
+        .collection('hala_redeemed_discounts')
+        .where('phoneNumber', '==', userDoc.phoneNumber)
+        .where('brand', '==', brand)
+        .where('date', '==', today) // ✅ check for today's date
+        .limit(1)
+        .get();
+  
+      if (!redeemedSnap.empty) {
+        // Already redeemed today
+        Alert.alert(
+          'Already Redeemed Today',
+          `You have already redeemed a discount for ${brand} today.`
+        );
+        return; // Stop execution
+      }
+  
+      // 🔹 Create new redeem record
       await firestore()
         .collection('hala_redeemed_discounts')
         .add({
@@ -95,15 +88,20 @@ const Discount_Redeem: React.FC<LanProps> = ({visible, onClose,discount,brand,ad
           address: address,
           code: discountCode,
           percentage: `-${discount}%`,
+          date: today, // ✅ store today's date
           createdAt: firestore.FieldValue.serverTimestamp(),
         });
-
+  
       onClose();
     } catch (err) {
       console.error('❌ Redeem failed:', err);
       Alert.alert('Error', err instanceof Error ? err.message : 'Unknown error');
     }
   };
+  
+
+
+ 
 
   return (
     <Modal transparent visible={visible} animationType="fade">
@@ -196,3 +194,31 @@ const styles = StyleSheet.create({
 });
 
 export default Discount_Redeem;
+
+
+
+
+
+  // const handleRedeem = async () => {
+  //   const user = auth().currentUser;
+  //   const userDataString = await AsyncStorage.getItem('hala_user_data');
+  //   if (!userDataString) throw new Error('User data not found');
+  //   const userData = JSON.parse(userDataString);
+  //   if (user) {
+  //     await firestore()
+  //       .collection('hala_redeemed_discounts')
+  //       .add({
+  //         Username: userData.name || 'N/A',
+  //         phoneNumber: userData.phoneNumber || 'N/A',
+  //         countryCode: userData.countryCode || 'N/A',
+  //         brand:brand,
+  //         address:address,
+  //         code: discountCode,
+  //         percentage: `-${discount}%`,
+  //         createdAt: firestore.FieldValue.serverTimestamp(),
+  //       });
+  //   }
+  //   onClose();
+  // };
+
+  
