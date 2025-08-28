@@ -1,4 +1,4 @@
-import {StyleSheet} from 'react-native'
+import {Platform, StyleSheet} from 'react-native'
 import { Colors } from '../../../Themes/Colors';
 import { Fonts } from '../../../Themes/Fonts';
 
@@ -9,6 +9,40 @@ export const getStyles =(language: string)=> StyleSheet.create({
       paddingHorizontal:'5%',
       paddingTop:'30%',
       flexGrow: 1,
+    },
+    languageFab: {
+      position: 'absolute',
+      top: 40,              // login header se thoda gap
+      right: 25,
+      width: 48,
+      height: 48,
+      borderRadius: 8,
+      backgroundColor: 'rgba(255,255,255,0.95)', // soft white (glass look)
+      alignItems: 'center',
+      justifyContent: 'center',
+      // Border subtle
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: 'rgba(0,0,0,0.06)',
+      // Shadow
+      ...Platform.select({
+        ios: {
+          shadowColor: '#000',
+          shadowOpacity: 0.12,
+          shadowRadius: 8,
+          shadowOffset: { width: 0, height: 4 },
+        },
+        android: {
+          elevation: 4,
+        },
+      }),
+      zIndex: 10,
+    },
+    
+    languageIcon: {
+      width: 22,
+      height: 22,
+      resizeMode: 'contain',
+      tintColor: '#14171A', // ya Colors.Black/Theme primary
     },
     H_Logo: {
       width: 100,

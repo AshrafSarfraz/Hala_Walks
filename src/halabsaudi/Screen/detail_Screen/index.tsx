@@ -35,7 +35,7 @@ const DetailScreen: React.FC<{route:any}> = ({route}) => {
   const [imageLoading, setImageLoading] = useState(true);
   const [alertVisible, setAlertVisible] = useState<boolean>(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [incorrectPinModal, setIncorrectPinModal] = useState(false);
+ 
   const [showTimings, setShowTimings] = useState(false);
 
 
@@ -167,8 +167,11 @@ const DetailScreen: React.FC<{route:any}> = ({route}) => {
    
             <View style={styles.Dis_Cont}>
               <View style={styles.Dis_txt_cont} >
-              <Text style={styles.Total_Discount}> {''+ item.discount +'%'}  </Text>
-              <Text style={styles.Discount}>{languageData[language].discount} </Text>
+                {language==='ar'?  <Text style={styles.Total_Discount}> {''+ item.discountArabic +''}  </Text>:
+                  <Text style={styles.Total_Discount}> {''+ item.discount +''}  </Text>}
+            
+        
+             
             
               </View>
               
@@ -205,24 +208,23 @@ const DetailScreen: React.FC<{route:any}> = ({route}) => {
             }}
           />
         </View>
-        <Pin_Modal
+
+<Pin_Modal
   visible={alertVisible}
   correctPin={item.pin}
+  brand={item.nameEng}
+  address={item.address}
+  discount={Number(item.discount) || 0}
+  // optional: sirf info/analytics ke liye
   onSubmit={(userPin) => {
-    if (userPin === item.pin) {
-      showDiscount_Alert();
-    } else {
-     setIncorrectPinModal(true); // or use console.warn()
-    }
-    hideAlert(); // Close pin modal in both cases
+    // console.log('Correct PIN entered:', userPin);
   }}
-  onClose={() => hideAlert()}
+  onClose={hideAlert}
 />
 
-        <Discount_Redeem visible={discountAlert} brand={item.nameEng}  discount={item.discount} address={Address} onClose={() => {hideDiscount_Alert();}}/>
-        <MenuUnavailableModal visible={modalVisible} onClose={() => setModalVisible(false)}/>
-        <IncorrectPin visible={incorrectPinModal} onClose={() => setIncorrectPinModal(false)}/>
-        <Branches
+      <MenuUnavailableModal visible={modalVisible} onClose={() => setModalVisible(false)}/>
+      
+      <Branches
         ref={refRBSheet}
         brandName={item.nameEng}  // ← YAHAN se filter hoga (agar Arabic se aata hai to nameArabic bhej dein)
         excludeId={item.id}       // ← current branch ko list se hata do

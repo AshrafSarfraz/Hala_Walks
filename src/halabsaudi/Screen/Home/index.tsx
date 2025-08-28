@@ -87,9 +87,7 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
             <RecentlyAdded />
           </View>
         </ScrollView>
-
-        <LanguageModal visible={alertVisible} onClose={hideAlert} />
-       
+  
       </SafeAreaView>
     </View>
   );

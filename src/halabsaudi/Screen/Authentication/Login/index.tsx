@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {  View, Text, ScrollView, TextInput, Image, StatusBar,TouchableOpacity,} from 'react-native';
-import { HBS_Logo } from '../../../Themes/Images';
+import { HBS_Logo, languageIcon } from '../../../Themes/Images';
 import CustomButton from '../../../Component/CustomButton/CustomButton';
 import { Colors } from '../../../Themes/Colors';
 import CountryDropdown from '../../../Component/Dropdown/SelectCountry';
@@ -14,6 +14,7 @@ import { RootState } from '../../../redux_toolkit/store';
 import { getStyles } from './style';
 import ActivityIndicatorModal from '../../../Component/Loader/ActivityIndicator';
 import AccountNotFoundModal from '../../../Component/CustomAlert/NoAccountFound';
+import LanguageModal from '../../../Component/CustomAlert/Lan_Modal';
 
 // ───────────────────────────────────────────────────────────────────────────────
 // Helper: build full phone with secret Qatar override
@@ -41,11 +42,24 @@ const Login: React.FC<NativeStackScreenProps<any>> = ({ navigation }) => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showNotFoundModal, setShowNotFoundModal] = useState(false);
+  const [alertVisible, setAlertVisible] = useState<boolean>(false);
 
   const language = useSelector((state: RootState) => state.language.language);
+  const handleCountrySelect = (code: string) => setCountryCode(code);
   const styles = getStyles(language);
 
-  const handleCountrySelect = (code: string) => setCountryCode(code);
+  
+
+
+  const showAlert = () => {
+    setAlertVisible(true);
+  };
+
+  const hideAlert = () => {
+    setAlertVisible(false);
+  };
+
+
 
   async function sendVerificationCode() {
     if (!phoneNumber) {
@@ -106,6 +120,14 @@ const Login: React.FC<NativeStackScreenProps<any>> = ({ navigation }) => {
         backgroundColor={Colors.White4}
         barStyle="dark-content"
       />
+    <TouchableOpacity
+        onPress={showAlert}
+        activeOpacity={0.8}
+        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+       style={styles.languageFab}>
+
+  <Image source={languageIcon} style={styles.languageIcon} />
+</TouchableOpacity>
 
       {/* Logo */}
       <Image source={HBS_Logo} style={styles.H_Logo} resizeMode="contain" />
@@ -149,7 +171,7 @@ const Login: React.FC<NativeStackScreenProps<any>> = ({ navigation }) => {
           style={{ alignSelf: 'center', marginTop: 20 }}
         >
           <Text style={{ color: Colors.Green, fontWeight: '600', textDecorationLine: 'underline' }}>
-            Don’t have an account? Register
+           {languageData[language].Dont_have_an_account_Register}
           </Text>
         </TouchableOpacity>
 
@@ -158,13 +180,15 @@ const Login: React.FC<NativeStackScreenProps<any>> = ({ navigation }) => {
           style={styles.Partner_Btn}
           onPress={() => navigation.navigate('HalaInfo')}
         >
-          <Text style={styles.Partner_Txt}>Become a Partner</Text>
+          <Text style={styles.Partner_Txt}>{languageData[language].become_a_Partner}</Text>
         </TouchableOpacity>
       </View>
 
       {isLoading && <ActivityIndicatorModal visible={isLoading} />}
       <AccountNotFoundModal  visible={showNotFoundModal}  onClose={() => setShowNotFoundModal(false)} />
+       <LanguageModal visible={alertVisible} onClose={hideAlert} />
     </ScrollView>
+
   );
 };
 

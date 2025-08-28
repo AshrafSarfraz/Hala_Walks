@@ -73,12 +73,25 @@ const languageData = {
     Profile:"Profile",
     Close:"Close",
 
-    
-
-  
-
-
+    Dont_have_an_account_Register:"Don’t have an account? Register",
+    become_a_Partner:"Become a Partner",
+    No_Account_Found:"No Account Found",
+    Please_create_your_account_first :"Please create your account first.",
+    Create_Account:"Create Account",
+    Cancel:"Cancel",
+    PIN_required: "PIN required. Please enter your PIN.",
+    Pin_incorrect: "Pin is incorrect. Please enter the correct pin.",
+    Already_redeemed_today: "You have already redeemed a discount for this brand today.",
+    Enter_Pin: "Enter Pin",
+    Where_to_Get_Redeem_PIN: "Where to Get Redeem PIN?",
+    Submit: "Submit",
     km: "Km away",
+    m: "m away",
+    Calculating:"Calculating...",
+
+    
+    
+    
     open: "open",
     closed: "closed",
     get_a_discount_code: "Get a discount code",
@@ -88,14 +101,14 @@ const languageData = {
     single_use_2: "Get a new code each time you open the app.",
     get_a_new_code: "Get a new code",
     Search_for_anything :"Search for anything you need",
-
     confirm: "Confirm",
     hello: "Hello",
-    
     delete_my_account_and_data: "Delete my account and data",
     history: "History",
     load_more: "Load more",
     you_got: "You got",
+
+
   },
   ar: {
     login: "تسجيل الدخول",
@@ -125,10 +138,12 @@ const languageData = {
     Create_account:"إنشاء حساب",
     Join_Hala_to_Get_started:"انضم إلى هلا للبدء",
     Register_yourself:"سجّل نفسك",
-
-
+    become_a_Partner: "كن شريكًا",
+    No_Account_Found: "لم يتم العثور على حساب",
+    Please_create_your_account_first: "يرجى إنشاء حسابك أولًا.",
+    Create_Account: "إنشاء حساب",
+    Cancel: "إلغاء",
     //Account Screen
-
     account: 'الحساب',
     redeem_history: 'سجل الاسترداد',
     discount_history: 'سجل الخصومات', // same meaning as redeem history
@@ -142,16 +157,16 @@ const languageData = {
     save: 'حفظ',
     cancel: 'إلغاء',                    // <-- added
     personal_details: 'البيانات الشخصية', // <-- added
-
     Home:   "الرئيسية",
     Wishlist:"قائمة الرغبات",
     Profile:"الملف الشخصي",
     Close :"إغلاق",
-
-
-
-
-
+    PIN_required: "الرمز السري مطلوب. يرجى إدخال رمزك.",
+    Pin_incorrect: "الرمز غير صحيح. يرجى إدخال الرمز الصحيح.",
+    Already_redeemed_today: "لقد قمت بالفعل باسترداد خصم لهذه العلامة اليوم.",
+    Enter_Pin: "أدخل الرمز السري",
+    Where_to_Get_Redeem_PIN: "من أين أحصل على رمز الاسترداد؟",
+    Submit: "إرسال",
     best_sellers: "الأكثر مبيعًا",
     recently_added: "المضافة حديثًا",
     toggle_more: "عرض المزيد",
@@ -171,7 +186,10 @@ const languageData = {
     'هلا بالسعودي هو منصة تربط الزوار السعوديين بالأعمال المحلية الموثوقة.' + 'انضم إلينا كشريك ووسّع نطاق عملك مع مزايا حصرية!' + 'سواء كنت تمتلك مطعمًا، سبا، صالونًا، أو متجرًا — نحن نساعدك على الترويج لعملك أمام الجمهور المناسب.' +
     'احصل على ظهور مميز، دعم تسويقي، وتتبع تفاعل العملاء في الوقت الفعلي.',
     continue: 'استمرار',
-    
+    Dont_have_an_account_Register:" ليس لديك حساب؟ سجِّل الآن",
+    km: "كمكم كيلومتر بعيد",
+    m: "كمكم متر بعيد",
+    Calculating:"جارٍ الحساب",
 
 
 
@@ -183,7 +201,8 @@ const languageData = {
     still_didnt_get_the_code_message: "إذا لم يصلك الكود، يرجى التأكد من إدخال رقم هاتفك بشكل صحيح.",
     fill_the_code: "أدخل الكود",
     didnt_get_the_code: "لم يصلك الكود؟",
-    km: "كمكم كيلومتر بعيد",
+    
+    
     open: "مفتوح",
     closed: "مغلق",
     get_a_discount_code: "احصل على رمز الخصم",

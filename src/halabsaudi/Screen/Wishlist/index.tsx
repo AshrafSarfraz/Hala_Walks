@@ -46,7 +46,7 @@ const Wishlist: React.FC<WishlistProps> = () => {
               <StatusBar hidden={false} translucent={true} animated={true} backgroundColor={Colors.White4} barStyle='dark-content' />
 
       <View style={styles.container}>
-        <Text style={styles.Header_Txt}>Wishlist</Text>
+        <Text style={styles.Header_Txt}>{languageData[language].Wishlist}</Text>
 
         {/* Render wishlist items */}
         <FlatList
@@ -88,9 +88,9 @@ const Wishlist: React.FC<WishlistProps> = () => {
                   <DistanceFromDevice
                     targetLat={item.latitude}
                     targetLong={item.longitude}
-                    kmText="km away"
-                    mText="m away"
-                    loadingText="Calculating..."
+                    kmText={languageData[language].km}
+                    mText={languageData[language].m}
+                    loadingText={languageData[language].Calculating}
                   />
                 </View>
       

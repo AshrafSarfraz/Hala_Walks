@@ -12,25 +12,18 @@ import {
 import { Colors } from '../../Themes/Colors';
 import { Fonts } from '../../Themes/Fonts';
 import { useNavigation } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux_toolkit/store';
+import { languageData } from '../../redux_toolkit/language/languageSlice';
 
 type Props = {
   visible: boolean;
   onClose: () => void;
-  title?: string;
-  message?: string;
-  primaryLabel?: string;
-  secondaryLabel?: string;
 };
 
-const AccountNotFoundModal: React.FC<Props> = ({
-  visible,
-  onClose,
-  title = 'No Account Found',
-  message = 'Please create your account first.',
-  primaryLabel = 'Create Account',
-  secondaryLabel = 'Cancel',
-}) => {
+const AccountNotFoundModal: React.FC<Props> = ({ visible, onClose}) => {
   const navigation = useNavigation();
+  const language = useSelector((state: RootState) => state.language.language);
 
   return (
     <Modal transparent visible={visible} animationType="none" statusBarTranslucent>
@@ -38,8 +31,8 @@ const AccountNotFoundModal: React.FC<Props> = ({
       <View style={styles.overlay}>
         <Pressable style={styles.cardWrap}>
           {/* Title & message */}
-          <Text style={styles.title}>{title}</Text>
-          <Text style={styles.message}>{message}</Text>
+          <Text style={styles.title}>{languageData[language].No_Account_Found}</Text>
+          <Text style={styles.message}>{languageData[language].Please_create_your_account_first}</Text>
 
           <View style={styles.divider} />
 
@@ -49,10 +42,10 @@ const AccountNotFoundModal: React.FC<Props> = ({
               style={styles.btnSecondary}
               onPress={onClose}
               accessibilityRole="button"
-              accessibilityLabel={secondaryLabel}
+              accessibilityLabel={languageData[language].cancel}
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             >
-              <Text style={styles.btnSecondaryTxt}>{secondaryLabel}</Text>
+              <Text style={styles.btnSecondaryTxt}>{languageData[language].cancel}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -63,10 +56,10 @@ const AccountNotFoundModal: React.FC<Props> = ({
                 navigation.navigate('SignUp');
               }}
               accessibilityRole="button"
-              accessibilityLabel={primaryLabel}
+              accessibilityLabel={languageData[language].Create_account}
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             >
-              <Text style={styles.btnPrimaryTxt}>{primaryLabel}</Text>
+              <Text style={styles.btnPrimaryTxt}>{languageData[language].Create_account}</Text>
             </TouchableOpacity>
           </View>
         </Pressable>

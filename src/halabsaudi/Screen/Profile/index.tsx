@@ -33,7 +33,7 @@ const Profile:React.FC<ProfileProps> = () => {
   const handleLogout = async () => {
     try {
       await auth().signOut();
-      console.log('User signed out!');
+      // console.log('User signed out!');
       await AsyncStorage.clear(); 
       navigation.reset({
         index: 0,
@@ -49,14 +49,14 @@ const Profile:React.FC<ProfileProps> = () => {
                <StatusBar hidden={false} translucent={true} animated={true} backgroundColor={Colors.White4} barStyle='dark-content' />
 
        <View style={styles.Container} >
-            <Text style={styles.Header_Txt} >Profile</Text>
+            <Text style={styles.Header_Txt} >{languageData[language].Profile}</Text>
             <View style={styles.Button_Cont} >
               <CustomButton2 title={languageData[language].account} onPress={() =>{navigation.navigate('AccountScreen')} } />
               <CustomButton2 title={languageData[language].redeem_history} onPress={() => {navigation.navigate('ReedemHistroy')}} />
               <CustomButton2 title={languageData[language].language} onPress={() =>{showAlert()}} />
             </View>
             <View style={styles.Logout_cont}>
-            <CustomButton title='Logout' onPress={() => {handleLogout()}} />
+            <CustomButton title={languageData[language].logout} onPress={() => {handleLogout()}} />
             </View>
         </View>
         <LanguageModal

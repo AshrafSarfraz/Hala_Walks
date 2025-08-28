@@ -3,21 +3,27 @@ import { View, Text, Modal, TouchableOpacity, StyleSheet, StatusBar } from 'reac
 import { Colors } from '../../Themes/Colors';
 import { Fonts } from '../../Themes/Fonts';
 import CustomButton from '../CustomButton/CustomButton';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux_toolkit/store';
+import { languageData } from '../../redux_toolkit/language/languageSlice';
 
 type LanProps = {
   visible: boolean;
   onClose: () => void;
+  message?: string;
 };
 
-const IncorrectPin: React.FC<LanProps> = ({ visible, onClose }) => {
+const IncorrectPin: React.FC<LanProps> = ({ visible, onClose, message }) => {
+  const language = useSelector((state: RootState) => state.language.language);
+
+
   return (
     <Modal transparent visible={visible} animationType="fade">
       <StatusBar hidden={true} translucent={true} animated={true} />
       <View style={styles.overlay}>
         <View style={styles.container}>
-          <Text style={styles.messageText}>Pin is incorrect. Please enter the correct pin</Text>
-
-           <CustomButton title='Close' onPress={onClose}/>
+        <Text style={styles.messageText}>{message}</Text>
+           <CustomButton title={languageData[language].Close} onPress={onClose}/>
         </View>
       </View>
     </Modal>
