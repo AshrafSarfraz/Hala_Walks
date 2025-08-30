@@ -17,6 +17,7 @@ import FastImage from 'react-native-fast-image';
 import { RootState } from '../../../redux_toolkit/store';
 import { useSelector } from 'react-redux';
 import { languageData } from '../../../redux_toolkit/language/languageSlice';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type VenuesProps = {
   navigation: any;
@@ -41,13 +42,36 @@ const Venues: React.FC<VenuesProps> = () => {
     setImageLoading(false); // Stop loader in case of error
   };
 
+  // useEffect(() => {
+  //   const loadData = async () => {
+  //     const data = await fetchVenuFromFirebase(); // 👈 use your logic here
+  //     setVenues(data);
+  //     setLoading(false);
+  //   };
+  //   loadData();
+  // }, []);
+
   useEffect(() => {
-    const loadData = async () => {
-      const data = await fetchVenuFromFirebase(); // 👈 use your logic here
-      setVenues(data);
-      setLoading(false);
+    const loadOffers = async () => {
+      try {
+        // Show cached data immediately
+        const cachedData = await AsyncStorage.getItem('H-Venues');
+        if (cachedData) {
+          setVenues(JSON.parse(cachedData));
+          setLoading(false);
+        }
+  
+        // Then fetch in background
+        const freshOffers = await fetchVenuFromFirebase();
+        setVenues(freshOffers);
+        await AsyncStorage.setItem('H-Venues', JSON.stringify(freshOffers));
+      } catch (error) {
+        console.error('Error loading offers:', error);
+        setLoading(false);
+      }
     };
-    loadData();
+  
+    loadOffers();
   }, []);
 
   const visibleItems = showAll ? venues : venues.slice(0, 8);

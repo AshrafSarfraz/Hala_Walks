@@ -23,6 +23,7 @@ import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import LinearGradient from 'react-native-linear-gradient';
 import DetectCountry from '../../Component/distanceCalculate/DetectCountry';
 import FastImage from 'react-native-fast-image';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SelectedCategories: React.FC<{ route: any }> = ({ route }) => {
   const navigation = useNavigation<any>();
@@ -37,19 +38,53 @@ const SelectedCategories: React.FC<{ route: any }> = ({ route }) => {
   const language = useSelector((state: RootState) => state.language.language);
   const styles = getStyles(language);
 
-  useEffect(() => {
-    const getBrands = async () => {
-      setLoading(true);
-      const fetchedBrands = await fetchBrandsFromFirebase();
-      const matchedItems = fetchedBrands.filter(data =>
-        data.selectedCategory?.toLowerCase() === item.text?.toLowerCase(),
-      );
-      setFilteredItems(matchedItems);
-      setLoading(false);
-    };
+  // useEffect(() => {
+  //   const getBrands = async () => {
+  //     setLoading(true);
+  //     const fetchedBrands = await fetchBrandsFromFirebase();
+  //     const matchedItems = fetchedBrands.filter(data =>
+  //       data.selectedCategory?.toLowerCase() === item.text?.toLowerCase(),
+  //     );
+  //     setFilteredItems(matchedItems);
+  //     setLoading(false);
+  //   };
 
-    getBrands();
-  }, []);
+  //   getBrands();
+  // }, []);
+  
+  useEffect(() => {
+    const loadBrands = async () => {
+      try {
+        setLoading(true);
+  
+        // 1️⃣ Pehle cache se dikhao (fast UI)
+        const cachedBrands = await AsyncStorage.getItem('H-brands_cache');
+        if (cachedBrands) {
+          const parsed = JSON.parse(cachedBrands);
+          const matched = parsed.filter(data =>
+            data.selectedCategory?.toLowerCase() === item.text?.toLowerCase()
+          );
+          setFilteredItems(matched);
+        }
+  
+        // 2️⃣ Phir fresh data laao
+        const freshBrands = await fetchBrandsFromFirebase(); // <-- fresh data
+        const matchedFresh = freshBrands.filter(data =>
+          data.selectedCategory?.toLowerCase() === item.text?.toLowerCase()
+        );
+        setFilteredItems(matchedFresh);
+      } catch (error) {
+        console.error('❌ Error loading brands:', error);
+        setFilteredItems([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    loadBrands();
+  }, [item.text]);
+
+
 
   const handleImageLoad = (id: string) => {
     setImageLoaded((prev) => ({

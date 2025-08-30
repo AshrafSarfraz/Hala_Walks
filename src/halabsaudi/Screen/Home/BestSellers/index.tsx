@@ -10,6 +10,7 @@ import { fetchBrandsFromFirebase } from '../../../firebase/firebaseutils';
 import { RootState } from '../../../redux_toolkit/store';
 import { getStyles } from './style';
 import DetectCountry from '../../../Component/distanceCalculate/DetectCountry';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width } = Dimensions.get('screen');
 
@@ -24,16 +25,38 @@ const BestSeller: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [loadedCards, setLoadedCards] = useState<{ [key: string]: boolean }>({});
 
-  useEffect(() => {
-    const getBrands = async () => {
-      setLoading(true);
-      const fetchedBrands = await fetchBrandsFromFirebase();
-      setBrands(fetchedBrands);
-      setLoading(false);
-    };
-    getBrands();
-  }, []);
+  // useEffect(() => {
+  //   const getBrands = async () => {
+  //     setLoading(true);
+  //     const fetchedBrands = await fetchBrandsFromFirebase();
+  //     setBrands(fetchedBrands);
+  //     setLoading(false);
+  //   };
+  //   getBrands();
+  // }, []);
 
+  useEffect(() => {
+    const loadOffers = async () => {
+      try {
+        // Show cached data immediately
+        const cachedData = await AsyncStorage.getItem('H-brands_cache');
+        if (cachedData) {
+          setBrands(JSON.parse(cachedData));
+          setLoading(false);
+        }
+  
+        // Then fetch in background
+        const freshOffers = await fetchBrandsFromFirebase();
+        setBrands(freshOffers);
+        await AsyncStorage.setItem('H-brands_cache', JSON.stringify(freshOffers));
+      } catch (error) {
+        console.error('Error loading offers:', error);
+        setLoading(false);
+      }
+    };
+  
+    loadOffers();
+  }, []);
 
 
   const handleCardLoad = (id: string) => setLoadedCards(prev => ({ ...prev, [id]: true }));

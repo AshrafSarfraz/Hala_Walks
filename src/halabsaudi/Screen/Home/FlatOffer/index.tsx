@@ -10,6 +10,7 @@ import { RootState } from '../../../redux_toolkit/store';
 import { getStyles } from './style';
 
 import FastImage from 'react-native-fast-image';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width } = Dimensions.get('screen');
 
@@ -24,15 +25,39 @@ const ImageSlider: React.FC<{ navigation: any }> = () => {
   const language = useSelector((state: RootState) => state.language.language); // Get the current language from Redux
   const styles = getStyles(language);
 
-  useEffect(() => {
-    const getFlatOffer = async () => {
-      setLoading(true);
-      const fetchedOffers = await fetchFlatOfferFromFirebase();
-      setOffers(fetchedOffers);
-      setLoading(false);
-    };
+  // useEffect(() => {
+  //   const getFlatOffer = async () => {
+  //     setLoading(true);
+  //     const fetchedOffers = await fetchFlatOfferFromFirebase();
+  //     setOffers(fetchedOffers);
+  //     setLoading(false);
+  //   };
 
-    getFlatOffer();
+  //   getFlatOffer();
+  // }, []);
+
+
+  useEffect(() => {
+    const loadOffers = async () => {
+      try {
+        // Show cached data immediately
+        const cachedData = await AsyncStorage.getItem('H-FlatOffers');
+        if (cachedData) {
+          setOffers(JSON.parse(cachedData));
+          setLoading(false);
+        }
+  
+        // Then fetch in background
+        const freshOffers = await fetchFlatOfferFromFirebase();
+        setOffers(freshOffers);
+        await AsyncStorage.setItem('H-FlatOffers', JSON.stringify(freshOffers));
+      } catch (error) {
+        console.error('Error loading offers:', error);
+        setLoading(false);
+      }
+    };
+  
+    loadOffers();
   }, []);
 
   const handleScroll = (event: any) => {

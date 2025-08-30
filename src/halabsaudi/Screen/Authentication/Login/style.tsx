@@ -7,13 +7,13 @@ export const getStyles =(language: string)=> StyleSheet.create({
       backgroundColor: Colors.White,
       padding: 10,
       paddingHorizontal:'5%',
-      paddingTop:'30%',
+      paddingTop:'35%',
       flexGrow: 1,
     },
     languageFab: {
       position: 'absolute',
-      top: 40,              // login header se thoda gap
-      right: 25,
+      top: 60,              // login header se thoda gap
+      right: 35,
       width: 48,
       height: 48,
       borderRadius: 8,

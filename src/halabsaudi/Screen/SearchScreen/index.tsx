@@ -23,6 +23,7 @@ import { languageData } from '../../redux_toolkit/language/languageSlice';
 import LinearGradient from 'react-native-linear-gradient';
 
 import FastImage from 'react-native-fast-image';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SearchScreen: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -36,16 +37,40 @@ const SearchScreen: React.FC = () => {
   const language = useSelector((state: RootState) => state.language.language);
   const styles = getStyles(language);
 
-  useEffect(() => {
-    const getBrands = async () => {
-      setLoading(true);
-      const fetchedBrands = await fetchBrandsFromFirebase();
-      setBrands(fetchedBrands);
-      setLoading(false);
-    };
+  // useEffect(() => {
+  //   const getBrands = async () => {
+  //     setLoading(true);
+  //     const fetchedBrands = await fetchBrandsFromFirebase();
+  //     setBrands(fetchedBrands);
+  //     setLoading(false);
+  //   };
 
-    getBrands();
+  //   getBrands();
+  // }, []);
+
+  useEffect(() => {
+    const loadOffers = async () => {
+      try {
+        // Show cached data immediately
+        const cachedData = await AsyncStorage.getItem('H-brands_cache');
+        if (cachedData) {
+          setBrands(JSON.parse(cachedData));
+          setLoading(false);
+        }
+  
+        // Then fetch in background
+        const freshOffers = await fetchBrandsFromFirebase();
+        setBrands(freshOffers);
+        await AsyncStorage.setItem('H-brands_cache', JSON.stringify(freshOffers));
+      } catch (error) {
+        console.error('Error loading offers:', error);
+        setLoading(false);
+      }
+    };
+  
+    loadOffers();
   }, []);
+  
 
   const filteredData = brands.filter(item =>
     item.nameEng?.toLowerCase().includes(searchQuery.toLowerCase())

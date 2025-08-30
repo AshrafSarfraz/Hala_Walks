@@ -12,6 +12,7 @@ import DistanceFromDevice from '../../../Component/distanceCalculate/distanceCal
 import { Location } from '../../../Themes/Images';
 import DetectCountry from '../../../Component/distanceCalculate/DetectCountry';
 import FastImage from 'react-native-fast-image';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const RecentlyAdded = () => {
   const navigation = useNavigation();
@@ -31,6 +32,10 @@ const RecentlyAdded = () => {
           id: doc.id,
           ...doc.data(),
         }));
+  
+
+
+  
 
         // Get current time and subtract 1 month
         const oneMonthAgo = new Date();

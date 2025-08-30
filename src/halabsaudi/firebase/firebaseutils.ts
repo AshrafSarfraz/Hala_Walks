@@ -9,7 +9,7 @@ export const fetchBrandsFromFirebase = async () => {
       id: doc.id,
       ...doc.data(),
     }));
-    await AsyncStorage.setItem("brands_cache", JSON.stringify(data));
+    await AsyncStorage.setItem("H-brands_cache", JSON.stringify(data));
     return data; // Return freshly fetched data from Firebase
   } catch (error) {
     // Handle errors if any
@@ -24,8 +24,9 @@ export const fetchFlatOfferFromFirebase = async () => {
     const snapshot = await firestore().collection('H-FlatOffers').get();
     const data = snapshot.docs.map(doc => ({
       id: doc.id,
-      ...doc.data(),
+      ...doc.data(),      
     }));
+    await AsyncStorage.setItem("H-Offer_cache", JSON.stringify(data));
     return data; // Return freshly fetched data from Firebase
   } catch (error) {
     // Handle the error appropriately (console log, show error message, etc.)
@@ -43,6 +44,7 @@ export const fetchVenuFromFirebase = async () => {
       id: doc.id,
       ...doc.data(),
     }));
+    await AsyncStorage.setItem("H-venus_cache", JSON.stringify(data));
     return data; // Return freshly fetched data from Firebase
   } catch (error) {
     // Handle the error appropriately (console log, show error message, etc.)
