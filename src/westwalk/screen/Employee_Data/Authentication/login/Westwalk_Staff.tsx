@@ -144,7 +144,7 @@ const EmployeeLogin: React.FC = () => {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.forgotContainer}>
+        {/* <View style={styles.forgotContainer}>
           <View style={styles.checkboxContainer}>
     
           </View>
@@ -153,7 +153,7 @@ const EmployeeLogin: React.FC = () => {
               {languageData[language]?.forget_password || 'Forgot Password?'}
             </Text>
           </TouchableOpacity>
-        </View>
+        </View> */}
 
         <CustomButton title={languageData[language].login} onPress={handleLogin} />
       </View>

@@ -20,6 +20,7 @@ import { Fonts } from '../../Themes/Fonts';
 import { RootState } from '../../redux_toolkit/store';
 import { languageData } from '../../redux_toolkit/language/languageSlice';
 import { fetchBrandsFromFirebase } from '../../firebase/firebaseutils';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type Brand = {
   id: string;
@@ -56,14 +57,34 @@ const Branches = forwardRef<RBSheetRef, Props>(
     const nav = useNavigation<any>();
     const styles = getStyles(language);
 
+
+
+ 
     useEffect(() => {
-      (async () => {
-        setLoading(true);
-        const fetched = await fetchBrandsFromFirebase();
-        setBrands(fetched as Brand[]);
+    const loadOffers = async () => {
+      try {
+        // Show cached data immediately
+        const cachedData = await AsyncStorage.getItem('H-brands_cache');
+        if (cachedData) {
+          setBrands(JSON.parse(cachedData));
+          setLoading(false);
+        }
+  
+        // Then fetch in background
+        const freshOffers = await fetchBrandsFromFirebase();
+        setBrands(freshOffers);
+        await AsyncStorage.setItem('H-brands_cache', JSON.stringify(freshOffers));
+      } catch (error) {
+        console.error('Error loading offers:', error);
         setLoading(false);
-      })();
-    }, []);
+      }
+    };
+  
+    loadOffers();
+  }, []);
+
+
+
 
     const norm = (s?: string) => (s ?? '').trim().toLowerCase();
 
@@ -236,8 +257,8 @@ const getStyles = (language: string) =>
       flex: 1,
       backgroundColor: Colors.White4,
       paddingHorizontal: '4%',
-      marginTop: Platform.OS === 'ios' ? '0%' : '5%',
-      marginBottom: Platform.OS === 'ios' ? '0%' : '2%',
+      marginTop: Platform.OS === 'ios' ? '5%' : '5%',
+      marginBottom: Platform.OS === 'ios' ? '2%' : '2%',
     },
     sheetTitle: {
       fontSize: 16,

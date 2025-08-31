@@ -95,9 +95,9 @@ const DetailScreen: React.FC<{route:any}> = ({route}) => {
 
 
   return (
-    <SafeAreaView>
+    <SafeAreaView >
                 <StatusBar hidden={false} translucent={true} animated={true} backgroundColor={Colors.White4} barStyle='dark-content' />
-          <ScrollView>
+          <ScrollView showsVerticalScrollIndicator={false} >
           <View style={styles.container}>
           
           <View style={styles.HeaderCont}>

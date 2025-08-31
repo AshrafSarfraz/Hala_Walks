@@ -22,6 +22,7 @@ import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import LinearGradient from 'react-native-linear-gradient';
 
 import FastImage from 'react-native-fast-image';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SelectedVenues: React.FC<{ route: any }> = ({ route }) => {
   const navigation = useNavigation<any>();
@@ -36,28 +37,71 @@ const SelectedVenues: React.FC<{ route: any }> = ({ route }) => {
   const language = useSelector((state: RootState) => state.language.language);
   const styles = getStyles(language);
 
+  // useEffect(() => {
+  //   const fetchOffers = async () => {
+  //     try {
+  //       setLoading(true);
+  //       const cachedBrands = await AsyncStorage.getItem('H-brands_cache');
+  //       const snapshot = await firestore().collection('H-Brands').get();
+  //       const BrandsData = snapshot.docs.map(doc => ({
+  //         id: doc.id,
+  //         ...doc.data(),
+  //       }));
+  //       const matchedItems = BrandsData.filter(
+  //         data => data.selectedVenue?.toLowerCase() === item.venueName?.toLowerCase(),
+  //       );
+  //       setFilteredItems(matchedItems);
+  //     } catch (error) {
+  //       console.error('❌ Error fetching offers:', error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchOffers();
+  // }, [item.text]);
+
   useEffect(() => {
-    const fetchOffers = async () => {
+    const loadBrands = async () => {
       try {
+        setLoading(true);
+  
+        // 1️⃣ Pehle cache se dikhao
+        const cachedBrands = await AsyncStorage.getItem('H-brands_cache');
+        if (cachedBrands) {
+          const parsed = JSON.parse(cachedBrands);
+          const matched = parsed.filter(
+            data => data.selectedVenue?.toLowerCase() === item.venueName?.toLowerCase(),
+          );
+          setFilteredItems(matched);
+        }
+  
+        // 2️⃣ Ab fresh data Firebase se lao
         const snapshot = await firestore().collection('H-Brands').get();
-        const BrandsData = snapshot.docs.map(doc => ({
+        const freshBrands = snapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data(),
         }));
-        const matchedItems = BrandsData.filter(
+  
+        // cache update karo
+        await AsyncStorage.setItem('H-brands_cache', JSON.stringify(freshBrands));
+  
+        // filter aur set state
+        const matchedFresh = freshBrands.filter(
           data => data.selectedVenue?.toLowerCase() === item.venueName?.toLowerCase(),
         );
-        setFilteredItems(matchedItems);
+        setFilteredItems(matchedFresh);
       } catch (error) {
-        console.error('❌ Error fetching offers:', error);
+        console.error('❌ Error loading brands:', error);
+        setFilteredItems([]);
       } finally {
         setLoading(false);
       }
     };
-
-    fetchOffers();
+  
+    loadBrands();
   }, [item.text]);
-
+  
   const handleImageLoad = (id: string) => {
     setImageLoaded((prev) => ({
       ...prev,
