@@ -38,9 +38,9 @@ const getStyles=(language:String)=> StyleSheet.create({
     transform:language==='en'?[{ scaleX:1}]:[{ scaleX:-1}]
   },
   headerText: {
-    fontSize: 18,
+    fontSize: language==='en'?18:16,
     fontFamily: Fonts.SF_Bold,
-    lineHeight: 24,
+    lineHeight: language==='en'?24:30,
     color: Colors.Green,
   },
 

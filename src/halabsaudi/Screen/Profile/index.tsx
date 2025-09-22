@@ -46,7 +46,7 @@ const Profile:React.FC<ProfileProps> = () => {
 
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: Colors.Bg }}>
-               <StatusBar hidden={false} translucent={true} animated={true} backgroundColor={Colors.White4} barStyle='dark-content' />
+               <StatusBar hidden={false} translucent={true} animated={true} backgroundColor={Colors.Bg} barStyle='dark-content' />
 
        <View style={styles.Container} >
             <Text style={styles.Header_Txt} >{languageData[language].Profile}</Text>

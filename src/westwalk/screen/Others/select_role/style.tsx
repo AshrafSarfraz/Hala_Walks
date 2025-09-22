@@ -11,7 +11,13 @@ export const getStyles=(language:string) => StyleSheet.create({
       flex:0.33,
       alignItems:'center',
       justifyContent:'flex-end',
-      paddingBottom:15
+      paddingBottom:15,
+      paddingHorizontal:20
+    },
+    Back_Btn:{
+    alignSelf:language==='en'?'flex-start':"flex-end",
+    marginBottom:10,
+    transform:language==='en'?[{ scaleX:1}]:[{ scaleX:-1}]
     },
     logo:{
       width: 150,

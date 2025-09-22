@@ -38,8 +38,7 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1,  backgroundColor: Colors.Bg, }}>
-              <StatusBar hidden={false} translucent={true} animated={true} backgroundColor={Colors.White4} barStyle='dark-content' />
-
+      <StatusBar hidden={false} translucent={true} animated={true} backgroundColor={Colors.Bg} barStyle='dark-content' />
       <SafeAreaView style={styles.Container}>
       <View style={styles.header}>
             <Image source={Full_logo_B} style={styles.logo} />

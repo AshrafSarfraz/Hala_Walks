@@ -9,7 +9,7 @@ export const getStyles = (language: string) =>
       paddingHorizontal: 24,
       marginTop: Platform.OS === 'ios' ? '0%' : '10%',
       marginBottom: Platform.OS === 'ios' ? '1%' : '6%',
-      paddingBottom: Platform.OS === 'ios' ? '0%' : '4%',
+      paddingBottom: Platform.OS === 'ios' ? '0%' : '9%',
     },
     HeaderCont: {
       flexDirection: language === 'en' ? 'row' : 'row-reverse',

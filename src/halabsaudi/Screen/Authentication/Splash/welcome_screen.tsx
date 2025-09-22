@@ -1,64 +1,118 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, StatusBar, Image, TouchableOpacity, Text, TextInput,KeyboardAvoidingView, Platform, ScrollView, TouchableWithoutFeedback,Keyboard,Alert,} from 'react-native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Colors } from '../../../Themes/Colors';
-import { Bank, Profile_Img, W_logo, WW_Icon } from '../../../Themes/Images';
-import { Fonts } from '../../../Themes/Fonts';
+import React, {useState} from 'react';
+import {
+  View,
+  StyleSheet,
+  StatusBar,
+  Image,
+  TouchableOpacity,
+  Text,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  TouchableWithoutFeedback,
+  Keyboard,
+  Alert,
+} from 'react-native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {Colors} from '../../../Themes/Colors';
+import {Bank, languageIcon, Profile_Img, W_logo, WW_Icon} from '../../../Themes/Images';
+import {Fonts} from '../../../Themes/Fonts';
+import LanguageModal from '../../../Component/CustomAlert/Lan_Modal';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../redux_toolkit/store';
+import { languageData } from '../../../redux_toolkit/language/languageSlice';
 
 type SplashBlankProps = {
   navigation: NativeStackNavigationProp<any>;
 };
 
-const WelcomeScreen: React.FC<SplashBlankProps> = ({ navigation }) => {
-  const [selected, setSelected] = useState<'customer' | 'community' | null>(null);
+const WelcomeScreen: React.FC<SplashBlankProps> = ({navigation}) => {
+  const [selected, setSelected] = useState<'customer' | 'community' | null>(
+    null,
+  );
+  const [alertVisible, setAlertVisible] = useState<boolean>(false);
   const [code, setCode] = useState('');
+
+  const language = useSelector((state: RootState) => state.language.language);
+  const styles = getStyles(language);
+
+
+
+  const showAlert = () => {
+    setAlertVisible(true);
+  };
+
+  const hideAlert = () => {
+    setAlertVisible(false);
+  };
 
   const handleSelection = (type: 'customer' | 'community') => {
     setSelected(type);
   };
 
-  const handleContinue = () => {
-    if (selected === 'customer') {
-      navigation.navigate('Login');
-    } else if (selected === 'community') {
-      if (code.trim() === '24680') {
-        navigation.navigate('WestwalkStack');
-      } else {
-        Alert.alert('Invalid community code. Please enter the correct code.');
-      }
-    }
-  };
+  // const handleContinue = () => {
+  //   if (selected === 'customer') {
+  //     navigation.navigate('Login');
+  //   } else if (selected === 'community') {
+  //     if (code.trim() === '24680') {
+  //       navigation.navigate('WestwalkStack');
+  //     } else {
+  //       Alert.alert('Invalid community code. Please enter the correct code.');
+  //     }
+  //   }
+  // };
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      style={styles.flex}
-    >
+      style={styles.flex}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled">
           <View style={styles.Main_Container}>
-            <StatusBar hidden={true} translucent={true} animated={true} />
+            <StatusBar hidden={false} translucent={true} animated={true} />
+            
+            <TouchableOpacity
+              onPress={showAlert}
+              activeOpacity={0.8}
+              hitSlop={{top: 8, bottom: 10, left: 10, right: 10}}
+              style={styles.languageFab}>
+              <Image source={languageIcon} style={styles.languageIcon} />
+            </TouchableOpacity>
             <Image source={W_logo} style={styles.logo} />
-
+            <Text style={styles.Passport_Txt} >{languageData[language].Passport_Txt}</Text>
             <View style={styles.buttonRow}>
               {/* Customer Button */}
               <TouchableOpacity
                 style={[
                   styles.selectButton,
-                  selected === 'customer' ? styles.selectedButton : styles.defaultButton,
+                  selected === 'customer'
+                    ? styles.selectedButton
+                    : styles.defaultButton,
                 ]}
-                onPress={() => handleSelection('customer')}
-              >
+                // onPress={() => handleSelection('customer')}
+                onPress={() => {
+                  navigation.navigate('Login'), handleSelection('customer');
+                }}>
                 <Image
                   source={Profile_Img}
                   style={[
                     styles.buttonImage,
-                    { tintColor: selected === 'customer' ? Colors.Green : 'white' },
+                    {
+                      tintColor:
+                        selected === 'customer' ? Colors.Green : 'white',
+                    },
                   ]}
                   resizeMode="contain"
                 />
-                <Text style={[styles.buttonText, selected === 'customer' && styles.selectedText]}>
-                  Saudi Visitor
+                <Text
+                  style={[
+                    styles.buttonText,
+                    selected === 'customer' && styles.selectedText,
+                  ]}>
+                 {languageData[language].Saudi_Visitor}
                 </Text>
               </TouchableOpacity>
 
@@ -66,26 +120,37 @@ const WelcomeScreen: React.FC<SplashBlankProps> = ({ navigation }) => {
               <TouchableOpacity
                 style={[
                   styles.selectButton,
-                  selected === 'community' ? styles.selectedButton : styles.defaultButton,
+                  selected === 'community'
+                    ? styles.selectedButton
+                    : styles.defaultButton,
                 ]}
-                onPress={() => handleSelection('community')}
-              >
+                onPress={() => {
+                  navigation.navigate('WestwalkStack'),
+                    handleSelection('customer');
+                }}>
                 <Image
                   source={WW_Icon}
                   style={[
                     styles.buttonImage2,
-                    { tintColor: selected === 'community' ? Colors.Green : 'white' },
+                    {
+                      tintColor:
+                        selected === 'community' ? Colors.Green : 'white',
+                    },
                   ]}
                   resizeMode="contain"
                 />
-                <Text style={[styles.buttonText, selected === 'community' && styles.selectedText]}>
-                  West Walk Community
+                <Text
+                  style={[
+                    styles.buttonText,
+                    selected === 'community' && styles.selectedText,
+                  ]}>
+                   {languageData[language].Westwalk_Community}
                 </Text>
               </TouchableOpacity>
             </View>
 
             {/* Input + Continue */}
-            {selected && (
+            {/* {selected && (
               <View style={styles.inputContainer}>
                 {selected === 'community' && (
                   <TextInput
@@ -101,8 +166,9 @@ const WelcomeScreen: React.FC<SplashBlankProps> = ({ navigation }) => {
                   <Text style={styles.continueText}>Continue</Text>
                 </TouchableOpacity>
               </View>
-            )}
+            )} */}
           </View>
+          <LanguageModal visible={alertVisible} onClose={hideAlert} />
         </ScrollView>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
@@ -111,7 +177,7 @@ const WelcomeScreen: React.FC<SplashBlankProps> = ({ navigation }) => {
 
 export default WelcomeScreen;
 
-const styles = StyleSheet.create({
+const getStyles=(langauge:string) => StyleSheet.create({
   flex: {
     flex: 1,
     backgroundColor: Colors.Green,
@@ -122,15 +188,52 @@ const styles = StyleSheet.create({
   Main_Container: {
     flex: 1,
     backgroundColor: Colors.Green,
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingVertical:60,
     justifyContent: 'flex-start',
   },
   logo: {
-    width: 180,
-    height: 180,
+    width: 120,
+    height: 120,
     alignSelf: 'center',
-    marginTop: 55,
+    marginTop: 80,
   },
+  languageFab: {
+    position: 'absolute',
+    top: 70,              // login header se thoda gap
+    right: 35,
+    width: 48,
+    height: 48,
+    borderRadius: 8,
+    backgroundColor: 'rgba(255,255,255,0.95)', // soft white (glass look)
+    alignItems: 'center',
+    justifyContent: 'center',
+    // Border subtle
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: 'rgba(0,0,0,0.06)',
+    // Shadow
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOpacity: 0.12,
+        shadowRadius: 8,
+        shadowOffset: { width: 0, height: 4 },
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
+    zIndex: 10,
+  },
+  
+  languageIcon: {
+    width: 22,
+    height: 22,
+    resizeMode: 'contain',
+    tintColor: '#14171A', // ya Colors.Black/Theme primary
+  },
+
+
   buttonRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -145,7 +248,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 10,
   },
-
+  Passport_Txt:{
+    color:'#D0A700',
+    fontSize:16,
+    fontFamily:Fonts.SF_Bold,
+    textAlign:"center",
+    alignSelf:"center",
+    width:200,
+    marginTop:20,
+    lineHeight:22
+  },
   defaultButton: {
     borderColor: 'white',
     backgroundColor: 'transparent',
@@ -159,10 +271,9 @@ const styles = StyleSheet.create({
     height: 50,
     marginBottom: 20,
   },
-  buttonImage2:{
+  buttonImage2: {
     width: 80,
     height: 80,
-
   },
   buttonText: {
     color: 'white',
@@ -195,7 +306,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop:10
+    marginTop: 10,
   },
   continueText: {
     color: Colors.Green,

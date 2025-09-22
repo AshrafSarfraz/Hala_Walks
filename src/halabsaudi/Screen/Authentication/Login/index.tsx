@@ -14,7 +14,8 @@ import { RootState } from '../../../redux_toolkit/store';
 import { getStyles } from './style';
 import ActivityIndicatorModal from '../../../Component/Loader/ActivityIndicator';
 import AccountNotFoundModal from '../../../Component/CustomAlert/NoAccountFound';
-import LanguageModal from '../../../Component/CustomAlert/Lan_Modal';
+import CustomHeader from '../../../Component/CustomHeader/CustomHeader';
+
 
 // ───────────────────────────────────────────────────────────────────────────────
 // Helper: build full phone with secret Qatar override
@@ -42,7 +43,7 @@ const Login: React.FC<NativeStackScreenProps<any>> = ({ navigation }) => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showNotFoundModal, setShowNotFoundModal] = useState(false);
-  const [alertVisible, setAlertVisible] = useState<boolean>(false);
+
 
   const language = useSelector((state: RootState) => state.language.language);
   const handleCountrySelect = (code: string) => setCountryCode(code);
@@ -51,14 +52,7 @@ const Login: React.FC<NativeStackScreenProps<any>> = ({ navigation }) => {
   
 
 
-  const showAlert = () => {
-    setAlertVisible(true);
-  };
-
-  const hideAlert = () => {
-    setAlertVisible(false);
-  };
-
+ 
 
 
   async function sendVerificationCode() {
@@ -120,15 +114,8 @@ const Login: React.FC<NativeStackScreenProps<any>> = ({ navigation }) => {
         backgroundColor={Colors.White4}
         barStyle="dark-content"
       />
-    <TouchableOpacity
-        onPress={showAlert}
-        activeOpacity={0.8}
-        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-       style={styles.languageFab}>
-
-  <Image source={languageIcon} style={styles.languageIcon} />
-</TouchableOpacity>
-
+            <CustomHeader title='' onBackPress={()=>{navigation.goBack()}} />
+              <View style={{marginBottom:"17%"}} />
       {/* Logo */}
       <Image source={HBS_Logo} style={styles.H_Logo} resizeMode="contain" />
 
@@ -186,7 +173,7 @@ const Login: React.FC<NativeStackScreenProps<any>> = ({ navigation }) => {
 
       {isLoading && <ActivityIndicatorModal visible={isLoading} />}
       <AccountNotFoundModal  visible={showNotFoundModal}  onClose={() => setShowNotFoundModal(false)} />
-       <LanguageModal visible={alertVisible} onClose={hideAlert} />
+   
     </ScrollView>
 
   );

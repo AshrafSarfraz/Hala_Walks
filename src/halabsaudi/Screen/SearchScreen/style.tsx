@@ -8,8 +8,8 @@ export const getStyles=(language:String) => StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.White4,
     paddingHorizontal: "4%",
-    marginTop:Platform.OS==='ios'?'0%':'11%',
-    marginBottom:Platform.OS==='ios'?'0%':'2%'
+    marginTop:Platform.OS==='ios'?'0%':'13%',
+    marginBottom:Platform.OS==='ios'?'0%':'5%'
   },
   header: {
     flexDirection: 'row',
@@ -81,44 +81,45 @@ export const getStyles=(language:String) => StyleSheet.create({
     shadowRadius: 4,
   },
   itemImage: {
-    width: 60,
-    height: 60,
+    width: 70,
+    height: 70,
     borderRadius: 8,
     marginRight: language==='en'?10:10,
     marginLeft: language==='ar'?10:0,
-    resizeMode:"cover"
+    resizeMode:"cover",
+    borderWidth:0.2
   },
   itemInfo: {
     flex: 1,
   },
   itemTitle: {
-    fontSize: language==='en'?16:16,
+    fontSize: language==='en'?16:14,
     fontFamily: language==='en'?Fonts.SF_Bold:"",
-    lineHeight: language==='en'?22:30,
+    lineHeight: language==='en'?20:26,
     fontWeight:'500',
     color: Colors.Black,
-    marginLeft:language==='ar'?"2%":0,
-    textAlign:language==='en'?'left':'right'
+    marginBottom:5,
+    textAlign:language==='en'?'left':'right',
   },
   itemLocation: {
-    fontSize: language==='en'?11:13,
+    fontSize: language==='en'?12:11,
     fontFamily: language==='en'?Fonts.SF_Medium:"",
-    lineHeight: language==='en'?14:24,
+    lineHeight: language==='en'?14:18,
     fontWeight:'300',
     color: Colors.Black,
     marginLeft:language==='ar'?"2%":0,
-     textAlign:language==='en'?'left':'right'
+    textAlign:language==='en'?'left':'right'
   
   },
   itemCity: {
-    fontSize: language==='en'?12:12,
+    width:'70%',
+    fontSize: language==='en'?10:8,
     fontFamily: language==='en'?Fonts.SF_Bold:"",
-    lineHeight: language==='en'?16:24,
+    lineHeight: language==='en'?10:14,
     fontWeight:'500',
     color: Colors.Green,
     marginLeft:language==='ar'?"2%":0,
      textAlign:language==='en'?'left':'right',
-     marginTop:4
   },
   shimmerItem: {
     width: '100%',
@@ -171,5 +172,32 @@ export const getStyles=(language:String) => StyleSheet.create({
    marginLeft:language==='en'?10:0,
    marginRight:language==='en'?0:10,
    textAlign:'justify'
+  },
+  Loc_Status_Cont: {
+    flexDirection: language==='en'?'row':"row-reverse",
+    alignItems: 'center',
+  
+    width: '100%',
+    alignSelf:"center",
+    marginTop:10  
+  },
+  Loc_Cont: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  
+    
+  },
+  LocationIcon: {
+    width: 12,
+    height: 12,
+    resizeMode: 'contain',
+    tintColor: Colors.Green,
+  },
+  location_txt: {
+    fontSize: 10,
+    color: 'green',
+    fontFamily: Fonts.SF_Medium,
+    lineHeight: 14,
+    marginLeft: 2,
   },
 });

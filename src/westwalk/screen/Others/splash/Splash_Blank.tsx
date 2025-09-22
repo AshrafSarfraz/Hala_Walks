@@ -16,7 +16,9 @@ export const preloadAllData = async () => {
     fetchFlatOfferFromFirebase(),
   ]);
 };
+
 const Splash_Blank: React.FC<SplashBlankProps> = ({ navigation }) => {
+ 
   useEffect(() => {
     const init = async () => {
       await preloadAllData();

@@ -126,7 +126,7 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
   return (
     <SafeAreaView>
       <StatusBar hidden={false} translucent={true}  animated={true} backgroundColor={Colors.Bg}  barStyle={'dark-content'}/>
-      <ScrollView> { source==='event'? (
+      <ScrollView showsVerticalScrollIndicator={false} > { source==='event'? (
         <View style={styles.container}>
         <View style={styles.HeaderCont}>
           <CustomHeader  title={languageData[language].Detail_Screen} onBackPress={() => {  navigation.goBack(); }} />

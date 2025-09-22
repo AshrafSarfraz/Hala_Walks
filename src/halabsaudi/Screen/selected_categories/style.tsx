@@ -81,28 +81,30 @@ export const getStyles=(language:String) => StyleSheet.create({
     shadowRadius: 4,
   },
   itemImage: {
-    width: 60,
-    height: 60,
+    width: 80,
+    height: 80,
     borderRadius: 8,
-   marginRight: language==='en'?10:10,
+    marginRight: language==='en'?10:10,
     marginLeft:language==='ar'?10:0, 
+    borderWidth:0.2
 
   },
   itemInfo: {
     flex: 1,
   },
   itemTitle: {
-    fontSize: language==='en'?16:16,
+    fontSize: language==='en'?16:14,
     fontFamily: language==='en'?Fonts.SF_Bold:"",
-    lineHeight: language==='en'?22:24,
+    lineHeight: language==='en'?20:26,
     fontWeight:'500',
     color: Colors.Black,
+    marginBottom:5,
     textAlign:language==='en'?'left':'right',
   },
   itemLocation: {
-    fontSize: language==='en'?11:13,
+    fontSize: language==='en'?12:11,
     fontFamily: language==='en'?Fonts.SF_Medium:"",
-    lineHeight: language==='en'?14:20,
+    lineHeight: language==='en'?14:18,
     fontWeight:'300',
     color: Colors.Black,
     marginLeft:language==='ar'?"2%":0,
@@ -110,14 +112,14 @@ export const getStyles=(language:String) => StyleSheet.create({
   
   },
   itemCity: {
-    fontSize: language==='en'?12:12,
+    width:'70%',
+    fontSize: language==='en'?10:8,
     fontFamily: language==='en'?Fonts.SF_Bold:"",
-    lineHeight: language==='en'?16:20,
+    lineHeight: language==='en'?10:14,
     fontWeight:'500',
     color: Colors.Green,
     marginLeft:language==='ar'?"2%":0,
      textAlign:language==='en'?'left':'right',
-     marginTop:4
   },
   emptyStateContainer:{
     marginTop:90,
@@ -133,5 +135,35 @@ export const getStyles=(language:String) => StyleSheet.create({
    marginTop:12,
    fontWeight:'bold',
    color:Colors.Black
-  }
+  },
+
+  // New Feature
+
+  Loc_Status_Cont: {
+    flexDirection: language==='en'?'row':"row-reverse",
+    alignItems: 'center',
+  
+    width: '100%',
+    alignSelf:"center",
+    marginTop:10  
+  },
+  Loc_Cont: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  
+    
+  },
+  LocationIcon: {
+    width: 12,
+    height: 12,
+    resizeMode: 'contain',
+    tintColor: Colors.Green,
+  },
+  location_txt: {
+    fontSize: 10,
+    color: 'green',
+    fontFamily: Fonts.SF_Medium,
+    lineHeight: 14,
+    marginLeft: 2,
+  },
 });

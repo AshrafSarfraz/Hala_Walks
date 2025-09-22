@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import {
   View,
   Text,
-   Image,  
+  Image,
   ActivityIndicator,
   TouchableOpacity,
   TextInput,
@@ -14,35 +14,44 @@ import {
 } from 'react-native';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import { Colors, Colors as ThemeColors } from '../../Themes/Colors';
-
-
+import { Colors } from '../../Themes/Colors';
 import { Back_Icon } from '../../Themes/Images';
 import { languageData } from '../../redux_toolkit/language/languageSlice';
 import { RootState } from '../../redux_toolkit/store';
 import { useSelector } from 'react-redux';
 import { getStyles } from './style';
+import IncorrectPin from '../../Component/CustomAlert/IncorrectPin';
 
+// --- Field Component ---
+type FieldProps = {
+  label: string;
+  helper?: string;
+  children: React.ReactNode;
+};
 
+const Field: React.FC<FieldProps> = ({ label, helper, children }) => {
+  return (
+    <View style={{ marginBottom: 16 }}>
+      <Text style={{ fontSize: 14, color: '#333', marginBottom: 4 }}>{label}</Text>
+      {children}
+      {helper ? <Text style={{ fontSize: 12, color: '#888', marginTop: 2 }}>{helper}</Text> : null}
+    </View>
+  );
+};
 
+// --- User type ---
 type UserDoc = {
   name?: string;
   email?: string;
   phoneNumber?: string;
   age?: number | null;
   gender?: string | null;
-  countryCode?: string;
-  createdAt?: any;
-  updatedAt?: any;
 };
-
-
-
 
 const GENDER_OPTIONS = ['Male', 'Female', 'Prefer not to say'] as const;
 type GenderType = (typeof GENDER_OPTIONS)[number];
 
-const AccountScreen: React.FC = ({navigation}) => {
+const AccountScreen: React.FC = ({ navigation }) => {
   const [initialLoading, setInitialLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -56,17 +65,17 @@ const AccountScreen: React.FC = ({navigation}) => {
   const [ageStr, setAgeStr] = useState('');
   const [gender, setGender] = useState<GenderType | ''>('');
   const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState('');
+  const [showAlert, setshowAlert] = useState(false);
 
-  // gender modal
   const [genderOpen, setGenderOpen] = useState(false);
-  const language = useSelector((state: RootState) => state.language.language); // Get the current language from Redux
- const styles = getStyles(language);
+  const language = useSelector((state: RootState) => state.language.language);
+  const styles = getStyles(language);
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
         setInitialLoading(true);
-
         const currentUser = auth().currentUser;
         const phone = currentUser?.phoneNumber;
         if (!phone) {
@@ -82,20 +91,20 @@ const AccountScreen: React.FC = ({navigation}) => {
           .get();
 
         if (snap.empty) {
-          setError('User not found in hala_users.');
+          setError('User not found.');
           setInitialLoading(false);
           return;
         }
 
         const doc = snap.docs[0];
-        const data = (doc.data() || {}) as UserDoc;
+        const data = doc.data() as UserDoc;
         setDocId(doc.id);
         setUserData(data);
 
-        // seed form
+        // Initialize form state
         setName(data.name ?? '');
         setEmail(data.email ?? '');
-        setAgeStr(typeof data.age === 'number' ? String(data.age) : '');
+        setAgeStr(data.age != null ? String(data.age) : '');
         setGender((data.gender as GenderType) ?? '');
       } catch (e: any) {
         setError('Failed to load profile. ' + (e?.message ?? ''));
@@ -110,11 +119,9 @@ const AccountScreen: React.FC = ({navigation}) => {
   const initials = useMemo(() => {
     const src = name || userData?.name || '';
     const parts = src.trim().split(/\s+/).slice(0, 2);
-    const letters = parts.map(p => p[0]?.toUpperCase() ?? '').join('');
-    return letters || 'U';
+    return parts.map(p => p[0]?.toUpperCase() ?? '').join('') || 'U';
   }, [name, userData?.name]);
 
-  // ---------- validation & save ----------
   const validate = () => {
     if (!name.trim()) return 'Please enter your full name';
     if (!email.trim()) return 'Please enter your email';
@@ -136,7 +143,7 @@ const AccountScreen: React.FC = ({navigation}) => {
       return;
     }
     if (!docId) {
-      setError('Cannot update: missing user document.');
+      setError('Missing user document.');
       return;
     }
 
@@ -150,7 +157,6 @@ const AccountScreen: React.FC = ({navigation}) => {
           email: email.trim(),
           age: ageVal,
           gender: gender || null,
-          // phoneNumber intentionally not updated
           updatedAt: firestore.FieldValue.serverTimestamp(),
         },
         { merge: true }
@@ -165,7 +171,8 @@ const AccountScreen: React.FC = ({navigation}) => {
       }));
 
       setEditMode(false);
-      Alert.alert('Saved', 'Your profile has been updated.');
+      setshowAlert(true);
+      setMessage('Your profile has been updated.');
     } catch (e: any) {
       setError('Failed to update profile. ' + (e?.message ?? ''));
     } finally {
@@ -174,41 +181,15 @@ const AccountScreen: React.FC = ({navigation}) => {
   };
 
   const onCancel = () => {
-    setName(userData?.name ?? '');
-    setEmail(userData?.email ?? '');
-    setAgeStr(typeof userData?.age === 'number' ? String(userData?.age) : '');
-    setGender((userData?.gender as GenderType) ?? '');
+    if (!userData) return;
+    setName(userData.name ?? '');
+    setEmail(userData.email ?? '');
+    setAgeStr(userData.age != null ? String(userData.age) : '');
+    setGender((userData.gender as GenderType) ?? '');
     setEditMode(false);
     setError(null);
   };
-/* ---------- Presentational helpers (flat) ---------- */
-const ListRow: React.FC<{ label: string; value: string; last?: boolean }> = ({
-  label,
-  value,
-  last,
-}) => (
-  <View style={[styles.listRow, last && styles.listRowLast]}>
-    <Text style={styles.listKey}>{label}</Text>
-    <Text style={styles.listVal} numberOfLines={1}>
-      {value || '—'}
-    </Text>
-  </View>
-);
 
-const Field: React.FC<{ label: string; helper?: string; children: React.ReactNode }> = ({
-  label,
-  helper,
-  children,
-}) => (
-  <View style={styles.fieldWrap}>
-    <Text style={styles.fieldLabel}>{label}</Text>
-    {children}
-    {helper ? <Text style={styles.helper}>{helper}</Text> : null}
-  </View>
-);
-
-
-  // ---------- UI ----------
   if (initialLoading) {
     return (
       <View style={styles.loadingWrap}>
@@ -222,9 +203,7 @@ const Field: React.FC<{ label: string; helper?: string; children: React.ReactNod
   if (!userData) {
     return (
       <View style={[styles.loadingWrap, { backgroundColor: Colors.White4 }]}>
-        <Text style={[styles.loadingTxt, { color: Colors.Red }]}>
-          {error ?? 'No data found.'}
-        </Text>
+        <Text style={[styles.loadingTxt, { color: Colors.Red }]}>{error ?? 'No data found.'}</Text>
       </View>
     );
   }
@@ -232,16 +211,28 @@ const Field: React.FC<{ label: string; helper?: string; children: React.ReactNod
   return (
     <View style={{ flex: 1, backgroundColor: Colors.White }}>
       <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
-      {/* Hero Header (keep as-is) */}
-      <View style={styles.hero}>
-        
-        <View style={styles.heroTopRow}>
-        <TouchableOpacity  onPress={()=>{navigation.goBack()}}    style={{flexDirection:language==='en'?"row":"row-reverse",alignItems:"center"}}   >
-          <Image source={Back_Icon} style={{marginRight:4,  width:25,height:25,resizeMode:"contain", tintColor:"white",  transform:language==='en'?[{ scaleX:1}]:[{ scaleX:-1}]}} />
-          <Text style={styles.heroTitle}>{languageData[language].account}</Text>
-        </TouchableOpacity>
 
-          
+      {/* Header */}
+      <View style={styles.hero}>
+        <View style={styles.heroTopRow}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={{ flexDirection: language === 'en' ? 'row' : 'row-reverse', alignItems: 'center' }}
+          >
+            <Image
+              source={Back_Icon}
+              style={{
+                marginRight: 4,
+                width: 25,
+                height: 25,
+                resizeMode: 'contain',
+                tintColor: 'white',
+                transform: language === 'en' ? [{ scaleX: 1 }] : [{ scaleX: -1 }],
+              }}
+            />
+            <Text style={styles.heroTitle}>{languageData[language].account}</Text>
+          </TouchableOpacity>
+
           {!editMode ? (
             <TouchableOpacity style={styles.heroBtnOutline} onPress={() => setEditMode(true)}>
               <Text style={styles.heroBtnOutlineTxt}>{languageData[language].edit}</Text>
@@ -274,27 +265,39 @@ const Field: React.FC<{ label: string; helper?: string; children: React.ReactNod
         </View>
       </View>
 
-      {/* Content (FLAT — no card background) */}
-      <ScrollView contentContainerStyle={styles.content}>
+      {/* Form */}
+      <ScrollView style={{ flex: 1, padding: 16 }}>
         <Text style={styles.sectionHeader}>{languageData[language].personal_details}</Text>
 
         {!editMode ? (
-          // ---- VIEW MODE: clean list rows (no cards) ----
           <View style={styles.list}>
-            <ListRow label={languageData[language].full_name} value={userData?.name ?? '—'} />
-            <ListRow label={languageData[language].email} value={userData?.email ?? '—'} />
-            <ListRow label={languageData[language].phone_number} value={userData?.phoneNumber ?? '—'} />
-            <ListRow label={languageData[language].age} value={userData?.age != null ? String(userData?.age) : '—'} />
-            <ListRow label={languageData[language].gender} value={userData?.gender ?? '—'} last />
+            <View style={styles.listRow}>
+              <Text style={styles.listKey}>{languageData[language].full_name}</Text>
+              <Text style={styles.listVal}>{userData.name ?? '—'}</Text>
+            </View>
+            <View style={styles.listRow}>
+              <Text style={styles.listKey}>{languageData[language].email}</Text>
+              <Text style={styles.listVal}>{userData.email ?? '—'}</Text>
+            </View>
+            <View style={styles.listRow}>
+              <Text style={styles.listKey}>{languageData[language].phone_number}</Text>
+              <Text style={styles.listVal}>{userData.phoneNumber ?? '—'}</Text>
+            </View>
+            <View style={styles.listRow}>
+              <Text style={styles.listKey}>{languageData[language].age}</Text>
+              <Text style={styles.listVal}>{userData.age != null ? String(userData.age) : '—'}</Text>
+            </View>
+            <View style={styles.listRow}>
+              <Text style={styles.listKey}>{languageData[language].gender}</Text>
+              <Text style={styles.listVal}>{userData.gender ?? '—'}</Text>
+            </View>
           </View>
         ) : (
-          // ---- EDIT MODE: minimal underline inputs (flat) ----
           <View style={styles.form}>
             <Field label={languageData[language].full_name}>
               <TextInput
                 style={styles.inputFlat}
                 placeholder={languageData[language].full_name}
-                placeholderTextColor={Colors.Black}
                 value={name}
                 onChangeText={setName}
               />
@@ -304,7 +307,6 @@ const Field: React.FC<{ label: string; helper?: string; children: React.ReactNod
               <TextInput
                 style={styles.inputFlat}
                 placeholder="you@example.com"
-                placeholderTextColor={Colors.Black}
                 value={email}
                 onChangeText={setEmail}
                 autoCapitalize="none"
@@ -312,10 +314,10 @@ const Field: React.FC<{ label: string; helper?: string; children: React.ReactNod
               />
             </Field>
 
-            <Field label={languageData[language].phone_number}helper="Phone number cannot be changed.">
+            <Field label={languageData[language].phone_number} helper="Phone number cannot be changed.">
               <TextInput
-                style={[styles.inputFlat, styles.inputDisabledFlat]}
-                value={userData?.phoneNumber ?? ''}
+                style={[styles.inputFlat, { backgroundColor: Colors.White4 }]}
+                value={userData.phoneNumber ?? ''}
                 editable={false}
               />
             </Field>
@@ -324,7 +326,6 @@ const Field: React.FC<{ label: string; helper?: string; children: React.ReactNod
               <TextInput
                 style={styles.inputFlat}
                 placeholder="e.g., 28"
-                placeholderTextColor={Colors.Black}
                 value={ageStr}
                 onChangeText={t => setAgeStr(t.replace(/[^\d]/g, ''))}
                 keyboardType="numeric"
@@ -334,27 +335,22 @@ const Field: React.FC<{ label: string; helper?: string; children: React.ReactNod
 
             <Field label={languageData[language].gender}>
               <TouchableOpacity
-                style={[styles.inputFlat, styles.dropdownTap]}
+                style={[styles.inputFlat, { justifyContent: 'center' }]}
                 onPress={() => setGenderOpen(true)}
               >
-                <Text style={gender ? styles.inputText : styles.placeholderText}>
+                <Text style={gender ? { color: Colors.Black } : { color: Colors.Gray }}>
                   {gender || 'Select gender'}
                 </Text>
               </TouchableOpacity>
             </Field>
 
-            {error ? <Text style={styles.formError}>{error}</Text> : null}
+            {error ? <Text style={{ color: Colors.Red, marginTop: 4 }}>{error}</Text> : null}
           </View>
         )}
       </ScrollView>
 
       {/* Gender Modal */}
-      <Modal
-        transparent
-        visible={genderOpen}
-        animationType="fade"
-        onRequestClose={() => setGenderOpen(false)}
-      >
+      <Modal transparent visible={genderOpen} animationType="fade" onRequestClose={() => setGenderOpen(false)}>
         <Pressable style={styles.modalOverlay} onPress={() => setGenderOpen(false)}>
           <Pressable style={styles.modalSheet}>
             <Text style={styles.modalTitle}>Select Gender</Text>
@@ -373,12 +369,17 @@ const Field: React.FC<{ label: string; helper?: string; children: React.ReactNod
           </Pressable>
         </Pressable>
       </Modal>
+
+      <IncorrectPin
+        visible={showAlert}
+        message={message}
+        onClose={() => {
+          setMessage('');
+          setshowAlert(false);
+        }}
+      />
     </View>
   );
 };
 
-
-
 export default AccountScreen;
-
-

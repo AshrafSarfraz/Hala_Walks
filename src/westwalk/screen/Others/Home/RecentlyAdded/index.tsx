@@ -122,11 +122,13 @@ const RecentlyAdded = () => {
         />
       ) : (
         <FlatList
-          data={recentItems}
+          data={recentItems.slice(0,8)}
           keyExtractor={(item) => item.id}
-          numColumns={2}
-          columnWrapperStyle={styles.row}
-          showsVerticalScrollIndicator={false}
+          horizontal={true}
+
+          // numColumns={1}
+          // columnWrapperStyle={styles.row}
+          showsHorizontalScrollIndicator={false}
           renderItem={renderItem}
         />
       )}
@@ -135,3 +137,5 @@ const RecentlyAdded = () => {
 };
 
 export default RecentlyAdded;
+
+

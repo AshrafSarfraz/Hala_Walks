@@ -39,7 +39,6 @@ const Categories:React.FC<CategoriesProps> = () => {
         data={images}
         keyExtractor={(item) => item.id}
         horizontal
-        pagingEnabled
         showsHorizontalScrollIndicator={false}
         renderItem={({ item }) => (
           <TouchableOpacity  style={styles.Flatlist_Cont} onPress={() => navigation.navigate('CategoriesScreen', { item })}>

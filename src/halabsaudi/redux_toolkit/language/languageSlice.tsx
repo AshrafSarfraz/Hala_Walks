@@ -88,6 +88,10 @@ const languageData = {
     km: "Km away",
     m: "m away",
     Calculating:"Calculating...",
+    Passport_Txt:"Your Exculsive Passport to Global Savings !",
+    Saudi_Visitor:"Saudi Visitor",
+    Westwalk_Community:"Westwalk Community",
+    List_of_Branch:"List of Branches",
 
     
     
@@ -190,7 +194,10 @@ const languageData = {
     km: "كمكم كيلومتر بعيد",
     m: "كمكم متر بعيد",
     Calculating:"جارٍ الحساب",
-
+    Passport_Txt:"جوازك الحصري لتوفير عالمي",
+    Saudi_Visitor:"زائر سعودي",
+    Westwalk_Community:"مجتمع ويست ووك",
+    List_of_Branch:'قائمة الفروع',
 
 
 

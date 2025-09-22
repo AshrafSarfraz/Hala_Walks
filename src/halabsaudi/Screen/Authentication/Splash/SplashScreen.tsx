@@ -3,19 +3,40 @@ import { View, Text, StyleSheet, Image, StatusBar } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Colors } from '../../../Themes/Colors';
 import { Full_logo_w } from '../../../Themes/Images';
+import { fetchBrandsFromFirebase, fetchFlatOfferFromFirebase, fetchVenuFromFirebase } from '../../../firebase/firebaseutils';
 
 
 type SplashScreenProps = {
   navigation: NativeStackNavigationProp<any>;
 };
 
+export const preloadAllData = async () => {
+  await Promise.all([
+    fetchBrandsFromFirebase(),
+    fetchVenuFromFirebase(),
+    fetchFlatOfferFromFirebase(),
+  ]);
+};
+
+
+
 const Splash_Screen: React.FC<SplashScreenProps> = ({ navigation }) => {
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      navigation.navigate('WelcomeScreen');
-    }, 200);
-    return () => clearTimeout(timeout);
-  }, [navigation]);
+ 
+   useEffect(() => {
+     const init = async () => {
+       await preloadAllData();
+       navigation.navigate('WelcomeScreen'); // ⏩ go to next screen
+     };
+ 
+     init();
+   }, [navigation]);
+
+  // useEffect(() => {
+  //   const timeout = setTimeout(() => {
+  //     navigation.navigate('WelcomeScreen');
+  //   }, 200);
+  //   return () => clearTimeout(timeout);
+  // }, [navigation]);
 
   return (
     <View style={styles.Main_Container}>

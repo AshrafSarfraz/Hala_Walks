@@ -1,8 +1,8 @@
 const ImgPath='../assets/Images/'
 export const BgImg=require(ImgPath+'bgImg.jpeg')
 export const W_logo=require(ImgPath+'wel_logo.png')
-export const Full_logo_w=require(ImgPath+'logo_w.png')
-export const Full_logo_B=require(ImgPath+'logo_b.png')
+export const Full_logo_w=require(ImgPath+'hbs_white.png')
+export const Full_logo_B=require(ImgPath+'hbs_black.png')
 export const Logo_W=require(ImgPath+'logo.png')
 // export const LoginBg=require(ImgPath+'loginbg.png')
 export const Food2=require(ImgPath+'food2.png')

@@ -1,13 +1,13 @@
-import {Platform, StyleSheet} from 'react-native';
+import {Dimensions, Platform, StyleSheet} from 'react-native';
 import {Colors} from '../../Themes/Colors';
 import {Fonts} from '../../Themes/Fonts';
-
+const { width } = Dimensions.get('window');
 
 export const getStyles = (language: string) =>
   StyleSheet.create({
     container: {
-      paddingHorizontal: 24,
-      marginTop: Platform.OS === 'ios' ? '0%' : '10%',
+      paddingHorizontal: '4%',
+      marginTop: Platform.OS === 'ios' ? '0%' : '13%',
       marginBottom: Platform.OS === 'ios' ? '1%' : '6%',
       paddingBottom: Platform.OS === 'ios' ? '0%' : '4%',
     },
@@ -85,8 +85,8 @@ export const getStyles = (language: string) =>
     Dis_Cont: {
       marginVertical: '3%',
       backgroundColor: Colors.White,
-      padding: '3%',
       paddingVertical: '4%',
+      paddingHorizontal:'2%',
       borderRadius: 10,
       flexDirection: language === 'en' ? 'row' : 'row-reverse',
       justifyContent: 'space-between',
@@ -102,24 +102,17 @@ export const getStyles = (language: string) =>
     },
     menu_txt: {
       color: Colors.White,
-      fontSize: 12,
+      fontSize: 10,
       lineHeight: 16,
       fontFamily: Fonts.SF_Bold,
     },
-    Discount: {
-      fontSize: language === 'en' ? 14 : 14,
-      color: Colors.Green,
-      fontFamily: language === 'en' ? Fonts.SF_Bold : '',
-      letterSpacing: 0.4,
-      lineHeight: language === 'en' ? 26 : 36,
-      fontWeight: language === 'en' ? '400' : 'bold',
-    },
+
     Total_Discount: {
-      fontSize: 18,
+      fontSize: 14,
       color: Colors.Green,
       fontFamily: Fonts.SF_Bold,
-      letterSpacing: 0.2,
-      lineHeight: 26,
+      lineHeight: 24,
+      width:'75%',
     },
     Desc_Cont: {
       flexDirection: language === 'en' ? 'row' : 'row-reverse',
@@ -158,6 +151,7 @@ export const getStyles = (language: string) =>
 
     Loc_Txt: {
       fontSize: 10,
+      lineHeight:16
     },
     Redeem_btn:{
     },
@@ -189,5 +183,14 @@ export const getStyles = (language: string) =>
       paddingVertical: 6,
       borderBottomWidth: 0.5,
       borderColor: '#eee',
+    },
+    
+    imageSlider: {
+      width: width-40,
+      height: 250,
+      borderRadius: 10,
+      marginRight:10,
+      resizeMode:"contain"
+   
     },
   });

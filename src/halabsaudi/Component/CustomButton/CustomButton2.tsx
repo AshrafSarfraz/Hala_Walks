@@ -4,6 +4,7 @@ import { TouchableOpacity, Text, StyleSheet, } from 'react-native';
 import { Colors } from '../../Themes/Colors';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux_toolkit/store';
+import { Fonts } from '../../Themes/Fonts';
 
 type buttonProps={
  title:string,
@@ -37,9 +38,10 @@ const getStyles=(language:string) => StyleSheet.create({
   },
   buttonText: {
     color: Colors.Green,
-    fontSize: 16,
+    fontSize: language==='en'?16:14,
+    fontFamily:Fonts.SF_Bold,
     fontWeight: 'bold',
-    lineHeight:22
+    lineHeight:language==='en'?22:26,
   },
 });
 

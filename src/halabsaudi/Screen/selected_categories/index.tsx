@@ -8,94 +8,150 @@ import {
   TouchableOpacity,
   SafeAreaView,
   StatusBar,
+  PermissionsAndroid,
+  Platform,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Search } from '../../Themes/Images';
 import CustomHeader from '../../Component/CustomHeader/CustomHeader';
-
+import { Location, Search } from '../../Themes/Images';
 import { fetchBrandsFromFirebase } from '../../firebase/firebaseutils';
+import { Colors } from '../../Themes/Colors';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux_toolkit/store';
 import { getStyles } from './style';
 import { languageData } from '../../redux_toolkit/language/languageSlice';
-import { Colors } from '../../Themes/Colors';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import LinearGradient from 'react-native-linear-gradient';
-import DetectCountry from '../../Component/distanceCalculate/DetectCountry';
 import FastImage from 'react-native-fast-image';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import DetectCountry from '../../Component/distanceCalculate/DetectCountry';
+import DistanceFromDevice from '../../Component/distanceCalculate/distanceCalculate';
+import Geolocation from 'react-native-geolocation-service';
 
 const SelectedCategories: React.FC<{ route: any }> = ({ route }) => {
   const navigation = useNavigation<any>();
   const { item } = route.params;
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredItems, setFilteredItems] = useState<any[]>([]);
-    const [country, setCountry] = useState<string | null>(null);
+  const [brands, setBrands] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [imageLoaded, setImageLoaded] = useState<{ [key: string]: boolean }>({});
+  const [country, setCountry] = useState<string | null>(null);
+  const [userLocation, setUserLocation] = useState<{ lat: number; long: number } | null>(null);
 
-    const countryName = useSelector((s: RootState) => s.country?.countryName ?? null);
+  const countryName = useSelector((s: RootState) => s.country?.countryName ?? null);
   const language = useSelector((state: RootState) => state.language.language);
   const styles = getStyles(language);
 
-  // useEffect(() => {
-  //   const getBrands = async () => {
-  //     setLoading(true);
-  //     const fetchedBrands = await fetchBrandsFromFirebase();
-  //     const matchedItems = fetchedBrands.filter(data =>
-  //       data.selectedCategory?.toLowerCase() === item.text?.toLowerCase(),
-  //     );
-  //     setFilteredItems(matchedItems);
-  //     setLoading(false);
-  //   };
+  // Request location and set userLocation
+  useEffect(() => {
+    const requestLocationPermission = async () => {
+      if (Platform.OS === 'android') {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          getCurrentLocation();
+        }
+      } else {
+        const authStatus = await Geolocation.requestAuthorization('whenInUse');
+        if (authStatus === 'granted') getCurrentLocation();
+      }
+    };
 
-  //   getBrands();
-  // }, []);
-  
+    const getCurrentLocation = () => {
+      Geolocation.getCurrentPosition(
+        position => {
+          setUserLocation({
+            lat: position.coords.latitude,
+            long: position.coords.longitude,
+          });
+        },
+        error => {
+          console.error(error);
+        },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
+      );
+    };
+
+    requestLocationPermission();
+  }, []);
+
+  // Load brands
   useEffect(() => {
     const loadBrands = async () => {
       try {
-        setLoading(true);
-  
-        // 1️⃣ Pehle cache se dikhao (fast UI)
-        const cachedBrands = await AsyncStorage.getItem('H-brands_cache');
-        if (cachedBrands) {
-          const parsed = JSON.parse(cachedBrands);
-          const matched = parsed.filter(data =>
-            data.selectedCategory?.toLowerCase() === item.text?.toLowerCase()
+        const cachedData = await AsyncStorage.getItem('H-brands_cache');
+        if (cachedData) {
+          const parsed = JSON.parse(cachedData).filter(
+            (b: any) =>
+              b.selectedCategory?.toLowerCase() === item.text?.toLowerCase()
           );
-          setFilteredItems(matched);
+          setBrands(parsed);
+          setLoading(false);
+        } else {
+          setLoading(true);
         }
-  
-        // 2️⃣ Phir fresh data laao
-        const freshBrands = await fetchBrandsFromFirebase(); // <-- fresh data
-        const matchedFresh = freshBrands.filter(data =>
-          data.selectedCategory?.toLowerCase() === item.text?.toLowerCase()
+
+        const freshData = await fetchBrandsFromFirebase();
+        const filteredFresh = freshData.filter(
+          (b: any) =>
+            b.selectedCategory?.toLowerCase() === item.text?.toLowerCase()
         );
-        setFilteredItems(matchedFresh);
-      } catch (error) {
-        console.error('❌ Error loading brands:', error);
-        setFilteredItems([]);
+        setBrands(filteredFresh);
+        await AsyncStorage.setItem('H-brands_cache', JSON.stringify(freshData));
+      } catch (err) {
+        console.error('Error loading brands:', err);
+        setBrands([]);
+        setLoading(false);
       } finally {
         setLoading(false);
       }
     };
-  
+
     loadBrands();
   }, [item.text]);
 
-
-
-  const handleImageLoad = (id: string) => {
-    setImageLoaded((prev) => ({
-      ...prev,
-      [id]: true,
-    }));
+  // Haversine distance
+  const haversineDistance = (lat1:number, lon1:number, lat2:number, lon2:number) => {
+    const toRad = (value:number) => (value * Math.PI) / 180;
+    const R = 6371; // km
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a =
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+      Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
   };
 
-  const searchFiltered = filteredItems.filter(entry =>
-    entry.nameEng?.toLowerCase().includes(searchQuery.toLowerCase()),
+  // Get nearest branch per brand
+  const getNearestBranchPerBrand = (brandsList: any[], userLoc: {lat:number, long:number}) => {
+    const brandMap: Record<string, any> = {};
+
+    brandsList.forEach(branch => {
+      if (!branch.latitude || !branch.longitude) return;
+      const distanceInKm = haversineDistance(
+        userLoc.lat,
+        userLoc.long,
+        branch.latitude,
+        branch.longitude
+      );
+
+      if (!brandMap[branch.nameEng] || distanceInKm < brandMap[branch.nameEng].distance) {
+        brandMap[branch.nameEng] = { ...branch, distance: distanceInKm };
+      }
+    });
+
+    return Object.values(brandMap);
+  };
+
+  // Filtered brands based on search
+  const filteredData = brands.filter(b =>
+    b.nameEng?.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  // Only nearest branches
+  const nearestBrands = userLocation ? getNearestBranchPerBrand(filteredData, userLocation) : filteredData;
 
   const renderEmptyState = () => (
     <View style={styles.emptyStateContainer}>
@@ -106,14 +162,13 @@ const SelectedCategories: React.FC<{ route: any }> = ({ route }) => {
 
   return (
     <View style={styles.container}>
-               <StatusBar hidden={false} translucent={true} animated={true} backgroundColor={Colors.White4} barStyle='dark-content' />
-      <SafeAreaView style={{ flex: 1 }}>
-        {
-          language==='en'? <CustomHeader title={item.text} onBackPress={() => navigation.goBack()} />:
-          <CustomHeader title={item.categoryArabic} onBackPress={() => navigation.goBack()} />
-        }
-       
-      
+      <StatusBar hidden={false} translucent backgroundColor={Colors.White4} barStyle="dark-content" />
+      <SafeAreaView style={{ flex: 1, backgroundColor:Colors.White4, marginTop:2 }}>
+        <CustomHeader
+          title={language === 'en' ? item.text : item.categoryArabic}
+          onBackPress={() => navigation.goBack()}
+        />
+
         <View style={{ marginTop: '7%' }} />
         <View style={styles.searchContainer}>
           <Image source={Search} style={styles.searchIcon} />
@@ -127,86 +182,94 @@ const SelectedCategories: React.FC<{ route: any }> = ({ route }) => {
         </View>
 
         <View style={styles.FlatlistContainer}>
-          {searchFiltered.length > 0 && !loading ? (
+          {filteredData.length > 0 && !loading && (
             <Text style={styles.FoundItem_Txt}>{languageData[language].Found_Items}</Text>
-          ) : null}
+          )}
 
           {loading ? (
             <FlatList
-              data={[1, 2, 3, 4, 5, 6,7,8,9,10]}
+              data={[1,2,3,4,5,6]}
               keyExtractor={(item, index) => index.toString()}
               renderItem={() => (
                 <View style={styles.itemContainer}>
-                  <ShimmerPlaceholder visible={false} LinearGradient={LinearGradient}  style={styles.itemImage} />
+                  <ShimmerPlaceholder LinearGradient={LinearGradient} style={styles.itemImage} />
                   <View style={styles.itemInfo}>
-                    <ShimmerPlaceholder visible={false}    LinearGradient={LinearGradient} style={{ height: 20, marginBottom: 6 }} />
-                    <ShimmerPlaceholder visible={false}    LinearGradient={LinearGradient} style={{ height: 15, marginBottom: 6 }} />
-                    <ShimmerPlaceholder visible={false}    LinearGradient={LinearGradient} style={{ height: 15, width: 80 }} />
+                    <ShimmerPlaceholder LinearGradient={LinearGradient} style={{ height: 20, marginBottom: 6 }} />
+                    <ShimmerPlaceholder LinearGradient={LinearGradient} style={{ height: 15, marginBottom: 6 }} />
                   </View>
                 </View>
               )}
             />
-          ) : searchFiltered.length === 0 ? (
+          ) : nearestBrands.length === 0 ? (
             renderEmptyState()
           ) : (
             <FlatList
-            data={
-              searchFiltered.filter(item => {
-                if (countryName) {
-                  return item.selectedCountry?.toLowerCase() === countryName.toLowerCase();
-                }
-                return true; // agar country detect na ho to sab items dikhao
-              })
-            }
+              data={nearestBrands.filter(b => !countryName || b.selectedCountry?.toLowerCase() === countryName.toLowerCase())}
               keyExtractor={item => item.id}
               contentContainerStyle={{ flexGrow: 1, paddingBottom: 20 }}
               showsVerticalScrollIndicator={false}
-              renderItem={({ item,index }) => {
-                const isLoaded = imageLoaded[item.id] || false;
-
-                return (
-                  <TouchableOpacity
-                    style={styles.itemContainer}
-                    onPress={() => navigation.navigate('DetailScreen', { item })}
-                  >
-                    {/* IMAGE shimmer */}
-                    <ShimmerPlaceholder
-                      visible={isLoaded}
-                      LinearGradient={LinearGradient}
-                      style={styles.itemImage}
-                    >
-                      <FastImage source={{ uri: item.img, priority: index <=6 ? FastImage.priority.high : index <= 10 ? FastImage.priority.normal : FastImage.priority.low }}
-                       style={styles.itemImage}   onLoad={() => handleImageLoad(item.id)}    />
-                    </ShimmerPlaceholder>
-
-                    {/* TEXT shimmer */}
-           
-                      <View style={styles.itemInfo}>
-                        <Text style={styles.itemTitle}>
-                          {language === 'en' ? item.nameEng : item.nameArabic}
-                        </Text>
-
-                       <Text style={styles.itemLocation}>
-                          {language === 'en'
-                            ? item.descriptionEng?.length > 70
-                              ? item.descriptionEng.substring(0, 70) + '...'
-                              : item.descriptionEng
-                            : item.descriptionArabic?.length > 70
-                            ? item.descriptionArabic.substring(0, 70) + '...'
-                            : item.descriptionArabic}
-                        </Text>
-     
-                       <Text style={styles.itemCity}>
-                          {item.selectedVenue}
-                        </Text>
+              initialNumToRender={6}
+              maxToRenderPerBatch={6}
+              windowSize={8}
+              renderItem={({ item, index }) => (
+                <TouchableOpacity
+                  style={styles.itemContainer}
+                  onPress={() => navigation.navigate('DetailScreen', { item })}
+                >
+                  <FastImage
+                    source={{
+                      uri: item.img,
+                      priority: index <= 6 ? FastImage.priority.high : FastImage.priority.normal,
+                    }}
+                    style={styles.itemImage}
+                    resizeMode={FastImage.resizeMode.cover}
+                  />
+                  <View style={styles.itemInfo}>
+                    <Text style={styles.itemTitle}>
+                     {language === 'en'
+                        ? item.nameEng?.length > 30
+                          ? item.nameEng.substring(0,30) + '...'
+                          : item.nameEng
+                        : item.nameArabic?.length > 30
+                        ? item.nameArabic.substring(0,30) + '...'
+                        : item.nameArabic}
+                    </Text>
+                    <Text style={styles.itemLocation}>
+                      {language === 'en'
+                        ? item.descriptionEng?.length > 70
+                          ? item.descriptionEng.substring(0,70) + '...'
+                          : item.descriptionEng
+                        : item.descriptionArabic?.length > 70
+                        ? item.descriptionArabic.substring(0,70) + '...'
+                        : item.descriptionArabic}
+                    </Text>
+                 
+                 
+                 
+                 
+                    <View style={styles.Loc_Status_Cont}>
+                      {/* <Text style={styles.itemCity}>{item.address}</Text> */}
+                    
+                    
+                      <View style={styles.Loc_Cont}>
+                        <Image source={Location} style={styles.LocationIcon} />
+                        <DistanceFromDevice
+                          targetLat={item.latitude}
+                          targetLong={item.longitude}
+                          kmText="km"
+                          mText="m"
+                          loadingText="Calculating..."
+                        />
                       </View>
-                  </TouchableOpacity>
-                );
-              }}
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              )}
             />
           )}
         </View>
       </SafeAreaView>
+
       <DetectCountry onCountryDetect={(value) => setCountry(value)} />
     </View>
   );

@@ -19,6 +19,8 @@ import HalaInfoScreen from '../../Screen/Merchant_Screen/Hala_Info';
 import BrandFormScreen from '../../Screen/Merchant_Screen/PartnerForm';
 import WelcomeScreen from '../../Screen/Authentication/Splash/welcome_screen';
 import SignuP from '../../Screen/Authentication/SignUp/signUp';
+import StackNavigation from '../../../westwalk/navigation/stackNavigation';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
@@ -33,17 +35,35 @@ const HalaStack: React.FC = () => {
   const [initialRoute, setInitialRoute] = useState<string | null>(null);
 
   useEffect(() => {
-    const unsubscribe = auth().onAuthStateChanged(user => {
-      console.log("USER:", user); // Debug: check user
-      if (user) {
-        setInitialRoute('BottomTab'); // User is logged in
-      } else {
-        setInitialRoute('BottomTab'); // User not logged in
-      }
-    });
-
-    return unsubscribe; // Cleanup
+    const checkInitialRoute = async () => {
+      const halaData = await AsyncStorage.getItem('hala_user'); // Hala ke liye alag key
+      const unsubscribe = auth().onAuthStateChanged(user => {
+        if (user && halaData) {
+          setInitialRoute('BottomTab'); // Hala user logged in
+        } else {
+          setInitialRoute('Splash'); // Hala user nahi hai
+        }
+      });
+  
+      return unsubscribe;
+    };
+  
+    checkInitialRoute();
   }, []);
+  
+
+  // useEffect(() => {
+  //   const unsubscribe = auth().onAuthStateChanged(user => {
+  //     console.log("USER:", user); // Debug: check user
+  //     if (user) {
+  //       setInitialRoute('BottomTab'); // User is logged in
+  //     } else {
+  //       setInitialRoute('Splash'); // User not logged in
+  //     }
+  //   });
+
+  //   return unsubscribe; // Cleanup
+  // }, []);
 
   if (!initialRoute) {
     // Auth status still checking – show splash or loader
@@ -54,6 +74,7 @@ const HalaStack: React.FC = () => {
       <Stack.Navigator initialRouteName={initialRoute} screenOptions={{ headerShown: false }}>
         <Stack.Screen name='Splash' component={Splash_Screen} />
         <Stack.Screen name='WelcomeScreen' component={WelcomeScreen} />
+        <Stack.Screen name="WestwalkStack" component={StackNavigation} />
         <Stack.Screen name='Onboarding' component={OnBoarding} />
         <Stack.Screen name='Login' component={Login} />
         <Stack.Screen name='SignUp' component={SignuP} />

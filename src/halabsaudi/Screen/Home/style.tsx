@@ -5,11 +5,10 @@ import {Fonts} from '../../Themes/Fonts';
 export const getStyles =(language:String)=> StyleSheet.create({
   
   Container: {
-  
     flex:1,
     backgroundColor: Colors.Bg,
     paddingHorizontal: Platform.OS === 'ios' ? '3%' : '0%',
-    marginTop: Platform.OS === 'ios' ? 0 : '8%',
+    marginTop: Platform.OS === 'ios' ? 0 : '10%',
     marginBottom: Platform.OS === 'ios' ? 0 : '2%',
   },
   header: {
@@ -21,7 +20,7 @@ export const getStyles =(language:String)=> StyleSheet.create({
 
   },
   logo: {
-    width: 130,
+    width: 140,
     height: 60,
     resizeMode: 'contain',
   },

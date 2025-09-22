@@ -6,7 +6,8 @@ export const styles = StyleSheet.create({
       paddingVertical: 20,
       backgroundColor: '#f4f4f4',
       width:"90%",
-      alignSelf:"center"
+      alignSelf:"center",
+      paddingBottom:50
     },
     Profile_container:{
       alignItems: 'center',

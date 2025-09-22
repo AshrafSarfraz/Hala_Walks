@@ -41,7 +41,7 @@ const ImageSlider: React.FC<{ navigation: any }> = () => {
     const loadOffers = async () => {
       try {
         // Show cached data immediately
-        const cachedData = await AsyncStorage.getItem('H-FlatOffers');
+        const cachedData = await AsyncStorage.getItem('H-Offer_cache');
         if (cachedData) {
           setOffers(JSON.parse(cachedData));
           setLoading(false);
@@ -50,7 +50,7 @@ const ImageSlider: React.FC<{ navigation: any }> = () => {
         // Then fetch in background
         const freshOffers = await fetchFlatOfferFromFirebase();
         setOffers(freshOffers);
-        await AsyncStorage.setItem('H-FlatOffers', JSON.stringify(freshOffers));
+        await AsyncStorage.setItem('H-Offer_cache', JSON.stringify(freshOffers));
       } catch (error) {
         console.error('Error loading offers:', error);
         setLoading(false);
@@ -59,6 +59,8 @@ const ImageSlider: React.FC<{ navigation: any }> = () => {
   
     loadOffers();
   }, []);
+
+
 
   const handleScroll = (event: any) => {
     const slideIndex = Math.round(event.nativeEvent.contentOffset.x / width);
@@ -108,11 +110,9 @@ const ImageSlider: React.FC<{ navigation: any }> = () => {
                 style={styles.image}
               >
                 {
-                  Platform.OS==='android'?(    <Image  source={{ uri: item.img}}   style={{width:'100%',height:200,}}  onLoad={handleImageLoad}    onError={handleImageError}    />
-                  ):(
+             
                     <FastImage source={{ uri: item.img, priority: index <=2 ? FastImage.priority.high : index <= 4 ? FastImage.priority.normal : FastImage.priority.low }}
                     style={styles.image}  onLoad={handleImageLoad}    onError={handleImageError}  />
-                  )
                 }
               
                 </ShimmerPlaceholder>

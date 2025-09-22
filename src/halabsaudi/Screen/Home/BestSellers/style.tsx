@@ -13,8 +13,9 @@ export const getStyles=(language:String) => StyleSheet.create({
     Flatlist_Cont:{
       width:240,
       height:language==='en'?100:110,
-      backgroundColor:Colors.White,
+      backgroundColor:'#f5f5f5',
       marginRight:10,
+      paddingLeft:10,
       borderRadius:10,
       flexDirection:language==='en'?'row':'row-reverse',
       alignItems:'center',
@@ -23,31 +24,32 @@ export const getStyles=(language:String) => StyleSheet.create({
      
     },
     image:{
-       width:70,
-       height:70,
+       width:60,
+       height:60,
        borderRadius:40,
-       marginLeft:3
+   
+       resizeMode:"contain",
     },
     bestSeller_Detail:{
      width:140,
-     marginLeft:language==='en'?10:0,
-     marginRight:language==='en'?0:10,
+     marginLeft:language==='en'?6:0,
+     marginRight:language==='en'?0:6,
      textAlign:'justify',
     },
     title_txt:{
-      fontSize:16,
+      fontSize:language==='en'?14:12,
       fontFamily:language==='en'?Fonts.SF_Bold:'',
       fontWeight :language==='en'?'400':'bold',
       color:Colors.Green,
-      lineHeight:language==='en'?22:22,
+      lineHeight:language==='en'?20:20,
       letterSpacing:language==='en'?0.2:0,
       textAlign:language==='en'?'left':'right',
     },
     desc_txt:{
-      fontSize:12,
+      fontSize:language==='en'?11:9,
       fontFamily:language==='en'?Fonts.SF_Regular:'',
       fontWeight :'400',
-      lineHeight:language==='en'?13:18,
+      lineHeight:language==='en'?13:13,
       letterSpacing:0.2,
       marginTop:2,
       color:Colors.Black,

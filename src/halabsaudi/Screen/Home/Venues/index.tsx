@@ -23,86 +23,92 @@ type VenuesProps = {
   navigation: any;
 };
 
-const Venues: React.FC<VenuesProps> = () => {
+const Venues: React.FC = () => {
   const navigation = useNavigation();
   const [showAll, setShowAll] = useState(false);
   const [venues, setVenues] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [imageLoading, setImageLoading] = useState(true);
+  const [imageLoaded, setImageLoaded] = useState<{ [key: string]: boolean }>({});
 
   const countryName = useSelector((s: RootState) => s.country?.countryName ?? null);
-  const language = useSelector((state: RootState) => state.language.language); // Get the current language from Redux
- 
-
-  const handleImageLoad = () => {
-    setImageLoading(false); // Stop loader when image is loaded
-  };
-
-  const handleImageError = () => {
-    setImageLoading(false); // Stop loader in case of error
-  };
-
-  // useEffect(() => {
-  //   const loadData = async () => {
-  //     const data = await fetchVenuFromFirebase(); // 👈 use your logic here
-  //     setVenues(data);
-  //     setLoading(false);
-  //   };
-  //   loadData();
-  // }, []);
+  const language = useSelector((state: RootState) => state.language.language);
 
   useEffect(() => {
     const loadOffers = async () => {
       try {
-        // Show cached data immediately
-        const cachedData = await AsyncStorage.getItem('H-Venues');
+        const cachedData = await AsyncStorage.getItem('H-venus_cache');
         if (cachedData) {
           setVenues(JSON.parse(cachedData));
           setLoading(false);
         }
-  
-        // Then fetch in background
+
         const freshOffers = await fetchVenuFromFirebase();
-        setVenues(freshOffers);
-        await AsyncStorage.setItem('H-Venues', JSON.stringify(freshOffers));
+        if (freshOffers.length > 0) {
+          setVenues(freshOffers);
+          await AsyncStorage.setItem('H-venus_cache', JSON.stringify(freshOffers));
+        }
       } catch (error) {
-        console.error('Error loading offers:', error);
+        console.error('Error loading venues:', error);
+      } finally {
         setLoading(false);
       }
     };
-  
+
     loadOffers();
   }, []);
 
-  const visibleItems = showAll ? venues : venues.slice(0, 8);
+  const handleImageLoad = (id: string) => {
+    setImageLoaded(prev => ({ ...prev, [id]: true }));
+  };
 
-  const renderShimmerItem = () => (
-    <View style={styles.Flatlist_Cont}>
-      {/* <ShimmerPlaceholder LinearGradient={LinearGradient} style={styles.image} />
-      <View style={styles.bestSeller_Detail}>
-        <ShimmerPlaceholder LinearGradient={LinearGradient} style={{ width: '80%', height: 20, marginBottom: 8, borderRadius: 5 }} />
-        <ShimmerPlaceholder LinearGradient={LinearGradient} style={{ width: '100%', height: 15, borderRadius: 5 }} />
-      </View> */}
-    </View>
-  );
+  const filteredVenues = React.useMemo(() => {
+    return venues.filter(item => {
+      if (countryName) {
+        return item.country?.toLowerCase() === countryName.toLowerCase();
+      }
+      return true;
+    });
+  }, [venues, countryName]);
 
-  const renderVenueItem = ({ item, index }: { item: any ,index:any }) => {
+  const visibleItems = showAll ? filteredVenues : filteredVenues.slice(0, 8);
+
+  const renderVenueItem = ({ item, index }: { item: any; index: number }) => {
+    const isLoaded = imageLoaded[item.id] || false;
+
     return (
       <TouchableOpacity
         style={styles.Flatlist_Cont}
         onPress={() => navigation.navigate('SelectedVenue', { item })}
       >
-        {/* Shimmer effect for image */}
-        <ShimmerPlaceholder visible={!imageLoading} LinearGradient={LinearGradient} style={styles.image}>
-        <FastImage source={{ uri: item.img, priority: index <=6 ? FastImage.priority.high : index <= 10 ? FastImage.priority.normal : FastImage.priority.low }}
-                 style={styles.image}  onLoad={handleImageLoad}    onError={handleImageError}  />
+        <ShimmerPlaceholder
+          visible={isLoaded}
+          LinearGradient={LinearGradient}
+          style={styles.image}
+        >
+          <FastImage
+            source={{
+              uri: item.img,
+              priority:
+                index <= 6
+                  ? FastImage.priority.high
+                  : index <= 10
+                  ? FastImage.priority.normal
+                  : FastImage.priority.low,
+            }}
+            style={styles.image}
+            resizeMode={FastImage.resizeMode.cover}
+            onLoad={() => handleImageLoad(item.id)}
+          />
         </ShimmerPlaceholder>
 
-        {/* Shimmer effect for venue name */}
-        <ShimmerPlaceholder visible={!imageLoading} LinearGradient={LinearGradient} style={{ width: '80%',  marginTop: 2,  height: 20, borderRadius: 5, }}>
-        {language==='en'? 
-          <Text style={styles.cate_txt}>{item.venueName}</Text>:
-          <Text style={styles.cate_txt}>{item.venueNameAr}</Text>}
+        <ShimmerPlaceholder
+          visible={isLoaded}
+          LinearGradient={LinearGradient}
+          style={{ width: '80%', marginTop: 2, height: 20, borderRadius: 5 }}
+        >
+          <Text style={styles.cate_txt}>
+            {language === 'en' ? item.venueName : item.venueNameAr}
+          </Text>
         </ShimmerPlaceholder>
       </TouchableOpacity>
     );
@@ -119,30 +125,26 @@ const Venues: React.FC<VenuesProps> = () => {
   return (
     <View style={styles.container}>
       <FlatList
-        data={ visibleItems.filter(item => {
-          if (countryName) {
-            return item.country?.toLowerCase() === countryName.toLowerCase();
-          }
-          return true; // agar country detect na ho to sab items dikhao
-        })}
+        data={visibleItems}
         keyExtractor={item => item.id}
         numColumns={4}
         renderItem={renderVenueItem}
-        ListEmptyComponent={renderShimmerItem} // Render shimmer effect when the list is empty
+        showsVerticalScrollIndicator={false}
       />
 
-      {venues.length > 8 && (
+      {filteredVenues.length > 8 && (
         <TouchableOpacity
           style={styles.showMoreButton}
           onPress={() => setShowAll(!showAll)}
         >
           <Text style={styles.showMoreText}>
-            {showAll ? languageData[language].Hide :  languageData[language].Show_More}
+            {showAll ? languageData[language].Hide : languageData[language].Show_More}
           </Text>
         </TouchableOpacity>
       )}
     </View>
   );
 };
+
 
 export default Venues;

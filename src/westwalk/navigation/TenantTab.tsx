@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, Dimensions, Platform } from 'react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
 import Home from '../screen/Others/Home';
 import {  HomeIcon, ProfileIcon, Wishlist, } from '../theme/Images';
 import WishlistScreen from '../screen/Others/Wishlist';
 import TenantsAccount from '../screen/Tenants_Data/Account';
+import { useSafeAreaInsets, SafeAreaProvider } from 'react-native-safe-area-context';
 
 const { width } = Dimensions.get('window');
 const tabWidth = width / 3;
@@ -26,6 +27,7 @@ type TabButtonProps = {
 
 
 const TenantsTab: React.FC<TabProps> = ({ navigation }) => {
+   const insets = useSafeAreaInsets(); // <-- important
   const [activeTab, setActiveTab] = useState<number>(0);
   const indicatorPosition = useSharedValue(tabWidth * 0); 
 
@@ -52,7 +54,7 @@ const TenantsTab: React.FC<TabProps> = ({ navigation }) => {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, paddingBottom:Platform.OS==='android'?insets.bottom:0  }}>
       {renderScreen()}
 
       <View style={styles.tabBar}>

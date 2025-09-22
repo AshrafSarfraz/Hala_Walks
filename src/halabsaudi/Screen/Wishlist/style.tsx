@@ -7,9 +7,9 @@ const {width} = Dimensions.get('screen');
 export default StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
     backgroundColor: Colors.Bg,
-    marginTop: Platform.OS === 'ios' ? 0 : '8%',
+    marginTop: Platform.OS === 'ios' ? 0 : '10%',
+    marginHorizontal:"2%"
   },
   Header_Txt: {
     marginHorizontal: '5%',
@@ -29,7 +29,7 @@ export default StyleSheet.create({
     margin: 8,
     borderRadius: 10,
     backgroundColor: Colors.White,
-    height: Platform.OS === 'ios' ? 240 : 240,
+    height: Platform.OS === 'ios' ? 210 : 210,
     alignItems:'flex-start',
     borderColor: '#E0E0E0',
     overflow: 'hidden',
@@ -40,12 +40,12 @@ export default StyleSheet.create({
   },
   image: {
     width: '100%', // Adjust image size according to screen width
-    height: 150,
+    height: 120,
     resizeMode: 'cover',
     borderRadius:10,
   },
   cate_txt: {
-    fontSize: 15,
+    fontSize: 13,
     marginVertical: Platform.OS==='ios'?7:2,
     fontFamily: Fonts.SF_Bold,
     color: Colors.Green,
@@ -59,7 +59,7 @@ export default StyleSheet.create({
     marginHorizontal:"6%",
   },
   Type_Text: {
-    fontSize: 11,
+    fontSize: 10,
     lineHeight: 13,
     color: Colors.White,
     fontFamily: Fonts.SF_Medium,
@@ -93,11 +93,11 @@ export default StyleSheet.create({
     marginLeft: 2,
   },
   Status_Txt: {
-    fontSize: 11,
+    fontSize: 10,
     color: 'green',
     fontFamily: Fonts.SF_Medium,
     lineHeight: 16,
-    marginLeft: 5,
+    marginLeft: 4,
   },
   HeaderCont: {
     alignItems:'flex-end',
