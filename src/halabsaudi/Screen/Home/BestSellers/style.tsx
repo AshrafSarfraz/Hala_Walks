@@ -11,7 +11,7 @@ export const getStyles=(language:String) => StyleSheet.create({
       marginLeft:'4%'
     },
     Flatlist_Cont:{
-      width:240,
+      width:280,
       height:language==='en'?100:110,
       backgroundColor:'#f5f5f5',
       marginRight:10,
@@ -19,16 +19,17 @@ export const getStyles=(language:String) => StyleSheet.create({
       borderRadius:10,
       flexDirection:language==='en'?'row':'row-reverse',
       alignItems:'center',
-      paddingHorizontal:'2%',
-      paddingVertical:"1%"
+      paddingVertical:"1%",
+      borderWidth:0.2,
+
+
+
      
     },
     image:{
-       width:60,
-       height:60,
-       borderRadius:40,
-   
-       resizeMode:"contain",
+       width:70,
+       height:70,
+       borderRadius:40
     },
     bestSeller_Detail:{
      width:140,

@@ -18,7 +18,7 @@ const RoleSelectionScreen:React.FC= () => {
     <View style={styles.container}>
           <StatusBar hidden={false} translucent={true} animated={true} backgroundColor={Colors.PrimaryColor} barStyle='light-content' />
       <View style={styles.Header_Cont} >
-      <TouchableOpacity onPress={()=>{navigation.goBack()}} style={styles.Back_Btn}  >
+      <TouchableOpacity onPress={()=>{navigation.navigate('WelcomeScreen')}} style={styles.Back_Btn}  >
         <Image style={{tintColor:Colors.White,width:25, height:25,alignSelf:"flex-start"}} source={Back_Icon}  />
        </TouchableOpacity>
       <Image source={West_Icon}  style={styles.logo} />

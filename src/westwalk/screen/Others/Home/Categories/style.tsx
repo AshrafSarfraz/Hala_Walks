@@ -12,7 +12,6 @@ export  const getStyles=(language:string) => StyleSheet.create({
     Flatlist_Cont:{
       marginRight:8,
       alignItems:'center',
-      marginBottom:20
     },
     image:{
        width:95,
@@ -23,7 +22,7 @@ export  const getStyles=(language:string) => StyleSheet.create({
     cate_txt:{
       fontSize:12,
       fontFamily:Fonts.F_Medium,
-      marginTop:10,
+     
       lineHeight:16,
       letterSpacing:0.3
     },

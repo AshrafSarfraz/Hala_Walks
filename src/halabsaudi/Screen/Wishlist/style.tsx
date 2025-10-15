@@ -14,7 +14,7 @@ export default StyleSheet.create({
   Header_Txt: {
     marginHorizontal: '5%',
     marginBottom: 20,
-    fontSize: 22,
+    fontSize: 18,
     fontFamily: Fonts.SF_Bold,
     color: Colors.Green,
     textAlign: 'center',

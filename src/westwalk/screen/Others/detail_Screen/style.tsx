@@ -1,7 +1,7 @@
-import {Platform, StyleSheet} from 'react-native';
+import {Dimensions, Platform, StyleSheet} from 'react-native';
 import { Colors } from '../../../theme/Colors';
 import { Fonts } from '../../../theme/Fonts';
-
+const { width } = Dimensions.get('window');
 
 export const getStyles = (language: string) =>
   StyleSheet.create({
@@ -33,6 +33,17 @@ export const getStyles = (language: string) =>
       height: 250,
       borderRadius: 10,
       marginBottom: Platform.OS === 'ios' ? 20 : 16,
+    },
+    overlay_cont:{
+      zIndex:1,
+      position:'absolute',
+      top:0
+    },
+    overlayImage:{
+     width:100,
+     height:50,
+     resizeMode:"contain",
+     borderBottomRightRadius:5,
     },
     Type_Cont: {
       backgroundColor: '#D0A700',
@@ -230,5 +241,13 @@ export const getStyles = (language: string) =>
       paddingVertical: 6,
       borderBottomWidth: 0.5,
       borderColor: '#eee',
+    },
+    imageSlider: {
+      width: width-40,
+      height: 250,
+      borderRadius: 10,
+      marginRight:10,
+      resizeMode:"contain"
+   
     },
   });

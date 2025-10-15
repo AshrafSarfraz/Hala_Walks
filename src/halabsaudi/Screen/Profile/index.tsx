@@ -37,7 +37,7 @@ const Profile:React.FC<ProfileProps> = () => {
       await AsyncStorage.clear(); 
       navigation.reset({
         index: 0,
-        routes: [{ name: 'Login' }],
+        routes: [{ name: 'WelcomeScreen' }],
       });
     } catch (error) {
       console.error('Error signing out: ', error);

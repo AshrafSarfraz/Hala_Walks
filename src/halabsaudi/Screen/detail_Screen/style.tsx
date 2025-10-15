@@ -8,10 +8,11 @@ export const getStyles = (language: string) =>
     container: {
       paddingHorizontal: '4%',
       marginTop: Platform.OS === 'ios' ? '0%' : '13%',
-      marginBottom: Platform.OS === 'ios' ? '1%' : '6%',
-      paddingBottom: Platform.OS === 'ios' ? '0%' : '4%',
+      marginBottom: Platform.OS === 'ios' ? '3%' : '6%',
+      paddingBottom: Platform.OS === 'ios' ? '2%' : '4%',
     },
     HeaderCont: {
+      paddingHorizontal: '4%',
       flexDirection: language === 'en' ? 'row' : 'row-reverse',
       justifyContent: 'space-between',
       alignItems: 'center',
@@ -33,6 +34,7 @@ export const getStyles = (language: string) =>
       height: 250,
       borderRadius: 10,
       marginBottom: Platform.OS === 'ios' ? 20 : 16,
+      resizeMode:"contain"
     },
     Type_Cont: {
       backgroundColor: '#D0A700',
@@ -95,6 +97,13 @@ export const getStyles = (language: string) =>
     Dis_txt_cont: {
       flexDirection: 'row',
     },
+    Total_Discount: {
+      fontSize: 14,
+      color: Colors.Green,
+      fontFamily: Fonts.SF_Bold,
+      lineHeight: 24,
+      textAlign:language==='en'?'left':"right",
+    },
     Menu_Btn: {
       backgroundColor: Colors.Green,
       padding: 8,
@@ -107,13 +116,7 @@ export const getStyles = (language: string) =>
       fontFamily: Fonts.SF_Bold,
     },
 
-    Total_Discount: {
-      fontSize: 14,
-      color: Colors.Green,
-      fontFamily: Fonts.SF_Bold,
-      lineHeight: 24,
-      width:'75%',
-    },
+    
     Desc_Cont: {
       flexDirection: language === 'en' ? 'row' : 'row-reverse',
     },

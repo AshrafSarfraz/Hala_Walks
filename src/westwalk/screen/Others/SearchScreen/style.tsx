@@ -68,7 +68,6 @@ export const getStyles=(language:String) => StyleSheet.create({
   },
   itemContainer: {
     flexDirection: language==='en'?'row':"row-reverse",
-    alignItems: 'center',
     backgroundColor: Colors.White,
     padding: 12,
     marginBottom: 10,
@@ -85,33 +84,34 @@ export const getStyles=(language:String) => StyleSheet.create({
     height: 60,
     borderRadius: 8,
     marginRight: language==='en'?10:10,
-    resizeMode:"cover",
+    marginLeft:language==='ar'?0:0, 
+
   },
   itemInfo: {
     flex: 1,
+    height:60,
     marginRight:10,
-   justifyContent:'center',
+    justifyContent:"center"
+   
   },
   itemTitle: {
-    fontSize: language==='en'?16:16,
+    fontSize: language==='en'?14:12,
     fontFamily: language==='en'?Fonts.F_Bold:"",
-    lineHeight: language==='en'?24:26,
+    lineHeight: language==='en'?18:18,
     fontWeight:'500',
+    marginBottom:4,
     color: Colors.Black,
-    marginLeft:language==='ar'?"5%":0,
     textAlign:language==='en'?'left':'right',
   },
   itemLocation: {
     fontSize: language==='en'?11:13,
     fontFamily: language==='en'?Fonts.F_Medium:"",
-    lineHeight: language==='en'?16:20,
+    lineHeight: language==='en'?14:20,
     fontWeight:'300',
     color: Colors.Black,
     marginLeft:language==='ar'?"2%":0,
     textAlign:language==='en'?'left':'right'
-  
   },
-
   shimmerItem: {
     width: '100%',
     height: 60,

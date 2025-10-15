@@ -27,12 +27,12 @@ export  const getStyles=(language:string) => StyleSheet.create({
       letterSpacing:0.3
     },
     Txt:{
-      fontSize:language==='en'?12:11,
+      fontSize:language==='en'?12:10,
       color:'#ffffff',
       fontWeight:"bold",
       textAlign:"center",
-      lineHeight:language==='en'?14:18,
-      marginTop:language==='en'?86:86,
+      lineHeight:language==='en'?14:14,
+      marginTop:language==='en'?86:84,
       width:language==='en'?'80%':'70%',
       alignSelf:"center"
     }

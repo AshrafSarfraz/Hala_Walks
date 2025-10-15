@@ -40,7 +40,6 @@ const getStyles=(language:string) => StyleSheet.create({
     color: Colors.Green,
     fontSize: language==='en'?16:14,
     fontFamily:Fonts.SF_Bold,
-    fontWeight: 'bold',
     lineHeight:language==='en'?22:26,
   },
 });

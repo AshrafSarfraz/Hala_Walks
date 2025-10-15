@@ -130,16 +130,27 @@ useEffect(() => {
         </ShimmerPlaceholder>
 
         <View style={styles.itemInfo}>
-          <Text style={styles.itemTitle}>
-            {language === 'en' ? item.nameEng : item.nameArabic}
-          </Text>
-          <Text style={styles.itemLocation}>
-            {(language === 'en'
-              ? item.descriptionEng
-              : item.descriptionArabic
-            )?.substring(0, 70) + '...'}
-          </Text>
-          <Text style={styles.itemCity}>{item.selectedCity}</Text>
+           <Text style={styles.itemTitle}>
+                              {language === 'en'
+                                 ? item.nameEng?.length > 30
+                                   ? item.nameEng.substring(0,25) + '...'
+                                   : item.nameEng
+                                 : item.nameArabic?.length > 30
+                                 ? item.nameArabic.substring(0,25) + '...'
+                                 : item.nameArabic}
+                             </Text>
+         
+         
+         
+         <Text style={styles.itemLocation}>
+                               {language === 'en'
+                                 ? item.descriptionEng?.length > 70
+                                   ? item.descriptionEng.substring(0,70) + '...'
+                                   : item.descriptionEng
+                                 : item.descriptionArabic?.length > 70
+                                 ? item.descriptionArabic.substring(0,70) + '...'
+                                 : item.descriptionArabic}
+                             </Text>
         </View>
       </TouchableOpacity>
     );

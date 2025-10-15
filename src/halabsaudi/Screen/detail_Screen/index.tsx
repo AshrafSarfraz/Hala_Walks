@@ -45,6 +45,7 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showTimings, setShowTimings] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState({});
 
   // Redux Toolkit
   const language = useSelector((state: RootState) => state.language.language);
@@ -55,7 +56,6 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
   const handleToggleCart = () => {
     dispatch(toggleItemInCart(item));
   };
-  // Redux Toolkit
 
   // Alert Modal
   const showAlert = () => {
@@ -64,8 +64,10 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
   const hideAlert = () => {
     setAlertVisible(false);
   };
- 
-  // Modal
+
+  const handleLoad = (key: string | number) => {
+    setImageLoaded(prev => ({...prev, [key]: true}));
+  };
 
   // Google Map and Mobile Number
   const handleOpenMaps = () => {
@@ -101,8 +103,7 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
         backgroundColor={Colors.White4}
         barStyle="dark-content"
       />
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.container}>
+  
           <View style={styles.HeaderCont}>
             <CustomHeader
               title={languageData[language].Detail_Screen}
@@ -121,31 +122,54 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
               )}
             </TouchableOpacity>
           </View>
-
+      <ScrollView showsVerticalScrollIndicator={false}>
+       
+      <View style={styles.container}>
           <View style={styles.Body_Cont}>
             {item.multiImageUrls && item.multiImageUrls.length > 0 ? (
-            
-            <ScrollView
+              <ScrollView
                 horizontal
                 pagingEnabled
                 showsHorizontalScrollIndicator={false}
-                style={{marginBottom: 16}}>
+                style={{marginBottom: 16}}
+                onScroll={handleScroll}
+                scrollEventThrottle={16}>
                 {item.multiImageUrls.map((url, index) => (
                   <View key={index} style={styles.imageContainer}>
-                    <FastImage
-                      source={{uri: url}}
-                      style={styles.imageSlider}
-                      resizeMode="cover"
-                    />
+                    <ShimmerPlaceholder
+                      LinearGradient={LinearGradient}
+                      visible={!!imageLoaded[index]} // jab load ho jaye shimmer band
+                      style={styles.imageSlider}>
+                      <FastImage
+                        source={{
+                          uri: url,
+                          priority:
+                            index <= 1
+                              ? FastImage.priority.high
+                              : FastImage.priority.normal,
+                        }}
+                        style={styles.imageSlider}
+                        resizeMode={FastImage.resizeMode.cover}
+                        onLoadEnd={() => handleLoad(index)}
+                        onError={() => handleLoad(index)} // fail case bhi handle
+                      />
+                    </ShimmerPlaceholder>
                   </View>
                 ))}
               </ScrollView>
             ) : (
-              <FastImage
-                source={{uri: item.img}} // fallback single image
-                style={styles.image}
-                resizeMode="cover"
-              />
+              <ShimmerPlaceholder
+                LinearGradient={LinearGradient}
+                visible={!!imageLoaded['single']}
+                style={styles.image}>
+                <Image
+                  source={{uri: item.img}}
+                  style={styles.image}
+                  resizeMode={'cover'}
+                  onLoadEnd={() => handleLoad('single')}
+                  onError={() => handleLoad('single')}
+                />
+              </ShimmerPlaceholder>
             )}
 
             <View style={styles.Type_Cont}>
@@ -197,7 +221,9 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
               <TouchableOpacity
                 onPress={() => refRBSheet.current.open()}
                 style={styles.Redeem_btn}>
-                <Text style={styles.use_txt}>{languageData[language].List_of_Branch}</Text>
+                <Text style={styles.use_txt}>
+                  {languageData[language].List_of_Branch}
+                </Text>
               </TouchableOpacity>
             </View>
             <View style={{}}>
@@ -225,48 +251,40 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
             {/* working Hours */}
 
             <View style={styles.Dis_Cont}>
-            
               <View style={styles.Dis_txt_cont}>
                 {language === 'ar' ? (
                   <Text style={styles.Total_Discount}>
-                    {' '}
-                    {'' + item.discountArabic + ''}{' '}
+                    {item.discountArabic ? item.discountArabic : 'undefined'}
                   </Text>
                 ) : (
                   <Text style={styles.Total_Discount}>
-                    {' '}
-                    {'' + item.discount + ''}{' '}
+                    {item.discount ? item.discount : 'undefined'}
                   </Text>
                 )}
               </View>
 
-
-
               <TouchableOpacity
-  style={styles.Menu_Btn}
-  onPress={() => {
-    const pdf = item.pdfUrl;
-    const menu = item.menuUrl;
+                style={styles.Menu_Btn}
+                onPress={() => {
+                  const pdf = item.pdfUrl;
+                  const menu = item.menuUrl;
 
-    if (pdf) {
-      // PDF موجود ہے → PDFViewerScreen پر navigate کرو
-      navigation.navigate('PDFViewerScreen', { pdfUrl: pdf });
-    } else if (menu) {
-      // اگر menu URL ہے → براہِ راست browser میں کھولو
-      if (menu.startsWith('http')) {
-        Linking.openURL(menu);
-      } else {
-        // اگر local file path ہے تو بھی PDFViewerScreen پر بھیج سکتے ہیں
-        navigation.navigate('PDFViewerScreen', { pdfUrl: menu });
-      }
-    } else {
-      // کوئی URL نہیں → modal کھولو
-      setModalVisible(true);
-    }
-  }}
->
-
-
+                  if (pdf) {
+                    // PDF موجود ہے → PDFViewerScreen پر navigate کرو
+                    navigation.navigate('PDFViewerScreen', {pdfUrl: pdf});
+                  } else if (menu) {
+                    // اگر menu URL ہے → براہِ راست browser میں کھولو
+                    if (menu.startsWith('http')) {
+                      Linking.openURL(menu);
+                    } else {
+                      // اگر local file path ہے تو بھی PDFViewerScreen پر بھیج سکتے ہیں
+                      navigation.navigate('PDFViewerScreen', {pdfUrl: menu});
+                    }
+                  } else {
+                    // کوئی URL نہیں → modal کھولو
+                    setModalVisible(true);
+                  }
+                }}>
                 <Text style={styles.menu_txt}>
                   {languageData[language].Avaliable_Offer}
                 </Text>
@@ -305,7 +323,7 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
           correctPin={item.pin}
           brand={item.nameEng}
           address={item.address}
-          discount={Number(item.discount) || 0}
+          discount={item.discount}
           // optional: sirf info/analytics ke liye
           onSubmit={userPin => {
             // console.log('Correct PIN entered:', userPin);

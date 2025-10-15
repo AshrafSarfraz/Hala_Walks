@@ -14,7 +14,7 @@ export const getStyles=(language:string) => StyleSheet.create({
     Header_Txt:{
             marginHorizontal: '5%',
             marginBottom: Platform.OS==='ios'?'10%':'8%',
-            fontSize: 22,
+            fontSize: 18,
             fontFamily: Fonts.SF_Bold,
             color: Colors.Green,
             textAlign: 'center',

@@ -59,7 +59,7 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
         backgroundColor={Colors.PrimaryColor}
         barStyle={'light-content'}
       />
-      <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 40,flex:1 }}>
         <View style={styles.Header_Cont}>
           <Image source={P_IMG} style={styles.profileImage} />
           <Text style={styles.name}>{userData.name}</Text>
@@ -72,11 +72,11 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
             image={ProfileIcon}
             onPress={() => navigation.navigate('ProfileScreen')}
           />
-          <CustomButton2
+          {/* <CustomButton2
             title={languageData[language].Documents}
             image={DocIcon}
             onPress={() => navigation.navigate('StaffDocumentControlScreen')}
-          />
+          /> */}
           <CustomButton2
             title={languageData[language].Redeem_History}
             image={HistroyIcon}

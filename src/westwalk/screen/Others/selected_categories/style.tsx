@@ -69,7 +69,6 @@ export const getStyles=(language:String) => StyleSheet.create({
   },
   itemContainer: {
     flexDirection: language==='en'?'row':"row-reverse",
-    alignItems: 'center',
     backgroundColor: Colors.White,
     padding: 12,
     marginBottom: 10,
@@ -85,19 +84,23 @@ export const getStyles=(language:String) => StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 8,
-   marginRight: language==='en'?10:10,
+    marginRight: language==='en'?10:10,
     marginLeft:language==='ar'?0:0, 
 
   },
   itemInfo: {
     flex: 1,
-    marginRight:10
+    height:60,
+    marginRight:10,
+    justifyContent:"center"
+   
   },
   itemTitle: {
-    fontSize: language==='en'?16:16,
+    fontSize: language==='en'?14:12,
     fontFamily: language==='en'?Fonts.F_Bold:"",
-    lineHeight: language==='en'?22:24,
+    lineHeight: language==='en'?18:18,
     fontWeight:'500',
+    marginBottom:4,
     color: Colors.Black,
     textAlign:language==='en'?'left':'right',
   },
@@ -109,17 +112,8 @@ export const getStyles=(language:String) => StyleSheet.create({
     color: Colors.Black,
     marginLeft:language==='ar'?"2%":0,
     textAlign:language==='en'?'left':'right'
-  
   },
-  itemCity: {
-    fontSize: language==='en'?12:12,
-    fontFamily: language==='en'?Fonts.F_Bold:"",
-    lineHeight: language==='en'?14:20,
-    fontWeight:'500',
-    color: Colors.Black,
-    marginLeft:language==='ar'?"2%":0,
-     textAlign:language==='en'?'left':'right'
-  },
+
   emptyStateContainer:{
     marginTop:90,
     alignItems:"center",

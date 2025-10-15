@@ -45,7 +45,7 @@ const CorporationAccount:React.FC<AccountProps> = ({navigation}) => {
   const handleLogout = async (navigation: any) => {
     try {
       await AsyncStorage.removeItem('org_emp_data'); // or AsyncStorage.clear()
-      navigation.replace('Role');
+      navigation.replace('WelcomeScreen');
     } catch (error) {
       console.log('Error during logout:', error);
     }}

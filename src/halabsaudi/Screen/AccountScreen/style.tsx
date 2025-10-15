@@ -129,7 +129,7 @@ export const getStyles = (language: 'en' | 'ar') => {
     subTxt: {
       color: '#E6F2EF',
       fontSize: 13,
-      marginTop: -7,
+      marginTop: 1,
       fontFamily: Fonts.SF_Regular,
       textAlign: isRTL ? 'right' : 'left',
     },
