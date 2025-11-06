@@ -31,6 +31,7 @@ import EmployeeLogin from '../screen/Employee_Data/Authentication/login/Westwalk
 import TenantsLogin from '../screen/Tenants_Data/Authentication/login/Tenants_Login';
 import PhoneDirectoryScreen from '../screen/Employee_Data/PhoneDirectory';
 import AuthLoadingScreen from '../screen/Others/auth_loading_screen/Auth_Loading';
+import HrSystem from '../screen/Employee_Data/Leave Apply';
 
 
 
@@ -54,6 +55,7 @@ export default function StackNavigation() {
         <Stack.Screen name="WishlistScreen" component={WishlistScreen}   />
         <Stack.Screen name="PDFViewerScreen" component={PDFViewerScreen}   />
         <Stack.Screen name="PhoneDirectory" component={PhoneDirectoryScreen}   />
+        <Stack.Screen name="HrSystem" component={HrSystem}   />
         
       
         {/* Staff Screen */}

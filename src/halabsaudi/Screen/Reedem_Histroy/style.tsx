@@ -7,7 +7,7 @@ export const getStyles = (language: 'en' | 'ar') =>
     Container: {
       flex: 1,
       backgroundColor: Colors.White4,
-      marginVertical: Platform.OS === 'ios' ? '2%' : '13%',
+      marginVertical: Platform.OS === 'ios' ? '2%' : '10%',
       marginHorizontal: '4%',
     },
 

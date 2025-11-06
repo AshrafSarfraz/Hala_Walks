@@ -123,7 +123,7 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
             </TouchableOpacity>
           </View>
       <ScrollView showsVerticalScrollIndicator={false}>
-       
+  
       <View style={styles.container}>
           <View style={styles.Body_Cont}>
             {item.multiImageUrls && item.multiImageUrls.length > 0 ? (
@@ -342,7 +342,9 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
           excludeId={item.id} // ← current branch ko list se hata do
           // onSelect={(branch) => console.log('Selected branch:', branch)}
         />
+            <View style={{height:100}} />
       </ScrollView>
+  
     </SafeAreaView>
   );
 };

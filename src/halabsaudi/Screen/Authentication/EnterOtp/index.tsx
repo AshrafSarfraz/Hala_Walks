@@ -119,7 +119,7 @@ const Otp: React.FC<OtpProps> = ({ route, navigation }) => {
         <Text style={styles.PhoneNumber}>{Phone}</Text>
 
         {/* ✅ Single OTP input (replaces multi-box container) */}
-        <View style={{ width: '100%', marginTop: 24 }}>
+        <View style={{ width: '100%', marginTop: 20 }}>
           <TextInput
             value={otp}
             onChangeText={(val) => {

@@ -77,7 +77,7 @@ const SelectedVenues: React.FC<{ route: any }> = ({ route }) => {
         }
   
         // 2️⃣ Ab fresh data Firebase se lao
-        const snapshot = await firestore().collection('H-Brands').get();
+        const snapshot = await firestore().collection('H-Brands').where('status', '==', 'Active').get();
         const freshBrands = snapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data(),

@@ -93,21 +93,21 @@ export const getStyles=(language:String) => StyleSheet.create({
     flex: 1,
   },
   itemTitle: {
-    fontSize: language==='en'?16:14,
+    fontSize: language==='en'?14:12,
     fontFamily: language==='en'?Fonts.SF_Bold:"",
-    lineHeight: language==='en'?20:26,
+    lineHeight: language==='en'?18:22,
     fontWeight:'500',
     color: Colors.Black,
     marginBottom:5,
     textAlign:language==='en'?'left':'right',
   },
   itemLocation: {
-    fontSize: language==='en'?12:11,
+    fontSize: language==='en'?11:11,
     fontFamily: language==='en'?Fonts.SF_Medium:"",
-    lineHeight: language==='en'?14:18,
+    lineHeight: language==='en'?13:16,
     fontWeight:'300',
     color: Colors.Black,
-    marginLeft:language==='ar'?"2%":0,
+    marginHorizontal:language==='ar'?"2%":0,
     textAlign:language==='en'?'left':'right'
   
   },
@@ -145,7 +145,7 @@ export const getStyles=(language:String) => StyleSheet.create({
   
     width: '100%',
     alignSelf:"center",
-    marginTop:10  
+    marginTop:5  
   },
   Loc_Cont: {
     flexDirection: 'row',

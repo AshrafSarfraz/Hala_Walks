@@ -7,17 +7,15 @@ export const getStyles = (language: string) =>
   StyleSheet.create({
     container: {
       paddingHorizontal: '4%',
-      marginTop: Platform.OS === 'ios' ? '0%' : '13%',
-      marginBottom: Platform.OS === 'ios' ? '3%' : '6%',
-      paddingBottom: Platform.OS === 'ios' ? '2%' : '4%',
     },
     HeaderCont: {
+      paddingTop: Platform.OS === 'ios' ? '2%' : '10%',
+      marginBottom:10,
       paddingHorizontal: '4%',
       flexDirection: language === 'en' ? 'row' : 'row-reverse',
       justifyContent: 'space-between',
       alignItems: 'center',
       width: '100%',
-      marginBottom: '3%',
     },
     HeartStyle: {
       width: 40,
@@ -59,11 +57,10 @@ export const getStyles = (language: string) =>
     },
     title: {
       width: '80%',
-      fontSize: 20,
-      lineHeight: language === 'en' ? 26 : 32,
+      fontSize: 16,
+      lineHeight: language === 'en' ? 22 : 28,
       color: Colors.Black,
       letterSpacing: 0.5,
-      fontWeight: language === 'en' ? '400' : 'bold',
       fontFamily: language === 'en' ? Fonts.SF_Bold : '',
       textAlign: language === 'en' ? 'left':"right",
     },
@@ -88,7 +85,7 @@ export const getStyles = (language: string) =>
       marginVertical: '3%',
       backgroundColor: Colors.White,
       paddingVertical: '4%',
-      paddingHorizontal:'2%',
+      paddingHorizontal:'3%',
       borderRadius: 10,
       flexDirection: language === 'en' ? 'row' : 'row-reverse',
       justifyContent: 'space-between',

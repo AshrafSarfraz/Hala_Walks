@@ -83,9 +83,9 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
             onPress={() => navigation.navigate('StaffHistroyScreen')}
           />
           <CustomButton2
-            title={languageData[language].Contact_Us}
+            title={'Contact Us'}
             image={Contact_us}
-            onPress={() => navigation.navigate('StaffContactUs')}
+            onPress={() => navigation.navigate('HrSystem')}
           />
           <CustomButton2
             title={languageData[language].Directory}
