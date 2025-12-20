@@ -5,7 +5,6 @@ import ImageSlider from './FlatOffer';
 import Categories from './Categories';
 import BestSeller from './BestSellers';
 import RecentlyAdded from './RecentlyAdded';
-import LanguageModal from '../../Component/CustomAlert/Lan_Modal';
 import { Colors } from '../../Themes/Colors';
 import Venues from './Venues';
 import { useSelector } from 'react-redux';

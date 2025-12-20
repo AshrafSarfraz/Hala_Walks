@@ -51,7 +51,8 @@ export const getStyles=(language:String) => StyleSheet.create({
     lineHeight:language==='en'?18:20,
     fontFamily: language==='en'?Fonts.SF_Medium:'',
     color: Colors.Black,
-    textAlign:language==='en'?'left':'right'
+    textAlign:language==='en'?'left':'right',
+    letterSpacing:0.3
   },
   FlatlistContainer: {
     flex: 1,
@@ -132,5 +133,33 @@ export const getStyles=(language:String) => StyleSheet.create({
    marginTop:12,
    fontWeight:'bold',
    color:Colors.Black
-  }
+  },
+
+  Loc_Status_Cont: {
+    flexDirection: language==='en'?'row':"row-reverse",
+    alignItems: 'center',
+  
+    width: '100%',
+    alignSelf:"center",
+    marginTop:5  
+  },
+  Loc_Cont: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  
+    
+  },
+  LocationIcon: {
+    width: 12,
+    height: 12,
+    resizeMode: 'contain',
+    tintColor: Colors.Green,
+  },
+  location_txt: {
+    fontSize: 10,
+    color: 'green',
+    fontFamily: Fonts.SF_Medium,
+    lineHeight: 14,
+    marginLeft: 2,
+  },
 });

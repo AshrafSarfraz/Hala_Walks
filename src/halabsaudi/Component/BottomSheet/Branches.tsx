@@ -257,8 +257,8 @@ const getStyles = (language: string) =>
       flex: 1,
       backgroundColor: Colors.White4,
       paddingHorizontal: '4%',
-      marginTop: Platform.OS === 'ios' ? '5%' : '5%',
-      marginBottom: Platform.OS === 'ios' ? '2%' : '2%',
+      paddingTop: Platform.OS === 'ios' ? '5%' : '5%',
+      paddingBottom: Platform.OS === 'ios' ? '2%' : '2%',
     },
     sheetTitle: {
       fontSize: 16,

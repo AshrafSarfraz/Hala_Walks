@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, Image, Dimensions, TouchableOpacity, Platform } from 'react-native';
+import { View, FlatList, Dimensions, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import LinearGradient from 'react-native-linear-gradient';
 
-import { fetchFlatOfferFromFirebase } from '../../../firebase/firebaseutils';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux_toolkit/store';
 import { getStyles } from './style';
@@ -15,85 +14,95 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const { width } = Dimensions.get('screen');
 
 const ImageSlider: React.FC<{ navigation: any }> = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [offers, setOffers] = useState<any[]>([]); // State to store Firestore data
-   const [country, setCountry] = useState<string | null>(null);
+
+  const [offers, setOffers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // NOTE: one global loading boolean causes issues with FlatList (one image loads -> shimmer off for all)
+  // We'll keep it simple but make it safe: shimmer shows until first image loads
   const [imageLoading, setImageLoading] = useState(true);
-   const countryName = useSelector((s: RootState) => s.country?.countryName ?? null);
-  const language = useSelector((state: RootState) => state.language.language); // Get the current language from Redux
+
+  const countryName = useSelector((s: RootState) => s.country?.countryName ?? null);
+  const language = useSelector((state: RootState) => state.language.language);
   const styles = getStyles(language);
 
-  // useEffect(() => {
-  //   const getFlatOffer = async () => {
-  //     setLoading(true);
-  //     const fetchedOffers = await fetchFlatOfferFromFirebase();
-  //     setOffers(fetchedOffers);
-  //     setLoading(false);
-  //   };
+  // ✅ ONLY: heroImage first, otherwise img
+  const getHeroImage = (item: any) => {
+    const hero = String(item?.heroImage || '').trim();
+    if (hero) return hero;
 
-  //   getFlatOffer();
-  // }, []);
-
+    const logo = String(item?.img || '').trim();
+    return logo;
+  };
 
   useEffect(() => {
-    const loadOffers = async () => {
+    const loadOffersFromBrands = async () => {
       try {
-        // Show cached data immediately
+        // cache first
         const cachedData = await AsyncStorage.getItem('H-Offer_cache');
         if (cachedData) {
           setOffers(JSON.parse(cachedData));
           setLoading(false);
+        } else {
+          setLoading(true);
         }
-  
-        // Then fetch in background
-        const freshOffers = await fetchFlatOfferFromFirebase();
-        setOffers(freshOffers);
-        await AsyncStorage.setItem('H-Offer_cache', JSON.stringify(freshOffers));
+
+        // fetch brands
+        const res = await fetch('https://hala-b-saudi.onrender.com/api/hbs/brands');
+        const json = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+          console.warn('Brands API failed:', json);
+          setLoading(false);
+          return;
+        }
+
+        const raw = json && (json as any).data ? (json as any).data : json;
+        const arr = Array.isArray(raw) ? raw : [];
+
+        // ✅ Only isFlatOffer true (top-level)
+        const flatOffers = arr
+          .map((item: any) => ({ id: item._id || item.id, ...item }))
+          .filter((item: any) => item.isFlatOffer === true);
+
+        setOffers(flatOffers);
+        await AsyncStorage.setItem('H-Offer_cache', JSON.stringify(flatOffers));
+        setLoading(false);
       } catch (error) {
         console.error('Error loading offers:', error);
         setLoading(false);
       }
     };
-  
-    loadOffers();
+
+    loadOffersFromBrands();
   }, []);
-
-
 
   const handleScroll = (event: any) => {
     const slideIndex = Math.round(event.nativeEvent.contentOffset.x / width);
     setCurrentIndex(slideIndex);
   };
 
-  const handleImageLoad = () => {
-    setImageLoading(false); // Stop the shimmer when image has loaded
-  };
+  const handleImageLoad = () => setImageLoading(false);
+  const handleImageError = () => setImageLoading(false);
 
-  const handleImageError = () => {
-    setImageLoading(false); // Stop the shimmer in case of an error
-  };
+  // country filter
+  const visibleOffers = offers.filter((item: any) => {
+    if (countryName) {
+      return item.selectedCountry?.toLowerCase() === countryName.toLowerCase();
+    }
+    return true;
+  });
 
   return (
     <View style={styles.container}>
       {loading ? (
-        <ShimmerPlaceholder
-          visible={false}
-          LinearGradient={LinearGradient}
-          style={styles.image}
-        />
+        <ShimmerPlaceholder visible={false} LinearGradient={LinearGradient} style={styles.image} />
       ) : (
         <FlatList
-        data={
-          offers.filter((item )=> {
-            if (countryName) {
-              return item.selectedCountry?.toLowerCase() === countryName.toLowerCase();
-            }
-            return true; // agar country detect na ho to sab items dikhao
-          })
-        } // Use Firestore data
-          keyExtractor={(item) => item.id}
+          data={visibleOffers}
+          keyExtractor={(item) => String(item.id)}
           horizontal
           pagingEnabled
           showsHorizontalScrollIndicator={false}
@@ -103,33 +112,33 @@ const ImageSlider: React.FC<{ navigation: any }> = () => {
               style={styles.imageContainer}
               onPress={() => navigation.navigate('DetailScreen', { item })}
             >
-              {/* Shimmer effect for image */}
               <ShimmerPlaceholder
                 visible={!imageLoading}
                 LinearGradient={LinearGradient}
                 style={styles.image}
               >
-                {
-             
-                    <FastImage source={{ uri: item.img, priority: index <=2 ? FastImage.priority.high : index <= 4 ? FastImage.priority.normal : FastImage.priority.low }}
-                    style={styles.image}  onLoad={handleImageLoad}    onError={handleImageError}  />
-                }
-              
-                </ShimmerPlaceholder>
-
-              {/* <View style={styles.overlay}>
-                <Text style={styles.imageText}>
-                  {languageData[language].discount + item.discount + '%'}
-                </Text>
-              </View> */}
+                <FastImage
+                  source={{
+                    uri: getHeroImage(item),
+                    priority:
+                      index <= 2
+                        ? FastImage.priority.high
+                        : index <= 4
+                        ? FastImage.priority.normal
+                        : FastImage.priority.low,
+                  }}
+                  style={styles.image}
+                  onLoad={handleImageLoad}
+                  onError={handleImageError}
+                />
+              </ShimmerPlaceholder>
             </TouchableOpacity>
           )}
         />
       )}
 
-      {/* Pagination Dots */}
       <View style={styles.pagination}>
-        {offers.map((_, index) => (
+        {visibleOffers.map((_: any, index: number) => (
           <View
             key={index}
             style={[
@@ -142,7 +151,6 @@ const ImageSlider: React.FC<{ navigation: any }> = () => {
           />
         ))}
       </View>
-
     </View>
   );
 };

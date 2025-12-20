@@ -32,8 +32,6 @@ const Profile:React.FC<ProfileProps> = () => {
 
   const handleLogout = async () => {
     try {
-      await auth().signOut();
-      // console.log('User signed out!');
       await AsyncStorage.clear(); 
       navigation.reset({
         index: 0,

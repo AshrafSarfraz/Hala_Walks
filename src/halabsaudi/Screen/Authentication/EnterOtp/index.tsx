@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -22,21 +23,41 @@ import { RootState } from '../../../redux_toolkit/store';
 import { languageData } from '../../../redux_toolkit/language/languageSlice';
 import { CommonActions } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { apiPost } from '../../../firebase/api/client';
+
+
 
 interface OtpProps extends NativeStackScreenProps<any> {}
 
 const Otp: React.FC<OtpProps> = ({ route, navigation }) => {
-  const { Phone, Confirmation, CountryCode } = route.params || {};
+  const { Phone, CountryCode } = route.params || {};
 
-  // ✅ single input OTP
   const [otp, setOtp] = useState<string>('');
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isVerifying, setIsVerifying] = useState<boolean>(false);
+  const [isResending, setIsResending] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [resendCooldown, setResendCooldown] = useState<number>(0); // seconds
 
   const language = useSelector((state: RootState) => state.language.language);
   const styles = getStyles(language);
 
-  // Optional: clipboard polling (works with single input too)
+  // 🔁 Cooldown timer for resend button
+  useEffect(() => {
+    let timer: NodeJS.Timeout | undefined;
+    if (resendCooldown > 0) {
+      timer = setInterval(() => {
+        setResendCooldown((prev) => {
+          if (prev <= 1 && timer) clearInterval(timer);
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => {
+      if (timer) clearInterval(timer);
+    };
+  }, [resendCooldown]);
+
+  // Optional: clipboard polling (auto-read OTP)
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
@@ -44,8 +65,6 @@ const Otp: React.FC<OtpProps> = ({ route, navigation }) => {
         if (/^\d{6}$/.test(clip) && otp !== clip) {
           setOtp(clip);
           await Clipboard.setString(''); // clear so it doesn't re-paste
-          // Auto-submit if you prefer:
-          // confirmCode(clip);
         }
       } catch (e) {
         // silent fail
@@ -55,48 +74,104 @@ const Otp: React.FC<OtpProps> = ({ route, navigation }) => {
     return () => clearInterval(interval);
   }, [otp]);
 
-  const saveUserData = async () => {
+  const saveUserData = async (token: string, user: any) => {
     try {
+      // Pehle jaisa flag + basic data
       await AsyncStorage.setItem('hala_user', 'true');
       await AsyncStorage.setItem(
         'hala_user_data',
         JSON.stringify({
           phoneNumber: Phone,
           countryCode: CountryCode,
-        })
+        }),
       );
-      console.log('✅ User data saved to Firestore & AsyncStorage');
+
+      // Extra: token + full user (backend se aya)
+      await AsyncStorage.setItem('hala_token', token);
+      await AsyncStorage.setItem('hala_user_backend', JSON.stringify(user));
+
+      console.log('✅ User data & token saved in AsyncStorage');
     } catch (e) {
       console.log('❌ Error saving data:', e);
-      setError('Error saving user data.');
+      // yaha hard error show nahi kar rahe, kyun ke login ho chuka hoga
     }
   };
 
+  // 🔐 Verify OTP via backend
   const confirmCode = async (code?: string) => {
     const pin = (code ?? otp).trim();
+
     if (pin.length !== 6) {
       setError('Please enter 6-digit code.');
       return;
     }
-    setIsLoading(true);
-    setError(null);
-    try {
-      await Confirmation.confirm(pin);
-      await saveUserData();
 
+    setIsVerifying(true);
+    setError(null);
+
+    try {
+      // POST /api/phoneAuth/login/verify-otp
+      const res = await apiPost<{
+        message: string;
+        token: string;
+        user: {
+          id: string;
+          name: string;
+          email: string;
+          phone: string;
+        };
+      }>('/phoneAuth/login/verify-otp', {
+        phone: Phone,
+        code: pin,
+      });
+
+      console.log('✅ OTP verified:', res);
+
+      await saveUserData(res.token, res.user);
+
+      // Navigate to main app stack
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
-          routes: [{ name: 'HalabStack' }],
-        })
+          routes: [{ name: 'BottomTab' }], // same as pehle
+        }),
       );
     } catch (err: any) {
-      console.log('❌ OTP failed:', err.message);
-      setError('Invalid OTP. Please try again.');
+      console.log('❌ OTP verification error:', err);
+      setError(err?.message || 'Invalid OTP. Please try again.');
     } finally {
-      setIsLoading(false);
+      setIsVerifying(false);
     }
   };
+
+  // 🔁 Resend OTP via backend
+  const handleResendOtp = async () => {
+    if (resendCooldown > 0) return;
+  
+    setIsResending(true);
+    setError(null);
+  
+    try {
+      const res = await apiPost('/phoneAuth/login/request-otp', {
+        phone: Phone,
+      });
+  
+      console.log('🔁 Resend OTP success:', res);
+      setResendCooldown(60);   // yahan bhi 60 sec ka local timer
+    } catch (err: any) {
+      console.log('🔁 Resend OTP error:', err);
+  
+      if (err?.status === 429) {
+        setError(err?.message || 'Please wait before resending OTP');
+        setResendCooldown(30);
+      } else {
+        setError(err?.message || 'Error resending OTP');
+      }
+    } finally {
+      setIsResending(false);
+    }
+  };
+  
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.Bg }}>
@@ -118,25 +193,22 @@ const Otp: React.FC<OtpProps> = ({ route, navigation }) => {
         <Text style={styles.digit_Txt}>{languageData[language].enter_otp}</Text>
         <Text style={styles.PhoneNumber}>{Phone}</Text>
 
-        {/* ✅ Single OTP input (replaces multi-box container) */}
+        {/* ✅ Single OTP input */}
         <View style={{ width: '100%', marginTop: 20 }}>
           <TextInput
             value={otp}
             onChangeText={(val) => {
-              // allow only digits, cap at 6
               const onlyDigits = val.replace(/\D/g, '').slice(0, 6);
               setOtp(onlyDigits);
-              // Auto-submit if you want instant verification:
-              // if (onlyDigits.length === 6) confirmCode(onlyDigits);
+              error && setError(null);
             }}
             keyboardType="number-pad"
             maxLength={6}
             autoFocus
-            // Autofill helpers
-            textContentType="oneTimeCode"  // iOS
-            autoComplete="sms-otp"         // Android
+            textContentType="oneTimeCode"
+            autoComplete="sms-otp"
             importantForAutofill="yes"
-            // Visuals: mimic spaced boxes feel
+    
             style={{
               backgroundColor: Colors.White4,
               borderColor: otp.length === 6 ? Colors.Green : '#E0E0E0',
@@ -162,14 +234,37 @@ const Otp: React.FC<OtpProps> = ({ route, navigation }) => {
           {!!error && <Text style={styles.Error}>{error}</Text>}
         </View>
 
+        {/* Resend section */}
+        <View style={{ marginTop: 16, alignItems: 'center' }}>
+          <TouchableOpacity
+            disabled={resendCooldown > 0 || isResending}
+            onPress={handleResendOtp}
+          >
+            <Text
+              style={{
+                color:
+                  resendCooldown > 0 || isResending ? Colors.Grey9 : Colors.Green,
+                textDecorationLine: 'underline',
+                fontWeight: '500',
+              }}
+            >
+              {resendCooldown > 0
+                ? `Resend code in ${resendCooldown}s`
+                : 'Resend code'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
         <View style={{ height: 100 }} />
         <CustomButton
           title={languageData[language].verify_otp}
           onPress={() => confirmCode()}
-          disabled={otp.length !== 6}
+          disabled={otp.length !== 6 || isVerifying}
         />
 
-        {isLoading && <ActivityIndicatorModal visible={isLoading} />}
+        {(isVerifying || isResending) && (
+          <ActivityIndicatorModal visible={isVerifying || isResending} />
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -177,192 +272,3 @@ const Otp: React.FC<OtpProps> = ({ route, navigation }) => {
 
 export default Otp;
 
-
-// import React, { useState, useRef, useEffect } from 'react';
-// import {
-//   View,
-//   Text,
-//   ScrollView,
-//   Image,
-//   TouchableOpacity,
-//   TextInput,
-//   StatusBar,
-
-// } from 'react-native';
-// import Clipboard from '@react-native-clipboard/clipboard';
-// import { Back_Icon, Logo_W } from '../../../Themes/Images';
-// import CustomButton from '../../../Component/CustomButton/CustomButton';
-// import { Colors } from '../../../Themes/Colors';
-// import { SafeAreaView } from 'react-native-safe-area-context';
-// import { getStyles } from './style';
-// import { NativeStackScreenProps } from '@react-navigation/native-stack';
-
-
-// import ActivityIndicatorModal from '../../../Component/Loader/ActivityIndicator';
-// import { useSelector } from 'react-redux';
-// import { RootState } from '../../../redux_toolkit/store';
-// import { languageData } from '../../../redux_toolkit/language/languageSlice';
-// import { CommonActions } from '@react-navigation/native';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
-
-// interface OtpProps extends NativeStackScreenProps<any> {}
-
-// const Otp: React.FC<OtpProps> = ({ route, navigation }) => {
-//   const { Phone, Confirmation,CountryCode } = route.params || {};
-//   const [otp, setOtp] = useState<string[]>(['', '', '', '', '', '']);
-//   const inputRef = useRef<Array<TextInput | null>>([]);
-//   const [showError, setShowError] = useState<boolean>(false);
-//   const [isLoading, setIsLoading] = useState<boolean>(false);
-//   const [error, setError] = useState<string | null>(null);
-
-//   const language = useSelector((state: RootState) => state.language.language);
-//   const styles = getStyles(language);
-
-//   useEffect(() => {
-//     setShowError(otp.some(pin => pin === ''));
-//   }, [otp]);
-
-//   useEffect(() => {
-//     const interval = setInterval(async () => {
-//       const clipboard = await Clipboard.getString();
-//       const isValid = /^\d{6}$/.test(clipboard);
-  
-//       if (isValid) {
-//         const digits = clipboard.split('');
-//         if (otp.join('') !== clipboard) {
-//           setOtp(digits);
-//           setTimeout(() => {
-//             inputRef.current[5]?.focus();
-//           }, 100);
-//           await Clipboard.setString(''); // clear it to prevent re-pasting
-//         }
-//       }
-//     }, 3000);
-  
-//     return () => clearInterval(interval);
-//   }, [otp]);
-  
-  
-
-//   const handleOtpChange = (value: string, index: number) => {
-//     const newOtp = [...otp];
-  
-//     if (value) {
-//       newOtp[index] = value;
-  
-//       // Clear the rest of the digits after current
-//       for (let i = index + 1; i < newOtp.length; i++) {
-//         newOtp[i] = '';
-//       }
-  
-//       setOtp(newOtp);
-  
-//       // Move focus to next box if available
-//       if (index < inputRef.current.length - 1) {
-//         inputRef.current[index + 1]?.focus();
-//       }
-//     } else {
-//       // If backspacing, clear current and focus previous
-//       newOtp[index] = '';
-//       setOtp(newOtp);
-  
-//       if (index > 0) {
-//         inputRef.current[index - 1]?.focus();
-//       }
-//     }
-//   };
-  
-
-//   const handleOtpKeyPress = (event: { nativeEvent: { key: string } }, index: number) => {
-//     if (event.nativeEvent.key === 'Backspace' && index > 0 && !otp[index]) {
-//       inputRef.current[index - 1]?.focus();
-//     }
-//   };
-
-  
-//   const saveUserData = async () => {
-//     try {
-  
-
-//       await AsyncStorage.setItem('hala_user', 'true');
-//       await AsyncStorage.setItem('hala_user_data', JSON.stringify({
-//         phoneNumber: Phone,
-//         countryCode: CountryCode,
-//       }));
-  
-//       console.log('✅ User data saved to Firestore & AsyncStorage');
-//     } catch (e) {
-//       console.log('❌ Error saving data:', e);
-//       setError('Error saving user data.');
-//     }
-//   };
-  
-  
-  
-//   const confirmCode = async () => {
-//     setIsLoading(true);
-//     setError(null);
-//     try {
-//       await Confirmation.confirm(otp.join(''));
-  
-//       await saveUserData();
-  
-//       // Navigate to Hala main stack
-//       navigation.dispatch(
-//         CommonActions.reset({
-//           index: 0,
-//           routes: [{ name: 'HalabStack' }],
-//         })
-//       );
-//     } catch (err: any) {
-//       console.log('❌ OTP failed:', err.message);
-//       setError('Invalid OTP. Please try again.');
-//     } finally {
-//       setIsLoading(false);
-//     }
-//   };
-  
-  
-//   return (
-//     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.Bg }}>
-//       <StatusBar hidden={false} translucent={true} animated={true} backgroundColor={Colors.White4} barStyle="dark-content" />
-//       <ScrollView contentContainerStyle={styles.MainCont}>
-//         <View>
-//           <TouchableOpacity style={styles.Header} onPress={() => navigation.goBack()}>
-//             <Image source={Back_Icon} style={styles.BackIcon} />
-//           </TouchableOpacity>
-//         </View>
-//         <Image source={Logo_W} style={styles.Logo} />
-//         <Text style={styles.digit_Txt}>{languageData[language].enter_otp}</Text>
-//         <Text style={styles.PhoneNumber}>{Phone}</Text>
-
-//         <View style={styles.inputContainer}>
-//           {otp.map((pin, index) => (
-//             <TextInput
-//               key={index}
-//               ref={ref => (inputRef.current[index] = ref)}
-//               style={[styles.Otp, { borderColor: pin ? Colors.Green : '#E0E0E0' }]}
-//               value={pin}
-//               onChangeText={value => handleOtpChange(value, index)}
-//               onKeyPress={event => handleOtpKeyPress(event, index)}
-//               maxLength={1}
-//               keyboardType="number-pad"
-//               autoFocus={index === 0}
-//               textContentType={index === 0 ? 'oneTimeCode' : 'none'} // ✅ iOS autofill only on first input
-//               autoComplete={index === 0 ? 'sms-otp' : 'off'}          // ✅ Android autofill
-//             />
-//           ))}
-//         </View>
-
-//         {error && <Text style={styles.Error}>{error}</Text>}
-
-//         <View style={{ height: 100 }} />
-//         <CustomButton title={languageData[language].verify_otp} onPress={confirmCode} />
-
-//         {isLoading && <ActivityIndicatorModal visible={isLoading} />}
-//       </ScrollView>
-//     </SafeAreaView>
-//   );
-// };
-
-// export default Otp;

@@ -51,7 +51,8 @@ export const getStyles=(language:String) => StyleSheet.create({
     lineHeight:language==='en'?20:20,
     fontFamily: language==='en'?Fonts.SF_Medium:'',
     color: Colors.Black,
-    textAlign:language==='en'?'left':'right'
+    textAlign:language==='en'?'left':'right',
+    letterSpacing:0.3
   },
   FlatlistContainer: {
     flex: 1,

@@ -10,7 +10,6 @@ import {
   Linking,
   StatusBar,
   Dimensions,
-  FlatList,
 } from 'react-native';
 import CustomHeader from '../../Component/CustomHeader/CustomHeader';
 import {useNavigation} from '@react-navigation/native';
@@ -22,64 +21,67 @@ import {Dark_Heart, Light_Heart, Location} from '../../Themes/Images';
 import Pin_Modal from '../../Component/CustomAlert/Pin_Modal';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import LinearGradient from 'react-native-linear-gradient';
-
 import {getStyles} from './style';
 import {languageData} from '../../redux_toolkit/language/languageSlice';
 import MenuUnavailableModal from '../../Component/CustomAlert/MenuAlert';
 import {Colors} from '../../Themes/Colors';
 import FastImage from 'react-native-fast-image';
 import Branches from '../../Component/BottomSheet/Branches';
+import RBSheet from 'react-native-raw-bottom-sheet';
+
 const {width} = Dimensions.get('screen');
 
 const DetailScreen: React.FC<{route: any}> = ({route}) => {
   const {item} = route.params;
+
   const dispatch = useDispatch();
-  const refRBSheet = useRef<RBSheet>();
-  const latitude = item.latitude ? item.latitude : null;
-  const longitude = item.longitude ? item.longitude : null;
-  const Address = item.address ? item.address : null;
-  const phoneNumber = item.PhoneNumber;
   const navigation = useNavigation();
+  const refRBSheet = useRef<RBSheet>(null);
 
-  const [alertVisible, setAlertVisible] = useState<boolean>(false);
+  const latitude = item?.latitude ?? null;
+  const longitude = item?.longitude ?? null;
+  const Address = item?.address ?? null;
+  const phoneNumber = item?.PhoneNumber;
+
+  const [alertVisible, setAlertVisible] = useState(false);
+
+  // ✅ discount text + value (both)
+  const [selectedDiscountText, setSelectedDiscountText] = useState<string>('');
+  const [selectedDiscountValue, setSelectedDiscountValue] = useState<number>(0);
+
   const [modalVisible, setModalVisible] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
   const [showTimings, setShowTimings] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState({});
+  const [imageLoaded, setImageLoaded] = useState<any>({});
 
-  // Redux Toolkit
   const language = useSelector((state: RootState) => state.language.language);
   const styles = getStyles(language);
+
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const isInCart = cartItems.some(cartItem => cartItem.id === item.id);
 
-  const handleToggleCart = () => {
-    dispatch(toggleItemInCart(item));
-  };
+  const handleToggleCart = () => dispatch(toggleItemInCart(item));
 
-  // Alert Modal
-  const showAlert = () => {
-    setAlertVisible(true);
-  };
   const hideAlert = () => {
     setAlertVisible(false);
+    setSelectedDiscountText('');
+    setSelectedDiscountValue(0);
   };
 
   const handleLoad = (key: string | number) => {
-    setImageLoaded(prev => ({...prev, [key]: true}));
+    setImageLoaded((prev: any) => ({...prev, [key]: true}));
   };
 
-  // Google Map and Mobile Number
   const handleOpenMaps = () => {
     const url = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
     Linking.openURL(url);
   };
+
   const Contact = () => {
     const url = `tel:${phoneNumber}`;
     Linking.openURL(url);
   };
-  // Google Map and Mobile Number
-  const daysArabic = {
+
+  const daysArabic: any = {
     monday: 'الاثنين',
     tuesday: 'الثلاثاء',
     wednesday: 'الأربعاء',
@@ -89,56 +91,46 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
     sunday: 'الأحد',
   };
 
-  const handleScroll = (event: any) => {
-    const slideIndex = Math.round(event.nativeEvent.contentOffset.x / width);
-    setCurrentIndex(slideIndex);
-  };
-
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{flex: 1}}>
       <StatusBar
         hidden={false}
-        translucent={true}
-        animated={true}
+        translucent
+        animated
         backgroundColor={Colors.White4}
         barStyle="dark-content"
       />
-  
-          <View style={styles.HeaderCont}>
-            <CustomHeader
-              title={languageData[language].Detail_Screen}
-              onBackPress={() => {
-                navigation.goBack();
-              }}
-            />
-            <TouchableOpacity
-              onPress={() => {
-                handleToggleCart();
-              }}>
-              {isInCart ? (
-                <Image source={Dark_Heart} style={styles.HeartStyle} />
-              ) : (
-                <Image source={Light_Heart} style={styles.HeartStyle} />
-              )}
-            </TouchableOpacity>
-          </View>
+
+      <View style={styles.HeaderCont}>
+        <CustomHeader
+          title={languageData[language].Detail_Screen}
+          onBackPress={() => navigation.goBack()}
+        />
+        <TouchableOpacity onPress={handleToggleCart}>
+          {isInCart ? (
+            <Image source={Dark_Heart} style={styles.HeartStyle} />
+          ) : (
+            <Image source={Light_Heart} style={styles.HeartStyle} />
+          )}
+        </TouchableOpacity>
+      </View>
+
       <ScrollView showsVerticalScrollIndicator={false}>
-  
-      <View style={styles.container}>
+        <View style={styles.container}>
           <View style={styles.Body_Cont}>
+            {/* Images */}
             {item.multiImageUrls && item.multiImageUrls.length > 0 ? (
               <ScrollView
                 horizontal
                 pagingEnabled
                 showsHorizontalScrollIndicator={false}
                 style={{marginBottom: 16}}
-                onScroll={handleScroll}
                 scrollEventThrottle={16}>
-                {item.multiImageUrls.map((url, index) => (
+                {item.multiImageUrls.map((url: string, index: number) => (
                   <View key={index} style={styles.imageContainer}>
                     <ShimmerPlaceholder
                       LinearGradient={LinearGradient}
-                      visible={!!imageLoaded[index]} // jab load ho jaye shimmer band
+                      visible={!!imageLoaded[index]}
                       style={styles.imageSlider}>
                       <FastImage
                         source={{
@@ -151,7 +143,7 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
                         style={styles.imageSlider}
                         resizeMode={FastImage.resizeMode.cover}
                         onLoadEnd={() => handleLoad(index)}
-                        onError={() => handleLoad(index)} // fail case bhi handle
+                        onError={() => handleLoad(index)}
                       />
                     </ShimmerPlaceholder>
                   </View>
@@ -165,7 +157,7 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
                 <Image
                   source={{uri: item.img}}
                   style={styles.image}
-                  resizeMode={'cover'}
+                  resizeMode="cover"
                   onLoadEnd={() => handleLoad('single')}
                   onError={() => handleLoad('single')}
                 />
@@ -177,11 +169,9 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
             </View>
 
             <View style={styles.Title_Cont}>
-              {language === 'ar' ? (
-                <Text style={styles.title}>{item.nameArabic}</Text>
-              ) : (
-                <Text style={styles.title}>{item.nameEng}</Text>
-              )}
+              <Text style={styles.title}>
+                {language === 'ar' ? item.nameArabic : item.nameEng}
+              </Text>
 
               <TouchableOpacity onPress={Contact} style={styles.call_cont}>
                 <Image
@@ -196,7 +186,7 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
 
             <View style={styles.Loc_Cont}>
               <Image source={Location} style={styles.Loc_Icon} />
-              <Text style={styles.Loc_Txt}>{Address} </Text>
+              <Text style={styles.Loc_Txt}>{Address}</Text>
             </View>
 
             {/* Working Hours */}
@@ -211,22 +201,23 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
                 onPress={() => setShowTimings(!showTimings)}
                 style={styles.timing_dropdown}>
                 <Text style={styles.working_hour_txt}>
-                  {' '}
-                  {languageData[language].Working_Hours || 'Working Hours'}{' '}
+                  {languageData[language].Working_Hours || 'Working Hours'}
                 </Text>
                 <Text style={styles.dropdown_icon}>
                   {showTimings ? '▲' : '▼'}
                 </Text>
               </TouchableOpacity>
+
               <TouchableOpacity
-                onPress={() => refRBSheet.current.open()}
+                onPress={() => refRBSheet.current?.open()}
                 style={styles.Redeem_btn}>
                 <Text style={styles.use_txt}>
                   {languageData[language].List_of_Branch}
                 </Text>
               </TouchableOpacity>
             </View>
-            <View style={{}}>
+
+            <View>
               {showTimings && item.timings && (
                 <View
                   style={{
@@ -235,7 +226,7 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
                     borderRadius: 8,
                     marginTop: 6,
                   }}>
-                  {Object.entries(item.timings).map(([day, time]) => (
+                  {Object.entries(item.timings).map(([day, time]: any) => (
                     <View key={day} style={styles.item_cont}>
                       <Text style={{fontSize: 15, color: '#333'}}>
                         {language === 'ar'
@@ -248,86 +239,86 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
                 </View>
               )}
             </View>
-            {/* working Hours */}
 
-            <View style={styles.Dis_Cont}>
-              <View style={styles.Dis_txt_cont}>
-                {language === 'ar' ? (
-                  <Text style={styles.Total_Discount}>
-                    {item.discountArabic ? item.discountArabic : 'undefined'}
-                  </Text>
-                ) : (
-                  <Text style={styles.Total_Discount}>
-                    {item.discount ? item.discount : 'undefined'}
-                  </Text>
-                )}
-              </View>
-
-              <TouchableOpacity
-                style={styles.Menu_Btn}
-                onPress={() => {
-                  const pdf = item.pdfUrl;
-                  const menu = item.menuUrl;
-
-                  if (pdf) {
-                    // PDF موجود ہے → PDFViewerScreen پر navigate کرو
-                    navigation.navigate('PDFViewerScreen', {pdfUrl: pdf});
-                  } else if (menu) {
-                    // اگر menu URL ہے → براہِ راست browser میں کھولو
-                    if (menu.startsWith('http')) {
-                      Linking.openURL(menu);
-                    } else {
-                      // اگر local file path ہے تو بھی PDFViewerScreen پر بھیج سکتے ہیں
-                      navigation.navigate('PDFViewerScreen', {pdfUrl: menu});
-                    }
-                  } else {
-                    // کوئی URL نہیں → modal کھولو
-                    setModalVisible(true);
-                  }
-                }}>
-                <Text style={styles.menu_txt}>
-                  {languageData[language].Avaliable_Offer}
-                </Text>
-              </TouchableOpacity>
+            {/* ✅ Discounts (ALWAYS English) */}
+            <View style={{width: '100%', marginBottom: 10}}>
+              {Array.isArray(item?.discounts) && item.discounts.length > 0 ? (
+                item.discounts.map((d: any, index: number) => {
+                  const englishText = `${d.value} ${d.descriptionEng}`;
+                  return (
+                    <TouchableOpacity
+                      key={index}
+                      activeOpacity={0.85}
+                      style={[
+                        styles.Dis_Cont,
+                        {width: '100%', alignSelf: 'stretch', marginBottom: 10},
+                      ]}
+                      onPress={() => {
+                        setSelectedDiscountText(englishText); // ✅ description
+                        setSelectedDiscountValue(Number(d.value) || 0); // ✅ digit
+                        setAlertVisible(true);
+                      }}>
+                      <Text style={styles.Total_Discount}>{englishText}</Text>
+                    </TouchableOpacity>
+                  );
+                })
+              ) : (
+                <View style={[styles.Dis_Cont, {width: '100%'}]}>
+                  <Text style={styles.Total_Discount}>undefined</Text>
+                </View>
+              )}
             </View>
+
+            {/* Menu Button */}
+            <TouchableOpacity
+              style={styles.Menu_Btn}
+              onPress={() => {
+                const pdf = item.pdfUrl;
+                const menu = item.menuUrl;
+
+                if (pdf) {
+                  navigation.navigate('PDFViewerScreen', {pdfUrl: pdf});
+                } else if (menu) {
+                  if (menu.startsWith('http')) {
+                    Linking.openURL(menu);
+                  } else {
+                    navigation.navigate('PDFViewerScreen', {pdfUrl: menu});
+                  }
+                } else {
+                  setModalVisible(true);
+                }
+              }}>
+              <Text style={styles.menu_txt}>
+                {languageData[language].Avaliable_Offer}
+              </Text>
+            </TouchableOpacity>
 
             <View style={styles.Desc_Cont}>
-              <Text style={styles.Desc}>
-                {languageData[language].description}
-              </Text>
+              <Text style={styles.Desc}>{languageData[language].description}</Text>
             </View>
-            {language === 'ar' ? (
-              <Text style={styles.Detail}>{item.descriptionArabic}</Text>
-            ) : (
-              <Text style={styles.Detail}>{item.descriptionEng}</Text>
-            )}
+
+            <Text style={styles.Detail}>
+              {language === 'ar' ? item.descriptionArabic : item.descriptionEng}
+            </Text>
           </View>
 
-          <CustomButton
-            title={languageData[language].Redeem}
-            onPress={() => {
-              showAlert();
-            }}
-          />
           <View style={{marginBottom: Platform.OS === 'ios' ? '5%' : '4%'}} />
+
           <CustomButton
             title={languageData[language].Open_Map}
-            onPress={() => {
-              handleOpenMaps();
-            }}
+            onPress={handleOpenMaps}
           />
         </View>
 
+        {/* ✅ PIN MODAL */}
         <Pin_Modal
           visible={alertVisible}
           correctPin={item.pin}
           brand={item.nameEng}
+          Redeempin={item.pin}
           address={item.address}
-          discount={item.discount}
-          // optional: sirf info/analytics ke liye
-          onSubmit={userPin => {
-            // console.log('Correct PIN entered:', userPin);
-          }}
+          discountText={selectedDiscountText}   // ✅ full text
+          discountValue={selectedDiscountValue} // ✅ digit
           onClose={hideAlert}
         />
 
@@ -338,13 +329,12 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
 
         <Branches
           ref={refRBSheet}
-          brandName={item.nameEng} // ← YAHAN se filter hoga (agar Arabic se aata hai to nameArabic bhej dein)
-          excludeId={item.id} // ← current branch ko list se hata do
-          // onSelect={(branch) => console.log('Selected branch:', branch)}
+          brandName={item.nameEng}
+          excludeId={item.id}
         />
-            <View style={{height:100}} />
+
+        <View style={{height: 100}} />
       </ScrollView>
-  
     </SafeAreaView>
   );
 };

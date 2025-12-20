@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -9,120 +9,137 @@ import {
   SafeAreaView,
   StatusBar,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { Search } from '../../Themes/Images';
+import {useNavigation} from '@react-navigation/native';
+import {Search} from '../../Themes/Images';
 import CustomHeader from '../../Component/CustomHeader/CustomHeader';
-import { firestore } from '../../firebase/firebaseconfig';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../redux_toolkit/store';
-import { getStyles } from './style';
-import { languageData } from '../../redux_toolkit/language/languageSlice';
-import { Colors } from '../../Themes/Colors';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../redux_toolkit/store';
+import {getStyles} from './style';
+import {languageData} from '../../redux_toolkit/language/languageSlice';
+import {Colors} from '../../Themes/Colors';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import LinearGradient from 'react-native-linear-gradient';
-
+import DetectCountry from '../../Component/distanceCalculate/DetectCountry';
 import FastImage from 'react-native-fast-image';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const SelectedVenues: React.FC<{ route: any }> = ({ route }) => {
+const BRANDS_API = 'https://hala-b-saudi.onrender.com/api/hbs/brands';
+
+const SelectedVenues: React.FC<{route: any}> = ({route}) => {
   const navigation = useNavigation<any>();
-  const { item } = route.params;
+  const {item} = route.params; // item.venueName / item.venueNameAr / item.country etc
+
   const [searchQuery, setSearchQuery] = useState('');
-    const [country, setCountry] = useState<string | null>(null);
+  const [country, setCountry] = useState<string | null>(null);
+
   const [filteredItems, setFilteredItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [imageLoaded, setImageLoaded] = useState<{ [key: string]: boolean }>({});
+  const [imageLoaded, setImageLoaded] = useState<{[key: string]: boolean}>({});
 
-  const countryName = useSelector((s: RootState) => s.country?.countryName ?? null);
   const language = useSelector((state: RootState) => state.language.language);
   const styles = getStyles(language);
 
-  // useEffect(() => {
-  //   const fetchOffers = async () => {
-  //     try {
-  //       setLoading(true);
-  //       const cachedBrands = await AsyncStorage.getItem('H-brands_cache');
-  //       const snapshot = await firestore().collection('H-Brands').get();
-  //       const BrandsData = snapshot.docs.map(doc => ({
-  //         id: doc.id,
-  //         ...doc.data(),
-  //       }));
-  //       const matchedItems = BrandsData.filter(
-  //         data => data.selectedVenue?.toLowerCase() === item.venueName?.toLowerCase(),
-  //       );
-  //       setFilteredItems(matchedItems);
-  //     } catch (error) {
-  //       console.error('❌ Error fetching offers:', error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
+  // ✅ normalize helper (trim + lowercase + collapse spaces + normalize &)
+  const norm = (v: any) =>
+    String(v ?? '')
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, ' ')
+      .replace(/＆/g, '&');
 
-  //   fetchOffers();
-  // }, [item.text]);
+  const handleImageLoad = (id: string) => {
+    setImageLoaded(prev => ({...prev, [id]: true}));
+  };
 
   useEffect(() => {
-    const loadBrands = async () => {
+    const fetchOffers = async () => {
+      setLoading(true);
       try {
-        setLoading(true);
-  
-        // 1️⃣ Pehle cache se dikhao
-        const cachedBrands = await AsyncStorage.getItem('H-brands_cache');
-        if (cachedBrands) {
-          const parsed = JSON.parse(cachedBrands);
-          const matched = parsed.filter(
-            data => data.selectedVenue?.toLowerCase() === item.venueName?.toLowerCase(),
-          );
-          setFilteredItems(matched);
+        const venueName = item?.venueName; // English venue name
+        const venueNameNorm = norm(venueName);
+
+        // 1) ✅ cache first (instant)
+        const cached = await AsyncStorage.getItem('H-brands_cache');
+        if (cached) {
+          const cachedArr = JSON.parse(cached);
+          const arr = Array.isArray(cachedArr) ? cachedArr : [];
+
+          const matchedCached = arr
+            .map((b: any) => ({id: b._id || b.id, ...b}))
+            .filter((b: any) => norm(b?.status) === 'active') // ✅ Active only
+            .filter((b: any) => norm(b?.selectedVenue) === venueNameNorm);
+
+          setFilteredItems(matchedCached);
+          setLoading(false);
         }
-  
-        // 2️⃣ Ab fresh data Firebase se lao
-        const snapshot = await firestore().collection('H-Brands').where('status', '==', 'Active').get();
-        const freshBrands = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
+
+        // 2) ✅ fresh API
+        const res = await fetch(BRANDS_API);
+        const json = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+          console.warn('Brands API failed:', json);
+          setLoading(false);
+          return;
+        }
+
+        const raw = json && (json as any).data ? (json as any).data : json;
+        const arr = Array.isArray(raw) ? raw : [];
+
+        const normalizedFresh = arr.map((b: any) => ({
+          id: b._id || b.id,
+          ...b,
         }));
-  
-        // cache update karo
-        await AsyncStorage.setItem('H-brands_cache', JSON.stringify(freshBrands));
-  
-        // filter aur set state
-        const matchedFresh = freshBrands.filter(
-          data => data.selectedVenue?.toLowerCase() === item.venueName?.toLowerCase(),
-        );
+
+        // ✅ store fresh full cache (optional)
+        await AsyncStorage.setItem('H-brands_cache', JSON.stringify(normalizedFresh));
+
+        const matchedFresh = normalizedFresh
+          .filter((b: any) => norm(b?.status) === 'active') // ✅ Active only
+          .filter((b: any) => norm(b?.selectedVenue) === venueNameNorm);
+
         setFilteredItems(matchedFresh);
       } catch (error) {
-        console.error('❌ Error loading brands:', error);
+        console.error('❌ Error fetching offers:', error);
         setFilteredItems([]);
       } finally {
         setLoading(false);
       }
     };
-  
-    loadBrands();
-  }, [item.text]);
-  
-  const handleImageLoad = (id: string) => {
-    setImageLoaded((prev) => ({
-      ...prev,
-      [id]: true,
-    }));
-  };
 
-  const searchFiltered = filteredItems.filter(entry =>
-    entry.nameEng?.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+    fetchOffers();
+  }, [item?.venueName]); // ✅ correct dependency
+
+  // ✅ search inside matched venue items
+  const searchFiltered = filteredItems.filter(entry => {
+    const q = norm(searchQuery);
+    if (!q) return true;
+    const en = norm(entry?.nameEng);
+    const ar = norm(entry?.nameArabic);
+    return en.includes(q) || ar.includes(q);
+  });
+
+  // ✅ apply country filter (DetectedCountry), fallback: show all
+  const finalData = searchFiltered.filter(b => {
+    if (country) return norm(b?.selectedCountry) === norm(country);
+    return true;
+  });
 
   return (
     <View style={styles.container}>
-               <StatusBar hidden={false} translucent={true} animated={true} backgroundColor={Colors.White4} barStyle='dark-content' />
-      <SafeAreaView style={{ flex: 1 }}>
-        <CustomHeader
-          title={item.venueName}
-          onBackPress={() => navigation.goBack()}
-        />
+      <StatusBar
+        hidden={false}
+        translucent
+        animated
+        backgroundColor={Colors.White4}
+        barStyle="dark-content"
+      />
 
-        <View style={{ marginTop: '7%' }} />
+      <SafeAreaView style={{flex: 1}}>
+        <CustomHeader title={item?.venueName} onBackPress={() => navigation.goBack()} />
+
+        <View style={{marginTop: '7%'}} />
+
         <View style={styles.searchContainer}>
           <Image source={Search} style={styles.searchIcon} />
           <TextInput
@@ -135,15 +152,15 @@ const SelectedVenues: React.FC<{ route: any }> = ({ route }) => {
         </View>
 
         <View style={styles.FlatlistContainer}>
-          {searchFiltered.length > 0 && (
+          {finalData.length > 0 && !loading ? (
             <Text style={styles.FoundItem_Txt}>{languageData[language].Found_Items}</Text>
-          )}
+          ) : null}
 
           {loading ? (
             <FlatList
               data={[1, 2, 3, 4, 5, 6]}
-              keyExtractor={(item, index) => index.toString()}
-              contentContainerStyle={{ paddingBottom: 20 }}
+              keyExtractor={(_, index) => index.toString()}
+              contentContainerStyle={{paddingBottom: 20}}
               renderItem={() => (
                 <View style={styles.itemContainer}>
                   <ShimmerPlaceholder visible={false} LinearGradient={LinearGradient} style={styles.itemImage} />
@@ -151,23 +168,23 @@ const SelectedVenues: React.FC<{ route: any }> = ({ route }) => {
                     <ShimmerPlaceholder
                       visible={false}
                       LinearGradient={LinearGradient}
-                      style={{ width: '70%', height: 16, borderRadius: 5, marginBottom: 6 }}
+                      style={{width: '70%', height: 16, borderRadius: 5, marginBottom: 6}}
                     />
                     <ShimmerPlaceholder
                       visible={false}
                       LinearGradient={LinearGradient}
-                      style={{ width: '90%', height: 14, borderRadius: 5, marginBottom: 4 }}
+                      style={{width: '90%', height: 14, borderRadius: 5, marginBottom: 4}}
                     />
                     <ShimmerPlaceholder
                       visible={false}
                       LinearGradient={LinearGradient}
-                      style={{ width: '40%', height: 12, borderRadius: 5 }}
+                      style={{width: '40%', height: 12, borderRadius: 5}}
                     />
                   </View>
                 </View>
               )}
             />
-          ) : searchFiltered.length === 0 ? (
+          ) : finalData.length === 0 ? (
             <View style={styles.emptyStateContainer}>
               <Image
                 source={require('../../assets/Images/no_data.png')}
@@ -177,60 +194,59 @@ const SelectedVenues: React.FC<{ route: any }> = ({ route }) => {
             </View>
           ) : (
             <FlatList
-            data={
-              searchFiltered.filter(item => {
-                if (countryName) {
-                  return item.selectedCountry?.toLowerCase() === countryName.toLowerCase();
-                }
-                return true; // agar country detect na ho to sab items dikhao
-              })
-            }
-              keyExtractor={item => item.id}
-              contentContainerStyle={{ flexGrow: 1, paddingBottom: 20 }}
+              data={finalData}
+              keyExtractor={it => String(it.id)}
+              contentContainerStyle={{flexGrow: 1, paddingBottom: 20}}
               showsVerticalScrollIndicator={false}
-              renderItem={({ item,index }) => (
+              renderItem={({item: rowItem, index}) => (
                 <TouchableOpacity
                   style={styles.itemContainer}
-                  onPress={() => navigation.navigate('DetailScreen', { item })}
-                >
+                  onPress={() => navigation.navigate('DetailScreen', {item: rowItem})}>
                   <ShimmerPlaceholder
-                    visible={imageLoaded[item.id] || false}
+                    visible={imageLoaded[String(rowItem.id)] || false}
                     LinearGradient={LinearGradient}
-                    style={styles.itemImage}
-                  >
-                     <FastImage source={{ uri: item.img, priority: index <=6 ? FastImage.priority.high : index <= 10 ? FastImage.priority.normal : FastImage.priority.low }}
-                       style={styles.itemImage}   onLoad={() => handleImageLoad(item.id)}    />
-                 
+                    style={styles.itemImage}>
+                    <FastImage
+                      source={{
+                        uri: rowItem.img,
+                        priority:
+                          index <= 6
+                            ? FastImage.priority.high
+                            : index <= 10
+                            ? FastImage.priority.normal
+                            : FastImage.priority.low,
+                      }}
+                      style={styles.itemImage}
+                      onLoadEnd={() => handleImageLoad(String(rowItem.id))}
+                      resizeMode={FastImage.resizeMode.cover}
+                    />
                   </ShimmerPlaceholder>
 
-                
-                    <View style={styles.itemInfo}>
-                      <Text style={styles.itemTitle}>
-                        {language === 'en' ? item.nameEng : item.nameArabic}
-                      </Text>
+                  <View style={styles.itemInfo}>
+                    <Text style={styles.itemTitle}>
+                      {language === 'en' ? rowItem.nameEng : rowItem.nameArabic}
+                    </Text>
 
-                      <Text style={styles.itemLocation}>
-                        {language === 'en'
-                          ? item.descriptionEng?.length > 70
-                            ? item.descriptionEng.substring(0, 70) + '...'
-                            : item.descriptionEng
-                          : item.descriptionArabic?.length > 70
-                          ? item.descriptionArabic.substring(0, 70) + '...'
-                          : item.descriptionArabic}
-                      </Text>
-                  
-                      <Text style={styles.itemCity}>
-                        {item.selectedCity}
-                      </Text>
-            
-                    </View>
-                  
+                    <Text style={styles.itemLocation}>
+                      {language === 'en'
+                        ? rowItem.descriptionEng?.length > 70
+                          ? rowItem.descriptionEng.substring(0, 70) + '...'
+                          : rowItem.descriptionEng
+                        : rowItem.descriptionArabic?.length > 70
+                        ? rowItem.descriptionArabic.substring(0, 70) + '...'
+                        : rowItem.descriptionArabic}
+                    </Text>
+
+                    <Text style={styles.itemCity}>{rowItem.selectedCity}</Text>
+                  </View>
                 </TouchableOpacity>
               )}
             />
           )}
         </View>
       </SafeAreaView>
+
+      <DetectCountry onCountryDetect={value => setCountry(value)} />
     </View>
   );
 };

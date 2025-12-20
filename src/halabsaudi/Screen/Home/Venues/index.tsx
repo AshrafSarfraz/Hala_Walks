@@ -3,7 +3,6 @@ import {
   View,
   Text,
   FlatList,
-  Image,
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
@@ -12,16 +11,13 @@ import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import LinearGradient from 'react-native-linear-gradient';
 
 import { styles } from './style';
-import { fetchVenuFromFirebase } from '../../../firebase/firebaseutils';
+// ❌ remove firebase
+// import { fetchVenuFromFirebase } from '../../../firebase/firebaseutils';
 import FastImage from 'react-native-fast-image';
 import { RootState } from '../../../redux_toolkit/store';
 import { useSelector } from 'react-redux';
 import { languageData } from '../../../redux_toolkit/language/languageSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-type VenuesProps = {
-  navigation: any;
-};
 
 const Venues: React.FC = () => {
   const navigation = useNavigation();
@@ -36,13 +32,32 @@ const Venues: React.FC = () => {
   useEffect(() => {
     const loadOffers = async () => {
       try {
+        // 1) cache first
         const cachedData = await AsyncStorage.getItem('H-venus_cache');
         if (cachedData) {
           setVenues(JSON.parse(cachedData));
           setLoading(false);
         }
 
-        const freshOffers = await fetchVenuFromFirebase();
+        // 2) fresh from API
+        const res = await fetch('https://hala-b-saudi.onrender.com/api/hbs/venues');
+        const json = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+          console.warn('Venues API failed:', json);
+          return;
+        }
+
+        // normalize: {success, data} OR direct array
+        const raw = json && json.data ? json.data : json;
+        const arr = Array.isArray(raw) ? raw : [];
+
+        // normalize id for FlatList
+        const freshOffers = arr.map((item: any) => ({
+          id: item._id || item.id,
+          ...item,
+        }));
+
         if (freshOffers.length > 0) {
           setVenues(freshOffers);
           await AsyncStorage.setItem('H-venus_cache', JSON.stringify(freshOffers));
@@ -64,6 +79,7 @@ const Venues: React.FC = () => {
   const filteredVenues = React.useMemo(() => {
     return venues.filter(item => {
       if (countryName) {
+        // your venue schema uses "country"
         return item.country?.toLowerCase() === countryName.toLowerCase();
       }
       return true;
@@ -80,11 +96,7 @@ const Venues: React.FC = () => {
         style={styles.Flatlist_Cont}
         onPress={() => navigation.navigate('SelectedVenue', { item })}
       >
-        <ShimmerPlaceholder
-          visible={isLoaded}
-          LinearGradient={LinearGradient}
-          style={styles.image}
-        >
+        <ShimmerPlaceholder visible={isLoaded} LinearGradient={LinearGradient} style={styles.image}>
           <FastImage
             source={{
               uri: item.img,
@@ -97,7 +109,7 @@ const Venues: React.FC = () => {
             }}
             style={styles.image}
             resizeMode={FastImage.resizeMode.cover}
-            onLoad={() => handleImageLoad(item.id)}
+            onLoad={() => handleImageLoad(String(item.id))}
           />
         </ShimmerPlaceholder>
 
@@ -126,17 +138,14 @@ const Venues: React.FC = () => {
     <View style={styles.container}>
       <FlatList
         data={visibleItems}
-        keyExtractor={item => item.id}
+        keyExtractor={item => String(item.id)}
         numColumns={4}
         renderItem={renderVenueItem}
         showsVerticalScrollIndicator={false}
       />
 
       {filteredVenues.length > 8 && (
-        <TouchableOpacity
-          style={styles.showMoreButton}
-          onPress={() => setShowAll(!showAll)}
-        >
+        <TouchableOpacity style={styles.showMoreButton} onPress={() => setShowAll(!showAll)}>
           <Text style={styles.showMoreText}>
             {showAll ? languageData[language].Hide : languageData[language].Show_More}
           </Text>
@@ -145,6 +154,5 @@ const Venues: React.FC = () => {
     </View>
   );
 };
-
 
 export default Venues;

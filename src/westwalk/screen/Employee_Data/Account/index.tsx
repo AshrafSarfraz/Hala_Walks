@@ -83,7 +83,7 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
             onPress={() => navigation.navigate('StaffHistroyScreen')}
           />
           <CustomButton2
-            title={'Contact Us'}
+            title={'Self HR Service'}
             image={Contact_us}
             onPress={() => navigation.navigate('HrSystem')}
           />

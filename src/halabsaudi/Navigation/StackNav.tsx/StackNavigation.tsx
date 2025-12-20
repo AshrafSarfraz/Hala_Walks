@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import Splash_Screen from '../../Screen/Authentication/Splash/SplashScreen';
 import OnBoarding from '../../Screen/OnBoarding';
 import Home from '../../Screen/Home';
@@ -12,23 +13,14 @@ import DetailScreen from '../../Screen/detail_Screen';
 import Reedem_His from '../../Screen/Reedem_Histroy';
 import SelectedCategories from '../../Screen/selected_categories';
 import SelectedVenues from '../../Screen/selected_venues';
-import auth from '@react-native-firebase/auth';
 import AccountScreen from '../../Screen/AccountScreen';
 import PDFViewerScreen from '../../Screen/pdfViewer';
 import HalaInfoScreen from '../../Screen/Merchant_Screen/Hala_Info';
 import BrandFormScreen from '../../Screen/Merchant_Screen/PartnerForm';
 import WelcomeScreen from '../../Screen/Authentication/Splash/welcome_screen';
 import SignuP from '../../Screen/Authentication/SignUp/signUp';
-import StackNavigation from '../../../westwalk/navigation/stackNavigation';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import HrSystem from '../../../westwalk/screen/Employee_Data/Leave Apply';
 
-
-
-
-type SplashScreenProps = {
-  navigation?: any;
-}
+import StackNavigation from '../../../westwalk/navigation/stackNavigation'; // agar Westwalk ka stack chahiye
 
 const Stack = createNativeStackNavigator();
 
@@ -37,40 +29,31 @@ const HalaStack: React.FC = () => {
 
   useEffect(() => {
     const checkInitialRoute = async () => {
-      const halaData = await AsyncStorage.getItem('hala_user'); // Hala ke liye alag key
-      const unsubscribe = auth().onAuthStateChanged(user => {
-        if (user && halaData) {
-          setInitialRoute('BottomTab'); // Hala user logged in
+      try {
+        // AsyncStorage se login status check
+        const halaData = await AsyncStorage.getItem('hala_user');
+        const token = await AsyncStorage.getItem('hala_token');
+
+        if (halaData === 'true' && token) {
+          // user pehle se login hai → direct BottomTab
+          setInitialRoute('BottomTab');
         } else {
-          setInitialRoute('Splash'); // Hala user nahi hai
+          // koi login nahi → Splash / onboarding etc
+          setInitialRoute('Splash');
         }
-      });
-  
-      return unsubscribe;
+      } catch (e) {
+        console.log('Error reading login state', e);
+        setInitialRoute('Splash');
+      }
     };
-  
+
     checkInitialRoute();
   }, []);
-  
 
-  // useEffect(() => {
-  //   const unsubscribe = auth().onAuthStateChanged(user => {
-  //     console.log("USER:", user); // Debug: check user
-  //     if (user) {
-  //       setInitialRoute('BottomTab'); // User is logged in
-  //     } else {
-  //       setInitialRoute('Splash'); // User not logged in
-  //     }
-  //   });
-
-  //   return unsubscribe; // Cleanup
-  // }, []);
-
+  // jab tak initialRoute decide nahi hua, Splash dikha do
   if (!initialRoute) {
-    // Auth status still checking – show splash or loader
-    return <Splash_Screen  />;
+    return <Splash_Screen />;
   }
-
   return (
       <Stack.Navigator initialRouteName={initialRoute} screenOptions={{ headerShown: false }}>
         <Stack.Screen name='Splash' component={Splash_Screen} />

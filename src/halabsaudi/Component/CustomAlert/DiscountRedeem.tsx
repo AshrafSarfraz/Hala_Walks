@@ -20,6 +20,8 @@ type RedeemData = {
   date: string;
   Username: string;
   phoneNumber: string;
+  brandId:string;
+  Redeempin:string
 };
 
 type Props = {
@@ -49,6 +51,9 @@ const Discount_Redeem: React.FC<Props> = ({ visible, data, onClose }) => {
           <Text style={styles.header_Text}>{data.brand}</Text>
           <Text style={styles.code_Text}>{data.code}</Text>
           <Text style={styles.dis_Text}>{data.percentage}</Text>
+         
+         
+
 
           <Text style={styles.desc_Text}>
             This is a single-use code for your use only. Get a new code each time you open the app.

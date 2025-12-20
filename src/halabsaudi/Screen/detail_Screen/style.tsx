@@ -82,7 +82,7 @@ export const getStyles = (language: string) =>
     },
 
     Dis_Cont: {
-      marginVertical: '3%',
+      marginVertical: '1%',
       backgroundColor: Colors.White,
       paddingVertical: '4%',
       paddingHorizontal:'3%',

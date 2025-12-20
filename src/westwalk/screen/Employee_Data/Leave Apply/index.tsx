@@ -36,7 +36,8 @@
 //     );
 //   }
 
-//   const target = `http://localhost:5173/?userId=${encodeURIComponent(userId)}`;
+//   // const target = `http://localhost:5173/?userId=${encodeURIComponent(userId)}`;
+//   const target = `https://al-wessilholding.com/app-redirect/?userId=${encodeURIComponent(userId)}`;
 
 //   return (
 //     <SafeAreaView edges={['top']} style={{ flex: 1,backgroundColor:"#31368A" }}>
@@ -48,6 +49,8 @@
 // const styles = StyleSheet.create({
 //   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
 // });
+
+
 
 import React, { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, StyleSheet, BackHandler, Platform } from 'react-native';
@@ -98,8 +101,9 @@ export default function SimpleQueryWebView() {
     );
   }
 
-  // Pass inApp=1 so the web shows a back button and knows it's embedded
-  const target = `http://localhost:5173/?userId=${encodeURIComponent(userId)}&inApp=1`;
+  // const target = `http://localhost:5173/app-redirect/?userId=${encodeURIComponent(userId)}&inApp=1`;
+   const target = `https://al-wessilholding.com/app-redirect/?userId=${encodeURIComponent(userId)}&inApp=1`;
+
 
   return (
     <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: '#31368A' }}>
@@ -112,19 +116,19 @@ export default function SimpleQueryWebView() {
           canGoBackRef.current = !!nav.canGoBack;
         }}
         // Intercept tel:/mailto:/whatsapp:/sms: if needed
-        onShouldStartLoadWithRequest={(req) => {
-          const url = req.url || '';
-          if (
-            url.startsWith('tel:') ||
-            url.startsWith('mailto:') ||
-            url.startsWith('whatsapp:') ||
-            url.startsWith('sms:')
-          ) {
-            // Linking.openURL(url).catch(() => {}); // enable if you want
-            return false;
-          }
-          return true;
-        }}
+        // onShouldStartLoadWithRequest={(req) => {
+        //   const url = req.url || '';
+        //   if (
+        //     url.startsWith('tel:') ||
+        //     url.startsWith('mailto:') ||
+        //     url.startsWith('whatsapp:') ||
+        //     url.startsWith('sms:')
+        //   ) {
+        //     // Linking.openURL(url).catch(() => {}); // enable if you want
+        //     return false;
+        //   }
+        //   return true;
+        // }}
         // Listen for "close" from the web and pop this screen
         onMessage={(e) => {
           try {
