@@ -25,14 +25,17 @@ const BASE_URL = 'https://hala-b-saudi.onrender.com/api/hbs/redeem';
 type Props = {
   visible: boolean;
   onClose: () => void;
+
   correctPin: string;
+
   brand: string;
+  brandId: string; // ✅ MUST SEND (your brand _id)
+
   Redeempin: string;
   address: string;
 
-  // ✅ NEW
-  discountText: string;   // "37 % Discount"
-  discountValue: number;  // 37
+  discountText: string; // e.g. "15% Discount on Final Bill"
+  discountValue: number; // e.g. 15
 };
 
 const Pin_Modal: React.FC<Props> = ({
@@ -40,6 +43,7 @@ const Pin_Modal: React.FC<Props> = ({
   onClose,
   correctPin,
   brand,
+  brandId,
   address,
   Redeempin,
   discountText,
@@ -54,7 +58,6 @@ const Pin_Modal: React.FC<Props> = ({
   const [message, setMessage] = useState('');
   const [incorrectPinModal, setIncorrectPinModal] = useState(false);
   const [successVisible, setSuccessVisible] = useState(false);
-
   const [redeemedItem, setRedeemedItem] = useState<any>(null);
 
   const language = useSelector((state: RootState) => state.language.language);
@@ -89,24 +92,38 @@ const Pin_Modal: React.FC<Props> = ({
     const halaData = halaRaw ? JSON.parse(halaRaw) : {};
 
     const phoneNumber = halaData.phoneNumber || backendUser.phone || 'N/A';
-    const uid = backendUser?.uid || backendUser?.id || 'N/A';
 
+    // ✅ Backend requires userId (not uid)
+    const userId =
+      backendUser?._id || backendUser?.id || backendUser?.uid || null;
+
+    if (!userId) throw new Error('Missing userId');
+    if (!brandId) throw new Error('Missing brandId');
+
+    // ✅ date for rule (one per brand per day)
     const today = new Date().toISOString().split('T')[0];
 
     const payload = {
+      // your fields
       Username: backendUser?.name || 'N/A',
       address,
       brand,
       code: discountCode,
-      countryCode: 'N/A',
-      date: today,
       phoneNumber,
-      uid,
+
+      // ✅ REQUIRED fields
+      userId,
+      brandId,
+      date: today,
+
       createdAt: `${Date.now()}`,
 
-      // ✅ BOTH SAVED
+      // discount fields (backend has percentage, so keep it)
       percentage: `-${discountValue}%`,
-      discountText: discountText,
+      discountText,
+
+      // optional
+      Redeempin,
     };
 
     const res = await fetch(BASE_URL, {
@@ -118,10 +135,14 @@ const Pin_Modal: React.FC<Props> = ({
     const data = await res.json().catch(() => null);
 
     if (!res.ok) {
+      // 409 "already redeemed today" etc.
       throw new Error(data?.message || 'Redeem failed');
     }
 
-    setRedeemedItem(data?.data || payload);
+    // Backend might return {success:true, data:saved} OR saved directly
+    const savedItem = data?.data || data || payload;
+
+    setRedeemedItem(savedItem);
     setSuccessVisible(true);
   };
 
@@ -170,7 +191,6 @@ const Pin_Modal: React.FC<Props> = ({
               {languageData[language].Enter_Pin}
             </Text>
 
-            {/* ✅ FULL TEXT SHOW */}
             <Text style={{marginBottom: 10}}>{discountText}</Text>
 
             <TextInput

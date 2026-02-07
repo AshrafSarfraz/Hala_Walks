@@ -26,17 +26,27 @@ const ImageSlider: React.FC<{ navigation: any }> = () => {
   useEffect(() => {
     const loadOffers = async () => {
       try {
-        // Show cached data immediately
         const cachedData = await AsyncStorage.getItem('offers');
+  
+        let cachedOffers: any[] = [];
+  
         if (cachedData) {
-          setOffers(JSON.parse(cachedData));
-          setLoading(false);
+          cachedOffers = JSON.parse(cachedData);
+          setOffers(cachedOffers);
+          setLoading(false); // 👈 instant show
         }
   
-        // Then fetch in background
+        // background fetch
         const freshOffers = await fetchFlatOfferFromFirebase();
-        setOffers(freshOffers);
-        await AsyncStorage.setItem('offers', JSON.stringify(freshOffers));
+  
+        // 🔥 update ONLY if data changed
+        if (JSON.stringify(freshOffers) !== JSON.stringify(cachedOffers)) {
+          setOffers(freshOffers);
+          setImageLoaded({}); // 👈 reset shimmer map
+          await AsyncStorage.setItem('offers', JSON.stringify(freshOffers));
+        }
+  
+        setLoading(false);
       } catch (error) {
         console.error('Error loading offers:', error);
         setLoading(false);

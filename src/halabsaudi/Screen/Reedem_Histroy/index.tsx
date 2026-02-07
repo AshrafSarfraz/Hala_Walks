@@ -146,6 +146,7 @@ const Redeem_His: React.FC = () => {
             data={history}
             keyExtractor={(it) => String(it.id)}
             renderItem={renderItem}
+            showsVerticalScrollIndicator={false}
             contentContainerStyle={{ paddingBottom: 20, paddingTop: 10 }}
           />
         )}

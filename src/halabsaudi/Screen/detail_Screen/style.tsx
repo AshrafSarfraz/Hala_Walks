@@ -1,13 +1,210 @@
+// import {Dimensions, Platform, StyleSheet} from 'react-native';
+// import {Colors} from '../../Themes/Colors';
+// import {Fonts} from '../../Themes/Fonts';
+// const { width } = Dimensions.get('window');
+
+// export const getStyles = (language: string) =>
+//   StyleSheet.create({
+//  
+//     HeaderCont: {
+//       paddingTop: Platform.OS === 'ios' ? '2%' : '10%',
+//       marginBottom:10,
+//       paddingHorizontal: '4%',
+//       flexDirection: language === 'en' ? 'row' : 'row-reverse',
+//       justifyContent: 'space-between',
+//       alignItems: 'center',
+//       width: '100%',
+//     },
+//     HeartStyle: {
+//       width: 40,
+//       height: 40,
+//       resizeMode: 'contain',
+//       tintColor: Colors.Green,
+//     },
+//     Body_Cont: {
+//       justifyContent: 'center',
+//       marginVertical: '2.5%',
+//     },
+//     image: {
+//       width: '100%',
+//       height: 250,
+//       borderRadius: 10,
+//       marginBottom: Platform.OS === 'ios' ? 20 : 16,
+//       resizeMode:"contain"
+//     },
+//     Type_Cont: {
+//       backgroundColor: '#D0A700',
+//       alignItems: 'center',
+//       alignSelf: language === 'en' ? 'flex-start' : 'flex-end',
+//       padding: '2%',
+//       marginBottom: '3%',
+//       borderRadius: 5,
+//     },
+//     Type_Text: {
+//       fontSize: 14,
+//       lineHeight: 18,
+//       color: Colors.White,
+//       fontFamily: Fonts.SF_Medium,
+//     },
+
+//     Title_Cont: {
+//       flexDirection: language === 'en' ? 'row' : 'row-reverse',
+//       alignItems: 'center',
+//       width: '100%',
+//       justifyContent: 'space-between',
+//     },
+//     title: {
+//       width: '80%',
+//       fontSize: 16,
+//       lineHeight: language === 'en' ? 22 : 28,
+//       color: Colors.Black,
+//       letterSpacing: 0.5,
+//       fontFamily: language === 'en' ? Fonts.SF_Bold : '',
+//       textAlign: language === 'en' ? 'left':"right",
+//     },
+//     call_cont: {
+//       flexDirection: 'row',
+//       alignItems: 'center',
+//     },
+//     Phone_Icon: {
+//       width: 22,
+//       height: 22,
+//       resizeMode: 'contain',
+//     },
+
+//     call_txt: {
+//       fontSize: 12,
+//       lineHeight: 15,
+//       color: Colors.Black,
+//       fontFamily: Fonts.SF_Bold,
+//     },
+
+//     Dis_Cont: {
+//       marginVertical: '1%',
+//       backgroundColor: Colors.White,
+//       paddingVertical: '4%',
+//       paddingHorizontal:'3%',
+//       borderRadius: 10,
+//       flexDirection: language === 'en' ? 'row' : 'row-reverse',
+//       justifyContent: 'space-between',
+//       alignItems: 'center',
+//     },
+//     Dis_txt_cont: {
+//       flexDirection: 'row',
+//     },
+//     Total_Discount: {
+//       fontSize: 14,
+//       color: Colors.Green,
+//       fontFamily: Fonts.SF_Bold,
+//       lineHeight: 24,
+//       textAlign:language==='en'?'left':"right",
+//     },
+//     Menu_Btn: {
+//       backgroundColor: Colors.Green,
+//       padding: 8,
+//       borderRadius: 6,
+//     },
+//     menu_txt: {
+//       color: Colors.White,
+//       fontSize: 10,
+//       lineHeight: 16,
+//       fontFamily: Fonts.SF_Bold,
+//     },
+
+    
+//     Desc_Cont: {
+//       flexDirection: language === 'en' ? 'row' : 'row-reverse',
+//     },
+//     Desc: {
+//       fontSize: 18,
+//       lineHeight: language === 'en' ? 26 : 32,
+//       letterSpacing: 0.6,
+//       color: Colors.Black,
+//       fontWeight: '500',
+//       fontFamily: language === 'en' ? Fonts.SF_Bold : '',
+//       marginTop: '2%',
+//       marginBottom: language === 'en' ? '2%' : '0.5%',
+//     },
+
+//     Detail: {
+//       fontSize: 14,
+//       lineHeight: language === 'en' ? 17 : 26,
+//       color: Colors.Black,
+//       fontFamily: language === 'en' ? Fonts.SF_Regular : '',
+//       fontWeight: '400',
+//       marginBottom: '3%',
+//       textAlign: language === 'en' ? 'left' : 'right',
+//     },
+//     Loc_Cont: {
+//       flexDirection: language==='en'?'row':'row-reverse',
+//       alignItems: 'center',
+//       marginTop: '2%',
+//     },
+//     Loc_Icon: {
+//       width: 16,
+//       height: 16,
+//       resizeMode: 'contain',
+//       marginRight: '1%',
+//     },
+
+//     Loc_Txt: {
+//       fontSize: 10,
+//       lineHeight:16
+//     },
+//     Redeem_btn:{
+//     },
+//     use_txt:{
+//      color:Colors.Green,
+//      fontSize:12,
+//      fontFamily:Fonts.SF_Medium,
+
+//     },
+//     timing_dropdown: {
+//       flexDirection: language==='en'?'row':'row-reverse',
+//       alignItems: 'center',
+//     },
+//     working_hour_txt: {
+//       fontSize: 14,
+//       color: Colors.Green,
+//       fontFamily: Fonts.SF_Bold,
+//       letterSpacing: 0.6,
+//       paddingVertical: 2,
+//       lineHeight: 22,
+//     },
+//     dropdown_icon: {
+//       fontSize: 14,
+//       color: Colors.Green,
+//     },
+//     item_cont: {
+//       flexDirection: language==='en'?"row":"row-reverse",
+//       justifyContent: 'space-between',
+//       paddingVertical: 6,
+//       borderBottomWidth: 0.5,
+//       borderColor: '#eee',
+//     },
+    
+//     imageSlider: {
+//       width: width-40,
+//       height: 250,
+//       borderRadius: 10,
+//       marginRight:10,
+//       resizeMode:"contain"
+   
+//     },
+//   });
 import {Dimensions, Platform, StyleSheet} from 'react-native';
 import {Colors} from '../../Themes/Colors';
 import {Fonts} from '../../Themes/Fonts';
-const { width } = Dimensions.get('window');
+
+const {width} = Dimensions.get('window');
 
 export const getStyles = (language: string) =>
   StyleSheet.create({
     container: {
       paddingHorizontal: '4%',
+      paddingBottom: 10,
     },
+
     HeaderCont: {
       paddingTop: Platform.OS === 'ios' ? '2%' : '10%',
       marginBottom:10,
@@ -17,33 +214,62 @@ export const getStyles = (language: string) =>
       alignItems: 'center',
       width: '100%',
     },
+
     HeartStyle: {
-      width: 40,
-      height: 40,
+      width: 38,
+      height: 38,
       resizeMode: 'contain',
       tintColor: Colors.Green,
     },
+
     Body_Cont: {
-      justifyContent: 'center',
-      marginVertical: '2.5%',
-    },
-    image: {
-      width: '100%',
+            justifyContent: 'center',
+            marginVertical: '2.5%',
+          },
+          image: {
+            width: '100%',
+            height: 250,
+            borderRadius: 10,
+            marginBottom: Platform.OS === 'ios' ? 20 : 16,
+            resizeMode:"contain"
+          },
+      imageSlider: {
+      width: width-40,
       height: 250,
       borderRadius: 10,
-      marginBottom: Platform.OS === 'ios' ? 20 : 16,
+      marginRight:10,
       resizeMode:"contain"
+   
     },
+
+    dotsRow: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      marginBottom: 12,
+      gap: 6,
+    },
+    dot: {
+      width: 7,
+      height: 7,
+      borderRadius: 99,
+      backgroundColor: '#C9C9C9',
+    },
+    dotActive: {
+      width: 18,
+      backgroundColor: Colors.Green,
+    },
+
     Type_Cont: {
       backgroundColor: '#D0A700',
       alignItems: 'center',
       alignSelf: language === 'en' ? 'flex-start' : 'flex-end',
-      padding: '2%',
-      marginBottom: '3%',
-      borderRadius: 5,
+      paddingVertical: 6,
+      paddingHorizontal: 10,
+      marginBottom: 10,
+      borderRadius: 8,
     },
     Type_Text: {
-      fontSize: 14,
+      fontSize: 13,
       lineHeight: 18,
       color: Colors.White,
       fontFamily: Fonts.SF_Medium,
@@ -54,26 +280,33 @@ export const getStyles = (language: string) =>
       alignItems: 'center',
       width: '100%',
       justifyContent: 'space-between',
+      marginBottom: 6,
     },
     title: {
-      width: '80%',
-      fontSize: 16,
+      width: '72%',
+      fontSize: 17,
       lineHeight: language === 'en' ? 22 : 28,
       color: Colors.Black,
-      letterSpacing: 0.5,
+      letterSpacing: 0.3,
       fontFamily: language === 'en' ? Fonts.SF_Bold : '',
-      textAlign: language === 'en' ? 'left':"right",
+      textAlign: language === 'en' ? 'left' : 'right',
     },
+
     call_cont: {
       flexDirection: 'row',
       alignItems: 'center',
+      paddingVertical: 6,
+      paddingHorizontal: 10,
+      borderRadius: 10,
+      backgroundColor: '#F3F4F6',
     },
     Phone_Icon: {
-      width: 22,
-      height: 22,
+      width: 18,
+      height: 18,
       resizeMode: 'contain',
+      marginRight: language === 'en' ? 6 : 0,
+      marginLeft: language === 'ar' ? 6 : 0,
     },
-
     call_txt: {
       fontSize: 12,
       lineHeight: 15,
@@ -81,116 +314,179 @@ export const getStyles = (language: string) =>
       fontFamily: Fonts.SF_Bold,
     },
 
-    Dis_Cont: {
-      marginVertical: '1%',
-      backgroundColor: Colors.White,
-      paddingVertical: '4%',
-      paddingHorizontal:'3%',
-      borderRadius: 10,
-      flexDirection: language === 'en' ? 'row' : 'row-reverse',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-    },
-    Dis_txt_cont: {
-      flexDirection: 'row',
-    },
-    Total_Discount: {
-      fontSize: 14,
-      color: Colors.Green,
-      fontFamily: Fonts.SF_Bold,
-      lineHeight: 24,
-      textAlign:language==='en'?'left':"right",
-    },
-    Menu_Btn: {
-      backgroundColor: Colors.Green,
-      padding: 8,
-      borderRadius: 6,
-    },
-    menu_txt: {
-      color: Colors.White,
-      fontSize: 10,
-      lineHeight: 16,
-      fontFamily: Fonts.SF_Bold,
-    },
-
-    
-    Desc_Cont: {
-      flexDirection: language === 'en' ? 'row' : 'row-reverse',
-    },
-    Desc: {
-      fontSize: 18,
-      lineHeight: language === 'en' ? 26 : 32,
-      letterSpacing: 0.6,
-      color: Colors.Black,
-      fontWeight: '500',
-      fontFamily: language === 'en' ? Fonts.SF_Bold : '',
-      marginTop: '2%',
-      marginBottom: language === 'en' ? '2%' : '0.5%',
-    },
-
-    Detail: {
-      fontSize: 14,
-      lineHeight: language === 'en' ? 17 : 26,
-      color: Colors.Black,
-      fontFamily: language === 'en' ? Fonts.SF_Regular : '',
-      fontWeight: '400',
-      marginBottom: '3%',
-      textAlign: language === 'en' ? 'left' : 'right',
-    },
     Loc_Cont: {
-      flexDirection: language==='en'?'row':'row-reverse',
+      flexDirection: language === 'en' ? 'row' : 'row-reverse',
       alignItems: 'center',
-      marginTop: '2%',
+      marginTop: 6,
+      padding: 10,
+      borderRadius: 12,
+      backgroundColor: '#F8F8F8',
     },
     Loc_Icon: {
       width: 16,
       height: 16,
       resizeMode: 'contain',
-      marginRight: '1%',
+      marginRight: language === 'en' ? 8 : 0,
+      marginLeft: language === 'ar' ? 8 : 0,
     },
-
     Loc_Txt: {
-      fontSize: 10,
-      lineHeight:16
+      flex: 1,
+      fontSize: 12,
+      lineHeight: 16,
+      color: Colors.Black,
+      textAlign: language === 'en' ? 'left' : 'right',
+      opacity: 0.9,
     },
-    Redeem_btn:{
-    },
-    use_txt:{
-     color:Colors.Green,
-     fontSize:12,
-     fontFamily:Fonts.SF_Medium,
 
+    rowBetween: {
+      flexDirection: language === 'en' ? 'row' : 'row-reverse',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginTop: 12,
     },
+
     timing_dropdown: {
-      flexDirection: language==='en'?'row':'row-reverse',
+      flexDirection: language === 'en' ? 'row' : 'row-reverse',
       alignItems: 'center',
     },
     working_hour_txt: {
       fontSize: 14,
       color: Colors.Green,
       fontFamily: Fonts.SF_Bold,
-      letterSpacing: 0.6,
+      letterSpacing: 0.2,
       paddingVertical: 2,
       lineHeight: 22,
     },
     dropdown_icon: {
       fontSize: 14,
       color: Colors.Green,
+      marginLeft: language === 'en' ? 6 : 0,
+      marginRight: language === 'ar' ? 6 : 0,
+    },
+
+    branchBtn: {
+      paddingVertical: 8,
+      paddingHorizontal: 12,
+      borderRadius: 12,
+      backgroundColor: '#F3F4F6',
+    },
+    branchBtnText: {
+      color: Colors.Green,
+      fontSize: 12,
+      fontFamily: Fonts.SF_Medium,
+    },
+
+    timingsCard: {
+      padding: 10,
+      backgroundColor: '#fff',
+      borderRadius: 12,
+      marginTop: 10,
+      borderWidth: 1,
+      borderColor: '#EFEFEF',
     },
     item_cont: {
-      flexDirection: language==='en'?"row":"row-reverse",
+      flexDirection: language === 'en' ? 'row' : 'row-reverse',
       justifyContent: 'space-between',
-      paddingVertical: 6,
+      paddingVertical: 8,
       borderBottomWidth: 0.5,
       borderColor: '#eee',
     },
-    
-    imageSlider: {
-      width: width-40,
-      height: 250,
-      borderRadius: 10,
-      marginRight:10,
-      resizeMode:"contain"
-   
+    timingDay: {
+      fontSize: 13,
+      color: '#333',
+      fontFamily: Fonts.SF_Medium,
+    },
+    timingTime: {
+      fontSize: 13,
+      color: '#000',
+      fontFamily: Fonts.SF_Bold,
+    },
+
+    Dis_Cont: {
+      marginTop: 10,
+      backgroundColor: Colors.White,
+      paddingVertical: 14,
+      paddingHorizontal: 12,
+      borderRadius: 14,
+      flexDirection: language === 'en' ? 'row' : 'row-reverse',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      borderWidth: 1,
+      borderColor: '#EFEFEF',
+    },
+    Total_Discount: {
+      flex: 1,
+      fontSize: 14,
+      color: Colors.Green,
+      fontFamily: Fonts.SF_Bold,
+      lineHeight: 20,
+      textAlign: language === 'en' ? 'left' : 'right',
+    },
+    disArrow: {
+      fontSize: 22,
+      color: '#999',
+      marginLeft: language === 'en' ? 10 : 0,
+      marginRight: language === 'ar' ? 10 : 0,
+    },
+
+    // ✅ New modern offer button
+    offerBtn: {
+      width: '100%',
+      borderRadius: 16,
+      paddingVertical: 14,
+      paddingHorizontal: 14,
+      backgroundColor: Colors.Green,
+      flexDirection: language === 'en' ? 'row' : 'row-reverse',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginTop: 12,
+    },
+    offerBtnDisabled: {
+      backgroundColor: '#B9B9B9',
+    },
+    offerBtnLeft: {
+      flex: 1,
+      paddingRight: language === 'en' ? 10 : 0,
+      paddingLeft: language === 'ar' ? 10 : 0,
+    },
+    offerBtnTitle: {
+      color: '#fff',
+      fontSize: 14,
+      fontFamily: Fonts.SF_Bold,
+    },
+    offerBtnSub: {
+      color: 'rgba(255,255,255,0.88)',
+      fontSize: 12,
+      marginTop: 4,
+      fontFamily: Fonts.SF_Regular,
+    },
+    offerBtnArrow: {
+      color: '#fff',
+      fontSize: 28,
+      fontFamily: Fonts.SF_Bold,
+      marginLeft: language === 'en' ? 10 : 0,
+      marginRight: language === 'ar' ? 10 : 0,
+    },
+
+    Desc_Cont: {
+      flexDirection: language === 'en' ? 'row' : 'row-reverse',
+      marginTop: 14,
+      marginBottom: 6,
+    },
+    Desc: {
+      fontSize: 18,
+      lineHeight: language === 'en' ? 26 : 32,
+      letterSpacing: 0.2,
+      color: Colors.Black,
+      fontFamily: language === 'en' ? Fonts.SF_Bold : '',
+    },
+    Detail: {
+      fontSize: 14,
+      lineHeight: language === 'en' ? 18 : 26,
+      color: Colors.Black,
+      fontFamily: language === 'en' ? Fonts.SF_Regular : '',
+      marginBottom: 10,
+      textAlign: language === 'en' ? 'left' : 'right',
+      opacity: 0.9,
     },
   });

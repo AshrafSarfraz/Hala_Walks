@@ -33,16 +33,35 @@ const BestSeller: React.FC = () => {
       .replace(/\s+/g, ' ');
 
   // ✅ filters: Active + Country
+  // const applyFilters = (list: any[]) => {
+  //   const selectedCountry = reduxCountry || country;
+
+  //   return list
+  //     .filter(b => norm(b?.status) === 'active') // ✅ only Active
+  //     .filter(b => {
+  //       if (!selectedCountry) return true;
+  //       return norm(b?.selectedCountry) === norm(selectedCountry);
+  //     });
+  // };
+
+
   const applyFilters = (list: any[]) => {
     const selectedCountry = reduxCountry || country;
-
+  
     return list
-      .filter(b => norm(b?.status) === 'active') // ✅ only Active
+      // 1️⃣ only Active
+      .filter(b => norm(b?.status) === 'active')
+  
+      // 2️⃣ only Best Seller
+      .filter(b => b?.isBestSeller === true)
+  
+      // 3️⃣ only selected country
       .filter(b => {
-        if (!selectedCountry) return true;
+        if (!selectedCountry) return false; // ❗ best seller screen → country must
         return norm(b?.selectedCountry) === norm(selectedCountry);
       });
   };
+  
 
   useEffect(() => {
     const loadOffers = async () => {

@@ -12,40 +12,43 @@ import {
   PermissionsAndroid,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import {useSelector} from 'react-redux';
 
 import CustomHeader from '../../Component/CustomHeader/CustomHeader';
 import {Location, Search} from '../../Themes/Images';
-
 import {Colors} from '../../Themes/Colors';
-import {useSelector} from 'react-redux';
 import {RootState} from '../../redux_toolkit/store';
+
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
-import {getStyles} from './style';
-import {languageData} from '../../redux_toolkit/language/languageSlice';
 import LinearGradient from 'react-native-linear-gradient';
 import Geolocation from 'react-native-geolocation-service';
 import FastImage from 'react-native-fast-image';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import DistanceFromDevice from '../../Component/distanceCalculate/distanceCalculate';
+import {getStyles} from './style';
+import {languageData} from '../../redux_toolkit/language/languageSlice';
 
 const BRANDS_API = 'https://hala-b-saudi.onrender.com/api/hbs/brands';
 
 const SearchScreen: React.FC = () => {
+  const navigation = useNavigation<any>();
+
   const [searchQuery, setSearchQuery] = useState('');
   const [brands, setBrands] = useState<any[]>([]);
-  const navigation = useNavigation<any>();
   const [loading, setLoading] = useState(true);
   const [userLocation, setUserLocation] = useState<{lat: number; long: number} | null>(null);
 
   const countryName = useSelector((s: RootState) => s.country?.countryName ?? null);
-  const language = useSelector((state: RootState) => state.language.language);
+  const language = useSelector((s: RootState) => s.language.language);
+
   const styles = getStyles(language);
 
   const norm = (v: any) => String(v ?? '').trim().toLowerCase();
 
-  // Request location and set userLocation
+  /* ================= LOCATION ================= */
   useEffect(() => {
-    const requestLocationPermission = async () => {
+    const requestPermission = async () => {
       try {
         if (Platform.OS === 'android') {
           const granted = await PermissionsAndroid.request(
@@ -55,121 +58,103 @@ const SearchScreen: React.FC = () => {
             getCurrentLocation();
           }
         } else {
-          const authStatus = await Geolocation.requestAuthorization('whenInUse');
-          if (authStatus === 'granted') getCurrentLocation();
+          const status = await Geolocation.requestAuthorization('whenInUse');
+          if (status === 'granted') getCurrentLocation();
         }
-      } catch (e) {
-        // ignore
-      }
+      } catch (e) {}
     };
 
     const getCurrentLocation = () => {
       Geolocation.getCurrentPosition(
-        position => {
+        pos => {
           setUserLocation({
-            lat: position.coords.latitude,
-            long: position.coords.longitude,
+            lat: pos.coords.latitude,
+            long: pos.coords.longitude,
           });
         },
-        error => console.error(error),
+        err => console.log(err),
         {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
       );
     };
 
-    requestLocationPermission();
+    requestPermission();
   }, []);
 
-  // Haversine distance
-  const haversineDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
-    const toRad = (value: number) => (value * Math.PI) / 180;
-    const R = 6371; // km
+  /* ================= DISTANCE ================= */
+  const haversineDistance = (
+    lat1: number,
+    lon1: number,
+    lat2: number,
+    lon2: number,
+  ) => {
+    const toRad = (v: number) => (v * Math.PI) / 180;
+    const R = 6371;
+
     const dLat = toRad(lat2 - lat1);
     const dLon = toRad(lon2 - lon1);
+
     const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c;
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos(toRad(lat1)) *
+        Math.cos(toRad(lat2)) *
+        Math.sin(dLon / 2) ** 2;
+
+    return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
   };
 
-  // Get nearest branch per brand
-  const getNearestBranchPerBrand = (brandsList: any[], userLoc: {lat: number; long: number}) => {
-    const brandMap: Record<string, any> = {};
+  /* ========== NEAREST BRANCH PER BRAND + SORT ========== */
+  const getNearestBranchPerBrand = (
+    list: any[],
+    userLoc: {lat: number; long: number},
+  ) => {
+    const map: Record<string, any> = {};
 
-    brandsList.forEach(branch => {
-      if (!branch.latitude || !branch.longitude) return;
+    list.forEach(item => {
+      if (!item.latitude || !item.longitude) return;
 
-      const distanceInKm = haversineDistance(
+      const distance = haversineDistance(
         userLoc.lat,
         userLoc.long,
-        Number(branch.latitude),
-        Number(branch.longitude),
+        Number(item.latitude),
+        Number(item.longitude),
       );
 
-      // key: brand name (fallback id)
-      const key = String(branch?.nameEng || branch?.nameArabic || branch?.id || '');
-      if (!key) return;
+      const key = String(item?.nameEng || item?.nameArabic || item?.id || '');
 
-      if (!brandMap[key] || distanceInKm < brandMap[key].distance) {
-        brandMap[key] = {...branch, distance: distanceInKm};
+      if (!map[key] || distance < map[key].distance) {
+        map[key] = {...item, distance};
       }
     });
 
-    return Object.values(brandMap);
+    // ✅ nearest → farthest
+    return Object.values(map).sort(
+      (a: any, b: any) => a.distance - b.distance,
+    );
   };
 
-  // Load brands (cache first, then fresh)
+  /* ================= LOAD BRANDS ================= */
   useEffect(() => {
     const loadBrands = async () => {
       try {
-        // 1) cache first
-        const cachedData = await AsyncStorage.getItem('H-brands_cache');
-        if (cachedData) {
-          const cached = JSON.parse(cachedData);
-          const cachedArr = Array.isArray(cached) ? cached : [];
-
-          // ✅ only Active in cache display
-          const onlyActiveCached = cachedArr.filter(
-            (b: any) => norm(b?.status) === 'active',
+        const cached = await AsyncStorage.getItem('H-brands_cache');
+        if (cached) {
+          const parsed = JSON.parse(cached).filter(
+            (b: any) => norm(b.status) === 'active',
           );
-
-          setBrands(onlyActiveCached);
+          setBrands(parsed);
           setLoading(false);
-        } else {
-          setLoading(true);
         }
 
-        // 2) fresh API
         const res = await fetch(BRANDS_API);
-        const json = await res.json().catch(() => ({}));
+        const json = await res.json();
 
-        if (!res.ok) {
-          console.warn('Brands API failed:', json);
-          setLoading(false);
-          return;
-        }
+        const arr = Array.isArray(json?.data) ? json.data : [];
+        const active = arr.filter((b: any) => norm(b.status) === 'active');
 
-        const raw = json && (json as any).data ? (json as any).data : json;
-        const arr = Array.isArray(raw) ? raw : [];
-
-        const normalized = arr.map((item: any) => ({
-          id: item._id || item.id,
-          ...item,
-        }));
-
-        // ✅ only Active
-        const onlyActive = normalized.filter((b: any) => norm(b?.status) === 'active');
-
-        if (onlyActive.length > 0) {
-          setBrands(onlyActive);
-          await AsyncStorage.setItem('H-brands_cache', JSON.stringify(onlyActive));
-        }
-
+        setBrands(active);
+        await AsyncStorage.setItem('H-brands_cache', JSON.stringify(active));
         setLoading(false);
-      } catch (error) {
-        console.error('Error loading brands:', error);
+      } catch (e) {
         setLoading(false);
       }
     };
@@ -177,152 +162,93 @@ const SearchScreen: React.FC = () => {
     loadBrands();
   }, []);
 
-  // ✅ ACTIVE + search (english + arabic)
+  /* ================= SEARCH ================= */
   const filteredData = brands.filter(item => {
-    const isActive = norm(item?.status) === 'active';
-    if (!isActive) return false;
+    if (norm(item.status) !== 'active') return false;
+    if (!searchQuery) return true;
 
-    const q = norm(searchQuery);
-    if (!q) return true;
-
-    const en = norm(item?.nameEng);
-    const ar = norm(item?.nameArabic);
-    return en.includes(q) || ar.includes(q);
+    return (
+      norm(item.nameEng).includes(norm(searchQuery)) ||
+      norm(item.nameArabic).includes(norm(searchQuery))
+    );
   });
 
-  // Only nearest branches
   const nearestBrands = userLocation
     ? getNearestBranchPerBrand(filteredData, userLocation)
     : filteredData;
 
-  const renderEmptyState = () => (
-    <View style={styles.emptyStateContainer}>
-      <Image
-        source={require('../../assets/Images/no_data.png')}
-        style={styles.emptyStateImage}
-      />
-      <Text style={styles.emptyStateText}>{languageData[language].No_Items_Found}</Text>
-    </View>
-  );
-
+  /* ================= UI ================= */
   return (
     <View style={styles.container}>
-      <StatusBar hidden={false} translucent animated backgroundColor={Colors.White4} />
+      <StatusBar backgroundColor={Colors.White4} />
       <SafeAreaView style={{flex: 1}}>
         <CustomHeader
           title={language === 'en' ? 'Search Screen' : 'شاشة البحث'}
           onBackPress={() => navigation.goBack()}
         />
 
-        <View style={{marginTop: '7%'}} />
-
         <View style={styles.searchContainer}>
           <Image source={Search} style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
             placeholder={languageData[language].Search_for_anything}
-            placeholderTextColor={Colors.Grey5}
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
         </View>
 
-        <View style={styles.FlatlistContainer}>
-          {filteredData.length > 0 && !loading ? (
-            <Text style={styles.FoundItem_Txt}>{languageData[language].Found_Items}</Text>
-          ) : null}
+        {loading ? (
+          <FlatList
+            data={[1, 2, 3, 4, 5]}
+            keyExtractor={(_, i) => i.toString()}
+            renderItem={() => (
+              <View style={styles.itemContainer}>
+                <ShimmerPlaceholder
+                  LinearGradient={LinearGradient}
+                  style={styles.itemImage}
+                />
+              </View>
+            )}
+          />
+        ) : (
+          <FlatList
+            data={nearestBrands.filter(b =>
+              countryName
+                ? norm(b.selectedCountry) === norm(countryName)
+                : true,
+            )}
+            keyExtractor={item => String(item.id)}
+            renderItem={({item}) => (
+              <TouchableOpacity
+                style={styles.itemContainer}
+                onPress={() =>
+                  navigation.navigate('DetailScreen', {item})
+                }>
+                <FastImage
+                  source={{uri: item.img}}
+                  style={styles.itemImage}
+                />
 
-          {loading ? (
-            <FlatList
-              data={[1, 2, 3, 4, 5, 6]}
-              keyExtractor={(_, index) => index.toString()}
-              renderItem={() => (
-                <View style={styles.itemContainer}>
-                  <ShimmerPlaceholder LinearGradient={LinearGradient} style={styles.itemImage} />
-                  <View style={styles.itemInfo}>
-                    <ShimmerPlaceholder
-                      LinearGradient={LinearGradient}
-                      style={{height: 20, marginBottom: 6}}
-                    />
-                    <ShimmerPlaceholder
-                      LinearGradient={LinearGradient}
-                      style={{height: 15, marginBottom: 6}}
+                <View style={styles.itemInfo}>
+                  <Text style={styles.itemTitle}>
+                    {language === 'en' ? item.nameEng : item.nameArabic}
+                  </Text>
+
+                  <View style={styles.Loc_Cont}>
+                    <Image source={Location} style={styles.LocationIcon} />
+                    <DistanceFromDevice
+                      targetLat={item.latitude}
+                      targetLong={item.longitude}
+                      kmText="km"
+                      mText="m"
+                      loadingText="Calculating..."
                     />
                   </View>
                 </View>
-              )}
-            />
-          ) : filteredData.length === 0 ? (
-            renderEmptyState()
-          ) : (
-            <FlatList
-              data={nearestBrands.filter(item => {
-                // ✅ country filter (optional)
-                if (countryName) {
-                  return norm(item.selectedCountry) === norm(countryName);
-                }
-                return true;
-              })}
-              keyExtractor={item => String(item.id)}
-              contentContainerStyle={{flexGrow: 1, paddingBottom: 20}}
-              showsVerticalScrollIndicator={false}
-              renderItem={({item, index}) => (
-                <TouchableOpacity
-                  style={styles.itemContainer}
-                  onPress={() => navigation.navigate('DetailScreen', {item})}>
-                  <FastImage
-                    source={{
-                      uri: item.img,
-                      priority:
-                        index <= 6
-                          ? FastImage.priority.high
-                          : index <= 10
-                          ? FastImage.priority.normal
-                          : FastImage.priority.low,
-                    }}
-                    style={styles.itemImage}
-                    resizeMode={FastImage.resizeMode.cover}
-                  />
-
-                  <View style={styles.itemInfo}>
-                    <Text style={styles.itemTitle}>
-                      {language === 'en'
-                        ? item.nameEng?.length > 30
-                          ? item.nameEng.substring(0, 30) + '...'
-                          : item.nameEng
-                        : item.nameArabic?.length > 30
-                        ? item.nameArabic.substring(0, 30) + '...'
-                        : item.nameArabic}
-                    </Text>
-
-                    <Text style={styles.itemLocation}>
-                      {language === 'en'
-                        ? item.descriptionEng?.length > 70
-                          ? item.descriptionEng.substring(0, 70) + '...'
-                          : item.descriptionEng
-                        : item.descriptionArabic?.length > 70
-                        ? item.descriptionArabic.substring(0, 70) + '...'
-                        : item.descriptionArabic}
-                    </Text>
-
-                    <View style={styles.Loc_Status_Cont}>
-                      <View style={styles.Loc_Cont}>
-                        <Image source={Location} style={styles.LocationIcon} />
-                        <DistanceFromDevice
-                          targetLat={item.latitude}
-                          targetLong={item.longitude}
-                          kmText="km"
-                          mText="m"
-                          loadingText="Calculating..."
-                        />
-                      </View>
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              )}
-            />
-          )}
-        </View>
+              </TouchableOpacity>
+            )}
+          />
+        )}
       </SafeAreaView>
     </View>
   );

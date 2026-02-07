@@ -26,31 +26,34 @@ const EventSlider: React.FC<{ navigation: any }> = () => {
 
   useEffect(() => {
     const loadOffers = async () => {
-      setLoading(true);
-
       try {
-        // Try load from AsyncStorage using 'events' key
+        // 1️⃣ Load cached data FIRST
         const cachedData = await AsyncStorage.getItem('events');
+  
         if (cachedData) {
           setOffers(JSON.parse(cachedData));
-          setLoading(false);
+          setLoading(false); // 👈 FORAN UI SHOW
         }
-
-        // Fetch fresh data anyway (optional)
+  
+        // 2️⃣ Fetch fresh data in BACKGROUND
         const freshOffers = await fetchEventsFromFirebase();
-        setOffers(freshOffers);
+  
+        // agar data different ho tab hi update karo
+        if (JSON.stringify(freshOffers) !== cachedData) {
+          setOffers(freshOffers);
+          await AsyncStorage.setItem('events', JSON.stringify(freshOffers));
+        }
+  
         setLoading(false);
-
-        // Save fresh data to AsyncStorage under 'events'
-        await AsyncStorage.setItem('events', JSON.stringify(freshOffers));
       } catch (error) {
         console.error('Error loading offers:', error);
         setLoading(false);
       }
     };
-
+  
     loadOffers();
   }, []);
+  
 
   const handleScroll = (event: any) => {
     const slideIndex = Math.round(event.nativeEvent.contentOffset.x / width);

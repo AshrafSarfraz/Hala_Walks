@@ -1,5 +1,5 @@
 // src/components/Branches/Branches.tsx
-import React, { forwardRef, useEffect, useMemo, useState } from 'react';
+import React, {forwardRef, useEffect, useMemo, useState} from 'react';
 import {
   View,
   Text,
@@ -9,113 +9,136 @@ import {
   Platform,
 } from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import { useSelector } from 'react-redux';
-import { useNavigation } from '@react-navigation/native';
+import {useSelector} from 'react-redux';
+import {useNavigation} from '@react-navigation/native';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import LinearGradient from 'react-native-linear-gradient';
 import FastImage from 'react-native-fast-image';
-
-import { Colors } from '../../Themes/Colors';
-import { Fonts } from '../../Themes/Fonts';
-import { RootState } from '../../redux_toolkit/store';
-import { languageData } from '../../redux_toolkit/language/languageSlice';
-import { fetchBrandsFromFirebase } from '../../firebase/firebaseutils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import {Colors} from '../../Themes/Colors';
+import {Fonts} from '../../Themes/Fonts';
+import {RootState} from '../../redux_toolkit/store';
+import {languageData} from '../../redux_toolkit/language/languageSlice';
+
 type Brand = {
-  id: string;
+  id: string; // mapped from _id
+  _id?: any;
   nameEng?: string;
   nameArabic?: string;
   brandName?: string;
   brandId?: string;
+  address?: string;
   img?: string;
   selectedVenue?: string;
   selectedCountry?: string;
   descriptionEng?: string;
   descriptionArabic?: string;
+  status?: string;
 };
 
 type Props = {
-  brandName?: string;   // filter target brand name
-  excludeId?: string;   // exclude current branch id
+  brandName?: string; // filter target brand name
+  excludeId?: string; // exclude current branch id
   onSelect?: (item: Brand) => void;
   height?: number;
 };
 
 // Basic type for RBSheet imperative API
-type RBSheetRef = { open: () => void; close: () => void };
+type RBSheetRef = {open: () => void; close: () => void};
+
+// ✅ Your Node.js API
+const BRANDS_API = 'https://hala-b-saudi.onrender.com/api/hbs/brands';
+const CACHE_KEY = 'H-brands_cache';
 
 const Branches = forwardRef<RBSheetRef, Props>(
-  ({ brandName, excludeId, onSelect, height = 450 }, ref) => {
+  ({brandName, excludeId, onSelect, height = 450}, ref) => {
     const [brands, setBrands] = useState<Brand[]>([]);
     const [loading, setLoading] = useState(true);
     const [imageLoaded, setImageLoaded] = useState<Record<string, boolean>>({});
 
     const language = useSelector((s: RootState) => s.language.language);
-    const countryName = useSelector((s: RootState) => s.country?.countryName ?? null);
+    const countryName = useSelector(
+      (s: RootState) => s.country?.countryName ?? null,
+    );
 
     const nav = useNavigation<any>();
     const styles = getStyles(language);
 
+    const norm = (s?: any) => String(s ?? '').trim().toLowerCase();
 
-
- 
+    /* ================= LOAD BRANDS FROM NODE API ================= */
     useEffect(() => {
-    const loadOffers = async () => {
-      try {
-        // Show cached data immediately
-        const cachedData = await AsyncStorage.getItem('H-brands_cache');
-        if (cachedData) {
-          setBrands(JSON.parse(cachedData));
+      const loadBrands = async () => {
+        try {
+          // 1) Show cached data immediately
+          const cachedData = await AsyncStorage.getItem(CACHE_KEY);
+          if (cachedData) {
+            setBrands(JSON.parse(cachedData));
+            setLoading(false);
+          }
+
+          // 2) Fetch fresh data from API
+          const res = await fetch(BRANDS_API);
+          const json = await res.json();
+
+          // API may return {data: []} or []
+          const arr =
+            Array.isArray(json) ? json : Array.isArray(json?.data) ? json.data : [];
+
+          // 3) Map Mongo _id -> id (string)
+          const mapped: Brand[] = arr.map((b: any) => ({
+            ...b,
+            id: String(b?.id ?? b?._id?.$oid ?? b?._id ?? b?.brandId ?? ''),
+          }));
+
+          // 4) Save + update
+          setBrands(mapped);
+          await AsyncStorage.setItem(CACHE_KEY, JSON.stringify(mapped));
+          setLoading(false);
+        } catch (error) {
+          console.error('Error loading brands:', error);
           setLoading(false);
         }
-  
-        // Then fetch in background
-        const freshOffers = await fetchBrandsFromFirebase();
-        setBrands(freshOffers);
-        await AsyncStorage.setItem('H-brands_cache', JSON.stringify(freshOffers));
-      } catch (error) {
-        console.error('Error loading offers:', error);
-        setLoading(false);
-      }
-    };
-  
-    loadOffers();
-  }, []);
+      };
 
+      loadBrands();
+    }, []);
 
-
-
-    const norm = (s?: string) => (s ?? '').trim().toLowerCase();
-
-    // Filter by brand name → country → exclude current branch
+    // ================= FILTERING =================
     const filtered = useMemo(() => {
       let list = brands;
 
+      // ✅ only Active brands (API has "Active")
+      list = list.filter(b => norm(b.status) === 'active');
+
+      // Filter by brand name
       if (brandName) {
         const key = norm(brandName);
         list = list.filter(
-          (b) =>
+          b =>
             norm(b.nameEng) === key ||
             norm(b.nameArabic) === key ||
-            norm(b.brandName) === key
+            norm(b.brandName) === key,
         );
       }
 
+      // Filter by selected country (from redux)
       if (countryName) {
         const c = norm(countryName);
-        list = list.filter((b) => norm(b.selectedCountry) === c);
+        list = list.filter(b => norm(b.selectedCountry) === c);
       }
 
+      // Exclude current branch id
       if (excludeId) {
-        list = list.filter((b) => b.id !== excludeId);
+        list = list.filter(b => String(b.id) !== String(excludeId));
       }
 
       return list;
     }, [brands, brandName, countryName, excludeId]);
 
     const handleImageLoad = (id: string) =>
-      setImageLoaded((prev) => ({ ...prev, [id]: true }));
+      setImageLoaded(prev => ({...prev, [id]: true}));
 
     const handlePress = (item: Brand) => {
       // Close the sheet first
@@ -125,21 +148,37 @@ const Branches = forwardRef<RBSheetRef, Props>(
       if (onSelect) {
         onSelect(item);
       } else {
-        setTimeout(() => nav.navigate('DetailScreen', { item }), 150);
+        setTimeout(() => nav.navigate('DetailScreen', {item}), 150);
       }
     };
 
     const renderSkeleton = () => (
       <FlatList
         data={[1, 2, 3, 4, 5, 6]}
-        keyExtractor={(i) => String(i)}
+        keyExtractor={i => String(i)}
         renderItem={() => (
           <View style={styles.itemContainer}>
-            <ShimmerPlaceholder visible={false} LinearGradient={LinearGradient} style={styles.itemImage} />
+            <ShimmerPlaceholder
+              visible={false}
+              LinearGradient={LinearGradient}
+              style={styles.itemImage}
+            />
             <View style={styles.itemInfo}>
-              <ShimmerPlaceholder visible={false} LinearGradient={LinearGradient} style={{ height: 20, marginBottom: 6 }} />
-              <ShimmerPlaceholder visible={false} LinearGradient={LinearGradient} style={{ height: 15, marginBottom: 6 }} />
-              <ShimmerPlaceholder visible={false} LinearGradient={LinearGradient} style={{ height: 15, width: 80 }} />
+              <ShimmerPlaceholder
+                visible={false}
+                LinearGradient={LinearGradient}
+                style={{height: 20, marginBottom: 6}}
+              />
+              <ShimmerPlaceholder
+                visible={false}
+                LinearGradient={LinearGradient}
+                style={{height: 15, marginBottom: 6}}
+              />
+              <ShimmerPlaceholder
+                visible={false}
+                LinearGradient={LinearGradient}
+                style={{height: 15, width: 80}}
+              />
             </View>
           </View>
         )}
@@ -148,16 +187,24 @@ const Branches = forwardRef<RBSheetRef, Props>(
       />
     );
 
-    const renderItem = ({ item, index }: { item: Brand; index: number }) => {
+    const renderItem = ({item, index}: {item: Brand; index: number}) => {
       const isLoaded = imageLoaded[item.id] || false;
       const title = language === 'ar' ? item.nameArabic : item.nameEng;
-      const descFull = language === 'ar' ? item.descriptionArabic : item.descriptionEng;
+      const descFull =
+        language === 'ar' ? item.descriptionArabic : item.descriptionEng;
       const desc =
-        (descFull || '').length > 70 ? `${descFull?.substring(0, 70)}...` : descFull || '';
+        (descFull || '').length > 70
+          ? `${descFull?.substring(0, 70)}...`
+          : descFull || '';
 
       return (
-        <TouchableOpacity style={styles.itemContainer} onPress={() => handlePress(item)}>
-          <ShimmerPlaceholder visible={isLoaded} LinearGradient={LinearGradient} style={styles.itemImage}>
+        <TouchableOpacity
+          style={styles.itemContainer}
+          onPress={() => handlePress(item)}>
+          <ShimmerPlaceholder
+            visible={isLoaded}
+            LinearGradient={LinearGradient}
+            style={styles.itemImage}>
             {item.img ? (
               <FastImage
                 source={{
@@ -181,14 +228,16 @@ const Branches = forwardRef<RBSheetRef, Props>(
             <Text style={styles.itemTitle} numberOfLines={1}>
               {title || '—'}
             </Text>
+
             {!!desc && (
               <Text style={styles.itemDescription} numberOfLines={2}>
                 {desc}
               </Text>
             )}
-            {!!item.selectedVenue && (
+
+            {!!item.address && (
               <Text style={styles.itemVenue} numberOfLines={1}>
-                {item.selectedVenue}
+                {item.address}
               </Text>
             )}
           </View>
@@ -203,16 +252,15 @@ const Branches = forwardRef<RBSheetRef, Props>(
         closeOnPressMask
         height={height}
         customStyles={{
-          wrapper: { backgroundColor: 'rgba(0, 0, 0, 0.3)' },
+          wrapper: {backgroundColor: 'rgba(0, 0, 0, 0.3)'},
           container: {
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
             backgroundColor: '#f9f9f9',
             elevation: 10,
           },
-          draggableIcon: { backgroundColor: '#bbb' },
-        }}
-      >
+          draggableIcon: {backgroundColor: '#bbb'},
+        }}>
         <View style={styles.container}>
           <Text style={styles.sheetTitle}>
             {language === 'ar'
@@ -224,31 +272,28 @@ const Branches = forwardRef<RBSheetRef, Props>(
               : 'Branches'}
           </Text>
 
-          {loading
-            ? renderSkeleton()
-            : filtered.length === 0
-            ? (
-              <Text style={styles.emptyText}>
-                {languageData[language].No_Items_Found}
-              </Text>
-            )
-            : (
-              <FlatList
-                data={filtered}
-                keyExtractor={(i) => i.id}
-                renderItem={renderItem}
-                contentContainerStyle={styles.listContent}
-                showsVerticalScrollIndicator={false}
-              />
-            )}
+          {loading ? (
+            renderSkeleton()
+          ) : filtered.length === 0 ? (
+            <Text style={styles.emptyText}>
+              {languageData[language].No_Items_Found}
+            </Text>
+          ) : (
+            <FlatList
+              data={filtered}
+              keyExtractor={i => String(i.id)}
+              renderItem={renderItem}
+              contentContainerStyle={styles.listContent}
+              showsVerticalScrollIndicator={false}
+            />
+          )}
         </View>
       </RBSheet>
     );
-  }
+  },
 );
 
 export default Branches;
-
 
 /* ---------------- styles ---------------- */
 const getStyles = (language: string) =>
@@ -280,10 +325,10 @@ const getStyles = (language: string) =>
       borderWidth: 1,
       borderColor: '#E0E0E0',
       shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
+      shadowOffset: {width: 0, height: 2},
       shadowOpacity: 0.1,
       shadowRadius: 4,
-      ...(Platform.OS === 'android' ? { elevation: 2 } : null),
+      ...(Platform.OS === 'android' ? {elevation: 2} : null),
     },
     itemImage: {
       width: 60,

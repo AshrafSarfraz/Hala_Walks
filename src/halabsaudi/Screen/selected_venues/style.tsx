@@ -82,11 +82,12 @@ export const getStyles=(language:String) => StyleSheet.create({
     shadowRadius: 4,
   },
   itemImage: {
-    width: 60,
-    height: 60,
+    width: 80,
+    height: 80,
     borderRadius: 8,
     marginRight: language==='en'?10:10,
     marginLeft: language==='ar'?10:0,
+    borderWidth:0.2
   },
   itemInfo: {
     flex: 1,

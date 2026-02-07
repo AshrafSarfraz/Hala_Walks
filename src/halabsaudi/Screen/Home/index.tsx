@@ -75,7 +75,8 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
           <View style={styles.txt_cont} >
             <Text style={styles.BestSeller_Txt}>{languageData[language].best_sellers}</Text>
             </View>
-            <BestSeller  />
+
+            <BestSeller/>
           </View>
 
           <View style={styles.BestSeller_Cont}>

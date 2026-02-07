@@ -1,16 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  FlatList,
-  Image,
-  TouchableOpacity,
-  SafeAreaView,
-  StatusBar,
-  PermissionsAndroid,
-  Platform,
-} from 'react-native';
+import { View, Text, TextInput, FlatList, Image, TouchableOpacity, SafeAreaView, StatusBar, PermissionsAndroid,Platform, } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import CustomHeader from '../../Component/CustomHeader/CustomHeader';
 import { Location, Search } from '../../Themes/Images';
@@ -259,7 +248,7 @@ const SelectedCategories: React.FC<{ route: any }> = ({ route }) => {
                       priority: index <= 6 ? FastImage.priority.high : FastImage.priority.normal,
                     }}
                     style={styles.itemImage}
-                    resizeMode={FastImage.resizeMode.cover}
+                    resizeMode={FastImage.resizeMode.contain}
                   />
 
                   <View style={styles.itemInfo}>

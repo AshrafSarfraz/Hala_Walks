@@ -7,8 +7,9 @@ import { RootState } from '../../redux_toolkit/store';
 import { switchCountryName } from '../../redux_toolkit/selectcountry.tsx/countrySlice';
 
 type Country = {
-  name: 'Qatar' | 'Bahrain';
-  code: 'QA' | 'BA';
+  name: 'Qatar' | 'Bahrain'| "Saudi Arabia";
+  code: 'QA' | 'BA'  | "SA";
+  
   image: ImageSourcePropType;
 };
 
@@ -19,6 +20,7 @@ type Props = {
 const countryOptions: Country[] = [
   { name: 'Qatar',   code: 'QA',  image: require('../../assets/Icons/Qatar_Flag.jpg') },
    { name: 'Bahrain', code: 'BA', image: require('../../assets/Icons/flag_bahrain.png') },
+   { name: 'Saudi Arabia', code: 'SA', image: require('../../assets/Icons/saudi.png') },
 ];
 
 const CountryDropdown2: React.FC<Props> = ({ onSelectCountry }) => {
