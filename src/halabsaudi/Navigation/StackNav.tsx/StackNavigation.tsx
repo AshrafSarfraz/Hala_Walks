@@ -21,6 +21,7 @@ import WelcomeScreen from '../../Screen/Authentication/Splash/welcome_screen';
 import SignuP from '../../Screen/Authentication/SignUp/signUp';
 
 import StackNavigation from '../../../westwalk/navigation/stackNavigation'; // agar Westwalk ka stack chahiye
+import Notifications from '../../Notifications';
 
 const Stack = createNativeStackNavigator();
 
@@ -48,6 +49,9 @@ const HalaStack: React.FC = () => {
     };
 
     checkInitialRoute();
+  }, []);
+   useEffect(() => {
+    Notifications(); // call the functional notification setup
   }, []);
 
   // jab tak initialRoute decide nahi hua, Splash dikha do

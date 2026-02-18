@@ -8,6 +8,7 @@ import auth from '@react-native-firebase/auth';
 
 import HalaStack from '../halabsaudi/Navigation/StackNav.tsx/StackNavigation';
 import StackNavigation from '../westwalk/navigation/stackNavigation';
+import { navigationRef } from '../halabsaudi/Notifications/RootNavigation';
 
 const Stack = createNativeStackNavigator();
 
@@ -53,7 +54,7 @@ const AppStack = () => {
   // ✅ If Westwalk-only user
   if (onlyStack === 'WestwalkOnly') {
     return (
-      <NavigationContainer>
+      <NavigationContainer ref={navigationRef}>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="WestwalkStack" component={StackNavigation} />
         </Stack.Navigator>
@@ -64,7 +65,7 @@ const AppStack = () => {
   // ✅ If Hala-only user
   if (onlyStack === 'HalabOnly') {
     return (
-      <NavigationContainer>
+      <NavigationContainer ref={navigationRef} >
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="HalabStack" component={HalaStack} />
         </Stack.Navigator>
@@ -74,7 +75,7 @@ const AppStack = () => {
 
   // ✅ No user logged in → show both stacks like before
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef} >
       <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={initialRoute}>
         <Stack.Screen name="HalabStack" component={HalaStack} />
         <Stack.Screen name="WestwalkStack" component={StackNavigation} />
