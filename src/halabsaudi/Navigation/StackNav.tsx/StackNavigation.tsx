@@ -22,6 +22,9 @@ import SignuP from '../../Screen/Authentication/SignUp/signUp';
 
 import StackNavigation from '../../../westwalk/navigation/stackNavigation'; // agar Westwalk ka stack chahiye
 import Notifications from '../../Notifications';
+import ConversationsScreen from '../../chat/conversationScreen';
+import ChatScreen from '../../chat/chatScreen';
+import StartChatScreen from '../../chat/startChatScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -37,7 +40,7 @@ const HalaStack: React.FC = () => {
 
         if (halaData === 'true' && token) {
           // user pehle se login hai → direct BottomTab
-          setInitialRoute('BottomTab');
+          setInitialRoute('StartChatScreen');
         } else {
           // koi login nahi → Splash / onboarding etc
           setInitialRoute('Splash');
@@ -76,6 +79,11 @@ const HalaStack: React.FC = () => {
         <Stack.Screen name='SelectedVenue' component={SelectedVenues} />
         <Stack.Screen name='AccountScreen' component={AccountScreen} />
         <Stack.Screen name='PDFViewerScreen' component={PDFViewerScreen} />
+        <Stack.Screen name='ConversationScreen' component={ConversationsScreen} />
+        <Stack.Screen name='ChatScreen' component={ChatScreen} />
+        <Stack.Screen name='StartChatScreen' component={StartChatScreen} />
+
+
 
         {/* Merchant Side */}
         <Stack.Screen name='HalaInfo' component={HalaInfoScreen} />

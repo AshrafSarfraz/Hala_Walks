@@ -271,4 +271,3 @@ const Otp: React.FC<OtpProps> = ({ route, navigation }) => {
 };
 
 export default Otp;
-
