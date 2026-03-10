@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "android": "react-native run-android",
-    "ashrafios": "npx react-native run-ios --udid  293FFE35-A2A5-421C-8DAD-0E2359960F64",
+    "ashrafios": "npm run ios --udid  293FFE35-A2A5-421C-8DAD-0E2359960F64",
     "ios": "npx react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
@@ -28,7 +28,9 @@
     "react": "19.0.0",
     "react-native": "0.78.0",
     "react-native-app-intro-slider": "^4.0.4",
+    "react-native-background-geolocation": "^5.0.3",
     "react-native-blob-util": "^0.21.3",
+    "react-native-config": "^1.6.1",
     "react-native-fast-image": "^8.6.3",
     "react-native-geolocation-service": "^5.3.1",
     "react-native-gesture-handler": "^2.25.0",

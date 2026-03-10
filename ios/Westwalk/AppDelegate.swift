@@ -4,6 +4,7 @@ import React_RCTAppDelegate
 import ReactAppDependencyProvider
 import Firebase   // Added For Firebase  A-Apr-2025  New Documentation
 
+
 @main
 class AppDelegate: RCTAppDelegate {
   override func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
@@ -35,4 +36,3 @@ class AppDelegate: RCTAppDelegate {
 #endif
   }
 }
- 

@@ -40,12 +40,20 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<false/>
 		<key>NSAllowsLocalNetworking</key>
-		<true/>
+		<false/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>We need access to your camera to take photos</string>
+	
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>We use your location to show nearby discounts and company-approved offers when you are using the app.</string>
+    <string>We use your location to show nearby discounts and company-approved offers when you are using the app.</string>
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>We need access to your location at all times to notify about nearby venues even when the app is in background.</string>
+    <key>NSLocationAlwaysUsageDescription</key>
+    <string>We need access to your location at all times to notify about nearby venues.</string>
+    <key>TSLocationManagerLicense</key>
+    <string>eyJhbGciOiJFZERTQSIsImtpZCI6ImVkMjU1MTktbWFpbi12MSJ9.eyJvcyI6ImlvcyIsImFwcF9pZCI6ImNvbS5oYWxhYnNhdWRpYXBwcmVhY3RuYXRpdmV2ZXJzaW9uIiwib3JkZXJfbnVtYmVyIjoxNTU3NywicmVuZXdhbF91cmwiOiJodHRwczovL3Nob3AudHJhbnNpc3RvcnNvZnQuY29tL2NhcnQvMTY1MDc4NjE1MDU6MT9ub3RlPTEwMzU2IiwiY3VzdG9tZXJfaWQiOjk0MjgsInByb2R1Y3QiOiJyZWFjdC1uYXRpdmUtYmFja2dyb3VuZC1nZW9sb2NhdGlvbiIsImtleV92ZXJzaW9uIjoxLCJhbGxvd2VkX3N1ZmZpeGVzIjpbIi5kZXYiLCIuZGV2ZWxvcG1lbnQiLCIuc3RhZ2luZyIsIi5zdGFnZSIsIi5xYSIsIi51YXQiLCIudGVzdCIsIi5kZWJ1ZyJdLCJtYXhfYnVpbGRfc3RhbXAiOjIwMjcwMzI2LCJncmFjZV9idWlsZHMiOjAsImVudGl0bGVtZW50cyI6WyJjb3JlIl0sImlhdCI6MTc3MjY5NTM1M30.Vyl0BaI-VANezUVWVtdmO2fPcbjlKCy0ULfNJUi2TrCPBrr-BJykiKLm-3LZNwa2gTdo1Kn9i44xvL1wDAbVAA</string>
+
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>We need permission to save photos</string>
 	<key>NSPhotoLibraryUsageDescription</key>
@@ -69,6 +77,7 @@
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>
+		<string>location</string>
 		<string>fetch</string>
 		<string>remote-notification</string>
 	</array>

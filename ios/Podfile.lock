@@ -1197,6 +1197,9 @@ PODS:
   - BoringSSL-GRPC/Interface (0.0.37)
   - BVLinearGradient (2.8.3):
     - React-Core
+  - CocoaLumberjack (3.8.5):
+    - CocoaLumberjack/Core (= 3.8.5)
+  - CocoaLumberjack/Core (3.8.5)
   - DoubleConversion (1.1.6)
   - fast_float (6.1.4)
   - FBLazyVector (0.78.0)
@@ -2686,6 +2689,29 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - react-native-config (1.6.1):
+    - react-native-config/App (= 1.6.1)
+  - react-native-config/App (1.6.1):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.11.18.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - react-native-geolocation-service (5.3.1):
     - React
   - react-native-pdf (6.7.7):
@@ -3084,6 +3110,29 @@ PODS:
     - React-perflogger (= 0.78.0)
     - React-utils (= 0.78.0)
   - RecaptchaInterop (101.0.0)
+  - RNBackgroundGeolocation (5.0.3):
+    - CocoaLumberjack (~> 3.8.5)
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.11.18.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - TSLocationManager (~> 4.0.10)
+    - Yoga
   - RNCAsyncStorage (2.1.2):
     - DoubleConversion
     - glog
@@ -3390,6 +3439,9 @@ PODS:
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.10)
   - SocketRocket (0.7.1)
+  - TSBackgroundFetch (4.0.6)
+  - TSLocationManager (4.0.21):
+    - TSBackgroundFetch (~> 4.0.6)
   - Yoga (0.0.0)
 
 DEPENDENCIES:
@@ -3436,6 +3488,7 @@ DEPENDENCIES:
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
   - React-microtasksnativemodule (from `../node_modules/react-native/ReactCommon/react/nativemodule/microtasks`)
   - react-native-blob-util (from `../node_modules/react-native-blob-util`)
+  - react-native-config (from `../node_modules/react-native-config`)
   - react-native-geolocation-service (from `../node_modules/react-native-geolocation-service`)
   - react-native-pdf (from `../node_modules/react-native-pdf`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
@@ -3468,6 +3521,7 @@ DEPENDENCIES:
   - ReactAppDependencyProvider (from `build/generated/ios`)
   - ReactCodegen (from `build/generated/ios`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
+  - RNBackgroundGeolocation (from `../node_modules/react-native-background-geolocation`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - "RNCClipboard (from `../node_modules/@react-native-clipboard/clipboard`)"
   - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
@@ -3488,6 +3542,7 @@ SPEC REPOS:
   trunk:
     - abseil
     - BoringSSL-GRPC
+    - CocoaLumberjack
     - Firebase
     - FirebaseAppCheckInterop
     - FirebaseAuth
@@ -3514,6 +3569,8 @@ SPEC REPOS:
     - SDWebImage
     - SDWebImageWebPCoder
     - SocketRocket
+    - TSBackgroundFetch
+    - TSLocationManager
 
 EXTERNAL SOURCES:
   boost:
@@ -3595,6 +3652,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/react/nativemodule/microtasks"
   react-native-blob-util:
     :path: "../node_modules/react-native-blob-util"
+  react-native-config:
+    :path: "../node_modules/react-native-config"
   react-native-geolocation-service:
     :path: "../node_modules/react-native-geolocation-service"
   react-native-pdf:
@@ -3659,6 +3718,8 @@ EXTERNAL SOURCES:
     :path: build/generated/ios
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
+  RNBackgroundGeolocation:
+    :path: "../node_modules/react-native-background-geolocation"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-async-storage/async-storage"
   RNCClipboard:
@@ -3695,6 +3756,7 @@ SPEC CHECKSUMS:
   boost: 7e761d76ca2ce687f7cc98e698152abd03a18f90
   BoringSSL-GRPC: dded2a44897e45f28f08ae87a55ee4bcd19bc508
   BVLinearGradient: cb006ba232a1f3e4f341bb62c42d1098c284da70
+  CocoaLumberjack: 6a459bc897d6d80bd1b8c78482ec7ad05dffc3f0
   DoubleConversion: cb417026b2400c8f53ae97020b2be961b59470cb
   fast_float: 06eeec4fe712a76acc9376682e4808b05ce978b6
   FBLazyVector: 6fe148afcef2e3213e484758e3459609d40d57f5
@@ -3754,6 +3816,7 @@ SPEC CHECKSUMS:
   React-Mapbuffer: 9fbb496e7d6f7c34d5e617365ee778bf96d14eae
   React-microtasksnativemodule: 36adde22631838680d1be62776e8ccb83186c06a
   react-native-blob-util: 775b994555980f1687e3fd918a4e6d0044aaeb39
+  react-native-config: 5ef02408b26209d8f422855b967b8723c1c060eb
   react-native-geolocation-service: 32b2c2a3b91e70ce2a8d0c684801aaeb0a07e0ec
   react-native-pdf: 735ad8762c0631325147539df7e5d4d7087d8b53
   react-native-safe-area-context: 0472f170cbc594668dc7923724f679b066ac75b7
@@ -3787,6 +3850,7 @@ SPEC CHECKSUMS:
   ReactCodegen: 0f8899ac1bad260bf3b362ee848ef67a70b5a306
   ReactCommon: a30b578194de911fbe1698efb8247bfe4cb6abff
   RecaptchaInterop: 11e0b637842dfb48308d242afc3f448062325aba
+  RNBackgroundGeolocation: 071ff914b47728e24d44313e3cd14029695ba1e0
   RNCAsyncStorage: 5321442ed26760d7581b26effab82399ea5ff18b
   RNCClipboard: 9f7b908de4bf4353871fb454c15fc03db4917b88
   RNDateTimePicker: 92be0055ce31921aa85c521ae0bca85a67291346
@@ -3804,8 +3868,10 @@ SPEC CHECKSUMS:
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
+  TSBackgroundFetch: 0afbeaae4e1132866e1d4b6e55265af26b5958ae
+  TSLocationManager: 4dec8151fe8085350b18acc13d47949b12774b57
   Yoga: be02ca501b03c79d7027a6bbbd0a8db985034f11
 
 PODFILE CHECKSUM: d7df4ea1acdb221c766b086461338d50ff5d9024
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2
