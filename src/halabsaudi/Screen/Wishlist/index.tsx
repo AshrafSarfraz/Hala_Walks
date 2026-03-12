@@ -17,7 +17,7 @@ import {Dark_Heart, Light_Heart, Location} from '../../Themes/Images';
 import {Colors} from '../../Themes/Colors'; // Import Colors
 import {RootState} from '../../redux_toolkit/store'; // Adjust the path to your store file
 import {toggleItemInCart} from '../../redux_toolkit/cartSlice';
-import DistanceFromDevice from '../../Component/distanceCalculate/distanceCalculate';
+// import DistanceFromDevice from '../../Component/distanceCalculate/distanceCalculate';
 import { languageData } from '../../redux_toolkit/language/languageSlice';
 
 type WishlistProps = {

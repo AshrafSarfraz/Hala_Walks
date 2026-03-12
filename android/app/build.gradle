@@ -56,7 +56,7 @@ android {
             storeFile file('my-release-key.keystore')
             storePassword 'Hala--key'
             keyAlias 'my-key-alias'
-            keyPassword 'Hala--key'
+           keyPassword 'Hala--key'
         }
 
     }

@@ -9,6 +9,7 @@ import { Colors } from '../../Themes/Colors';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux_toolkit/store';
 import { languageData } from '../../redux_toolkit/language/languageSlice';
+import NotificationTestScreen from '../StackNav.tsx/NotificationTestScreen';
 
 const Tab = createBottomTabNavigator();
 

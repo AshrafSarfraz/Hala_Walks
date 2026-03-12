@@ -274,7 +274,7 @@ import {RootState} from '../../redux_toolkit/store';
 import {getStyles} from './style';
 import {languageData} from '../../redux_toolkit/language/languageSlice';
 import {Colors} from '../../Themes/Colors';
-import DetectCountry from '../../Component/distanceCalculate/DetectCountry';
+// import DetectCountry from '../../Component/distanceCalculate/DetectCountry';
 import FastImage from 'react-native-fast-image';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -534,7 +534,7 @@ const SelectedVenues: React.FC<{route: any}> = ({route}) => {
       </SafeAreaView>
 
       {/* keep if you want, it won't blank data now */}
-      <DetectCountry onCountryDetect={value => setCountry(value)} />
+      {/* <DetectCountry onCountryDetect={value => setCountry(value)} /> */}
     </View>
   );
 };

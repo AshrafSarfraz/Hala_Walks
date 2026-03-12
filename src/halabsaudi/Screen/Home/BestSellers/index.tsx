@@ -9,64 +9,36 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {RootState} from '../../../redux_toolkit/store';
 import {getStyles} from './style';
-import DetectCountry from '../../../Component/distanceCalculate/DetectCountry';
 
 const {width} = Dimensions.get('screen');
 const BRANDS_API = 'https://hala-b-saudi.onrender.com/api/hbs/brands';
 
-const BestSeller: React.FC = () => {
+const BestSeller: React.FC<{onDataLoaded?: (hasData: boolean) => void}> = ({onDataLoaded}) => {
   const navigation = useNavigation<any>();
   const reduxCountry = useSelector((s: RootState) => s.country?.countryName ?? null);
   const language = useSelector((state: RootState) => state.language.language);
   const styles = getStyles(language);
 
   const [brands, setBrands] = useState<any[]>([]);
-  const [country, setCountry] = useState<string | null>(null); // DetectCountry se
   const [loading, setLoading] = useState(true);
   const [loadedCards, setLoadedCards] = useState<{[key: string]: boolean}>({});
 
-  // ✅ normalize helper
   const norm = (v: any) =>
-    String(v ?? '')
-      .trim()
-      .toLowerCase()
-      .replace(/\s+/g, ' ');
-
-  // ✅ filters: Active + Country
-  // const applyFilters = (list: any[]) => {
-  //   const selectedCountry = reduxCountry || country;
-
-  //   return list
-  //     .filter(b => norm(b?.status) === 'active') // ✅ only Active
-  //     .filter(b => {
-  //       if (!selectedCountry) return true;
-  //       return norm(b?.selectedCountry) === norm(selectedCountry);
-  //     });
-  // };
-
+    String(v ?? '').trim().toLowerCase().replace(/\s+/g, ' ');
 
   const applyFilters = (list: any[]) => {
-    const selectedCountry = reduxCountry || country;
-  
     return list
-      // 1️⃣ only Active
       .filter(b => norm(b?.status) === 'active')
-  
-      // 2️⃣ only Best Seller
       .filter(b => b?.isBestSeller === true)
-  
-      // 3️⃣ only selected country
       .filter(b => {
-        if (!selectedCountry) return false; // ❗ best seller screen → country must
-        return norm(b?.selectedCountry) === norm(selectedCountry);
+        if (!reduxCountry) return false;
+        return norm(b?.selectedCountry) === norm(reduxCountry);
       });
   };
-  
 
   useEffect(() => {
     const loadOffers = async () => {
       try {
-        // 1) cache first
         const cachedData = await AsyncStorage.getItem('H-brands_cache');
         if (cachedData) {
           const parsed = JSON.parse(cachedData);
@@ -77,7 +49,6 @@ const BestSeller: React.FC = () => {
           setTimeout(() => setLoading(false), 1000);
         }
 
-        // 2) fetch fresh
         const res = await fetch(BRANDS_API);
         const json = await res.json().catch(() => ({}));
 
@@ -108,15 +79,20 @@ const BestSeller: React.FC = () => {
     loadOffers();
   }, []);
 
-  // ✅ Re-filter when reduxCountry OR detected country changes
   const filteredBrands = applyFilters(brands);
+
+  // ✅ Parent ko notify karo jab loading khatam ho
+  useEffect(() => {
+    if (!loading) {
+      onDataLoaded?.(filteredBrands.length > 0);
+    }
+  }, [filteredBrands.length, loading]);
 
   const handleCardLoad = (id: string) =>
     setLoadedCards(prev => ({...prev, [id]: true}));
 
   const getDescription = (item: any) =>
-    (((language === 'en' ? item.descriptionEng : item.descriptionArabic) || '')
-      .substring(0, 60) + '...');
+    ((language === 'en' ? item.descriptionEng : item.descriptionArabic) || '').substring(0, 60) + '...';
 
   const renderShimmerItem = () => (
     <View style={styles.Flatlist_Cont}>
@@ -131,15 +107,8 @@ const BestSeller: React.FC = () => {
       <TouchableOpacity
         style={styles.Flatlist_Cont}
         onPress={() => navigation.navigate('DetailScreen', {item})}>
-        <View
-          style={{
-            flexDirection: language === 'en' ? 'row' : 'row-reverse',
-            alignItems: 'center',
-          }}>
-          <ShimmerPlaceholder
-            visible={isLoaded}
-            LinearGradient={LinearGradient}
-            style={styles.image}>
+        <View style={{flexDirection: language === 'en' ? 'row' : 'row-reverse', alignItems: 'center'}}>
+          <ShimmerPlaceholder visible={isLoaded} LinearGradient={LinearGradient} style={styles.image}>
             <FastImage
               source={{
                 uri: item.img,
@@ -163,13 +132,15 @@ const BestSeller: React.FC = () => {
                   : item.nameEng
                 : item.nameArabic}
             </Text>
-
             <Text style={styles.desc_txt}>{getDescription(item)}</Text>
           </View>
         </View>
       </TouchableOpacity>
     );
   };
+
+  // ✅ Loading khatam ho aur data nahi to kuch render mat karo
+  if (!loading && filteredBrands.length === 0) return null;
 
   return (
     <View style={styles.container}>
@@ -183,7 +154,7 @@ const BestSeller: React.FC = () => {
         />
       ) : (
         <FlatList
-          data={filteredBrands} // ✅ Active + Country
+          data={filteredBrands}
           horizontal
           pagingEnabled
           keyExtractor={item => String(item.id)}
@@ -191,8 +162,6 @@ const BestSeller: React.FC = () => {
           renderItem={renderBrandItem}
         />
       )}
-
-      <DetectCountry onCountryDetect={value => setCountry(value)} />
     </View>
   );
 };

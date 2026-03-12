@@ -49,10 +49,10 @@ Flatlist_Cont: {
     },
     Type_Cont: {
       backgroundColor: '#D0A700',
-      paddingHorizontal: '4%',
+      paddingHorizontal: '2%',
       paddingVertical: 3,
       borderRadius: 3,
-      marginHorizontal:"5%",
+      marginHorizontal:"4%",
       alignSelf:language==='en'?'flex-start':'flex-end'
     },
     Type_Text: {

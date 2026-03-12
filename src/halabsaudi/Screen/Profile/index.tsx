@@ -51,6 +51,7 @@ const Profile:React.FC<ProfileProps> = () => {
             <View style={styles.Button_Cont} >
               <CustomButton2 title={languageData[language].account} onPress={() =>{navigation.navigate('AccountScreen')} } />
               <CustomButton2 title={languageData[language].redeem_history} onPress={() => {navigation.navigate('ReedemHistroy')}} />
+              {/* <CustomButton2 title={'Test'} onPress={() => {navigation.navigate('NotificationTest')}} /> */}
               <CustomButton2 title={languageData[language].language} onPress={() =>{showAlert()}} />
             </View>
             <View style={styles.Logout_cont}>

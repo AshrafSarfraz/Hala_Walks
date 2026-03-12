@@ -2,6 +2,12 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:../../../../../Downloads/westwalk_wpt.gpx">
+   </FileRef>
+   <FileRef
+      location = "group:../../../../../Downloads/gpxgenerator_path (1).gpx">
+   </FileRef>
+   <FileRef
       location = "group:Westwalk.xcodeproj">
    </FileRef>
    <FileRef

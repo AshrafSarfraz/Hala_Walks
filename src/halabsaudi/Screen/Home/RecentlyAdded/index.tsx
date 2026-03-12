@@ -7,12 +7,13 @@ import {
   TouchableOpacity,
   Platform,
   ActivityIndicator,
+  PermissionsAndroid,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FastImage from 'react-native-fast-image';
-
+import Geolocation from '@react-native-community/geolocation';
 import {RootState} from '../../../redux_toolkit/store';
 import {getStyles} from './style';
 import DistanceFromDevice from '../../../Component/distanceCalculate/distanceCalculate';
@@ -20,38 +21,25 @@ import DetectCountry from '../../../Component/distanceCalculate/DetectCountry';
 import {Location} from '../../../Themes/Images';
 
 const BRANDS_API = 'https://hala-b-saudi.onrender.com/api/hbs/brands';
-const RECENT_TTL_MS = 3 * 60 * 60 * 1000; // 3 hours cache
+const RECENT_TTL_MS = 3 * 60 * 60 * 1000;
 
-type CacheShape = {
-  ts: number;
-  data: any[];
-};
+type CacheShape = {ts: number; data: any[]};
 
-const RecentlyAdded: React.FC = () => {
+const RecentlyAdded: React.FC<{onDataLoaded?: (hasData: boolean) => void}> = ({onDataLoaded}) => {
   const navigation = useNavigation<any>();
   const mountedRef = useRef(true);
 
-  const reduxCountry = useSelector(
-    (s: RootState) => s.country?.countryName ?? null,
-  );
-  const language = useSelector(
-    (state: RootState) => state.language.language,
-  );
+  const reduxCountry = useSelector((s: RootState) => s.country?.countryName ?? null);
+  const language = useSelector((state: RootState) => state.language.language);
   const styles = getStyles(language);
 
   const [deviceCountry, setDeviceCountry] = useState<string | null>(null);
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadedCards, setLoadedCards] = useState<{[k: string]: boolean}>({});
+  const [userLocation, setUserLocation] = useState<{lat: number; long: number} | null>(null);
 
-  /* ---------------- helpers ---------------- */
-
-  const norm = (v: any) =>
-    String(v ?? '')
-      .trim()
-      .toLowerCase()
-      .replace(/\s+/g, ' ');
-
+  const norm = (v: any) => String(v ?? '').trim().toLowerCase().replace(/\s+/g, ' ');
   const selectedCountry = reduxCountry || deviceCountry;
 
   const RECENT_CACHE_KEY = useMemo(() => {
@@ -60,8 +48,58 @@ const RecentlyAdded: React.FC = () => {
       : 'H-recent_cache_unknown';
   }, [selectedCountry]);
 
-  /* ---------------- cache helpers ---------------- */
+  /* ---------------- location ---------------- */
+  useEffect(() => {
+    const getCurrentLocation = () => {
+      Geolocation.getCurrentPosition(
+        position => {
+          if (!mountedRef.current) return;
+          setUserLocation({
+            lat: position.coords.latitude,
+            long: position.coords.longitude,
+          });
+        },
+        error => console.log('❌ Location error:', error),
+        {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+      );
+    };
 
+    const requestLocationPermission = async () => {
+      try {
+        if (Platform.OS === 'android') {
+          const already = await PermissionsAndroid.check(
+            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+          );
+          if (already) {
+            getCurrentLocation();
+            return;
+          }
+          const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+            {
+              title: 'Location Permission',
+              message: 'We need access to your location to provide better services.',
+              buttonNeutral: 'Ask Me Later',
+              buttonNegative: 'Cancel',
+              buttonPositive: 'OK',
+            },
+          );
+          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+            getCurrentLocation();
+          }
+        } else {
+          Geolocation.requestAuthorization();
+          getCurrentLocation();
+        }
+      } catch (e) {
+        console.log('Permission error:', e);
+      }
+    };
+
+    requestLocationPermission();
+  }, []);
+
+  /* ---------------- cache helpers ---------------- */
   const readCache = async (): Promise<CacheShape | null> => {
     try {
       const raw = await AsyncStorage.getItem(RECENT_CACHE_KEY);
@@ -80,7 +118,6 @@ const RecentlyAdded: React.FC = () => {
   };
 
   /* ---------------- fetch ---------------- */
-
   const fetchBrands = async (signal?: AbortSignal) => {
     const res = await fetch(BRANDS_API, {signal});
     const json = await res.json().catch(() => ({}));
@@ -90,41 +127,31 @@ const RecentlyAdded: React.FC = () => {
   };
 
   /* ---------------- recently added logic ---------------- */
-
   const buildRecentList = (arr: any[]) => {
-    const TEN_DAYS_MS = 15 * 24 * 60 * 60 * 1000;
+    const ONE_YEAR_MS = 120 * 24 * 60 * 60 * 1000;
     const now = Date.now();
 
     return arr
       .map(item => ({
         id: item._id || item.id,
         ...item,
-        createdAtMs: new Date(
-          item.createdAt || item.created_at || item.time,
-        ).getTime(),
+        createdAtMs: new Date(item.createdAt || item.created_at || item.time).getTime(),
       }))
       .filter(item => norm(item.status) === 'active')
       .filter(item => Number.isFinite(item.createdAtMs))
-      .filter(item => now - item.createdAtMs <= TEN_DAYS_MS) // ✅ 10 days
-      .filter(
-        item =>
-          selectedCountry &&
-          norm(item.selectedCountry) === norm(selectedCountry),
-      ) // ✅ country strict
+      .filter(item => now - item.createdAtMs <= ONE_YEAR_MS)
+      .filter(item => selectedCountry && norm(item.selectedCountry) === norm(selectedCountry))
       .sort((a, b) => b.createdAtMs - a.createdAtMs)
       .slice(0, 7);
   };
 
   /* ---------------- load data ---------------- */
-
   const loadData = async () => {
     if (!selectedCountry) return;
 
     const cached = await readCache();
-    const cacheFresh =
-      cached && Date.now() - cached.ts < RECENT_TTL_MS;
+    const cacheFresh = cached && Date.now() - cached.ts < RECENT_TTL_MS;
 
-    // show cache instantly
     if (cached?.data?.length && mountedRef.current) {
       setItems(cached.data);
       setLoading(false);
@@ -140,9 +167,7 @@ const RecentlyAdded: React.FC = () => {
     try {
       const raw = await fetchBrands(controller.signal);
       const recent = buildRecentList(raw);
-
       if (!mountedRef.current) return;
-
       setItems(recent);
       await writeCache(recent);
     } catch (e) {
@@ -155,7 +180,6 @@ const RecentlyAdded: React.FC = () => {
   };
 
   /* ---------------- effects ---------------- */
-
   useEffect(() => {
     mountedRef.current = true;
     loadData();
@@ -164,10 +188,18 @@ const RecentlyAdded: React.FC = () => {
     };
   }, [selectedCountry]);
 
-  /* ---------------- render ---------------- */
+  // ✅ Parent ko notify karo jab loading khatam ho
+  useEffect(() => {
+    if (!loading) {
+      onDataLoaded?.(items.length > 0);
+    }
+  }, [items.length, loading]);
 
-  const handleCardLoad = (id: string) =>
-    setLoadedCards(p => ({...p, [id]: true}));
+  /* ---------------- render ---------------- */
+  const handleCardLoad = (id: string) => setLoadedCards(p => ({...p, [id]: true}));
+
+  // ✅ Loading khatam ho aur data nahi to kuch render mat karo
+  if (!loading && items.length === 0) return null;
 
   const renderItem = ({item, index}: {item: any; index: number}) => {
     return (
@@ -182,35 +214,32 @@ const RecentlyAdded: React.FC = () => {
             resizeMode={FastImage.resizeMode.cover}
           />
         ) : (
-          <Image
-            source={{uri: item.img}}
-            style={styles.image}
-            resizeMode="cover"
-          />
+          <Image source={{uri: item.img}} style={styles.image} resizeMode="cover" />
         )}
 
         <Text style={styles.cate_txt}>
-          {language === 'en'
-            ? item.nameEng
-            : item.nameArabic}
+          {language === 'en' ? item.nameEng : item.nameArabic}
         </Text>
 
         <View style={styles.Type_Cont}>
-          <Text style={styles.Type_Text}>
-            {item.selectedCategory}
-          </Text>
+          <Text style={styles.Type_Text}>{item.selectedCategory}</Text>
         </View>
 
         <View style={styles.Loc_Status_Cont}>
           <View style={styles.Loc_Cont}>
             <Image source={Location} style={styles.LocationIcon} />
-            <DistanceFromDevice
-              targetLat={Number(item.latitude)}
-              targetLong={Number(item.longitude)}
-              kmText="km away"
-              mText="m away"
-              loadingText="Calculating..."
-            />
+            {userLocation ? (
+              <DistanceFromDevice
+                userLat={userLocation.lat}
+                userLong={userLocation.long}
+                targetLat={Number(item.latitude)}
+                targetLong={Number(item.longitude)}
+                kmText="km"
+                mText="m"
+              />
+            ) : (
+              <Text style={{fontSize: 10, color: 'green'}}>--</Text>
+            )}
           </View>
         </View>
       </TouchableOpacity>
@@ -228,12 +257,8 @@ const RecentlyAdded: React.FC = () => {
           horizontal
           showsHorizontalScrollIndicator={false}
           renderItem={renderItem}
-          ListEmptyComponent={
-            <Text style={{opacity: 0.6}}>No Recently Added</Text>
-          }
         />
       )}
-
       <DetectCountry onCountryDetect={setDeviceCountry} />
     </View>
   );

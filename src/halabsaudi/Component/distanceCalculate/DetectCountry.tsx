@@ -1,7 +1,6 @@
 // DetectCountry.tsx
 import React, { useEffect } from 'react';
 import { PermissionsAndroid, Platform } from 'react-native';
-import Geolocation from 'react-native-geolocation-service';
 
 interface DetectCountryProps {
   onCountryDetect: (country: string) => void;
@@ -9,36 +8,10 @@ interface DetectCountryProps {
 
 const DetectCountry: React.FC<DetectCountryProps> = ({ onCountryDetect }) => {
   useEffect(() => {
-    const requestLocationPermission = async () => {
-      if (Platform.OS === 'android') {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        );
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          getLocation();
-        }
-      } else {
-        const authStatus = await Geolocation.requestAuthorization('whenInUse');
-        if (authStatus === 'granted') {
-          getLocation();
-        }
-      }
-    };
-
     const getLocation = () => {
-      const latitude= 25.276987
-      const  longitude= 51.520008
+      const latitude = 25.276987;
+      const longitude = 51.520008;
       fetchCountry(latitude, longitude);
-      // Geolocation.getCurrentPosition(
-      //   position => {
-      //   const { latitude, longitude } = position.coords;
-      //     fetchCountry(latitude, longitude);
-      //   },
-      //   error => {
-      //     console.error(error);
-      //   },
-      //   { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
-      // );
     };
 
     const fetchCountry = async (lat: number, lon: number) => {
@@ -58,10 +31,10 @@ const DetectCountry: React.FC<DetectCountryProps> = ({ onCountryDetect }) => {
       }
     };
 
-    requestLocationPermission();
+    getLocation();
   }, []);
 
-  return null; // No UI needed
+  return null;
 };
 
 export default DetectCountry;

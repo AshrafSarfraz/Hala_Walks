@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, FlatList, Image, TouchableOpacity, SafeAreaView, StatusBar, PermissionsAndroid,Platform, } from 'react-native';
+import { View, Text, TextInput, FlatList, Image, TouchableOpacity, SafeAreaView, StatusBar, PermissionsAndroid, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import CustomHeader from '../../Component/CustomHeader/CustomHeader';
 import { Location, Search } from '../../Themes/Images';
@@ -14,7 +14,7 @@ import FastImage from 'react-native-fast-image';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DetectCountry from '../../Component/distanceCalculate/DetectCountry';
 import DistanceFromDevice from '../../Component/distanceCalculate/distanceCalculate';
-import Geolocation from 'react-native-geolocation-service';
+import Geolocation from '@react-native-community/geolocation'; // ✅ fixed import
 
 const BRANDS_API = 'https://hala-b-saudi.onrender.com/api/hbs/brands';
 
@@ -32,52 +32,70 @@ const SelectedCategories: React.FC<{ route: any }> = ({ route }) => {
   const language = useSelector((state: RootState) => state.language.language);
   const styles = getStyles(language);
 
-  // ✅ image priority: heroImage first, else img
   const getBrandImage = (b: any) => {
     const hero = String(b?.heroImage || '').trim();
     if (hero) return hero;
     return String(b?.img || '').trim();
   };
 
-  // Request location and set userLocation
+  /* ================= LOCATION ================= */
   useEffect(() => {
-    const requestLocationPermission = async () => {
-      if (Platform.OS === 'android') {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        );
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          getCurrentLocation();
-        }
-      } else {
-        const authStatus = await Geolocation.requestAuthorization('whenInUse');
-        if (authStatus === 'granted') getCurrentLocation();
-      }
-    };
-
     const getCurrentLocation = () => {
       Geolocation.getCurrentPosition(
         position => {
+          console.log('✅ Location:', position.coords);
           setUserLocation({
             lat: position.coords.latitude,
             long: position.coords.longitude,
           });
         },
-        error => {
-          console.error(error);
-        },
+        error => console.log('❌ Location error:', error),
         { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
       );
+    };
+
+    const requestLocationPermission = async () => {
+      try {
+        if (Platform.OS === 'android') {
+          const already = await PermissionsAndroid.check(
+            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+          );
+          if (already) {
+            getCurrentLocation();
+            return;
+          }
+          const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+            {
+              title: 'Location Permission',
+              message: 'We need access to your location to provide better services.',
+              buttonNeutral: 'Ask Me Later',
+              buttonNegative: 'Cancel',
+              buttonPositive: 'OK',
+            },
+          );
+          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+            getCurrentLocation();
+          } else {
+            console.log('❌ Permission denied');
+          }
+        } else {
+          // iOS
+          Geolocation.requestAuthorization();
+          getCurrentLocation();
+        }
+      } catch (e) {
+        console.log('Permission error:', e);
+      }
     };
 
     requestLocationPermission();
   }, []);
 
-  // ✅ Load brands from API (instead of Firebase)
+  /* ================= LOAD BRANDS ================= */
   useEffect(() => {
     const loadBrands = async () => {
       try {
-        // 1) cache first
         const cachedData = await AsyncStorage.getItem('H-brands_cache');
         if (cachedData) {
           const cached = JSON.parse(cachedData);
@@ -87,37 +105,25 @@ const SelectedCategories: React.FC<{ route: any }> = ({ route }) => {
             .filter((b: any) => b.selectedCategory?.toLowerCase() === item.text?.toLowerCase());
           setBrands(parsed);
           setLoading(false);
-        } else {
-          setLoading(true);
         }
 
-        // 2) fresh API
         const res = await fetch(BRANDS_API);
         const json = await res.json().catch(() => ({}));
 
         if (!res.ok) {
-          console.warn('Brands API failed:', json);
           setLoading(false);
           return;
         }
 
-        const raw = (json && (json as any).data) ? (json as any).data : json;
+        const raw = json?.data ? json.data : json;
         const freshArr = Array.isArray(raw) ? raw : [];
+        const normalizedFresh = freshArr.map((b: any) => ({ id: b._id || b.id, ...b }));
 
-        // normalize id
-        const normalizedFresh = freshArr.map((b: any) => ({
-          id: b._id || b.id,
-          ...b,
-        }));
-
-        // filter by category + Active
         const filteredFresh = normalizedFresh
           .filter((b: any) => b?.status === 'Active')
           .filter((b: any) => b.selectedCategory?.toLowerCase() === item.text?.toLowerCase());
 
         setBrands(filteredFresh);
-
-        // store full fresh in cache (same as your old logic)
         await AsyncStorage.setItem('H-brands_cache', JSON.stringify(normalizedFresh));
       } catch (err) {
         console.error('Error loading brands:', err);
@@ -130,30 +136,26 @@ const SelectedCategories: React.FC<{ route: any }> = ({ route }) => {
     loadBrands();
   }, [item.text]);
 
-  // Haversine distance
+  /* ================= DISTANCE ================= */
   const haversineDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
-    const toRad = (value: number) => (value * Math.PI) / 180;
-    const R = 6371; // km
+    const toRad = (v: number) => (v * Math.PI) / 180;
+    const R = 6371;
     const dLat = toRad(lat2 - lat1);
     const dLon = toRad(lon2 - lon1);
     const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(toRad(lat1)) *
-        Math.cos(toRad(lat2)) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c;
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+    return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
   };
 
-  // Get nearest branch per brand
+  /* ================= NEAREST BRANCH ================= */
   const getNearestBranchPerBrand = (brandsList: any[], userLoc: { lat: number; long: number }) => {
     const brandMap: Record<string, any> = {};
 
     brandsList.forEach(branch => {
       if (!branch.latitude || !branch.longitude) return;
 
-      const distanceInKm = haversineDistance(
+      const distance = haversineDistance(
         userLoc.lat,
         userLoc.long,
         Number(branch.latitude),
@@ -163,21 +165,22 @@ const SelectedCategories: React.FC<{ route: any }> = ({ route }) => {
       const key = String(branch.nameEng || branch.nameArabic || branch.id || branch._id || '');
       if (!key) return;
 
-      if (!brandMap[key] || distanceInKm < brandMap[key].distance) {
-        brandMap[key] = { ...branch, distance: distanceInKm };
+      if (!brandMap[key] || distance < brandMap[key].distance) {
+        brandMap[key] = { ...branch, distance };
       }
     });
 
-    return Object.values(brandMap);
+    return Object.values(brandMap).sort((a: any, b: any) => a.distance - b.distance);
   };
 
-  // Filtered brands based on search
+  /* ================= FILTER ================= */
   const filteredData = brands.filter(b =>
     b.nameEng?.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
-  // Only nearest branches
-  const nearestBrands = userLocation ? getNearestBranchPerBrand(filteredData, userLocation) : filteredData;
+  const nearestBrands = userLocation
+    ? getNearestBranchPerBrand(filteredData, userLocation)
+    : filteredData;
 
   const renderEmptyState = () => (
     <View style={styles.emptyStateContainer}>
@@ -186,6 +189,7 @@ const SelectedCategories: React.FC<{ route: any }> = ({ route }) => {
     </View>
   );
 
+  /* ================= UI ================= */
   return (
     <View style={styles.container}>
       <StatusBar hidden={false} translucent backgroundColor={Colors.White4} barStyle="dark-content" />
@@ -215,36 +219,39 @@ const SelectedCategories: React.FC<{ route: any }> = ({ route }) => {
           {loading ? (
             <FlatList
               data={[1, 2, 3, 4, 5, 6]}
-              keyExtractor={(it, index) => index.toString()}
+              keyExtractor={(_, index) => index.toString()}
               renderItem={() => (
                 <View style={styles.itemContainer}>
                   <ShimmerPlaceholder LinearGradient={LinearGradient} style={styles.itemImage} />
                   <View style={styles.itemInfo}>
-                    <ShimmerPlaceholder LinearGradient={LinearGradient} style={{ height: 20, marginBottom: 6 }} />
-                    <ShimmerPlaceholder LinearGradient={LinearGradient} style={{ height: 15, marginBottom: 6 }} />
+                    <ShimmerPlaceholder LinearGradient={LinearGradient} style={{ height: 20, marginBottom: 6, borderRadius: 4 }} />
+                    <ShimmerPlaceholder LinearGradient={LinearGradient} style={{ height: 15, marginBottom: 6, borderRadius: 4 }} />
+                    <ShimmerPlaceholder LinearGradient={LinearGradient} style={{ height: 12, width: '40%', borderRadius: 4 }} />
                   </View>
                 </View>
               )}
+              showsVerticalScrollIndicator={false}
             />
           ) : nearestBrands.length === 0 ? (
             renderEmptyState()
           ) : (
             <FlatList
-              data={nearestBrands.filter(b => !countryName || b.selectedCountry?.toLowerCase() === countryName.toLowerCase())}
-              keyExtractor={(it) => String(it.id || it._id)}
+              data={nearestBrands.filter(b =>
+                !countryName || b.selectedCountry?.toLowerCase() === countryName.toLowerCase(),
+              )}
+              keyExtractor={it => String(it.id || it._id)}
               contentContainerStyle={{ flexGrow: 1, paddingBottom: 20 }}
               showsVerticalScrollIndicator={false}
               initialNumToRender={6}
               maxToRenderPerBatch={6}
               windowSize={8}
-              renderItem={({ item, index }) => (
+              renderItem={({ item: brandItem, index }) => (
                 <TouchableOpacity
                   style={styles.itemContainer}
-                  onPress={() => navigation.navigate('DetailScreen', { item })}
-                >
+                  onPress={() => navigation.navigate('DetailScreen', { item: brandItem })}>
                   <FastImage
                     source={{
-                      uri: getBrandImage(item),
+                      uri: getBrandImage(brandItem),
                       priority: index <= 6 ? FastImage.priority.high : FastImage.priority.normal,
                     }}
                     style={styles.itemImage}
@@ -254,34 +261,40 @@ const SelectedCategories: React.FC<{ route: any }> = ({ route }) => {
                   <View style={styles.itemInfo}>
                     <Text style={styles.itemTitle}>
                       {language === 'en'
-                        ? item.nameEng?.length > 30
-                          ? item.nameEng.substring(0, 30) + '...'
-                          : item.nameEng
-                        : item.nameArabic?.length > 30
-                        ? item.nameArabic.substring(0, 30) + '...'
-                        : item.nameArabic}
+                        ? brandItem.nameEng?.length > 30
+                          ? brandItem.nameEng.substring(0, 30) + '...'
+                          : brandItem.nameEng
+                        : brandItem.nameArabic?.length > 30
+                        ? brandItem.nameArabic.substring(0, 30) + '...'
+                        : brandItem.nameArabic}
                     </Text>
 
                     <Text style={styles.itemLocation}>
                       {language === 'en'
-                        ? item.descriptionEng?.length > 70
-                          ? item.descriptionEng.substring(0, 70) + '...'
-                          : item.descriptionEng
-                        : item.descriptionArabic?.length > 70
-                        ? item.descriptionArabic.substring(0, 70) + '...'
-                        : item.descriptionArabic}
+                        ? brandItem.descriptionEng?.length > 70
+                          ? brandItem.descriptionEng.substring(0, 70) + '...'
+                          : brandItem.descriptionEng
+                        : brandItem.descriptionArabic?.length > 70
+                        ? brandItem.descriptionArabic.substring(0, 70) + '...'
+                        : brandItem.descriptionArabic}
                     </Text>
 
                     <View style={styles.Loc_Status_Cont}>
                       <View style={styles.Loc_Cont}>
-                      <Image source={Location} style={styles.LocationIcon} />
-                        <DistanceFromDevice
-                          targetLat={item.latitude}
-                          targetLong={item.longitude}
-                          kmText="km"
-                          mText="m"
-                          loadingText="Calculating..."
-                        />
+                        <Image source={Location} style={styles.LocationIcon} />
+                        {/* ✅ userLocation mile tab hi show karo */}
+                        {userLocation ? (
+                          <DistanceFromDevice
+                            userLat={userLocation.lat}
+                            userLong={userLocation.long}
+                            targetLat={Number(brandItem.latitude)}
+                            targetLong={Number(brandItem.longitude)}
+                            kmText="km"
+                            mText="m"
+                          />
+                        ) : (
+                          <Text style={{ fontSize: 10, color: 'green' }}>--</Text>
+                        )}
                       </View>
                     </View>
                   </View>
@@ -292,7 +305,7 @@ const SelectedCategories: React.FC<{ route: any }> = ({ route }) => {
         </View>
       </SafeAreaView>
 
-      <DetectCountry onCountryDetect={(value) => setCountry(value)} />
+      <DetectCountry onCountryDetect={value => setCountry(value)} />
     </View>
   );
 };

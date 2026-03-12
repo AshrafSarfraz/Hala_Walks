@@ -82,6 +82,7 @@ export const getStyles =(language: string)=> StyleSheet.create({
       borderColor:Colors.Grey9,
       width:200,
       height:59,
+      letterSpacing:0.3
 
     },
     SignUp_Btn:{

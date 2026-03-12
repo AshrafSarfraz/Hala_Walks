@@ -208,15 +208,15 @@ const Venues: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <FlatList
+     <FlatList
         data={visibleItems}
         keyExtractor={item => String(item.id)}
         numColumns={4}
         renderItem={renderVenueItem}
         showsVerticalScrollIndicator={false}
-        scrollEnabled={false} // ✅ so Home ScrollView scroll works
+        scrollEnabled={false}
+        columnWrapperStyle={{justifyContent: 'flex-start'}} // ✅ left se start karo
       />
-
       {filteredVenues.length > 8 && (
         <TouchableOpacity
           style={styles.showMoreButton}

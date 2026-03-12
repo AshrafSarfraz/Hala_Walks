@@ -3,43 +3,44 @@ import { Colors } from "../../../Themes/Colors";
 import { Fonts } from "../../../Themes/Fonts";
 
 const {width} = Dimensions.get('window');
-const imageSize = (width - 40) / 4; // Adjusting image size dynamically
+const COLUMNS = 4;
+const HORIZONTAL_MARGIN = width * 0.03 * 2; // 3% dono taraf
+const ITEM_GAP = 6 * (COLUMNS - 1); // marginRight gap
+const itemSize = (width - HORIZONTAL_MARGIN - ITEM_GAP) / COLUMNS;
 
 export const styles = StyleSheet.create({
   container: {
-    alignItems: 'center',
     marginHorizontal: '3%',
     marginTop: 10,
   },
   Flatlist_Cont: {
-    marginRight: 6,
+    width: itemSize,        // ✅ exact 4 column width
     alignItems: 'center',
-    width: imageSize, // Making container responsive
-    marginBottom:10,
-   
+    marginBottom: 10,
+    marginRight: 6,
   },
   image: {
-    width: imageSize * 0.85,
-    height: imageSize * 0.85,
+    width: itemSize * 0.85,
+    height: itemSize * 0.85,
     borderRadius: 10,
-    resizeMode:"cover",
   },
   cate_txt: {
     fontSize: 10,
-    color:Colors.Black,
-    fontFamily:Fonts.SF_Bold,
+    color: Colors.Black,
+    fontFamily: Fonts.SF_Bold,
     marginTop: 5,
     lineHeight: 14,
     letterSpacing: 0.3,
     textAlign: 'center',
-    width:"100%"
+    width: '100%',
   },
   showMoreButton: {
-    marginTop:8,
+    marginTop: 8,
     paddingVertical: 8,
     paddingHorizontal: 10,
     backgroundColor: Colors.Green,
     borderRadius: 6,
+    alignSelf: 'center',
   },
   showMoreText: {
     color: '#fff',
@@ -50,11 +51,10 @@ export const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff', // or your theme background
   },
-  loader:{
-    position:"absolute",
-    alignSelf:"center",
-    justifyContent:'center',
-  }
+  loader: {
+    position: 'absolute',
+    alignSelf: 'center',
+    justifyContent: 'center',
+  },
 });
