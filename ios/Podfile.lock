@@ -2735,7 +2735,7 @@ PODS:
     - Yoga
   - react-native-geolocation-service (5.3.1):
     - React
-  - react-native-pdf (6.7.7):
+  - react-native-pdf (7.0.3):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3843,7 +3843,7 @@ SPEC CHECKSUMS:
   react-native-config: 5ef02408b26209d8f422855b967b8723c1c060eb
   react-native-geolocation: 57a4a35c149d8613f81b89ff155e6ae28e76aea0
   react-native-geolocation-service: 32b2c2a3b91e70ce2a8d0c684801aaeb0a07e0ec
-  react-native-pdf: 735ad8762c0631325147539df7e5d4d7087d8b53
+  react-native-pdf: 3c2c2abecf2470571bdba7cf0c6a51d002bd2b4e
   react-native-safe-area-context: 0472f170cbc594668dc7923724f679b066ac75b7
   react-native-webview: 005cf4cfde4e2688d222e1fe962d638bc2acc07d
   React-NativeModulesApple: ec44c21ae0bbb5f9a2df72db00294e33a00e07f0
