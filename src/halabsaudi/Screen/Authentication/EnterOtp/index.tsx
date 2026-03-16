@@ -77,6 +77,7 @@ const Otp: React.FC<OtpProps> = ({ route, navigation }) => {
   const saveUserData = async (token: string, user: any) => {
     try {
       // Pehle jaisa flag + basic data
+    
       await AsyncStorage.setItem('hala_user', 'true');
       await AsyncStorage.setItem(
         'hala_user_data',
@@ -128,12 +129,15 @@ const Otp: React.FC<OtpProps> = ({ route, navigation }) => {
       console.log('✅ OTP verified:', res);
 
       await saveUserData(res.token, res.user);
-
+      const disclosureAccepted = await AsyncStorage.getItem('hala_location_disclosure_accepted');
       // Navigate to main app stack
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
-          routes: [{ name: 'BottomTab' }], // same as pehle
+          routes: [{ 
+            // If never seen → show disclosure first, else go straight to app
+            name: disclosureAccepted ? 'BottomTab' : 'LocationDisclosure' 
+          }],
         }),
       );
     } catch (err: any) {

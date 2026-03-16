@@ -18,7 +18,7 @@ const languageData = {
     terms_of_use: "Terms of Use",
     and: "and",
   //  otp Screeb
-    enter_otp: "Enter the 6-digit OTP sent to you at",
+    enter_otp: "Enter the OTP sent to your WhatsApp number",
     verify_otp: "Verify OTP",
     incorrect_otp: "The OTP passcode you’ve entered is incorrect",
     no_code_received: "I haven’t received a code",
@@ -124,7 +124,7 @@ const languageData = {
     and: " و ",
     welcome_back: "مرحبًا بعودتك!",
     sign_in_message: "سجّل الدخول إلى حسابك",
-    enter_otp: "أدخل رمز OTP المكون من 6 أرقام المرسل إليك على",
+    enter_otp: "أدخل رمز التحقق المرسل إلى رقم WhatsApp الخاص بك.",
     incorrect_otp: "رمز OTP الذي أدخلته غير صحيح",
     no_code_received: "لم أستلم الرمز",
     resend: "إعادة الإرسال",

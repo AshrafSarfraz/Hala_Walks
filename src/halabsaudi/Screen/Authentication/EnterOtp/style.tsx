@@ -36,12 +36,12 @@ export const getStyles=(language:string)=> StyleSheet.create({
     },
     digit_Txt: {
       fontFamily: Fonts.SF_Medium,
-      fontSize: 20,
+      fontSize: 16,
       color: Colors.Black,
       alignSelf: 'center',
-      lineHeight: 26,
+      lineHeight: 20,
       marginTop: '5%',
-      marginBottom: '1%',
+
     },
     PhoneNumber:{
       fontFamily: Fonts.SF_Medium,

@@ -9,7 +9,7 @@ import { navigate } from './RootNavigation';
 
 const VENUES_API = 'https://hala-b-saudi.onrender.com/api/hbs/venues';
 const VENUES_CACHE_KEY = 'H-venues_cache_v3';
-const GEOFENCE_RADIUS = 1000;
+const GEOFENCE_RADIUS = 2000;
 const CHANNEL_ID = 'geofence_channel';
 const COOLDOWN_KEY = 'geofence_cooldown';
 export const PENDING_VENUE_KEY = 'pending_venue_navigate'; // ✅ export — index.js bhi use karega

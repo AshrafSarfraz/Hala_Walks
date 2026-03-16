@@ -22,6 +22,7 @@ import SignuP from '../../Screen/Authentication/SignUp/signUp';
 
 import StackNavigation from '../../../westwalk/navigation/stackNavigation'; // agar Westwalk ka stack chahiye
 import NotificationTestScreen from './NotificationTestScreen';
+import LocationDisclosure from '../../Screen/LocationDisclosureScreen';
 
 
 const Stack = createNativeStackNavigator();
@@ -60,6 +61,7 @@ const HalaStack: React.FC = () => {
   return (
       <Stack.Navigator initialRouteName={initialRoute} screenOptions={{ headerShown: false }}>
         <Stack.Screen name='Splash' component={Splash_Screen} />
+        <Stack.Screen name='LocationDisclosure' component={LocationDisclosure} />
         <Stack.Screen name='WelcomeScreen' component={WelcomeScreen} />
         <Stack.Screen name="WestwalkStack" component={StackNavigation} />
         <Stack.Screen name='Onboarding' component={OnBoarding} />
