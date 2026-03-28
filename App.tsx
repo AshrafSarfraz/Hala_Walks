@@ -1,6 +1,5 @@
 import 'react-native-gesture-handler';
 import React, { useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
 import { Provider } from 'react-redux';
 import { persistor, store } from './src/westwalk/redux/store';
 import { PersistGate } from 'redux-persist/integration/react';
@@ -28,6 +27,6 @@ const App = () => {
   );
 }
 
-const styles = StyleSheet.create({})
+
 
 export default App;

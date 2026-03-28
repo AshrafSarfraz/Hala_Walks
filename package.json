@@ -5,7 +5,7 @@
   "scripts": {
     "android": "react-native run-android",
     "ashrafios": "npx react-native run-ios --udid  293FFE35-A2A5-421C-8DAD-0E2359960F64",
-    "ios": "npx react-native run-ios",
+    "ios": "npx react-native run-ios --udid 46275535-CB8F-4C08-A5B6-09DEB106E0A5",
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest"
@@ -21,11 +21,13 @@
     "@react-native-firebase/firestore": "^22.2.0",
     "@react-native-firebase/messaging": "^22.2.0",
     "@react-native-firebase/storage": "^22.2.0",
+    "@react-native-vector-icons/ionicons": "^13.0.0",
     "@react-navigation/bottom-tabs": "^7.3.10",
     "@react-navigation/native": "^7.1.6",
     "@react-navigation/native-stack": "^7.3.10",
     "@reduxjs/toolkit": "^2.7.0",
     "axios": "^1.13.6",
+    "jwt-decode": "^4.0.0",
     "react": "19.0.0",
     "react-native": "0.78.0",
     "react-native-app-intro-slider": "^4.0.4",

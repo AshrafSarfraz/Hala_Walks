@@ -1,41 +1,86 @@
-
+// src/halabsaudi/Notifications/index.tsx
 import { Platform, PermissionsAndroid } from "react-native";
 import messaging from "@react-native-firebase/messaging";
 import notifee, { EventType } from "@notifee/react-native";
 import { navigate } from "./RootNavigation";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect } from "react";
 
-const API_BASE = "https://hala-b-saudi.onrender.com/api/hbs"; // apna
+const API_BASE = "https://hala-b-saudi.onrender.com/api";
 
-async function fetchVenueById(venueId) {
-  const res = await fetch(`${API_BASE}/venues/${venueId}`);
+
+// ---------- Helper: Fetch venue by ID ----------
+async function fetchVenueById(venueId: string) {
+  const res = await fetch(`${API_BASE}/hbs/venues/${venueId}`);
   const json = await res.json().catch(() => ({}));
   return json?.data || null;
 }
 
-async function openFromData(data) {
+// ---------- Helper: Navigate from notification ----------
+async function openFromData(data: any) {
   const screen = data?.screen;
   const venueId = data?.venueId;
 
-  // ✅ SelectedVenue expects route.params.item
   if (screen === "SelectedVenue" && venueId) {
     const venue = await fetchVenueById(venueId);
-    if (venue) {
-      navigate("SelectedVenue", { item: venue });
-    } else {
-      navigate("Home");
-    }
+    if (venue) navigate("SelectedVenue", { item: venue });
+    else navigate("Home");
     return;
   }
 
   if (screen) navigate(screen);
 }
 
-const Notifications = async () => {
-  // ✅ permissions
-  if (Platform.OS === "ios") {
-    await messaging().requestPermission();
-  }
+// jwt token
+const jwtToken = async () => {
+  await AsyncStorage.getItem("hala_token");
+};
 
+
+
+// ---------- Helper: Register device token ----------
+async function registerDevice(token: string, userToken: string) {
+  try {
+    await fetch(`${API_BASE}/devices/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+      body: JSON.stringify({
+        token,
+        platform: Platform.OS,
+      }),
+    });
+    console.log("✅ Device token registered:", token);
+  } catch (err) {
+    console.error("❌ Device registration failed:", err);
+  }
+}
+
+
+
+// ---------- Helper: Remove device token ----------
+export async function removeDeviceToken(token: string, userToken: string) {
+  try {
+    await fetch(`${API_BASE}/devices/remove`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+      body: JSON.stringify({ token }),
+    });
+    console.log("✅ Device token removed:", token);
+  } catch (err) {
+    console.error("❌ Device removal failed:", err);
+  }
+}
+
+// ---------- Notifications Setup ----------
+const Notifications = async (userToken: string) => {
+  // ---------- Permissions ----------
+  if (Platform.OS === "ios") await messaging().requestPermission();
   if (Platform.OS === "android" && Platform.Version >= 33) {
     const granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
@@ -43,19 +88,26 @@ const Notifications = async () => {
     if (granted !== PermissionsAndroid.RESULTS.GRANTED) return;
   }
 
-  // ✅ token (for debug)
+  // ---------- Get token & register ----------
   const token = await messaging().getToken();
-  console.log("FCM Token:", token);
+  console.log("🔑 FCM Token:", token);
+  await registerDevice(token, userToken);
 
-  // ✅ channel (Android)
+  // ---------- Handle token refresh ----------
+  messaging().onTokenRefresh(async (newToken) => {
+    console.log("🔄 FCM Token refreshed:", newToken);
+    await registerDevice(newToken, userToken);
+  });
+
+  // ---------- Android channel ----------
   await notifee.createChannel({
     id: "default",
     name: "Default Channel",
-    importance: 4, // HIGH
+    importance: 4,
   });
 
-  // ✅ foreground message => show local notification
-  messaging().onMessage(async remoteMessage => {
+  // ---------- Foreground notifications ----------
+  messaging().onMessage(async (remoteMessage) => {
     const data = remoteMessage?.data || {};
     await notifee.displayNotification({
       title: remoteMessage?.notification?.title || data.title || "Hala B Saudi",
@@ -68,26 +120,159 @@ const Notifications = async () => {
     });
   });
 
-  // ✅ tap from background
-  messaging().onNotificationOpenedApp(async remoteMessage => {
+  // ---------- Background / killed notifications ----------
+  messaging().onNotificationOpenedApp(async (remoteMessage) => {
     await openFromData(remoteMessage?.data || {});
   });
 
-  // ✅ tap from killed state
   const initial = await messaging().getInitialNotification();
-  if (initial?.data) {
-    await openFromData(initial.data);
-  }
+  if (initial?.data) await openFromData(initial.data);
 
-  // ✅ tap while app in foreground (Notifee)
+  // ---------- Foreground Notifee tap ----------
   notifee.onForegroundEvent(async ({ type, detail }) => {
-    if (type === EventType.PRESS) {
-      await openFromData(detail?.notification?.data || {});
-    }
+    if (type === EventType.PRESS) await openFromData(detail?.notification?.data || {});
   });
 };
 
 export default Notifications;
+
+
+
+
+
+
+
+
+
+
+
+
+
+// // /src/halabsaudi/Notifications/index.tsx
+// import { Platform, PermissionsAndroid } from "react-native";
+// import messaging from "@react-native-firebase/messaging";
+// import notifee, { EventType } from "@notifee/react-native";
+// import { navigate } from "./RootNavigation";
+
+// const API_BASE = "https://hala-b-saudi.onrender.com/api/hbs"; // apna
+
+// async function fetchVenueById(venueId) {
+//   const res = await fetch(`${API_BASE}/venues/${venueId}`);
+//   const json = await res.json().catch(() => ({}));
+//   return json?.data || null;
+// }
+
+// async function openFromData(data) {
+//   const screen = data?.screen;
+//   const venueId = data?.venueId;
+
+//   // ✅ SelectedVenue expects route.params.item
+//   if (screen === "SelectedVenue" && venueId) {
+//     const venue = await fetchVenueById(venueId);
+//     if (venue) {
+//       navigate("SelectedVenue", { item: venue });
+//     } else {
+//       navigate("Home");
+//     }
+//     return;
+//   }
+
+//   if (screen) navigate(screen);
+// }
+
+// const Notifications = async () => {
+//   // ✅ permissions
+//   if (Platform.OS === "ios") {
+//     await messaging().requestPermission();
+//   }
+
+//   if (Platform.OS === "android" && Platform.Version >= 33) {
+//     const granted = await PermissionsAndroid.request(
+//       PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+//     );
+//     if (granted !== PermissionsAndroid.RESULTS.GRANTED) return;
+//   }
+
+//   // ✅ token (for debug)
+//   const token = await messaging().getToken();
+//   console.log("FCM Token:", token);
+
+//   // ✅ send token to server
+//   await fetch("https://hala-b-saudi.onrender.com/api/devices/register", {
+//   method: "POST",
+//   headers: {
+//     "Content-Type": "application/json",
+//     Authorization: `Bearer ${userToken}`, // redux ya storage se
+//   },
+//   body: JSON.stringify({
+//     token,
+//     platform: Platform.OS,
+//   }),
+// });
+
+// // ✅ remove token on logout (call this function on logout)
+// await fetch("https://hala-b-saudi.onrender.com/api/devices/remove", {
+//   method: "DELETE",
+//   headers: {
+//     "Content-Type": "application/json",
+//     Authorization: `Bearer ${USER_TOKEN}`,
+//   },
+//   body: JSON.stringify({ token }),
+// });
+
+//   // ✅ channel (Android)
+//   await notifee.createChannel({
+//     id: "default",
+//     name: "Default Channel",
+//     importance: 4, // HIGH
+//   });
+
+//   // ✅ foreground message => show local notification
+//   messaging().onMessage(async remoteMessage => {
+//     const data = remoteMessage?.data || {};
+//     await notifee.displayNotification({
+//       title: remoteMessage?.notification?.title || data.title || "Hala B Saudi",
+//       body: remoteMessage?.notification?.body || data.body || "",
+//       android: {
+//         channelId: "default",
+//         pressAction: { id: "default" },
+//       },
+//       data,
+//     });
+//   });
+
+//   // ✅ tap from background
+//   messaging().onNotificationOpenedApp(async remoteMessage => {
+//     await openFromData(remoteMessage?.data || {});
+//   });
+
+//   // ✅ tap from killed state
+//   const initial = await messaging().getInitialNotification();
+//   if (initial?.data) {
+//     await openFromData(initial.data);
+//   }
+
+//   // ✅ tap while app in foreground (Notifee)
+//   notifee.onForegroundEvent(async ({ type, detail }) => {
+//     if (type === EventType.PRESS) {
+//       await openFromData(detail?.notification?.data || {});
+//     }
+//   });
+// };
+
+// export default Notifications;
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

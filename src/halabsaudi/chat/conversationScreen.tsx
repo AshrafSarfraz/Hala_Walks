@@ -1,131 +1,326 @@
 // src/halabsaudi/chat/conversationScreen.tsx
 import React, {useEffect, useState} from 'react';
-import {View, Text, FlatList, TouchableOpacity, StyleSheet, TextInput, Button, Alert} from 'react-native';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  StyleSheet,
+  ActivityIndicator,
+  Image,
+  Alert,
+} from 'react-native';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+
+import {Colors} from '../Themes/Colors';
+import {Chat} from '../Themes/Images';
+import {getAvatarColor} from '../Themes/avatarColor';
+import ChatSearchModal from '../Component/Modal/ChatSearchModal';
+
+import {BASE_URL} from '../../config/api';
+import {connectSocket, getSocket} from './socket';
+import ConversationHeader from '../Component/ChatHeaders/conversation';
 
 type Conversation = {
   _id: string;
-  participant: { _id: string; name: string };
-  lastMessage: { text: string } | null;
+  participant: {_id: string; name: string};
+  lastMessage: {text: string} | null;
   lastMessageAt: string;
+  unreadCount?: number;
 };
 
-type RootStackParamList = {
-  ChatScreen: { chatId: string; participantName: string };
-};
-
-type Props = NativeStackScreenProps<RootStackParamList, 'ChatScreen'>;
-
-export default function ConversationsScreen({ navigation }: Props) {
+export default function ConversationsScreen({navigation}: any) {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [token, setToken] = useState<string | null>(null);
-  const [newUserId, setNewUserId] = useState(''); // For creating new chat
+  const [loading, setLoading] = useState(true);
+  const [searchVisible, setSearchVisible] = useState(false);
 
-  // 1️⃣ Load JWT token
-  useEffect(() => {
-    const getToken = async () => {
-      const t = await AsyncStorage.getItem('hala_token');
-      setToken(t);
-    };
-    getToken();
-  }, []);
+  // load token
+ useEffect(() => {
+  const initSocket = async () => {
+    const t = await AsyncStorage.getItem('hala_token');
+    if (!t) return;
+    setToken(t);
+    connectSocket(t); // socket connect hote hi ready to listen
+  };
+  initSocket();
+}, []);
 
-  // 2️⃣ Fetch chats
+  // fetch chats
   useEffect(() => {
     if (!token) return;
 
-    axios
-      .get('http://10.0.2.2:3000/api/chat', {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then(res => setConversations(res.data))
-      .catch(err => console.log('Server error:', err.response?.data || err.message));
+    const loadChats = async () => {
+      try {
+        const res = await axios.get(`${BASE_URL}/api/chat`, {
+          headers: {Authorization: `Bearer ${token}`},
+        });
+
+        const sorted = res.data.sort(
+          (a: Conversation, b: Conversation) =>
+            new Date(b.lastMessageAt).getTime() -
+            new Date(a.lastMessageAt).getTime(),
+        );
+
+        setConversations(sorted);
+      } catch (err: any) {
+        console.log(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadChats();
   }, [token]);
 
-  // 3️⃣ Open chat
+// live chat update
+useEffect(() => {
+  const socket = getSocket();
+  if (!socket) return;
+
+  socket.on('chat-updated', (data: any) => {
+    setConversations(prev => {
+      // check if chat already exists
+      const exists = prev.find(c => c._id === data.chatId);
+
+      if (exists) {
+        // update existing chat
+        const updated = prev.map(chat =>
+          chat._id === data.chatId
+            ? {
+                ...chat,
+                lastMessage: data.lastMessage,
+                lastMessageAt: data.lastMessageAt,
+              }
+            : chat
+        );
+        return updated.sort(
+          (a, b) =>
+            new Date(b.lastMessageAt).getTime() -
+            new Date(a.lastMessageAt).getTime()
+        );
+      }
+
+      // 🔹 if chat doesn't exist (new chat or previously deleted)
+      const newChat = {
+        _id: data.chatId,
+        participant: data.participant, // backend se zaruri bhejna
+        lastMessage: data.lastMessage,
+        lastMessageAt: data.lastMessageAt,
+      };
+
+      return [newChat, ...prev];
+    });
+  });
+
+  return () => {
+    socket.off('chat-updated');
+  };
+}, []);
+
+  
+
   const openChat = (chat: Conversation) => {
     navigation.navigate('ChatScreen', {
       chatId: chat._id,
-      participantName: chat.participant.name,
+      participantName: chat.participant?.name || 'User',
     });
   };
 
-  // 4️⃣ Create or get chat
-  const createChat = async () => {
-    if (!newUserId.trim()) {
-      Alert.alert('Enter participant user ID');
-      return;
-    }
+  const deleteConversation = async (chatId: string) => {
+  try {
+    if (!token) return;
 
-    try {
-      const res = await axios.post(
-        `http://10.0.2.2:3000/api/chat/with/${newUserId}`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+    await axios.delete(`${BASE_URL}/api/chat/${chatId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
-      const chat = res.data;
+    // UI se remove
+    setConversations(prev =>
+      prev.filter(chat => chat._id !== chatId),
+    );
 
-      // Add new chat to list
-      setConversations(prev => [chat, ...prev]);
-      setNewUserId('');
+  } catch (err) {
+    console.log("delete error:", err);
+  }
+};
 
-      // Navigate to chat screen
-      console.log('chat id:', chat._id);
-      navigation.navigate('ChatScreen', {
-        chatId: chat._id,
-        participantName: chat.participant.name,
-      });
-    } catch (err: any) {
-      console.log('Create chat error:', err.response?.data || err.message);
-      Alert.alert('Error', err.response?.data?.error || 'Failed to create chat');
-      
-    }
+  const handleMenu = () => {
+  Alert.alert(
+    'Options',
+    '',
+    [
+      {
+        text: 'New Chat',
+        onPress: () => navigation.navigate('StartChatScreen'),
+      },
+      {
+        text: 'Refresh',
+        onPress: fetchChats,
+      },
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+    ],
+    { cancelable: true },
+  );
+};
+
+  const renderItem = ({ item }: { item: Conversation }) => {
+  const name = item.participant?.name || 'User';
+  const last = item.lastMessage?.text || 'Start conversation';
+
+  const handleLongPress = () => {
+    Alert.alert(
+      'Delete Chat',
+      `Delete chat with ${name}?`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => deleteConversation(item._id),
+        },
+      ],
+      { cancelable: true },
+    );
   };
 
   return (
-    <View style={styles.container}>
-      <View style={{ flexDirection: 'row', padding: 10 }}>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter user ID to chat"
-          value={newUserId}
-          onChangeText={setNewUserId}
-        />
-        <Button title="Start Chat" onPress={createChat} />
+    <TouchableOpacity
+      style={styles.row}
+      onPress={() => openChat(item)}
+      onLongPress={handleLongPress}   // ✅ YE IMPORTANT LINE
+      delayLongPress={300}            // optional (smooth feel)
+    >
+      <View
+        style={[
+          styles.avatar,
+          { backgroundColor: getAvatarColor(item.participant?._id) },
+        ]}>
+        <Text style={styles.avatarText}>
+          {name.charAt(0).toUpperCase()}
+        </Text>
       </View>
+
+      <View style={{ flex: 1 }}>
+        <Text style={styles.name}>{name}</Text>
+        <Text style={styles.lastMessage} numberOfLines={1}>
+          {last}
+        </Text>
+      </View>
+    </TouchableOpacity>
+  );
+};
+
+  if (loading) {
+    return (
+      <View style={styles.loader}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.container}>
+     <ConversationHeader
+  title="Chats"
+  onSearchPress={() => setSearchVisible(true)}
+  onMenuPress={handleMenu}
+/>
 
       <FlatList
         data={conversations}
         keyExtractor={item => item._id}
-        renderItem={({ item }) => (
-          <TouchableOpacity style={styles.row} onPress={() => openChat(item)}>
-            <Text style={styles.name}>{item.participant.name}</Text>
-            <Text style={styles.lastMessage}>
-              {item.lastMessage?.text || 'No messages yet'}
-            </Text>
-          </TouchableOpacity>
-        )}
-        ListEmptyComponent={<Text style={{ textAlign: 'center', marginTop: 20 }}>No conversations yet</Text>}
+        renderItem={renderItem}
+        keyboardShouldPersistTaps="handled"
       />
+
+      <TouchableOpacity
+        style={styles.floatingButton}
+        onPress={() => navigation.navigate('StartChatScreen')}>
+        <Image source={Chat} style={styles.floatingButtonicon} />
+      </TouchableOpacity>
+
+      <ChatSearchModal
+  visible={searchVisible}
+  onClose={() => setSearchVisible(false)}
+  token={token}
+/>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
-  row: { padding: 15, borderBottomWidth: 0.5, borderColor: '#ccc' },
-  name: { fontSize: 16, fontWeight: '600' },
-  lastMessage: { color: '#555', marginTop: 5 },
-  input: {
+  container: {flex: 1, backgroundColor: '#f5f6fa'},
+
+  header: {
+    padding: 15,
+    backgroundColor: Colors.Green,
+  },
+
+  headerTitle: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+
+  row: {
+    flexDirection: 'row',
+    padding: 15,
+    backgroundColor: '#fff',
+    margin: 10,
+    borderRadius: 10,
+  },
+
+  avatar: {
+    width: 45,
+    height: 45,
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+  },
+
+  avatarText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+
+  name: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+
+  lastMessage: {
+    color: '#666',
+  },
+
+  loader: {
     flex: 1,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    marginRight: 5,
-    marginTop: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  floatingButton: {
+    position: 'absolute',
+    bottom: 25,
+    right: 25,
+    backgroundColor: Colors.Green,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  floatingButtonicon: {
+    width: 30,
+    height: 30,
+    tintColor: '#fff',
   },
 });

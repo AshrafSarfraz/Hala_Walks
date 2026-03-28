@@ -25,6 +25,7 @@ import Notifications from '../../Notifications';
 import ConversationsScreen from '../../chat/conversationScreen';
 import ChatScreen from '../../chat/chatScreen';
 import StartChatScreen from '../../chat/startChatScreen';
+import Wishlist from '../../Screen/Wishlist';
 
 const Stack = createNativeStackNavigator();
 
@@ -40,7 +41,7 @@ const HalaStack: React.FC = () => {
 
         if (halaData === 'true' && token) {
           // user pehle se login hai → direct BottomTab
-          setInitialRoute('StartChatScreen');
+          setInitialRoute('BottomTab');
         } else {
           // koi login nahi → Splash / onboarding etc
           setInitialRoute('Splash');
@@ -71,6 +72,7 @@ const HalaStack: React.FC = () => {
         <Stack.Screen name='SignUp' component={SignuP} />
         <Stack.Screen name='OTP' component={Otp} />
         <Stack.Screen name='BottomTab' component={Bottom} />
+        <Stack.Screen name='Wishlist' component={Wishlist} />
         <Stack.Screen name='Home' component={Home} />
         <Stack.Screen name='SearchScreen' component={SearchScreen} />
         <Stack.Screen name='DetailScreen' component={DetailScreen} />
