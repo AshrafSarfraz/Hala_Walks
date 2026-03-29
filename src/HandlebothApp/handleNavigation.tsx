@@ -9,7 +9,7 @@ import auth from '@react-native-firebase/auth';
 import HalaStack from '../halabsaudi/Navigation/StackNav.tsx/StackNavigation';
 import StackNavigation from '../westwalk/navigation/stackNavigation';
 import { navigationRef } from '../halabsaudi/Notifications/RootNavigation';
-import { checkAndNavigatePendingVenue } from '../halabsaudi/Notifications';
+import { checkAndNavigatePendingVenue, initBackgroundVenueTracker } from '../halabsaudi/Notifications';
 
 const Stack = createNativeStackNavigator();
 
@@ -21,26 +21,31 @@ const AppStack = () => {
   useEffect(() => {
     const checkLoginStatus = async () => {
       const firebaseUser = auth().currentUser;
-
+  
       const [staffData, tenantData, orgEmpData] = await Promise.all([
         AsyncStorage.getItem('staff_data'),
         AsyncStorage.getItem('tenant_data'),
         AsyncStorage.getItem('org_emp_data'),
       ]);
-
+  
       const isWestwalkUser = staffData || tenantData || orgEmpData;
-
+  
       if (isWestwalkUser) {
         setOnlyStack('WestwalkOnly');
       } else if (firebaseUser) {
         setOnlyStack('HalabOnly');
+        // ✅ Returning Hala user — silently restart tracker if previously granted
+        const granted = await AsyncStorage.getItem('hala_location_permission_granted');
+        if (granted === 'true') {
+          initBackgroundVenueTracker();
+        }
       } else {
         setInitialRoute('HalabStack');
       }
-
+  
       setLoading(false);
     };
-
+  
     checkLoginStatus();
   }, []);
 

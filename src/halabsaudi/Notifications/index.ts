@@ -5,14 +5,15 @@ import notifee, {
   AuthorizationStatus,
   EventType,
 } from '@notifee/react-native';
+import { Platform, PermissionsAndroid } from 'react-native';
 import { navigate } from './RootNavigation';
 
 const VENUES_API = 'https://hala-b-saudi.onrender.com/api/hbs/venues';
 const VENUES_CACHE_KEY = 'H-venues_cache_v3';
-const GEOFENCE_RADIUS = 2000;
+const GEOFENCE_RADIUS = 1000;
 const CHANNEL_ID = 'geofence_channel';
 const COOLDOWN_KEY = 'geofence_cooldown';
-export const PENDING_VENUE_KEY = 'pending_venue_navigate'; // ✅ export — index.js bhi use karega
+export const PENDING_VENUE_KEY = 'pending_venue_navigate';
 
 let isTrackerInitialized = false;
 let geofenceSubscription: any = null;
@@ -56,7 +57,7 @@ function getVenueName(venue: any): string {
   );
 }
 
-// ─── Cooldown — din mein 1 baar per venue ─────────────────────────────────────
+// ─── Cooldown ─────────────────────────────────────────────────────────────────
 
 export async function canShowNotification(venueId: string): Promise<boolean> {
   try {
@@ -81,12 +82,7 @@ export async function saveCooldown(venueId: string) {
   } catch {}
 }
 
-// ─── Pending Navigation — Killed Mode ke liye ─────────────────────────────────
-// Flow:
-// 1. User notification press kare (app killed ho)
-// 2. index.js ka onBackgroundEvent → venueId AsyncStorage mein save hoga
-// 3. App open ho → AppStack ke NavigationContainer onReady → checkAndNavigatePendingVenue()
-// 4. Venue screen pe navigate ho jaye
+// ─── Pending Navigation ───────────────────────────────────────────────────────
 
 export async function checkAndNavigatePendingVenue() {
   try {
@@ -112,18 +108,6 @@ export async function setupNotificationChannel() {
     });
   } catch (e) {
     console.log('[Notifee] Channel error', e);
-  }
-}
-
-async function requestNotificationPermission() {
-  try {
-    const settings = await notifee.requestPermission();
-    return (
-      settings.authorizationStatus === AuthorizationStatus.AUTHORIZED ||
-      settings.authorizationStatus === AuthorizationStatus.PROVISIONAL
-    );
-  } catch (e) {
-    return false;
   }
 }
 
@@ -164,8 +148,6 @@ async function navigateToVenue(venueId: string) {
 }
 
 // ─── Notification Press Handler ───────────────────────────────────────────────
-// ⚠️  SIRF onForegroundEvent yahan register hoga
-// ⚠️  onBackgroundEvent SIRF index.js mein hoga — yahan BILKUL nahi likhna
 
 export function setupNotificationPressHandler() {
   notifee.onForegroundEvent(async ({ type, detail }) => {
@@ -212,30 +194,93 @@ export async function registerVenueGeofences() {
   }
 }
 
+// ─── Request All Permissions (called once after login) ────────────────────────
+
+export async function requestAllPermissions(): Promise<boolean> {
+  try {
+    // 1. Notification permission
+    await setupNotificationChannel();
+    await notifee.requestPermission();
+
+    if (Platform.OS === 'android') {
+      // 2. Foreground location
+      const fineGranted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: 'Location Permission',
+          message: 'Hala B Saudi needs location access to detect nearby venues and send you exclusive offers.',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Deny',
+          buttonPositive: 'Allow',
+        }
+      );
+
+      if (fineGranted !== PermissionsAndroid.RESULTS.GRANTED) {
+        // User denied foreground — save flag and stop
+        await AsyncStorage.setItem('hala_permissions_asked', 'true');
+        await AsyncStorage.setItem('hala_location_permission_granted', 'false');
+        return false;
+      }
+
+      // 3. Background location (Android 10+)
+      if (Platform.Version >= 29) {
+        await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION,
+          {
+            title: 'Background Location',
+            message:
+              'To notify you about nearby venues even when the app is closed, ' +
+              'please select "Allow all the time".',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Deny',
+            buttonPositive: 'Allow',
+          }
+        );
+        // We don't block on background — user may grant foreground only, still ok
+      }
+    }
+
+    // Save that we asked — regardless of result, never ask again
+    await AsyncStorage.setItem('hala_permissions_asked', 'true');
+    await AsyncStorage.setItem('hala_location_permission_granted', 'true');
+    return true;
+  } catch (e) {
+    console.log('[Permissions] Error:', e);
+    await AsyncStorage.setItem('hala_permissions_asked', 'true');
+    return false;
+  }
+}
+
 // ─── Main Init ────────────────────────────────────────────────────────────────
 
 export async function initBackgroundVenueTracker() {
   try {
+    // Don't start if user never granted location
+    const granted = await AsyncStorage.getItem('hala_location_permission_granted');
+    if (granted !== 'true') {
+      console.log('[Tracker] Location not granted — not starting');
+      return;
+    }
+
     if (isTrackerInitialized) {
       console.log('[Tracker] Already initialized');
       return;
     }
 
-    await requestNotificationPermission();
-    await setupNotificationChannel();
-    setupNotificationPressHandler(); // ✅ Sirf foreground handler yahan
+    setupNotificationPressHandler();
 
     const state = await BackgroundGeolocation.ready({
       desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_HIGH,
       distanceFilter: 50,
-      stopOnTerminate: false,  // Android: killed app ke baad bhi kaam kare
-      startOnBoot: true,       // Device restart ke baad auto start
+      stopOnTerminate: false,   // works when app is killed
+      startOnBoot: true,        // works after device restart
       locationAuthorizationRequest: 'Always',
       pausesLocationUpdatesAutomatically: false,
       geofenceInitialTriggerEntry: true,
       debug: false,
       logLevel: BackgroundGeolocation.LOG_LEVEL_OFF,
       stopTimeout: 5,
+      disableLocationAuthorizationAlert: true, // ✅ no annoying popups ever
     });
 
     console.log('[Tracker] Ready. Enabled:', state.enabled);
@@ -246,7 +291,6 @@ export async function initBackgroundVenueTracker() {
       if (event.action === 'ENTER') {
         const venueId = event.identifier;
         const venueName = event?.extras?.name || 'one of our venues';
-
         const allowed = await canShowNotification(venueId);
         if (!allowed) {
           console.log('[Geofence] Cooldown active for:', venueName);
@@ -283,19 +327,6 @@ export async function stopBackgroundVenueTracker() {
     console.log('[Tracker] Stop error', e);
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 // import BackgroundGeolocation from 'react-native-background-geolocation';

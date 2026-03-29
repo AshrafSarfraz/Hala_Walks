@@ -38,9 +38,9 @@ export const getStyles = (language: String) =>
     },
     Logout_Cont: {
       width: '92%',
-      alignSelf: 'center',
-      position:'absolute',
-      bottom:50
+  alignSelf: 'center',
+  marginTop: 20,
+  marginBottom: 40,
  
     },
   });

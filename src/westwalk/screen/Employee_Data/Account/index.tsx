@@ -59,7 +59,7 @@ const Account: React.FC<AccountProps> = ({ navigation }) => {
         backgroundColor={Colors.PrimaryColor}
         barStyle={'light-content'}
       />
-      <ScrollView contentContainerStyle={{ paddingBottom: 40,flex:1 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 40}}>
         <View style={styles.Header_Cont}>
           <Image source={P_IMG} style={styles.profileImage} />
           <Text style={styles.name}>{userData.name}</Text>
