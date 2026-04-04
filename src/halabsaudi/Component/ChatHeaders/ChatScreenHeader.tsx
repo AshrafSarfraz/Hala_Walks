@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
+import {View, Text, TouchableOpacity, Image, StyleSheet, Platform} from 'react-native';
 import Ionicons from '@react-native-vector-icons/ionicons';
 
 import {Colors} from '../../Themes/Colors';
@@ -23,7 +23,7 @@ export default function ChatScreenHeader({
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={onBackPress} style={styles.backBtn}>
-        <Ionicons name="arrow-back" size={24} color="#fff" />
+        <Ionicons name='arrow-back' color="#fff" size={Platform.OS === 'ios' ? 30 : 16}/>
       </TouchableOpacity>
 
       <View style={styles.profileWrap}>

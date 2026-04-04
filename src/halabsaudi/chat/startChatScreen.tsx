@@ -90,12 +90,18 @@ export default function StartChatScreen({ navigation }: Props) {
   return (
     <View style={styles.container}>
       {/* Search Bar */}
-      <TextInput
-        placeholder="Search users..."
-        style={styles.searchInput}
-        value={search}
-        onChangeText={setSearch}
-      />
+      <View style={styles.searchContainer}>
+  <TextInput
+    placeholder="Search users..."
+    style={styles.searchInput}
+    value={search}
+    onChangeText={setSearch}
+  />
+
+  <TouchableOpacity onPress={() => navigation.goBack()}>
+    <Text style={styles.cancelText}>Cancel</Text>
+  </TouchableOpacity>
+</View>
 
       {/* Users List */}
       <FlatList
@@ -171,6 +177,29 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#fff',
   },
+  searchContainer: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  marginTop: 40,
+  marginBottom: 10,
+},
+
+searchInput: {
+  flex: 1,
+  backgroundColor: '#fff',
+  borderRadius: 8,
+  paddingHorizontal: 12,
+  paddingVertical: 8,
+  fontSize: 16,
+  elevation: 2,
+},
+
+cancelText: {
+  marginLeft: 10,
+  fontSize: 16,
+  color: '#007AFF', // iOS blue feel
+  fontWeight: '500',
+},
 
   name: { fontSize: 16, fontWeight: 'bold' },
 

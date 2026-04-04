@@ -10,6 +10,7 @@ import {
   Image,
   Alert,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
@@ -37,6 +38,9 @@ export default function ConversationsScreen({navigation}: any) {
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [searchVisible, setSearchVisible] = useState(false);
+
+
+  const insets = useSafeAreaInsets();
 
   // load token
  useEffect(() => {
@@ -241,7 +245,10 @@ useEffect(() => {
       />
 
       <TouchableOpacity
-        style={styles.floatingButton}
+         style={[
+    styles.floatingButton,
+    { bottom: 80 + insets.bottom } // 👈 yahan fix
+  ]}
         onPress={() => navigation.navigate('StartChatScreen')}>
         <Image source={Chat} style={styles.floatingButtonicon} />
       </TouchableOpacity>
@@ -308,7 +315,7 @@ const styles = StyleSheet.create({
 
   floatingButton: {
     position: 'absolute',
-    bottom: 25,
+    bottom: 10,
     right: 25,
     backgroundColor: Colors.Green,
     width: 60,

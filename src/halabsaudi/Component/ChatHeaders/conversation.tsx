@@ -45,10 +45,12 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.Green,
     paddingHorizontal: 15,
     paddingVertical: 12,
+    paddingTop:50,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     elevation: 4,
+
   },
 
   title: {
