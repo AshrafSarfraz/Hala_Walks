@@ -82,7 +82,7 @@ const TenantsAccount: React.FC<AccountProps> = ({ navigation }) => {
           }}
         />
         <CustomButton2
-          title={languageData[language].Contact_Us}
+          title={languageData[language].Make_a_Request}
           image={Contact_us}
           onPress={() => {
             navigation.navigate('TenantsContactUs');
