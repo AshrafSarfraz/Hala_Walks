@@ -9,7 +9,6 @@ import { Colors } from '../../Themes/Colors';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux_toolkit/store';
 import { languageData } from '../../redux_toolkit/language/languageSlice';
-import NotificationTestScreen from '../StackNav.tsx/NotificationTestScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -28,8 +27,8 @@ const MyTabs: React.FC = () => {
             case 'Home':
               iconSource = require('../../assets/Icons/home.png');
               break;
-            case 'Wishlist':
-              iconSource = require('../../assets/Icons/wishlist.png');
+            case 'Chat':
+              iconSource = require('../../assets/Icons/send.png');
               break;
             case 'Profile':
               iconSource = require('../../assets/Icons/profile.png');
@@ -67,7 +66,7 @@ const MyTabs: React.FC = () => {
       })}
     >
       <Tab.Screen name="Home" component={Home} options={{ tabBarLabel: languageData[language].Home}} />
-      <Tab.Screen name="Wishlist" component={Wishlist} options={{ tabBarLabel: languageData[language].Wishlist}} />
+      <Tab.Screen name="Chat" component={ConversationsScreen} options={{ tabBarLabel: languageData[language].Chat}} />
       <Tab.Screen name="Profile" component={Profile} options={{ tabBarLabel: languageData[language].Profile}} />
     </Tab.Navigator>
   );

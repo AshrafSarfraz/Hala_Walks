@@ -68,39 +68,18 @@ const Profile: React.FC<ProfileProps> = () => {
         barStyle="dark-content"
       />
 
-      <View style={styles.Container}>
-        <Text style={styles.Header_Txt}>{languageData[language].Profile}</Text>
-        <View style={styles.Button_Cont}>
-          <CustomButton2
-            title={languageData[language].account}
-            onPress={() => {
-              navigation.navigate('AccountScreen');
-            }}
-          />
-          <CustomButton2
-            title={languageData[language].redeem_history}
-            onPress={() => {
-              navigation.navigate('ReedemHistroy');
-            }}
-          />
-          {/* <CustomButton2 title={'Test'} onPress={() => {navigation.navigate('NotificationTest')}} /> */}
-          <CustomButton2
-            title={languageData[language].language}
-            onPress={() => {
-              showAlert();
-            }}
-          />
+       <View style={styles.Container} >
+            <Text style={styles.Header_Txt} >{languageData[language].Profile}</Text>
+            <View style={styles.Button_Cont} >
+              <CustomButton2 title={languageData[language].account} onPress={() =>{navigation.navigate('AccountScreen')} } />
+              <CustomButton2 title={languageData[language].redeem_history} onPress={() => {navigation.navigate('ReedemHistroy')}} />
+              <CustomButton2 title={languageData[language].language} onPress={() =>{showAlert()}} />
+            </View>
+            <View style={styles.Logout_cont}>
+            <CustomButton title={languageData[language].logout} onPress={() => {handleLogout()}} />
+            </View>
         </View>
-        <View style={styles.Logout_cont}>
-          <CustomButton
-            title={languageData[language].logout}
-            onPress={() => {
-              handleLogout();
-            }}
-          />
-        </View>
-      </View>
-      <LanguageModal
+        <LanguageModal
         visible={alertVisible}
         onClose={() => {
           hideAlert();

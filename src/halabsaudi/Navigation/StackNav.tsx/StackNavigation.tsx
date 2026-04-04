@@ -21,9 +21,13 @@ import WelcomeScreen from '../../Screen/Authentication/Splash/welcome_screen';
 import SignuP from '../../Screen/Authentication/SignUp/signUp';
 
 import StackNavigation from '../../../westwalk/navigation/stackNavigation'; // agar Westwalk ka stack chahiye
-import NotificationTestScreen from './NotificationTestScreen';
+// import Notifications from '../../Notifications';
 import LocationDisclosure from '../../Screen/LocationDisclosureScreen';
-
+import Wishlist from '../../Screen/Wishlist';
+import ConversationsScreen from '../../chat/conversationScreen';
+import ChatScreen from '../../chat/chatScreen';
+import StartChatScreen from '../../chat/startChatScreen';
+import NotificationTestScreen from './NotificationTestScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -69,6 +73,7 @@ const HalaStack: React.FC = () => {
         <Stack.Screen name='SignUp' component={SignuP} />
         <Stack.Screen name='OTP' component={Otp} />
         <Stack.Screen name='BottomTab' component={Bottom} />
+        <Stack.Screen name='Wishlist' component={Wishlist} />
         <Stack.Screen name='Home' component={Home} />
         <Stack.Screen name='SearchScreen' component={SearchScreen} />
         <Stack.Screen name='DetailScreen' component={DetailScreen} />
@@ -77,6 +82,11 @@ const HalaStack: React.FC = () => {
         <Stack.Screen name='SelectedVenue' component={SelectedVenues} />
         <Stack.Screen name='AccountScreen' component={AccountScreen} />
         <Stack.Screen name='PDFViewerScreen' component={PDFViewerScreen} />
+        <Stack.Screen name='ConversationScreen' component={ConversationsScreen} />
+        <Stack.Screen name='ChatScreen' component={ChatScreen} />
+        <Stack.Screen name='StartChatScreen' component={StartChatScreen} />
+
+
 
         {/* Merchant Side */}
         <Stack.Screen name='HalaInfo' component={HalaInfoScreen} />
