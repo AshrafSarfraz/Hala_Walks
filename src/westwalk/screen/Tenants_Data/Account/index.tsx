@@ -1,0 +1,103 @@
+import React, { useEffect, useState } from 'react';
+import { SafeAreaView, View, Image, Text, StatusBar } from 'react-native';
+import { Colors } from '../../../theme/Colors';
+import CustomButton2 from '../../../components/buttons/CustomButton2';
+import { Contact_us, DocIcon, HistroyIcon, P_IMG, ProfileIcon } from '../../../theme/Images';
+import CustomButton from '../../../components/buttons/CustomButton';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { languageData } from '../../../redux/language/languageSlice';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
+import { getStyles } from './style';
+import { auth } from '../../../firebase/firebaseconfig';
+
+type AccountProps = {
+  navigation: any;
+};
+
+const TenantsAccount: React.FC<AccountProps> = ({ navigation }) => {
+  const language = useSelector((state: RootState) => state.language.language);
+  const styles = getStyles(language);
+  const [userData, setUserData] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const storedUserData = await AsyncStorage.getItem('tenant_data');
+        if (storedUserData) {
+          setUserData(JSON.parse(storedUserData));
+        }
+      } catch (error) {
+        console.log('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+
+
+  const handleLogout = async (navigation: any) => {
+    try {
+      await AsyncStorage.removeItem('tenant_data'); // or AsyncStorage.clear()
+      navigation.replace('Role');
+    } catch (error) {
+      console.log('Error during logout:', error);
+    }
+  };
+
+
+
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.Bg }}>
+      <StatusBar
+        hidden={false}
+        translucent={true}
+        animated={true}
+        backgroundColor={Colors.PrimaryColor}
+        barStyle={'light-content'}
+      />
+      <View style={styles.Header_Cont}>
+      {/* <Image  source={ userData?.profileImg ? { uri: userData.profileImg } : P_IMG}style={styles.profileImage}/> */}
+      <Image  source={P_IMG}style={styles.profileImage}/>
+        <Text style={styles.name}>{userData?.name || 'Guest'}</Text>
+        <Text style={styles.staffId}>{userData?.tenantId || 'N/A'}</Text>
+      </View>
+
+      <View style={styles.Button_Cont}>
+        <CustomButton2
+          title={languageData[language].Account_Info}
+          image={ProfileIcon}
+          onPress={() => {
+            navigation.navigate('TenantsProfile');
+          }}
+        />
+        <CustomButton2
+          title={languageData[language].Documents}
+          image={DocIcon}
+          onPress={() => {
+            navigation.navigate('TenantDocumentControlScreen');
+          }}
+        />
+        <CustomButton2
+          title={languageData[language].Redeem_History}
+          image={HistroyIcon}
+          onPress={() => {
+            navigation.navigate('TenantsHistroyScreen');
+          }}
+        />
+      </View>
+
+      <View style={styles.Logout_Cont}>
+        <CustomButton
+          title={languageData[language].logout}
+          onPress={() => {
+            handleLogout(navigation);
+          }}
+        />
+      </View>
+    </SafeAreaView>
+  );
+};
+
+export default TenantsAccount;

@@ -1,0 +1,75 @@
+source 'https://cdn.cocoapods.org/'
+
+# React Native Firebase requires static frameworks
+use_frameworks! :linkage => :static
+$RNFirebaseAsStaticFramework = true
+
+# Resolve react_native_pods.rb with node to allow for hoisting
+require Pod::Executable.execute_command('node', ['-p',
+  'require.resolve(
+    "react-native/scripts/react_native_pods.rb",
+    {paths: [process.argv[1]]},
+  )', __dir__]).strip
+
+platform :ios, min_ios_version_supported
+prepare_react_native_project!
+
+target 'Westwalk' do
+  config = use_native_modules!
+
+  use_react_native!(
+    :path => config[:reactNativePath],
+    # An absolute path to your application root.
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
+  )
+
+  post_install do |installer|
+    # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
+    react_native_post_install(
+      installer,
+      config[:reactNativePath],
+      :mac_catalyst_enabled => false,
+      # :ccache_enabled => true
+    )
+
+    # Xcode 26.4: fmt 11.x consteval is rejected by Apple Clang 21
+    installer.pods_project.targets.each do |target|
+      if target.name == 'fmt'
+        target.build_configurations.each do |build_config|
+          build_config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++17'
+        end
+      end
+    end
+
+    # #region agent log
+    debug_log_path = File.expand_path('../.cursor/debug-656838.log', __dir__)
+    rnfb_targets = installer.pod_targets.select { |t| t.name.start_with?('RNFB') }
+    rnfb_static = rnfb_targets.map { |t| { name: t.name, static_framework: t.build_as_static_framework? } }
+    fmt_target = installer.pods_project.targets.find { |t| t.name == 'fmt' }
+    fmt_cxx = fmt_target&.build_configurations&.first&.build_settings&.[]('CLANG_CXX_LANGUAGE_STANDARD')
+    File.open(debug_log_path, 'a') do |f|
+      f.puts({
+        sessionId: '656838',
+        runId: 'pod-install',
+        hypothesisId: 'A',
+        location: 'Podfile:post_install',
+        message: 'RNFB pod static_framework flags after pod install',
+        data: {
+          RNFirebaseAsStaticFramework: defined?($RNFirebaseAsStaticFramework) ? $RNFirebaseAsStaticFramework : nil,
+          rnfb_targets: rnfb_static
+        },
+        timestamp: (Time.now.to_f * 1000).to_i
+      }.to_json)
+      f.puts({
+        sessionId: '656838',
+        runId: 'pod-install',
+        hypothesisId: 'B',
+        location: 'Podfile:post_install',
+        message: 'fmt pod C++ standard after Xcode 26 workaround',
+        data: { fmt_clang_cxx_language_standard: fmt_cxx },
+        timestamp: (Time.now.to_f * 1000).to_i
+      }.to_json)
+    end
+    # #endregion
+  end
+end

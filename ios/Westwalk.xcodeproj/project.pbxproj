@@ -1,0 +1,754 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 54;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0CA6A65BEA9D4FA0BE9DEDC5 /* bgImg.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 9C808CA66C3E49DBB96C698C /* bgImg.jpeg */; };
+		0E10D7479A4B6417CF9023F2 /* Pods_Westwalk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 76D0CCA5785030C2D1DE0877 /* Pods_Westwalk.framework */; };
+		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		15D820F22476435590D4E149 /* partner.png in Resources */ = {isa = PBXBuildFile; fileRef = 95EEDF4D026D4C989091C7A5 /* partner.png */; };
+		18245D27D20B4DE086C768E9 /* westwalk_nw.png in Resources */ = {isa = PBXBuildFile; fileRef = 154416DF881D415FA4DC92A6 /* westwalk_nw.png */; };
+		1AF6D63447FE46E19FADA59A /* health.png in Resources */ = {isa = PBXBuildFile; fileRef = 2A616C99BF55415D9A0672FD /* health.png */; };
+		1B8027859A9A4A638AF11E24 /* SF-Pro-Rounded-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4D491D1A51FD4560A02AC677 /* SF-Pro-Rounded-Regular.otf */; };
+		1E32280F2080473D9FA2499C /* research.png in Resources */ = {isa = PBXBuildFile; fileRef = 0127F4C0636540D5AB65E133 /* research.png */; };
+		241C1F1444AD4145A63341B4 /* splash2.png in Resources */ = {isa = PBXBuildFile; fileRef = 4EB979B26EE54A66B114A367 /* splash2.png */; };
+		272C3B4BC20245D5A89DF835 /* hotel.png in Resources */ = {isa = PBXBuildFile; fileRef = DC55AF61888F43B9B19A0CD2 /* hotel.png */; };
+		36BBC685FD0B4CF1902A6E28 /* FilsonProLight.otf in Resources */ = {isa = PBXBuildFile; fileRef = 9901091BACFA49A8868C562C /* FilsonProLight.otf */; };
+		3B4D68AE525345E7B35F6E42 /* slider2.png in Resources */ = {isa = PBXBuildFile; fileRef = 73AB8A54EF4E42E2BD25B3C1 /* slider2.png */; };
+		3C866B0902674B8AB7E6E5F4 /* health_fitness.png in Resources */ = {isa = PBXBuildFile; fileRef = 57E02F48F6C14B71B3D06882 /* health_fitness.png */; };
+		4673828FA38D440E9B320A4F /* searchImg.png in Resources */ = {isa = PBXBuildFile; fileRef = 3F72F95770C5449393B4FDD4 /* searchImg.png */; };
+		4CFF4D73C8124AA59C11D08E /* SF-Pro-Rounded-Ultralight.otf in Resources */ = {isa = PBXBuildFile; fileRef = A9DF4983B1AB49259B8E6EA6 /* SF-Pro-Rounded-Ultralight.otf */; };
+		50ABBE3A22664138AEC18C14 /* westwalk_nb.png in Resources */ = {isa = PBXBuildFile; fileRef = 364E64AB720C4DAD9165D4B3 /* westwalk_nb.png */; };
+		529C7657EC2280C95DBDECCB /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
+		56BAB149AE3A4F7E9C9E38E5 /* food2.png in Resources */ = {isa = PBXBuildFile; fileRef = 75DD4605EF3048A4BBD47B6A /* food2.png */; };
+		57130E59170C4E25BC996BEE /* SF-Pro-Rounded-Heavy.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1920815042CC49D58DC16D19 /* SF-Pro-Rounded-Heavy.otf */; };
+		58764492A9184C1C98F2541D /* SF-Pro-Rounded-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1040638182F74B3880D49853 /* SF-Pro-Rounded-Light.otf */; };
+		60A5F6DE92A94FFE8DECA793 /* ww_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 86CD6311A46F4E95A7528A2D /* ww_icon.png */; };
+		60FE65F77CBE4CF5898DF4B6 /* food_drinks.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 17835638C2D74F5EBA486A9E /* food_drinks.jpg */; };
+		665F40134F23475CBBA47057 /* logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 08A62FDAB06F4C68BE98CE09 /* logo.png */; };
+		6AAB5BFE80D441B5A2BCD115 /* food__drinks.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1E9328A234034EFDAE7224D1 /* food__drinks.jpg */; };
+		722FF895AEBD482E832B902A /* nodata_found.jpg in Resources */ = {isa = PBXBuildFile; fileRef = B33EC84BD3984E0ABBC5B6BF /* nodata_found.jpg */; };
+		74263F4A838B47AEA1D6291D /* SF-Pro-Rounded-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = A8BE0C2E238C42A58B47E3C6 /* SF-Pro-Rounded-Medium.otf */; };
+		74E1CFC695BE451DB41F157F /* westwalk_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 16116D115E99497EA80BCB4F /* westwalk_icon.png */; };
+		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
+		7B4A330A99F841898E7D7FBF /* image.png in Resources */ = {isa = PBXBuildFile; fileRef = 7D2868482B74462D925DDBFF /* image.png */; };
+		7D005149FBE9418CACEEA069 /* beauty_spa.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 0C61A142981D407A9AF87936 /* beauty_spa.jpg */; };
+		7D93085E42904727BBDA4BDE /* giftpack.png in Resources */ = {isa = PBXBuildFile; fileRef = 548F9F843265409C8AE55ED1 /* giftpack.png */; };
+		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		88DB634D800D4EFE8675D6A7 /* FilsonProRegular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 94F86D2113BE460C9939AEF4 /* FilsonProRegular.otf */; };
+		8C3277055556424D8870C21B /* splash.png in Resources */ = {isa = PBXBuildFile; fileRef = 13130A10F20C459C9F156908 /* splash.png */; };
+		9135A9C0F7D84A8DA4F2F906 /* logo_w.png in Resources */ = {isa = PBXBuildFile; fileRef = BDAD7AB62FCB49B9BF444605 /* logo_w.png */; };
+		9E87102ECB004F43A5E5AF06 /* logo_b.png in Resources */ = {isa = PBXBuildFile; fileRef = 90D0234A82AC4A1CBE21E158 /* logo_b.png */; };
+		A2671C1D519049678D95277E /* SF-Pro-Rounded-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2920B3D2045B446EBE09089B /* SF-Pro-Rounded-Thin.otf */; };
+		A31F106FC9314E30B088D28A /* SF-Pro-Rounded-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = 450B2B81FD5F46248106CB9F /* SF-Pro-Rounded-Black.otf */; };
+		A493DD5BAFE44F518891C5EB /* service.png in Resources */ = {isa = PBXBuildFile; fileRef = B80BCC734C604616840A969B /* service.png */; };
+		A5743B3E5B2F4CF8BB777E01 /* entertainment.png in Resources */ = {isa = PBXBuildFile; fileRef = 9C5349FBA0F5422F96FF400F /* entertainment.png */; };
+		AE044C3E1E4B4D4BBB81D393 /* no_data.png in Resources */ = {isa = PBXBuildFile; fileRef = B29AE0C316C74641B2F49A1D /* no_data.png */; };
+		B1E57AD50B86413C96D2B5D8 /* shop.png in Resources */ = {isa = PBXBuildFile; fileRef = 9A547F9A53BB46D98A4E27E0 /* shop.png */; };
+		B3F662FB186F4316AB5C12C5 /* FilsonProBlack.otf in Resources */ = {isa = PBXBuildFile; fileRef = 67BDC230A9E0453CB52E96FF /* FilsonProBlack.otf */; };
+		B5C5B0B12B74431C84802880 /* services.png in Resources */ = {isa = PBXBuildFile; fileRef = 952F93DF63B540F68895F7C4 /* services.png */; };
+		BDD91F122DDB24C90092B747 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BDD91F112DDB24C90092B747 /* GoogleService-Info.plist */; };
+		C421005060B7412281F0E0DA /* wel_logo.png in Resources */ = {isa = PBXBuildFile; fileRef = CE994BCB2BD04E4E95C9F1AF /* wel_logo.png */; };
+		CC9FD6896EBC4D9C86FDC1D7 /* slider3.png in Resources */ = {isa = PBXBuildFile; fileRef = B9FE6ADF0CFE478F9FF47740 /* slider3.png */; };
+		CE1D82AB19BA41B49B9F97CE /* FilsonProMedium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4C6E5EDD06CD4D64B63DB738 /* FilsonProMedium.otf */; };
+		CF4A452D899A4ACCACCE4006 /* beauty__spa.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 3399BBC3C3D8452B9DDD5564 /* beauty__spa.jpg */; };
+		CFDDEDE69E244AE493A3DC25 /* FilsonProBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4CBB26C89EBB4631993DB5D1 /* FilsonProBold.otf */; };
+		D77CCC1251334577965C59EA /* SF-Pro-Rounded-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = C4E7041BDE5045E09764C83B /* SF-Pro-Rounded-Bold.otf */; };
+		D92023B314A840198B3FDE29 /* westwalk.png in Resources */ = {isa = PBXBuildFile; fileRef = A115ED707C1C4A8DBF9F6E51 /* westwalk.png */; };
+		E534CB2FA0BB47B0A1D42558 /* slider1.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F23DBF8E2D84676A67E2995 /* slider1.png */; };
+		F8C1D80A53D44A28AC2D5321 /* SF-Pro-Rounded-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = B802058C2F824751ACA6720A /* SF-Pro-Rounded-Semibold.otf */; };
+		FDA240A56D06423DB8208F4F /* nodata.png in Resources */ = {isa = PBXBuildFile; fileRef = 14E4CBEA49B04478BAB16B8A /* nodata.png */; };
+		FE9BB7034B604BC48DF3D42E /* westwalk_logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 0F1377F887D14E8CA0DFC414 /* westwalk_logo.png */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0127F4C0636540D5AB65E133 /* research.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = research.png; path = ../src/halabsaudi/assets/images/research.png; sourceTree = "<group>"; };
+		08A62FDAB06F4C68BE98CE09 /* logo.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = logo.png; path = ../src/halabsaudi/assets/images/logo.png; sourceTree = "<group>"; };
+		0C61A142981D407A9AF87936 /* beauty_spa.jpg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = beauty_spa.jpg; path = ../src/westwalk/assets/images/beauty_spa.jpg; sourceTree = "<group>"; };
+		0F1377F887D14E8CA0DFC414 /* westwalk_logo.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = westwalk_logo.png; path = ../src/westwalk/assets/images/westwalk_logo.png; sourceTree = "<group>"; };
+		1040638182F74B3880D49853 /* SF-Pro-Rounded-Light.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Rounded-Light.otf"; path = "../src/halabsaudi/assets/Fonts/SF-Pro-Rounded-Light.otf"; sourceTree = "<group>"; };
+		13130A10F20C459C9F156908 /* splash.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = splash.png; path = ../src/westwalk/assets/images/splash.png; sourceTree = "<group>"; };
+		13B07F961A680F5B00A75B9A /* Westwalk.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Westwalk.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Westwalk/Images.xcassets; sourceTree = "<group>"; };
+		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Westwalk/Info.plist; sourceTree = "<group>"; };
+		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = Westwalk/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		14E4CBEA49B04478BAB16B8A /* nodata.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = nodata.png; path = ../src/halabsaudi/assets/images/nodata.png; sourceTree = "<group>"; };
+		154416DF881D415FA4DC92A6 /* westwalk_nw.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = westwalk_nw.png; path = ../src/westwalk/assets/images/westwalk_nw.png; sourceTree = "<group>"; };
+		16116D115E99497EA80BCB4F /* westwalk_icon.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = westwalk_icon.png; path = ../src/westwalk/assets/images/westwalk_icon.png; sourceTree = "<group>"; };
+		17835638C2D74F5EBA486A9E /* food_drinks.jpg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = food_drinks.jpg; path = ../src/westwalk/assets/images/food_drinks.jpg; sourceTree = "<group>"; };
+		1920815042CC49D58DC16D19 /* SF-Pro-Rounded-Heavy.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Rounded-Heavy.otf"; path = "../src/halabsaudi/assets/Fonts/SF-Pro-Rounded-Heavy.otf"; sourceTree = "<group>"; };
+		1E9328A234034EFDAE7224D1 /* food__drinks.jpg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = food__drinks.jpg; path = ../src/halabsaudi/assets/images/food__drinks.jpg; sourceTree = "<group>"; };
+		2920B3D2045B446EBE09089B /* SF-Pro-Rounded-Thin.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Rounded-Thin.otf"; path = "../src/halabsaudi/assets/Fonts/SF-Pro-Rounded-Thin.otf"; sourceTree = "<group>"; };
+		2A616C99BF55415D9A0672FD /* health.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = health.png; path = ../src/halabsaudi/assets/images/health.png; sourceTree = "<group>"; };
+		3399BBC3C3D8452B9DDD5564 /* beauty__spa.jpg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = beauty__spa.jpg; path = ../src/halabsaudi/assets/images/beauty__spa.jpg; sourceTree = "<group>"; };
+		364E64AB720C4DAD9165D4B3 /* westwalk_nb.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = westwalk_nb.png; path = ../src/westwalk/assets/images/westwalk_nb.png; sourceTree = "<group>"; };
+		3F72F95770C5449393B4FDD4 /* searchImg.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = searchImg.png; path = ../src/halabsaudi/assets/images/searchImg.png; sourceTree = "<group>"; };
+		450B2B81FD5F46248106CB9F /* SF-Pro-Rounded-Black.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Rounded-Black.otf"; path = "../src/halabsaudi/assets/Fonts/SF-Pro-Rounded-Black.otf"; sourceTree = "<group>"; };
+		4C6E5EDD06CD4D64B63DB738 /* FilsonProMedium.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FilsonProMedium.otf; path = ../src/westwalk/assets/fonts/FilsonProMedium.otf; sourceTree = "<group>"; };
+		4CBB26C89EBB4631993DB5D1 /* FilsonProBold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FilsonProBold.otf; path = ../src/westwalk/assets/fonts/FilsonProBold.otf; sourceTree = "<group>"; };
+		4D491D1A51FD4560A02AC677 /* SF-Pro-Rounded-Regular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Rounded-Regular.otf"; path = "../src/halabsaudi/assets/Fonts/SF-Pro-Rounded-Regular.otf"; sourceTree = "<group>"; };
+		4EB979B26EE54A66B114A367 /* splash2.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = splash2.png; path = ../src/westwalk/assets/images/splash2.png; sourceTree = "<group>"; };
+		548F9F843265409C8AE55ED1 /* giftpack.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = giftpack.png; path = ../src/halabsaudi/assets/images/giftpack.png; sourceTree = "<group>"; };
+		57E02F48F6C14B71B3D06882 /* health_fitness.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = health_fitness.png; path = ../src/westwalk/assets/images/health_fitness.png; sourceTree = "<group>"; };
+		5F23DBF8E2D84676A67E2995 /* slider1.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = slider1.png; path = ../src/westwalk/assets/images/slider1.png; sourceTree = "<group>"; };
+		67BDC230A9E0453CB52E96FF /* FilsonProBlack.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FilsonProBlack.otf; path = ../src/westwalk/assets/fonts/FilsonProBlack.otf; sourceTree = "<group>"; };
+		73AB8A54EF4E42E2BD25B3C1 /* slider2.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = slider2.png; path = ../src/halabsaudi/assets/images/slider2.png; sourceTree = "<group>"; };
+		75DD4605EF3048A4BBD47B6A /* food2.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = food2.png; path = ../src/westwalk/assets/images/food2.png; sourceTree = "<group>"; };
+		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Westwalk/AppDelegate.swift; sourceTree = "<group>"; };
+		76D0CCA5785030C2D1DE0877 /* Pods_Westwalk.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Westwalk.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7D2868482B74462D925DDBFF /* image.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = image.png; path = ../src/westwalk/assets/images/image.png; sourceTree = "<group>"; };
+		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = Westwalk/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		86CD6311A46F4E95A7528A2D /* ww_icon.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = ww_icon.png; path = ../src/halabsaudi/assets/images/ww_icon.png; sourceTree = "<group>"; };
+		888AA4D7FE0E4E3FFDFC38CB /* Pods-Westwalk.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Westwalk.debug.xcconfig"; path = "Target Support Files/Pods-Westwalk/Pods-Westwalk.debug.xcconfig"; sourceTree = "<group>"; };
+		90D0234A82AC4A1CBE21E158 /* logo_b.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = logo_b.png; path = ../src/halabsaudi/assets/images/logo_b.png; sourceTree = "<group>"; };
+		94F86D2113BE460C9939AEF4 /* FilsonProRegular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FilsonProRegular.otf; path = ../src/westwalk/assets/fonts/FilsonProRegular.otf; sourceTree = "<group>"; };
+		952F93DF63B540F68895F7C4 /* services.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = services.png; path = ../src/halabsaudi/assets/images/services.png; sourceTree = "<group>"; };
+		95EEDF4D026D4C989091C7A5 /* partner.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = partner.png; path = ../src/halabsaudi/assets/images/partner.png; sourceTree = "<group>"; };
+		9901091BACFA49A8868C562C /* FilsonProLight.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FilsonProLight.otf; path = ../src/westwalk/assets/fonts/FilsonProLight.otf; sourceTree = "<group>"; };
+		9A547F9A53BB46D98A4E27E0 /* shop.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = shop.png; path = ../src/westwalk/assets/images/shop.png; sourceTree = "<group>"; };
+		9C5349FBA0F5422F96FF400F /* entertainment.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = entertainment.png; path = ../src/westwalk/assets/images/entertainment.png; sourceTree = "<group>"; };
+		9C808CA66C3E49DBB96C698C /* bgImg.jpeg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = bgImg.jpeg; path = ../src/halabsaudi/assets/images/bgImg.jpeg; sourceTree = "<group>"; };
+		A115ED707C1C4A8DBF9F6E51 /* westwalk.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = westwalk.png; path = ../src/westwalk/assets/images/westwalk.png; sourceTree = "<group>"; };
+		A8BE0C2E238C42A58B47E3C6 /* SF-Pro-Rounded-Medium.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Rounded-Medium.otf"; path = "../src/halabsaudi/assets/Fonts/SF-Pro-Rounded-Medium.otf"; sourceTree = "<group>"; };
+		A9DF4983B1AB49259B8E6EA6 /* SF-Pro-Rounded-Ultralight.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Rounded-Ultralight.otf"; path = "../src/halabsaudi/assets/Fonts/SF-Pro-Rounded-Ultralight.otf"; sourceTree = "<group>"; };
+		B29AE0C316C74641B2F49A1D /* no_data.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = no_data.png; path = ../src/halabsaudi/assets/images/no_data.png; sourceTree = "<group>"; };
+		B33EC84BD3984E0ABBC5B6BF /* nodata_found.jpg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = nodata_found.jpg; path = ../src/westwalk/assets/images/nodata_found.jpg; sourceTree = "<group>"; };
+		B802058C2F824751ACA6720A /* SF-Pro-Rounded-Semibold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Rounded-Semibold.otf"; path = "../src/halabsaudi/assets/Fonts/SF-Pro-Rounded-Semibold.otf"; sourceTree = "<group>"; };
+		B80BCC734C604616840A969B /* service.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = service.png; path = ../src/westwalk/assets/images/service.png; sourceTree = "<group>"; };
+		B9FE6ADF0CFE478F9FF47740 /* slider3.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = slider3.png; path = ../src/halabsaudi/assets/images/slider3.png; sourceTree = "<group>"; };
+		BD3690F72E312457000F887F /* Westwalk.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Westwalk.entitlements; path = Westwalk/Westwalk.entitlements; sourceTree = "<group>"; };
+		BDAD7AB62FCB49B9BF444605 /* logo_w.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = logo_w.png; path = ../src/halabsaudi/assets/images/logo_w.png; sourceTree = "<group>"; };
+		BDD91F112DDB24C90092B747 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		C4E7041BDE5045E09764C83B /* SF-Pro-Rounded-Bold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SF-Pro-Rounded-Bold.otf"; path = "../src/halabsaudi/assets/Fonts/SF-Pro-Rounded-Bold.otf"; sourceTree = "<group>"; };
+		CE994BCB2BD04E4E95C9F1AF /* wel_logo.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = wel_logo.png; path = ../src/halabsaudi/assets/images/wel_logo.png; sourceTree = "<group>"; };
+		DC55AF61888F43B9B19A0CD2 /* hotel.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = hotel.png; path = ../src/westwalk/assets/images/hotel.png; sourceTree = "<group>"; };
+		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		EF67000DA5E0A6A40FEB7211 /* Pods-Westwalk.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Westwalk.release.xcconfig"; path = "Target Support Files/Pods-Westwalk/Pods-Westwalk.release.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		13B07F8C1A680F5B00A75B9A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0E10D7479A4B6417CF9023F2 /* Pods_Westwalk.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		13B07FAE1A68108700A75B9A /* Westwalk */ = {
+			isa = PBXGroup;
+			children = (
+				BD3690F72E312457000F887F /* Westwalk.entitlements */,
+				BDD91F112DDB24C90092B747 /* GoogleService-Info.plist */,
+				13B07FB51A68108700A75B9A /* Images.xcassets */,
+				761780EC2CA45674006654EE /* AppDelegate.swift */,
+				13B07FB61A68108700A75B9A /* Info.plist */,
+				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
+				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
+			);
+			name = Westwalk;
+			sourceTree = "<group>";
+		};
+		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
+				76D0CCA5785030C2D1DE0877 /* Pods_Westwalk.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Libraries;
+			sourceTree = "<group>";
+		};
+		83CBB9F61A601CBA00E9B192 = {
+			isa = PBXGroup;
+			children = (
+				13B07FAE1A68108700A75B9A /* Westwalk */,
+				832341AE1AAA6A7D00B99B32 /* Libraries */,
+				83CBBA001A601CBA00E9B192 /* Products */,
+				2D16E6871FA4F8E400B85C8A /* Frameworks */,
+				BBD78D7AC51CEA395F1C20DB /* Pods */,
+				98B693921C6A49AE8E52327F /* Resources */,
+			);
+			indentWidth = 2;
+			sourceTree = "<group>";
+			tabWidth = 2;
+			usesTabs = 0;
+		};
+		83CBBA001A601CBA00E9B192 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				13B07F961A680F5B00A75B9A /* Westwalk.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		98B693921C6A49AE8E52327F /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				67BDC230A9E0453CB52E96FF /* FilsonProBlack.otf */,
+				4CBB26C89EBB4631993DB5D1 /* FilsonProBold.otf */,
+				9901091BACFA49A8868C562C /* FilsonProLight.otf */,
+				4C6E5EDD06CD4D64B63DB738 /* FilsonProMedium.otf */,
+				94F86D2113BE460C9939AEF4 /* FilsonProRegular.otf */,
+				450B2B81FD5F46248106CB9F /* SF-Pro-Rounded-Black.otf */,
+				C4E7041BDE5045E09764C83B /* SF-Pro-Rounded-Bold.otf */,
+				1920815042CC49D58DC16D19 /* SF-Pro-Rounded-Heavy.otf */,
+				1040638182F74B3880D49853 /* SF-Pro-Rounded-Light.otf */,
+				A8BE0C2E238C42A58B47E3C6 /* SF-Pro-Rounded-Medium.otf */,
+				4D491D1A51FD4560A02AC677 /* SF-Pro-Rounded-Regular.otf */,
+				B802058C2F824751ACA6720A /* SF-Pro-Rounded-Semibold.otf */,
+				2920B3D2045B446EBE09089B /* SF-Pro-Rounded-Thin.otf */,
+				A9DF4983B1AB49259B8E6EA6 /* SF-Pro-Rounded-Ultralight.otf */,
+				0C61A142981D407A9AF87936 /* beauty_spa.jpg */,
+				9C5349FBA0F5422F96FF400F /* entertainment.png */,
+				75DD4605EF3048A4BBD47B6A /* food2.png */,
+				17835638C2D74F5EBA486A9E /* food_drinks.jpg */,
+				57E02F48F6C14B71B3D06882 /* health_fitness.png */,
+				DC55AF61888F43B9B19A0CD2 /* hotel.png */,
+				7D2868482B74462D925DDBFF /* image.png */,
+				B33EC84BD3984E0ABBC5B6BF /* nodata_found.jpg */,
+				B80BCC734C604616840A969B /* service.png */,
+				9A547F9A53BB46D98A4E27E0 /* shop.png */,
+				5F23DBF8E2D84676A67E2995 /* slider1.png */,
+				13130A10F20C459C9F156908 /* splash.png */,
+				4EB979B26EE54A66B114A367 /* splash2.png */,
+				A115ED707C1C4A8DBF9F6E51 /* westwalk.png */,
+				16116D115E99497EA80BCB4F /* westwalk_icon.png */,
+				0F1377F887D14E8CA0DFC414 /* westwalk_logo.png */,
+				364E64AB720C4DAD9165D4B3 /* westwalk_nb.png */,
+				154416DF881D415FA4DC92A6 /* westwalk_nw.png */,
+				3399BBC3C3D8452B9DDD5564 /* beauty__spa.jpg */,
+				9C808CA66C3E49DBB96C698C /* bgImg.jpeg */,
+				1E9328A234034EFDAE7224D1 /* food__drinks.jpg */,
+				548F9F843265409C8AE55ED1 /* giftpack.png */,
+				2A616C99BF55415D9A0672FD /* health.png */,
+				08A62FDAB06F4C68BE98CE09 /* logo.png */,
+				90D0234A82AC4A1CBE21E158 /* logo_b.png */,
+				BDAD7AB62FCB49B9BF444605 /* logo_w.png */,
+				B29AE0C316C74641B2F49A1D /* no_data.png */,
+				14E4CBEA49B04478BAB16B8A /* nodata.png */,
+				95EEDF4D026D4C989091C7A5 /* partner.png */,
+				0127F4C0636540D5AB65E133 /* research.png */,
+				3F72F95770C5449393B4FDD4 /* searchImg.png */,
+				952F93DF63B540F68895F7C4 /* services.png */,
+				73AB8A54EF4E42E2BD25B3C1 /* slider2.png */,
+				B9FE6ADF0CFE478F9FF47740 /* slider3.png */,
+				CE994BCB2BD04E4E95C9F1AF /* wel_logo.png */,
+				86CD6311A46F4E95A7528A2D /* ww_icon.png */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				888AA4D7FE0E4E3FFDFC38CB /* Pods-Westwalk.debug.xcconfig */,
+				EF67000DA5E0A6A40FEB7211 /* Pods-Westwalk.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		13B07F861A680F5B00A75B9A /* Westwalk */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Westwalk" */;
+			buildPhases = (
+				44B4D6E94F2823519722626E /* [CP] Check Pods Manifest.lock */,
+				13B07F871A680F5B00A75B9A /* Sources */,
+				13B07F8C1A680F5B00A75B9A /* Frameworks */,
+				13B07F8E1A680F5B00A75B9A /* Resources */,
+				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
+				59AB4D790CEAAACE2B09EF90 /* [CP] Embed Pods Frameworks */,
+				FDA64E365CD3D2CC2EB9FED9 /* [CP] Copy Pods Resources */,
+				7ED0C1719D374602823CDE7A /* [CP-User] [RNFB] Core Configuration */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Westwalk;
+			productName = Westwalk;
+			productReference = 13B07F961A680F5B00A75B9A /* Westwalk.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		83CBB9F71A601CBA00E9B192 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1210;
+				TargetAttributes = {
+					13B07F861A680F5B00A75B9A = {
+						LastSwiftMigration = 1120;
+					};
+				};
+			};
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Westwalk" */;
+			compatibilityVersion = "Xcode 12.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 83CBB9F61A601CBA00E9B192;
+			packageReferences = (
+				BDD91F102DDB24B50092B747 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
+			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				13B07F861A680F5B00A75B9A /* Westwalk */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		13B07F8E1A680F5B00A75B9A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
+				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				BDD91F122DDB24C90092B747 /* GoogleService-Info.plist in Resources */,
+				529C7657EC2280C95DBDECCB /* PrivacyInfo.xcprivacy in Resources */,
+				B3F662FB186F4316AB5C12C5 /* FilsonProBlack.otf in Resources */,
+				CFDDEDE69E244AE493A3DC25 /* FilsonProBold.otf in Resources */,
+				36BBC685FD0B4CF1902A6E28 /* FilsonProLight.otf in Resources */,
+				CE1D82AB19BA41B49B9F97CE /* FilsonProMedium.otf in Resources */,
+				88DB634D800D4EFE8675D6A7 /* FilsonProRegular.otf in Resources */,
+				A31F106FC9314E30B088D28A /* SF-Pro-Rounded-Black.otf in Resources */,
+				D77CCC1251334577965C59EA /* SF-Pro-Rounded-Bold.otf in Resources */,
+				57130E59170C4E25BC996BEE /* SF-Pro-Rounded-Heavy.otf in Resources */,
+				58764492A9184C1C98F2541D /* SF-Pro-Rounded-Light.otf in Resources */,
+				74263F4A838B47AEA1D6291D /* SF-Pro-Rounded-Medium.otf in Resources */,
+				1B8027859A9A4A638AF11E24 /* SF-Pro-Rounded-Regular.otf in Resources */,
+				F8C1D80A53D44A28AC2D5321 /* SF-Pro-Rounded-Semibold.otf in Resources */,
+				A2671C1D519049678D95277E /* SF-Pro-Rounded-Thin.otf in Resources */,
+				4CFF4D73C8124AA59C11D08E /* SF-Pro-Rounded-Ultralight.otf in Resources */,
+				7D005149FBE9418CACEEA069 /* beauty_spa.jpg in Resources */,
+				A5743B3E5B2F4CF8BB777E01 /* entertainment.png in Resources */,
+				56BAB149AE3A4F7E9C9E38E5 /* food2.png in Resources */,
+				60FE65F77CBE4CF5898DF4B6 /* food_drinks.jpg in Resources */,
+				3C866B0902674B8AB7E6E5F4 /* health_fitness.png in Resources */,
+				272C3B4BC20245D5A89DF835 /* hotel.png in Resources */,
+				7B4A330A99F841898E7D7FBF /* image.png in Resources */,
+				722FF895AEBD482E832B902A /* nodata_found.jpg in Resources */,
+				A493DD5BAFE44F518891C5EB /* service.png in Resources */,
+				B1E57AD50B86413C96D2B5D8 /* shop.png in Resources */,
+				E534CB2FA0BB47B0A1D42558 /* slider1.png in Resources */,
+				8C3277055556424D8870C21B /* splash.png in Resources */,
+				241C1F1444AD4145A63341B4 /* splash2.png in Resources */,
+				D92023B314A840198B3FDE29 /* westwalk.png in Resources */,
+				74E1CFC695BE451DB41F157F /* westwalk_icon.png in Resources */,
+				FE9BB7034B604BC48DF3D42E /* westwalk_logo.png in Resources */,
+				50ABBE3A22664138AEC18C14 /* westwalk_nb.png in Resources */,
+				18245D27D20B4DE086C768E9 /* westwalk_nw.png in Resources */,
+				CF4A452D899A4ACCACCE4006 /* beauty__spa.jpg in Resources */,
+				0CA6A65BEA9D4FA0BE9DEDC5 /* bgImg.jpeg in Resources */,
+				6AAB5BFE80D441B5A2BCD115 /* food__drinks.jpg in Resources */,
+				7D93085E42904727BBDA4BDE /* giftpack.png in Resources */,
+				1AF6D63447FE46E19FADA59A /* health.png in Resources */,
+				665F40134F23475CBBA47057 /* logo.png in Resources */,
+				9E87102ECB004F43A5E5AF06 /* logo_b.png in Resources */,
+				9135A9C0F7D84A8DA4F2F906 /* logo_w.png in Resources */,
+				AE044C3E1E4B4D4BBB81D393 /* no_data.png in Resources */,
+				FDA240A56D06423DB8208F4F /* nodata.png in Resources */,
+				15D820F22476435590D4E149 /* partner.png in Resources */,
+				1E32280F2080473D9FA2499C /* research.png in Resources */,
+				4673828FA38D440E9B320A4F /* searchImg.png in Resources */,
+				B5C5B0B12B74431C84802880 /* services.png in Resources */,
+				3B4D68AE525345E7B35F6E42 /* slider2.png in Resources */,
+				CC9FD6896EBC4D9C86FDC1D7 /* slider3.png in Resources */,
+				C421005060B7412281F0E0DA /* wel_logo.png in Resources */,
+				60A5F6DE92A94FFE8DECA793 /* ww_icon.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/.xcode.env.local",
+				"$(SRCROOT)/.xcode.env",
+			);
+			name = "Bundle React Native code and images";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"$REACT_NATIVE_PATH/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
+		};
+		44B4D6E94F2823519722626E /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Westwalk-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		59AB4D790CEAAACE2B09EF90 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Westwalk/Pods-Westwalk-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Westwalk/Pods-Westwalk-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Westwalk/Pods-Westwalk-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		7ED0C1719D374602823CDE7A /* [CP-User] [RNFB] Core Configuration */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+			);
+			name = "[CP-User] [RNFB] Core Configuration";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#!/usr/bin/env bash\n#\n# Copyright (c) 2016-present Invertase Limited & Contributors\n#\n# Licensed under the Apache License, Version 2.0 (the \"License\");\n# you may not use this library except in compliance with the License.\n# You may obtain a copy of the License at\n#\n#   http://www.apache.org/licenses/LICENSE-2.0\n#\n# Unless required by applicable law or agreed to in writing, software\n# distributed under the License is distributed on an \"AS IS\" BASIS,\n# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n# See the License for the specific language governing permissions and\n# limitations under the License.\n#\n\n##########################################################################\n##########################################################################\n#\n#  NOTE THAT IF YOU CHANGE THIS FILE YOU MUST RUN pod install AFTERWARDS\n#\n#  This file is installed as an Xcode build script in the project file\n#  by cocoapods, and you will not see your changes until you pod install\n#\n##########################################################################\n##########################################################################\n\nset -e\n\n_MAX_LOOKUPS=2;\n_SEARCH_RESULT=''\n_RN_ROOT_EXISTS=''\n_CURRENT_LOOKUPS=1\n_JSON_ROOT=\"'react-native'\"\n_JSON_FILE_NAME='firebase.json'\n_JSON_OUTPUT_BASE64='e30=' # { }\n_CURRENT_SEARCH_DIR=${PROJECT_DIR}\n_PLIST_BUDDY=/usr/libexec/PlistBuddy\n_TARGET_PLIST=\"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\n_DSYM_PLIST=\"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist\"\n\n# plist arrays\n_PLIST_ENTRY_KEYS=()\n_PLIST_ENTRY_TYPES=()\n_PLIST_ENTRY_VALUES=()\n\nfunction setPlistValue {\n  echo \"info:      setting plist entry '$1' of type '$2' in file '$4'\"\n  ${_PLIST_BUDDY} -c \"Add :$1 $2 '$3'\" $4 || echo \"info:      '$1' already exists\"\n}\n\nfunction getFirebaseJsonKeyValue () {\n  if [[ ${_RN_ROOT_EXISTS} ]]; then\n    ruby -Ku -e \"require 'rubygems';require 'json'; output=JSON.parse('$1'); puts output[$_JSON_ROOT]['$2']\"\n  else\n    echo \"\"\n  fi;\n}\n\nfunction jsonBoolToYesNo () {\n  if [[ $1 == \"false\" ]]; then\n    echo \"NO\"\n  elif [[ $1 == \"true\" ]]; then\n    echo \"YES\"\n  else echo \"NO\"\n  fi\n}\n\necho \"info: -> RNFB build script started\"\necho \"info: 1) Locating ${_JSON_FILE_NAME} file:\"\n\nif [[ -z ${_CURRENT_SEARCH_DIR} ]]; then\n  _CURRENT_SEARCH_DIR=$(pwd)\nfi;\n\nwhile true; do\n  _CURRENT_SEARCH_DIR=$(dirname \"$_CURRENT_SEARCH_DIR\")\n  if [[ \"$_CURRENT_SEARCH_DIR\" == \"/\" ]] || [[ ${_CURRENT_LOOKUPS} -gt ${_MAX_LOOKUPS} ]]; then break; fi;\n  echo \"info:      ($_CURRENT_LOOKUPS of $_MAX_LOOKUPS) Searching in '$_CURRENT_SEARCH_DIR' for a ${_JSON_FILE_NAME} file.\"\n  _SEARCH_RESULT=$(find \"$_CURRENT_SEARCH_DIR\" -maxdepth 2 -name ${_JSON_FILE_NAME} -print | /usr/bin/head -n 1)\n  if [[ ${_SEARCH_RESULT} ]]; then\n    echo \"info:      ${_JSON_FILE_NAME} found at $_SEARCH_RESULT\"\n    break;\n  fi;\n  _CURRENT_LOOKUPS=$((_CURRENT_LOOKUPS+1))\ndone\n\nif [[ ${_SEARCH_RESULT} ]]; then\n  _JSON_OUTPUT_RAW=$(cat \"${_SEARCH_RESULT}\")\n  _RN_ROOT_EXISTS=$(ruby -Ku -e \"require 'rubygems';require 'json'; output=JSON.parse('$_JSON_OUTPUT_RAW'); puts output[$_JSON_ROOT]\" || echo '')\n\n  if [[ ${_RN_ROOT_EXISTS} ]]; then\n    if ! python3 --version >/dev/null 2>&1; then echo \"python3 not found, firebase.json file processing error.\" && exit 1; fi\n    _JSON_OUTPUT_BASE64=$(python3 -c 'import json,sys,base64;print(base64.b64encode(bytes(json.dumps(json.loads(open('\"'${_SEARCH_RESULT}'\"', '\"'rb'\"').read())['${_JSON_ROOT}']), '\"'utf-8'\"')).decode())' || echo \"e30=\")\n  fi\n\n  _PLIST_ENTRY_KEYS+=(\"firebase_json_raw\")\n  _PLIST_ENTRY_TYPES+=(\"string\")\n  _PLIST_ENTRY_VALUES+=(\"$_JSON_OUTPUT_BASE64\")\n\n  # config.app_data_collection_default_enabled\n  _APP_DATA_COLLECTION_ENABLED=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"app_data_collection_default_enabled\")\n  if [[ $_APP_DATA_COLLECTION_ENABLED ]]; then\n    _PLIST_ENTRY_KEYS+=(\"FirebaseDataCollectionDefaultEnabled\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_APP_DATA_COLLECTION_ENABLED\")\")\n  fi\n\n  # config.analytics_auto_collection_enabled\n  _ANALYTICS_AUTO_COLLECTION=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"analytics_auto_collection_enabled\")\n  if [[ $_ANALYTICS_AUTO_COLLECTION ]]; then\n    _PLIST_ENTRY_KEYS+=(\"FIREBASE_ANALYTICS_COLLECTION_ENABLED\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_ANALYTICS_AUTO_COLLECTION\")\")\n  fi\n\n  # config.analytics_collection_deactivated\n  _ANALYTICS_DEACTIVATED=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"analytics_collection_deactivated\")\n  if [[ $_ANALYTICS_DEACTIVATED ]]; then\n    _PLIST_ENTRY_KEYS+=(\"FIREBASE_ANALYTICS_COLLECTION_DEACTIVATED\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_ANALYTICS_DEACTIVATED\")\")\n  fi\n\n  # config.analytics_idfv_collection_enabled\n  _ANALYTICS_IDFV_COLLECTION=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"analytics_idfv_collection_enabled\")\n  if [[ $_ANALYTICS_IDFV_COLLECTION ]]; then\n    _PLIST_ENTRY_KEYS+=(\"GOOGLE_ANALYTICS_IDFV_COLLECTION_ENABLED\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_ANALYTICS_IDFV_COLLECTION\")\")\n  fi\n\n  # config.analytics_default_allow_analytics_storage\n  _ANALYTICS_STORAGE=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"analytics_default_allow_analytics_storage\")\n  if [[ $_ANALYTICS_STORAGE ]]; then\n    _PLIST_ENTRY_KEYS+=(\"GOOGLE_ANALYTICS_DEFAULT_ALLOW_ANALYTICS_STORAGE\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_ANALYTICS_STORAGE\")\")\n  fi\n\n  # config.analytics_default_allow_ad_storage\n  _ANALYTICS_AD_STORAGE=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"analytics_default_allow_ad_storage\")\n  if [[ $_ANALYTICS_AD_STORAGE ]]; then\n    _PLIST_ENTRY_KEYS+=(\"GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_STORAGE\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_ANALYTICS_AD_STORAGE\")\")\n  fi\n\n  # config.analytics_default_allow_ad_user_data\n  _ANALYTICS_AD_USER_DATA=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"analytics_default_allow_ad_user_data\")\n  if [[ $_ANALYTICS_AD_USER_DATA ]]; then\n    _PLIST_ENTRY_KEYS+=(\"GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_USER_DATA\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_ANALYTICS_AD_USER_DATA\")\")\n  fi\n\n  # config.analytics_default_allow_ad_personalization_signals\n  _ANALYTICS_PERSONALIZATION=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"analytics_default_allow_ad_personalization_signals\")\n  if [[ $_ANALYTICS_PERSONALIZATION ]]; then\n    _PLIST_ENTRY_KEYS+=(\"GOOGLE_ANALYTICS_DEFAULT_ALLOW_AD_PERSONALIZATION_SIGNALS\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_ANALYTICS_PERSONALIZATION\")\")\n  fi\n\n  # config.analytics_registration_with_ad_network_enabled\n  _ANALYTICS_REGISTRATION_WITH_AD_NETWORK=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"google_analytics_registration_with_ad_network_enabled\")\n  if [[ $_ANALYTICS_REGISTRATION_WITH_AD_NETWORK ]]; then\n    _PLIST_ENTRY_KEYS+=(\"GOOGLE_ANALYTICS_REGISTRATION_WITH_AD_NETWORK_ENABLED\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_ANALYTICS_REGISTRATION_WITH_AD_NETWORK\")\")\n  fi\n\n  # config.google_analytics_automatic_screen_reporting_enabled\n  _ANALYTICS_AUTO_SCREEN_REPORTING=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"google_analytics_automatic_screen_reporting_enabled\")\n  if [[ $_ANALYTICS_AUTO_SCREEN_REPORTING ]]; then\n    _PLIST_ENTRY_KEYS+=(\"FirebaseAutomaticScreenReportingEnabled\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_ANALYTICS_AUTO_SCREEN_REPORTING\")\")\n  fi\n\n  # config.perf_auto_collection_enabled\n  _PERF_AUTO_COLLECTION=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"perf_auto_collection_enabled\")\n  if [[ $_PERF_AUTO_COLLECTION ]]; then\n    _PLIST_ENTRY_KEYS+=(\"firebase_performance_collection_enabled\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_PERF_AUTO_COLLECTION\")\")\n  fi\n\n  # config.perf_collection_deactivated\n  _PERF_DEACTIVATED=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"perf_collection_deactivated\")\n  if [[ $_PERF_DEACTIVATED ]]; then\n    _PLIST_ENTRY_KEYS+=(\"firebase_performance_collection_deactivated\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_PERF_DEACTIVATED\")\")\n  fi\n\n  # config.messaging_auto_init_enabled\n  _MESSAGING_AUTO_INIT=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"messaging_auto_init_enabled\")\n  if [[ $_MESSAGING_AUTO_INIT ]]; then\n    _PLIST_ENTRY_KEYS+=(\"FirebaseMessagingAutoInitEnabled\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_MESSAGING_AUTO_INIT\")\")\n  fi\n\n  # config.in_app_messaging_auto_colllection_enabled\n  _FIAM_AUTO_INIT=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"in_app_messaging_auto_collection_enabled\")\n  if [[ $_FIAM_AUTO_INIT ]]; then\n    _PLIST_ENTRY_KEYS+=(\"FirebaseInAppMessagingAutomaticDataCollectionEnabled\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_FIAM_AUTO_INIT\")\")\n  fi\n\n  # config.app_check_token_auto_refresh\n  _APP_CHECK_TOKEN_AUTO_REFRESH=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"app_check_token_auto_refresh\")\n  if [[ $_APP_CHECK_TOKEN_AUTO_REFRESH ]]; then\n    _PLIST_ENTRY_KEYS+=(\"FirebaseAppCheckTokenAutoRefreshEnabled\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_APP_CHECK_TOKEN_AUTO_REFRESH\")\")\n  fi\n\n  # config.crashlytics_disable_auto_disabler - undocumented for now - mainly for debugging, document if becomes useful\n  _CRASHLYTICS_AUTO_DISABLE_ENABLED=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"crashlytics_disable_auto_disabler\")\n  if [[ $_CRASHLYTICS_AUTO_DISABLE_ENABLED == \"true\" ]]; then\n    echo \"Disabled Crashlytics auto disabler.\" # do nothing\n  else\n    _PLIST_ENTRY_KEYS+=(\"FirebaseCrashlyticsCollectionEnabled\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"NO\")\n  fi\nelse\n  _PLIST_ENTRY_KEYS+=(\"firebase_json_raw\")\n  _PLIST_ENTRY_TYPES+=(\"string\")\n  _PLIST_ENTRY_VALUES+=(\"$_JSON_OUTPUT_BASE64\")\n  echo \"warning:   A firebase.json file was not found, whilst this file is optional it is recommended to include it to configure firebase services in React Native Firebase.\"\nfi;\n\necho \"info: 2) Injecting Info.plist entries: \"\n\n# Log out the keys we're adding\nfor i in \"${!_PLIST_ENTRY_KEYS[@]}\"; do\n  echo \"    ->  $i) ${_PLIST_ENTRY_KEYS[$i]}\" \"${_PLIST_ENTRY_TYPES[$i]}\" \"${_PLIST_ENTRY_VALUES[$i]}\"\ndone\n\nfor plist in \"${_TARGET_PLIST}\" \"${_DSYM_PLIST}\" ; do\n  if [[ -f \"${plist}\" ]]; then\n\n    # paths with spaces break the call to setPlistValue. temporarily modify\n    # the shell internal field separator variable (IFS), which normally\n    # includes spaces, to consist only of line breaks\n    oldifs=$IFS\n    IFS=\"\n\"\n\n    for i in \"${!_PLIST_ENTRY_KEYS[@]}\"; do\n      setPlistValue \"${_PLIST_ENTRY_KEYS[$i]}\" \"${_PLIST_ENTRY_TYPES[$i]}\" \"${_PLIST_ENTRY_VALUES[$i]}\" \"${plist}\"\n    done\n\n    # restore the original internal field separator value\n    IFS=$oldifs\n  else\n    echo \"warning:   A Info.plist build output file was not found (${plist})\"\n  fi\ndone\n\necho \"info: <- RNFB build script finished\"\n";
+		};
+		FDA64E365CD3D2CC2EB9FED9 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Westwalk/Pods-Westwalk-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Westwalk/Pods-Westwalk-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Westwalk/Pods-Westwalk-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		13B07F871A680F5B00A75B9A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				761780ED2CA45674006654EE /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		13B07F941A680F5B00A75B9A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 888AA4D7FE0E4E3FFDFC38CB /* Pods-Westwalk.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Westwalk/Westwalk.entitlements;
+				CURRENT_PROJECT_VERSION = 142;
+				DEVELOPMENT_TEAM = BL7628DU9X;
+				ENABLE_BITCODE = NO;
+				INFOPLIST_FILE = Westwalk/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.4.2;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.halabsaudiappreactnativeversion;
+				PRODUCT_NAME = Westwalk;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Debug;
+		};
+		13B07F951A680F5B00A75B9A /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = EF67000DA5E0A6A40FEB7211 /* Pods-Westwalk.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Westwalk/Westwalk.entitlements;
+				CURRENT_PROJECT_VERSION = 142;
+				DEVELOPMENT_TEAM = BL7628DU9X;
+				INFOPLIST_FILE = Westwalk/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.4.2;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.halabsaudiappreactnativeversion;
+				PRODUCT_NAME = Westwalk;
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
+		83CBBA201A601CBA00E9B192 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon/ReactCommon.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon/ReactCommon.framework/Headers/react/nativemodule/core",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon-Samples/ReactCommon_Samples.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon-Samples/ReactCommon_Samples.framework/Headers/platform/ios",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-Fabric/React_Fabric.framework/Headers/react/renderer/components/view/platform/cxx",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-NativeModulesApple/React_NativeModulesApple.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers/react/renderer/graphics/platform/ios",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					/usr/lib/swift,
+					"$(inherited)",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"\"$(SDKROOT)/usr/lib/swift\"",
+					"\"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)\"",
+					"\"$(inherited)\"",
+				);
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-DFOLLY_NO_CONFIG",
+					"-DFOLLY_MOBILE=1",
+					"-DFOLLY_USE_LIBCPP=1",
+					"-DFOLLY_CFG_NO_COROUTINES=1",
+					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
+				USE_HERMES = true;
+			};
+			name = Debug;
+		};
+		83CBBA211A601CBA00E9B192 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon/ReactCommon.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon/ReactCommon.framework/Headers/react/nativemodule/core",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon-Samples/ReactCommon_Samples.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon-Samples/ReactCommon_Samples.framework/Headers/platform/ios",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-Fabric/React_Fabric.framework/Headers/react/renderer/components/view/platform/cxx",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-NativeModulesApple/React_NativeModulesApple.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers/react/renderer/graphics/platform/ios",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					/usr/lib/swift,
+					"$(inherited)",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"\"$(SDKROOT)/usr/lib/swift\"",
+					"\"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)\"",
+					"\"$(inherited)\"",
+				);
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-DFOLLY_NO_CONFIG",
+					"-DFOLLY_MOBILE=1",
+					"-DFOLLY_USE_LIBCPP=1",
+					"-DFOLLY_CFG_NO_COROUTINES=1",
+					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
+				SDKROOT = iphoneos;
+				USE_HERMES = true;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Westwalk" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				13B07F941A680F5B00A75B9A /* Debug */,
+				13B07F951A680F5B00A75B9A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Westwalk" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				83CBBA201A601CBA00E9B192 /* Debug */,
+				83CBBA211A601CBA00E9B192 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		BDD91F102DDB24B50092B747 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.12.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+	};
+	rootObject = 83CBB9F71A601CBA00E9B192 /* Project object */;
+}

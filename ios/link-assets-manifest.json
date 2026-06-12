@@ -1,0 +1,205 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "src/westwalk/assets/fonts/FilsonProBlack.otf",
+      "sha1": "6d39644d97139919703f6d1aa5bf967c542ea288"
+    },
+    {
+      "path": "src/westwalk/assets/fonts/FilsonProBold.otf",
+      "sha1": "faeecd2168ce1e0f2ce4587dc53a8dcf822e0aeb"
+    },
+    {
+      "path": "src/westwalk/assets/fonts/FilsonProLight.otf",
+      "sha1": "7967d85e68607e09c0ba02f88a93db2f80f18cb8"
+    },
+    {
+      "path": "src/westwalk/assets/fonts/FilsonProMedium.otf",
+      "sha1": "d71e213519c911b66f24310267499d3f3b20ff64"
+    },
+    {
+      "path": "src/westwalk/assets/fonts/FilsonProRegular.otf",
+      "sha1": "a42e1cbffef3bf54c3aaaf219f592167ac9f082d"
+    },
+    {
+      "path": "src/westwalk/assets/images/beauty_spa.jpg",
+      "sha1": "c4776daa4ccdebb8b4a4ea9b18ef415cca096678"
+    },
+    {
+      "path": "src/westwalk/assets/images/entertainment.png",
+      "sha1": "7ac9e11fa739da13feb3f13feed3abfbda788953"
+    },
+    {
+      "path": "src/westwalk/assets/images/food2.png",
+      "sha1": "591a6701d05b49857d471cf1d1663fd4d087389d"
+    },
+    {
+      "path": "src/westwalk/assets/images/food_drinks.jpg",
+      "sha1": "6182531c19a2cb7d01e40677393c49bdcf58ee26"
+    },
+    {
+      "path": "src/westwalk/assets/images/health_fitness.png",
+      "sha1": "a85721100359c2a223493731bcd852c58405da6f"
+    },
+    {
+      "path": "src/westwalk/assets/images/hotel.png",
+      "sha1": "413b266498199608021b7cb85822a4465c6201e2"
+    },
+    {
+      "path": "src/westwalk/assets/images/image.png",
+      "sha1": "ac6f1d1df04b4659480d0fa0e4a53c3098a80d7e"
+    },
+    {
+      "path": "src/westwalk/assets/images/nodata_found.jpg",
+      "sha1": "a7aa0f2dab571d27a0bf30fd0f9afa31d3c24d15"
+    },
+    {
+      "path": "src/westwalk/assets/images/service.png",
+      "sha1": "3b35559d2754c1407089f4de9cbc5a9cfaa10a96"
+    },
+    {
+      "path": "src/westwalk/assets/images/shop.png",
+      "sha1": "41fa2fdec9fa7a8294ed58dd0baff3b0d560af92"
+    },
+    {
+      "path": "src/westwalk/assets/images/slider1.png",
+      "sha1": "e78384370a0bc778dca02a5703c30e4fb9b96816"
+    },
+    {
+      "path": "src/westwalk/assets/images/splash.png",
+      "sha1": "acb3ec24a5f7ea679e69e1b6439359ddfb686c99"
+    },
+    {
+      "path": "src/westwalk/assets/images/splash2.png",
+      "sha1": "fb1cb21a84300cbd37f9cdb00c49ad91ae09e06f"
+    },
+    {
+      "path": "src/westwalk/assets/images/westwalk.png",
+      "sha1": "169210f3904aeb95b368f3b167d15f9d1c204cc4"
+    },
+    {
+      "path": "src/westwalk/assets/images/westwalk_icon.png",
+      "sha1": "0bfb1e25e68a2cb213b3249591de73e8250af752"
+    },
+    {
+      "path": "src/westwalk/assets/images/westwalk_logo.png",
+      "sha1": "e94f341169b219e93d92d44f3ed2d982dcfcbb42"
+    },
+    {
+      "path": "src/westwalk/assets/images/westwalk_nb.png",
+      "sha1": "bf02cb562a6639b1418b002f40552849127b7323"
+    },
+    {
+      "path": "src/westwalk/assets/images/westwalk_nw.png",
+      "sha1": "ea7eafe9624d8c8f2a3b143b7c2682dfc898e559"
+    },
+    {
+      "path": "src/halabsaudi/assets/Fonts/SF-Pro-Rounded-Black.otf",
+      "sha1": "2da10fa4ae334947087917844e0316cbce730e69"
+    },
+    {
+      "path": "src/halabsaudi/assets/Fonts/SF-Pro-Rounded-Bold.otf",
+      "sha1": "745fb5fc263ee7e4d86211f1680bd928c327040a"
+    },
+    {
+      "path": "src/halabsaudi/assets/Fonts/SF-Pro-Rounded-Heavy.otf",
+      "sha1": "85e8f7b4b33e7f5b6065947ae4a7e885cdcc8d75"
+    },
+    {
+      "path": "src/halabsaudi/assets/Fonts/SF-Pro-Rounded-Light.otf",
+      "sha1": "910cab7f17ab0b65ce8a0a09fddc152dc2b4f5bb"
+    },
+    {
+      "path": "src/halabsaudi/assets/Fonts/SF-Pro-Rounded-Medium.otf",
+      "sha1": "889faa176363f8b8e629aeaacdf85c07d1312d8d"
+    },
+    {
+      "path": "src/halabsaudi/assets/Fonts/SF-Pro-Rounded-Regular.otf",
+      "sha1": "ab2491a7db1d0a1792e50aefd4eea4bc46215742"
+    },
+    {
+      "path": "src/halabsaudi/assets/Fonts/SF-Pro-Rounded-Semibold.otf",
+      "sha1": "00fd8c58ca31cc2794b221405884a1601f50558f"
+    },
+    {
+      "path": "src/halabsaudi/assets/Fonts/SF-Pro-Rounded-Thin.otf",
+      "sha1": "ec84d72ada4a56604edc41df8a229aca16ff613b"
+    },
+    {
+      "path": "src/halabsaudi/assets/Fonts/SF-Pro-Rounded-Ultralight.otf",
+      "sha1": "f0375b7b4fff814ce30c9e43ddee6d3a5d4bd607"
+    },
+    {
+      "path": "src/halabsaudi/assets/images/beauty__spa.jpg",
+      "sha1": "c4776daa4ccdebb8b4a4ea9b18ef415cca096678"
+    },
+    {
+      "path": "src/halabsaudi/assets/images/bgImg.jpeg",
+      "sha1": "47b6214b173114b12440a3e62f8670fee669b53e"
+    },
+    {
+      "path": "src/halabsaudi/assets/images/food__drinks.jpg",
+      "sha1": "6182531c19a2cb7d01e40677393c49bdcf58ee26"
+    },
+    {
+      "path": "src/halabsaudi/assets/images/giftpack.png",
+      "sha1": "9ace05ad03b9f11172be44fa39b3a48ec5daf005"
+    },
+    {
+      "path": "src/halabsaudi/assets/images/health.png",
+      "sha1": "856480e431e7d62fda5c4179704c0d3da1ea1dca"
+    },
+    {
+      "path": "src/halabsaudi/assets/images/logo.png",
+      "sha1": "c99df17d28fe202c377618ec662d6fddf975b209"
+    },
+    {
+      "path": "src/halabsaudi/assets/images/logo_b.png",
+      "sha1": "66b9dc494391bd805f476136f615030d3e898a62"
+    },
+    {
+      "path": "src/halabsaudi/assets/images/logo_w.png",
+      "sha1": "412b1dc61098e0d0ffc110f7376ae01b846d0586"
+    },
+    {
+      "path": "src/halabsaudi/assets/images/no_data.png",
+      "sha1": "9444a1ccebb6f250301ae4c25c30a5551e6339f8"
+    },
+    {
+      "path": "src/halabsaudi/assets/images/nodata.png",
+      "sha1": "cd5ae75a74f7e3cfe2e0ad3413926fcc3cd6d0c5"
+    },
+    {
+      "path": "src/halabsaudi/assets/images/partner.png",
+      "sha1": "419369b51dcb7c15a189f84f17643e3c7d9fd8c3"
+    },
+    {
+      "path": "src/halabsaudi/assets/images/research.png",
+      "sha1": "afbb85d539afc6b0942dc3c68a821a0dc8175cdc"
+    },
+    {
+      "path": "src/halabsaudi/assets/images/searchImg.png",
+      "sha1": "963030a3384181fb551c6b2a7f07116784672afa"
+    },
+    {
+      "path": "src/halabsaudi/assets/images/services.png",
+      "sha1": "3b35559d2754c1407089f4de9cbc5a9cfaa10a96"
+    },
+    {
+      "path": "src/halabsaudi/assets/images/slider2.png",
+      "sha1": "a3f7133e48a04eab424e798ebc8013b528e07f9c"
+    },
+    {
+      "path": "src/halabsaudi/assets/images/slider3.png",
+      "sha1": "7589e3bfad62493e16ab65c11d736bf708c02935"
+    },
+    {
+      "path": "src/halabsaudi/assets/images/wel_logo.png",
+      "sha1": "1f46de5f26db079dbc47d90a12658a7c2f4302f7"
+    },
+    {
+      "path": "src/halabsaudi/assets/images/ww_icon.png",
+      "sha1": "0bfb1e25e68a2cb213b3249591de73e8250af752"
+    }
+  ]
+}
