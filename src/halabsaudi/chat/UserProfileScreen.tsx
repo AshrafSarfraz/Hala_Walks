@@ -254,7 +254,7 @@ export default function UserProfileScreen({route, navigation}: Props) {
         <View style={s.card}>
           <SectionTitle label={t.actions} isRTL={isRTL} />
           <ActionRow
-            icon="chatbubble-outline" iconColor={Colors.Green} iconBg="#DCFCE7"
+            icon="chatbubble-outline" iconColor={Colors.Red} iconBg='#FEE2E2'
             label={t.send_message}
             onPress={() => navigation.goBack()}
             isRTL={isRTL}
@@ -262,8 +262,8 @@ export default function UserProfileScreen({route, navigation}: Props) {
           <Divider />
           <ActionRow
             icon={isMuted ? 'notifications-outline' : 'notifications-off-outline'}
-            iconColor={isMuted ? '#6B7280' : '#F59E0B'}
-            iconBg={isMuted ? '#F3F4F6' : '#FEF3C7'}
+            iconColor={isMuted ? '#6B7280' : Colors.Red}
+            iconBg={isMuted ? '#F3F4F6' : '#FEE2E2'}
             label={isMuted ? t.unmute_btn : t.mute_notifications}
             sublabel={isMuted ? t.tap_to_unmute : t.silence_chat}
             onPress={() => setMuteModalVisible(true)}
@@ -384,7 +384,7 @@ function InfoRow({icon, label, value, sublabel, multiline, isRTL}: {
   return (
     <View style={[s.infoRow, {flexDirection: rowDir}]}>
       <View style={[s.infoIcon, isRTL ? {marginLeft: 14, marginRight: 0} : {}]}>
-        <Ionicons name={icon as any} size={18} color={Colors.lightRed} />
+        <Ionicons name={icon as any} size={18} color={Colors.Red} />
       </View>
       <View style={{flex: 1, alignItems: isRTL ? 'flex-end' : 'flex-start'}}>
         <Text style={[s.infoLabel, {textAlign: isRTL ? 'right' : 'left'}]}>{label}</Text>
@@ -481,7 +481,7 @@ const s = StyleSheet.create({
 
   infoRow: {alignItems: 'flex-start', paddingHorizontal: 16, paddingVertical: 13, gap: 14},
   infoIcon: {
-    width: 36, height: 36, borderRadius: 10, backgroundColor: '#F0FDF4',
+    width: 36, height: 36, borderRadius: 10, backgroundColor: '#FEE2E2',
     justifyContent: 'center', alignItems: 'center', marginTop: 1,
   },
   infoLabel:    {fontSize: 11, color: '#9CA3AF', marginBottom: 2, fontWeight: '600'},

@@ -54,7 +54,7 @@ export default function ChatScreenHeader({
 
   return (
     <View style={[styles.container, {flexDirection: rowDir}]}>
-      <View style={styles.arcDecor} />
+     
 
       {/* Back — chevron flips for RTL */}
       <TouchableOpacity
@@ -141,13 +141,7 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === 'ios' ? 12 : 14,
     paddingBottom: 14,
   },
-  arcDecor: {
-    position: 'absolute',
-    top: -50, right: -50,
-    width: 140, height: 140,
-    borderRadius: 70,
-    backgroundColor: 'rgba(255,255,255,0.08)',
-  },
+ 
   backBtn: {padding: 8, marginRight: 4},
   profileWrap: {flex: 1, alignItems: 'center'},
   avatarWrap: {position: 'relative'},

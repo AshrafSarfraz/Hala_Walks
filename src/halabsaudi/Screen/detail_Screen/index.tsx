@@ -143,7 +143,8 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
   }, [item]);
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: Colors.dargBg}}>
+    <View style={{flex: 1, backgroundColor: Colors.dargBg}}>
+    <SafeAreaView style={{ backgroundColor: Colors.darkgrey}}>
     
 
       <View style={styles.HeaderCont}>
@@ -158,7 +159,7 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
           />
         </TouchableOpacity>
       </View>
-
+ </SafeAreaView>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <View style={styles.Body_Cont}>
@@ -385,7 +386,8 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
 
         <View style={{height: 80}} />
       </ScrollView>
-    </SafeAreaView>
+   
+    </View>
   );
 };
 

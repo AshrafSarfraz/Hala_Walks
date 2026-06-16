@@ -187,23 +187,26 @@ export async function getDeviceLocation(): Promise<DeviceCoords> {
   );
 
   const attempts = (async (): Promise<DeviceCoords> => {
-    // 1. BackgroundGeolocation — already running for venue alerts
-    try {
-      const loc = await BackgroundGeolocation.getCurrentPosition({
-        timeout: 5,        // 5 s — enough if plugin already has a fix
-        samples: 1,
-        persist: false,
-        maximumAge: 120000,
-      });
-      return {
-        latitude: loc.coords.latitude,
-        longitude: loc.coords.longitude,
-      };
-    } catch (e) {
-      console.log('[getDeviceLocation] background-geolocation failed:', e);
+    // iOS simulator: BackgroundGeolocation often returns stale/wrong coords.
+    // Prefer community geolocation first so MapView's blue dot stays accurate.
+    if (Platform.OS !== 'ios') {
+      try {
+        const loc = await BackgroundGeolocation.getCurrentPosition({
+          timeout: 5,
+          samples: 1,
+          persist: false,
+          maximumAge: 120000,
+        });
+        return {
+          latitude: loc.coords.latitude,
+          longitude: loc.coords.longitude,
+        };
+      } catch (e) {
+        console.log('[getDeviceLocation] background-geolocation failed:', e);
+      }
     }
 
-    // 2. Network/cached fix — fast, no GPS needed
+    // Network/cached fix — fast, no GPS cold-start needed
     try {
       return await communityGetPosition({
         enableHighAccuracy: false,
@@ -214,7 +217,7 @@ export async function getDeviceLocation(): Promise<DeviceCoords> {
       console.log('[getDeviceLocation] network fix failed:', e);
     }
 
-    // 3. GPS — only reached if both above failed
+    // High-accuracy GPS as last resort
     return communityGetPosition({
       enableHighAccuracy: true,
       timeout: 6000,

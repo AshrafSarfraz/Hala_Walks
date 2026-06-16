@@ -1,170 +1,272 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useCallback, useMemo} from 'react';
 import {
   View,
   Text,
   StyleSheet,
   FlatList,
-  Image,
   TouchableOpacity,
   Dimensions,
   Modal,
+  Platform,
+  StatusBar,
+  ActivityIndicator,
 } from 'react-native';
+import FastImage from 'react-native-fast-image';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {BASE_URL} from '../../config/api';
+import CustomHeader from '../Component/CustomHeader/CustomHeader';
+import {useNavigation} from '@react-navigation/native';
+import {Colors} from '../Themes/Colors';
+
+// ── Theme tokens (mirrors Profile screen) ──────────────────────────────────
+const C = {
+  bg: '#0F0F0F', // dargBg equivalent
+  card: '#1C1C1E', // cardBg equivalent
+  red: Colors.btnRed, // btnRed equivalent
+  lightRed: Colors.btnRed, // lightRed equivalent
+  white: '#FFFFFF',
+  muted: '#8E8E93',
+  divider: '#2C2C2E',
+  overlay: 'rgba(0,0,0,0.55)',
+};
 
 const WIDTH = Dimensions.get('window').width;
-const SIZE = WIDTH / 3;
+const GAP = 2;
+const COLS = 3;
+const TILE = (WIDTH - GAP * (COLS + 1)) / COLS;
+
+// Local cache key — lets the grid render instantly on repeat visits
+// while a fresh network copy loads silently in the background.
+const CACHE_KEY = 'map_profile_checkins_cache_v1';
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 const MapProfile = () => {
+  const navigation = useNavigation();
   const [posts, setPosts] = useState<any[]>([]);
   const [selected, setSelected] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
-  const fetchPosts = async () => {
+  const fetchPosts = useCallback(async () => {
+    // 1) Paint cached data immediately (if we have it) — no spinner, no wait.
+    try {
+      const cachedRaw = await AsyncStorage.getItem(CACHE_KEY);
+      if (cachedRaw) {
+        setPosts(JSON.parse(cachedRaw));
+        setLoading(false);
+      }
+    } catch (e) {
+      // cache read failed — not fatal, fall through to network
+    }
+
+    // 2) Always refresh from network in the background, then update cache.
     try {
       const token = await AsyncStorage.getItem('hala_token');
-
-      const res = await axios.get(
-        `${BASE_URL}/api/hbs/map/my-checkins`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
-      setPosts(res.data?.data || []);
+      const res = await axios.get(`${BASE_URL}/api/hbs/map/my-checkins`, {
+        headers: {Authorization: `Bearer ${token}`},
+      });
+      const fresh = res.data?.data || [];
+      setPosts(fresh);
+      AsyncStorage.setItem(CACHE_KEY, JSON.stringify(fresh)).catch(() => {});
     } catch (err) {
       console.log(err);
+    } finally {
+      setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchPosts();
-  }, []);
+  }, [fetchPosts]);
 
-  const renderItem = ({item}: any) => {
-    return (
+  // ── Derived stats from real data ─────────────────────────────────────────
+  const totalCheckins = posts.length;
+  const uniquePlaces = useMemo(
+    () => new Set(posts.map(p => p.location?.name).filter(Boolean)).size,
+    [posts],
+  );
+  const user = posts?.[0]?.user;
+
+  // ── Initials fallback ────────────────────────────────────────────────────
+  const initials = user?.name
+    ? user.name
+        .trim()
+        .split(/\s+/)
+        .slice(0, 2)
+        .map((p: string) => p[0]?.toUpperCase() ?? '')
+        .join('')
+    : '';
+
+  // ── Grid item (memoized so FlatList doesn't re-render every tile on
+  //    unrelated state changes like opening the modal) ─────────────────────
+  const renderItem = useCallback(
+    ({item}: any) => (
       <TouchableOpacity
-        activeOpacity={0.9}
+        activeOpacity={0.85}
+        style={styles.tile}
         onPress={() => setSelected(item)}>
-        <Image
-          source={{uri: item.image}}
-          style={styles.gridImage}
+        <FastImage
+          source={{
+            uri: item.image,
+            priority: FastImage.priority.normal,
+            cache: FastImage.cacheControl.immutable,
+          }}
+          style={styles.tileImage}
+          resizeMode={FastImage.resizeMode.cover}
         />
-
-        {/* Location tag */}
-        <View style={styles.locationTag}>
-          <Text style={styles.locationText}>
-            📍 {item.location?.name || 'Location'}
+        {/* gradient-style scrim at bottom */}
+        <View style={styles.tileScrim} />
+        <View style={styles.tileInfo}>
+          <Text style={styles.tileLocation} numberOfLines={1}>
+            📍 {item.location?.name || 'Unknown'}
           </Text>
+          {!!item.caption && (
+            <Text style={styles.tileCaption} numberOfLines={1}>
+              {item.caption}
+            </Text>
+          )}
         </View>
       </TouchableOpacity>
+    ),
+    [],
+  );
+
+  const keyExtractor = useCallback((item: any) => item._id, []);
+
+  // ── Empty / loading state ────────────────────────────────────────────────
+  const renderEmpty = () => {
+    if (loading) {
+      return (
+        <View style={styles.emptyWrap}>
+          <ActivityIndicator size="large" color={C.red} />
+        </View>
+      );
+    }
+    return (
+      <View style={styles.emptyWrap}>
+        <Text style={styles.emptyIcon}>🗺️</Text>
+        <Text style={styles.emptyTitle}>No check-ins yet</Text>
+        <Text style={styles.emptyBody}>
+          Places you check in to will appear here.
+        </Text>
+      </View>
     );
   };
 
+  // ── Header ────────────────────────────────────────────────────────────────
+  const renderHeader = () => (
+    <View style={styles.header}>
+      <CustomHeader title="" onBackPress={() => navigation.goBack()} />
+      {/* Avatar + name */}
+      <View style={styles.avatarRow}>
+        <View style={styles.avatarWrap}>
+          {/* Initials fallback */}
+          <View style={styles.avatarFallback}>
+            <Text style={styles.avatarInitials}>{initials}</Text>
+          </View>
+          {user?.profilePhoto && (
+            <FastImage
+              source={{uri: user.profilePhoto}}
+              style={styles.avatarImg}
+              resizeMode={FastImage.resizeMode.cover}
+            />
+          )}
+        </View>
+        <View style={styles.nameBlock}>
+          <Text style={styles.profileName}>{user?.name}</Text>
+          {/* <Text style={styles.profileSub}>📍 Exploring places</Text> */}
+        </View>
+      </View>
+
+      {/* Stats row — real data only */}
+      <View style={styles.statsRow}>
+        <View style={styles.statCard}>
+          <Text style={styles.statNumber}>{totalCheckins}</Text>
+          <Text style={styles.statLabel}>Check-ins</Text>
+        </View>
+        <View style={styles.statDivider} />
+        <View style={styles.statCard}>
+          <Text style={styles.statNumber}>{uniquePlaces}</Text>
+          <Text style={styles.statLabel}>Places</Text>
+        </View>
+      </View>
+
+      {/* Section label */}
+      {posts.length > 0 && (
+        <Text style={styles.sectionLabel}>MY CHECK-INS</Text>
+      )}
+    </View>
+  );
+
   return (
     <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor={C.bg} />
 
-      {/* HEADER */}
-      <View style={styles.header}>
-
-  <View style={styles.topRow}>
-
-    <Image
-      source={{
-        uri:
-          posts?.[0]?.user?.profilePhoto ||
-          'https://i.pravatar.cc/300',
-      }}
-      style={styles.avatar}
-    />
-
-    <View style={styles.stats}>
-
-      <View style={styles.statItem}>
-        <Text style={styles.statNumber}>
-          {posts.length}
-        </Text>
-        <Text style={styles.statLabel}>
-          Posts
-        </Text>
-      </View>
-
-      <View style={styles.statItem}>
-        <Text style={styles.statNumber}>12k</Text>
-        <Text style={styles.statLabel}>
-          Followers
-        </Text>
-      </View>
-
-      <View style={styles.statItem}>
-        <Text style={styles.statNumber}>245</Text>
-        <Text style={styles.statLabel}>
-          Following
-        </Text>
-      </View>
-
-    </View>
-
-  </View>
-
-  <Text style={styles.profileName}>
-    {posts?.[0]?.user?.name || 'Your Profile'}
-  </Text>
-
-  <Text style={styles.profileBio}>
-    📍 Exploring places • Capturing moments
-  </Text>
-
-  <TouchableOpacity style={styles.editBtn}>
-    <Text style={styles.editBtnText}>
-      Edit Profile
-    </Text>
-  </TouchableOpacity>
-
-</View>
-
-      {/* GRID */}
       <FlatList
         data={posts}
-        numColumns={3}
-        keyExtractor={item => item._id}
+        numColumns={COLS}
+        keyExtractor={keyExtractor}
         renderItem={renderItem}
+        ListHeaderComponent={renderHeader}
+        ListEmptyComponent={renderEmpty}
         showsVerticalScrollIndicator={false}
+        columnWrapperStyle={styles.row}
+        contentContainerStyle={styles.listContent}
+        // ── Performance tuning for an image-heavy grid ──────────────────────
+        removeClippedSubviews={true}
+        initialNumToRender={12}
+        maxToRenderPerBatch={12}
+        windowSize={7}
+        updateCellsBatchingPeriod={50}
       />
 
-      {/* FULLSCREEN MODAL */}
+      {/* ── Full-screen modal ─────────────────────────────────────────────── */}
       <Modal
         visible={!!selected}
         transparent
-        animationType="slide"
+        animationType="fade"
         onRequestClose={() => setSelected(null)}>
-
-        <View style={styles.modalContainer}>
+        <View style={styles.modalBg}>
+          {/* Close */}
           <TouchableOpacity
             style={styles.closeBtn}
-            onPress={() => setSelected(null)}>
-            <Text style={{color: '#fff', fontSize: 18}}>✕</Text>
+            onPress={() => setSelected(null)}
+            hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}>
+            <Text style={styles.closeTxt}>✕</Text>
           </TouchableOpacity>
 
           {selected && (
             <>
-              <Image
+              <FastImage
                 source={{uri: selected.image}}
                 style={styles.fullImage}
-                resizeMode="contain"
+                resizeMode={FastImage.resizeMode.contain}
               />
 
-              {/* LOCATION OVERLAY */}
-              <View style={styles.overlay}>
-                <Text style={styles.overlayLocation}>
-                  📍 {selected.location?.name}
-                </Text>
+              {/* Info overlay */}
+              <View style={styles.modalOverlay}>
+                {/* Location pill */}
+                <View style={styles.locationPill}>
+                  <Text style={styles.locationPillTxt}>
+                    📍 {selected.location?.name || 'Unknown location'}
+                  </Text>
+                </View>
 
                 {!!selected.caption && (
-                  <Text style={styles.caption}>
-                    {selected.caption}
+                  <Text style={styles.modalCaption}>{selected.caption}</Text>
+                )}
+
+                {!!selected.createdAt && (
+                  <Text style={styles.modalDate}>
+                    {new Date(selected.createdAt).toLocaleDateString(
+                      'en-US',
+                      {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric',
+                      },
+                    )}
                   </Text>
                 )}
               </View>
@@ -172,191 +274,282 @@ const MapProfile = () => {
           )}
         </View>
       </Modal>
-
     </View>
   );
 };
 
 export default MapProfile;
 
+// ─────────────────────────────────────────────────────────────────────────────
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: Colors.darkgrey,
   },
 
-  // ───────────────── HEADER ─────────────────
+  listContent: {
+    paddingBottom: 32,
+  },
+
+  // ── Header ────────────────────────────────────────────────────────────────
 
   header: {
+    paddingTop: Platform.OS === 'ios' ? 56 : 24,
     paddingHorizontal: 18,
-    paddingTop: 20,
-    paddingBottom: 18,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f2f2f2',
+    paddingBottom: 6,
   },
 
-  topRow: {
+  avatarRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 16,
+    marginBottom: 20,
   },
 
-  avatar: {
-    width: 92,
-    height: 92,
-    borderRadius: 46,
-    backgroundColor: '#e5e5e5',
-    borderWidth: 3,
-    borderColor: '#6C4EFF',
+  avatarWrap: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    overflow: 'hidden',
+    borderWidth: 2.5,
+    borderColor: C.red,
+    backgroundColor: C.card,
   },
 
-  stats: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    marginLeft: 20,
-  },
-
-  statItem: {
-    alignItems: 'center',
-  },
-
-  statNumber: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#111',
-  },
-
-  statLabel: {
-    fontSize: 13,
-    color: '#777',
-    marginTop: 2,
-  },
-
-  profileName: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#111',
-    marginTop: 14,
-  },
-
-  profileBio: {
-    fontSize: 13,
-    color: '#666',
-    marginTop: 4,
-    lineHeight: 18,
-  },
-
-  editBtn: {
-    marginTop: 14,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 10,
-    paddingVertical: 8,
-    alignItems: 'center',
-  },
-
-  editBtnText: {
-    fontWeight: '600',
-    color: '#111',
-  },
-
-  // ───────────────── GRID ─────────────────
-
-  gridWrapper: {
-    position: 'relative',
-    margin: 1,
-  },
-
-  gridImage: {
-    width: SIZE - 2,
-    height: SIZE - 2,
-    backgroundColor: '#f2f2f2',
-  },
-
-  locationTag: {
+  avatarFallback: {
     position: 'absolute',
-    bottom: 6,
-    left: 6,
-    right: 6,
-    backgroundColor: 'rgba(0,0,0,0.55)',
-    borderRadius: 10,
-    paddingHorizontal: 6,
-    paddingVertical: 4,
-  },
-
-  locationText: {
-    color: '#fff',
-    fontSize: 10,
-    fontWeight: '600',
-  },
-
-  emptyContainer: {
-    alignItems: 'center',
-    marginTop: 120,
-    paddingHorizontal: 30,
-  },
-
-  emptyTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#111',
-    marginTop: 20,
-  },
-
-  emptyText: {
-    fontSize: 14,
-    color: '#777',
-    marginTop: 8,
-    textAlign: 'center',
-    lineHeight: 22,
-  },
-
-  // ───────────────── MODAL ─────────────────
-
-  modalContainer: {
-    flex: 1,
-    backgroundColor: '#000',
-  },
-
-  closeBtn: {
-    position: 'absolute',
-    top: 55,
-    right: 20,
-    zIndex: 100,
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    backgroundColor: 'rgba(0,0,0,0.45)',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: Colors.Red,
     justifyContent: 'center',
     alignItems: 'center',
   },
 
-  fullImage: {
+  avatarInitials: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: C.white,
+  },
+
+  avatarImg: {
     width: '100%',
     height: '100%',
   },
 
-  overlay: {
+  nameBlock: {
+    flex: 1,
+  },
+
+  profileName: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: C.white,
+    marginBottom: 4,
+  },
+
+  profileSub: {
+    fontSize: 13,
+    color: C.muted,
+  },
+
+  // ── Stats ─────────────────────────────────────────────────────────────────
+
+  statsRow: {
+    flexDirection: 'row',
+    backgroundColor: C.card,
+    borderRadius: 14,
+    marginBottom: 24,
+    overflow: 'hidden',
+  },
+
+  statCard: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 16,
+  },
+
+  statDivider: {
+    width: 0.5,
+    backgroundColor: C.divider,
+    marginVertical: 12,
+  },
+
+  statNumber: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: C.white,
+    marginBottom: 3,
+  },
+
+  statLabel: {
+    fontSize: 12,
+    color: C.muted,
+    fontWeight: '500',
+    textTransform: 'uppercase',
+    letterSpacing: 0.6,
+  },
+
+  sectionLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: C.muted,
+    letterSpacing: 0.8,
+    marginBottom: 10,
+  },
+
+  // ── Grid ──────────────────────────────────────────────────────────────────
+
+  row: {
+    gap: GAP,
+    paddingHorizontal: GAP,
+    marginBottom: GAP,
+  },
+
+  tile: {
+    width: TILE,
+    height: TILE,
+    borderRadius: 6,
+    overflow: 'hidden',
+    backgroundColor: C.card,
+  },
+
+  tileImage: {
+    width: '100%',
+    height: '100%',
+  },
+
+  tileScrim: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    paddingHorizontal: 18,
-    paddingTop: 24,
-    paddingBottom: 42,
-    backgroundColor: 'rgba(0,0,0,0.45)',
+    height: '50%',
+    // manual gradient via layered views
+    backgroundColor: 'rgba(0,0,0,0)',
   },
 
-  overlayLocation: {
-    color: '#fff',
-    fontSize: 22,
+  tileInfo: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 6,
+    paddingBottom: 6,
+    paddingTop: 16,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+  },
+
+  tileLocation: {
+    color: C.white,
+    fontSize: 9,
+    fontWeight: '700',
+    letterSpacing: 0.2,
+  },
+
+  tileCaption: {
+    color: 'rgba(255,255,255,0.75)',
+    fontSize: 8,
+    marginTop: 1,
+  },
+
+  // ── Empty ─────────────────────────────────────────────────────────────────
+
+  emptyWrap: {
+    alignItems: 'center',
+    marginTop: 80,
+    paddingHorizontal: 40,
+  },
+
+  emptyIcon: {
+    fontSize: 48,
+    marginBottom: 16,
+  },
+
+  emptyTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: C.white,
+    marginBottom: 8,
+  },
+
+  emptyBody: {
+    fontSize: 14,
+    color: C.muted,
+    textAlign: 'center',
+    lineHeight: 22,
+  },
+
+  // ── Modal ─────────────────────────────────────────────────────────────────
+
+  modalBg: {
+    flex: 1,
+    backgroundColor: '#000',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  closeBtn: {
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? 56 : 24,
+    right: 20,
+    zIndex: 10,
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  closeTxt: {
+    color: C.white,
+    fontSize: 16,
+    fontWeight: '600',
+  },
+
+  fullImage: {
+    width: WIDTH,
+    height: WIDTH,
+  },
+
+  modalOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 20,
+    paddingTop: 28,
+    paddingBottom: Platform.OS === 'ios' ? 48 : 32,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+  },
+
+  locationPill: {
+    alignSelf: 'flex-start',
+    backgroundColor: C.red,
+    borderRadius: 20,
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    marginBottom: 12,
+  },
+
+  locationPillTxt: {
+    color: C.white,
+    fontSize: 13,
     fontWeight: '700',
   },
 
-  caption: {
-    color: '#f5f5f5',
-    marginTop: 10,
+  modalCaption: {
+    color: 'rgba(255,255,255,0.9)',
     fontSize: 15,
     lineHeight: 22,
+    marginBottom: 8,
+  },
+
+  modalDate: {
+    color: C.muted,
+    fontSize: 12,
   },
 });

@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
   languageButton: {
     backgroundColor: '#fff',
     borderWidth:2,
-    borderColor:Colors.Green,
+    borderColor:Colors.Red,
     width: '80%',
     height: 60,
     borderRadius: 8,
@@ -91,13 +91,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   selectedButton: {
-    backgroundColor: Colors.Green, // Highlight selected language
+    backgroundColor: Colors.Red, // Highlight selected language
   },
   selectedButtonTxt:{
    color:"#FFF"
   },
   languageText: {
-    color: Colors.Green,
+    color: Colors.Red,
     fontSize: 16,
     fontFamily: Fonts.SF_Bold,
   },

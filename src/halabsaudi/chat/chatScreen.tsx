@@ -1176,6 +1176,7 @@ export default function ChatScreen({route, navigation}: any) {
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
       <View style={styles.container}>
+        <View style={{backgroundColor: Colors.darkgrey}}>
         <ChatScreenHeader
           name={participantName}
           userId={participantId}
@@ -1189,7 +1190,8 @@ export default function ChatScreen({route, navigation}: any) {
           hidesOnline={participantHidesOnline}
           hidesLastSeen={participantHidesLastSeen}
         />
-
+        </View>
+<View style={{ flex:1,backgroundColor: Colors.dargBg}}>
         <KeyboardAvoidingView
           style={{flex: 1}}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -1420,13 +1422,14 @@ export default function ChatScreen({route, navigation}: any) {
         onCamera={handleCamera}
         onGallery={handleGallery}
       />
+      </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {flex: 1, backgroundColor: Colors.dargBg},
-  container: {flex: 1, backgroundColor: Colors.dargBg},
+  safeArea: {flex: 1, backgroundColor: Colors.darkgrey},
+  container: {flex: 1, backgroundColor: Colors.darkgrey},
   loader: {flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#EAE6DF'},
   msgRow: {marginVertical: 1},
   rowRight: {alignItems: 'flex-end'},

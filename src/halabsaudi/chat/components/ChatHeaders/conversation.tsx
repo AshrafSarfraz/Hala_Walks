@@ -64,7 +64,7 @@ export default function ConversationHeader({
 
   return (
     <View style={styles.wrapper}>
-      <View style={styles.arcAccent} />
+      
 
       {/* ── Top row ── */}
       <View style={[styles.topRow, {flexDirection: rowDir}]}>
@@ -160,12 +160,7 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
     overflow: 'hidden',
   },
-  arcAccent: {
-    position: 'absolute',
-    top: -50, right: -50,
-    width: 160, height: 160, borderRadius: 80,
-    backgroundColor: 'rgba(124,196,166,0.12)',
-  },
+
   topRow: {justifyContent: 'space-between', alignItems: 'flex-start'},
   eyebrow: {
     fontSize: 11, color: Colors.White,

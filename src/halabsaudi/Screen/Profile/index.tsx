@@ -264,12 +264,12 @@ const Profile: React.FC = () => {
               </Text>
             </View>
             {lastSeenLoading ? (
-              <ActivityIndicator size="small" color={Colors.Green} style={{marginRight: 4}} />
+              <ActivityIndicator size="small" color={Colors.Red} style={{marginRight: 4}} />
             ) : (
               <Switch
                 value={showLastSeen}
                 onValueChange={val => updatePrivacy('hideLastSeen', val)}
-                trackColor={{false: '#DDD', true: Colors.lightRed}}
+                trackColor={{false: '#DDD', true: Colors.Red}}
                 thumbColor="#fff"
               />
             )}
@@ -277,7 +277,7 @@ const Profile: React.FC = () => {
           <View style={s.divider} />
           <View style={s.switchRow}>
             <View style={s.iconBubble}>
-              <Ionicons name="radio-button-on-outline" size={18} color={Colors.lightRed} />
+              <Ionicons name="radio-button-on-outline" size={18} color={Colors.Red} />
             </View>
             <View style={{flex: 1}}>
               <Text style={s.switchLabel}>{t.online_status}</Text>
@@ -286,24 +286,42 @@ const Profile: React.FC = () => {
               </Text>
             </View>
             {onlineLoading ? (
-              <ActivityIndicator size="small" color={Colors.Green} style={{marginRight: 4}} />
+              <ActivityIndicator size="small" color={Colors.Red} style={{marginRight: 4}} />
             ) : (
               <Switch
                 value={showOnlineStatus}
                 onValueChange={val => updatePrivacy('hideOnlineStatus', val)}
-                trackColor={{false: '#DDD', true: Colors.lightRed}}
+                trackColor={{false: '#DDD', true: Colors.Red}}
                 thumbColor="#fff"
               />
             )}
           </View>
         </View>
 
+        {/* wishlist */}
+        <Text style={s.sectionLabel}>
+          {t.Wishlist}
+        </Text>
+<View style={s.card}>
+  
+           <TouchableOpacity style={s.menuRow} activeOpacity={0.6} onPress={() => navigation.navigate('Wishlist')}>
+            <View style={s.iconBubble}>
+              <Ionicons name="heart-outline" size={18} color={Colors.btnRed} />
+            </View>
+            <Text style={s.menuLabel}>{t.Wishlist}</Text>
+            <Ionicons name={language === 'ar' ? 'chevron-back' : 'chevron-forward'} size={15} color={Colors.Red} />
+          </TouchableOpacity>
+        </View>
+     
+
+        
+
         {/* Logout */}
         <Text style={s.sectionLabel}> </Text>
         <View style={s.card}>
           <TouchableOpacity style={s.logoutRow} onPress={handleLogout} activeOpacity={0.7}>
             <View style={[s.iconBubble, {backgroundColor: '#FEE2E2'}]}>
-              <Ionicons name="log-out-outline" size={18} color="#DC2626" />
+              <Ionicons name="log-out-outline" size={18} color={Colors.Red} />
             </View>
             <Text style={s.logoutTxt}>{t.logout}</Text>
             <Ionicons name={language === 'ar' ? 'chevron-back' : 'chevron-forward'} size={15} color="#C7C7CC" />
@@ -350,7 +368,7 @@ const Profile: React.FC = () => {
       {loggingOut && (
         <View style={s.overlay}>
           <View style={s.overlayBox}>
-            <ActivityIndicator size="large" color={Colors.Green} />
+            <ActivityIndicator size="large" color={Colors.Red} />
             <Text style={s.overlayText}>
               {language === 'ar' ? 'جارٍ تسجيل الخروج…' : 'Logging out…'}
             </Text>

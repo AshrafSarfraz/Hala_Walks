@@ -20,7 +20,7 @@ import BrandFormScreen from '../../Screen/Merchant_Screen/PartnerForm';
 import WelcomeScreen from '../../Screen/Authentication/Splash/welcome_screen';
 import SignuP from '../../Screen/Authentication/SignUp/signUp';
 
-import StackNavigation from '../../../westwalk/navigation/stackNavigation'; // agar Westwalk ka stack chahiye
+import StackNavigation from '../../../westwalk/navigation/stackNavigation';
 import NotificationTestScreen from './NotificationTestScreen';
 import LocationDisclosure from '../../Screen/LocationDisclosureScreen';
 import StartChatScreen from '../../chat/startChatScreen';
@@ -31,9 +31,14 @@ import EditAccountScreen from '../../Screen/UserAccount/EditAccount';
 import AllMediaScreen from '../../chat/AllMediaScreen';
 import ImagePreviewScreen from '../../chat/components/ImagePreviewScreen';
 
-import MapProfile from '../../Map/profileScreen'
+import MapProfile from '../../Map/profileScreen';
 import MapCaptureScreen from '../../Map/capture';
+import Wishlist from '../../Screen/Wishlist';
 
+// ── Timeline screen import ────────────────────────────────────────────────────
+// Ye wo screen hai jo tab bar ke centre + button se open hogi.
+// Agar tumhari Timeline screen kisi aur path pe hai toh path adjust karo.
+import TimelineScreen from '../../Screen/Timeline';
 
 const Stack = createNativeStackNavigator();
 
@@ -43,16 +48,13 @@ const HalaStack: React.FC = () => {
   useEffect(() => {
     const checkInitialRoute = async () => {
       try {
-        // AsyncStorage se login status check
         const halaData = await AsyncStorage.getItem('hala_user');
         const token = await AsyncStorage.getItem('hala_token');
 
         if (halaData === 'true' && token) {
-          // user pehle se login hai → direct BottomTab
           setInitialRoute('BottomTab');
         } else {
-          // koi login nahi → Splash / onboarding etc
-          setInitialRoute('Splash');
+          setInitialRoute('Onboarding');
         }
       } catch (e) {
         console.log('Error reading login state', e);
@@ -63,14 +65,15 @@ const HalaStack: React.FC = () => {
     checkInitialRoute();
   }, []);
 
-  // jab tak initialRoute decide nahi hua, Splash dikha do
   if (!initialRoute) {
     return <Splash_Screen />;
   }
+
   return (
     <Stack.Navigator
       initialRouteName={initialRoute}
       screenOptions={{headerShown: false}}>
+      {/* ── Auth & Onboarding ── */}
       <Stack.Screen name="Splash" component={Splash_Screen} />
       <Stack.Screen name="LocationDisclosure" component={LocationDisclosure} />
       <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} />
@@ -79,7 +82,33 @@ const HalaStack: React.FC = () => {
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="SignUp" component={SignuP} />
       <Stack.Screen name="OTP" component={Otp} />
+
+      {/* ── Main app (bottom tabs) ── */}
       <Stack.Screen name="BottomTab" component={Bottom} />
+
+      {/*
+       * ── Timeline Modal ────────────────────────────────────────────────────
+       *
+       * presentation: 'modal'  → iOS pe neeche se slide up hoga
+       * gestureEnabled: true   → swipe down se band ho jaayega
+       *
+       * Tab bar ke centre button se kisi bhi tab pe ye screen khulti hai:
+       *   navigation.navigate('Timeline')
+       *
+       * Band karne ke liye Timeline screen ke andar:
+       *   navigation.goBack()
+       */}
+      <Stack.Screen
+        name="Timeline"
+        component={TimelineScreen}
+        options={{
+          presentation: 'modal',
+          gestureEnabled: true,
+          headerShown: false,
+        }}
+      />
+
+      {/* ── App screens ── */}
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="SearchScreen" component={SearchScreen} />
       <Stack.Screen name="DetailScreen" component={DetailScreen} />
@@ -88,16 +117,21 @@ const HalaStack: React.FC = () => {
       <Stack.Screen name="SelectedVenue" component={SelectedVenues} />
       <Stack.Screen name="EditAccount" component={EditAccountScreen} />
       <Stack.Screen name="PDFViewerScreen" component={PDFViewerScreen} />
-      {/* Merchant Side */}
+      <Stack.Screen name="Wishlist" component={Wishlist} />
 
+      {/* ── Chat ── */}
       <Stack.Screen name="StartChatScreen" component={StartChatScreen} />
       <Stack.Screen name="ChatScreen" component={ChatScreen} />
       <Stack.Screen name="BlockedUsers" component={BlockedUsers} />
       <Stack.Screen name="UserProfile" component={UserProfileScreen} />
       <Stack.Screen name="AllMediaScreen" component={AllMediaScreen} />
-      <Stack.Screen  name="ImagePreview" component={ImagePreviewScreen}options={{headerShown: false, presentation: 'fullScreenModal'}}/>
- 
-      {/* Merchant Side */}
+      <Stack.Screen
+        name="ImagePreview"
+        component={ImagePreviewScreen}
+        options={{headerShown: false, presentation: 'fullScreenModal'}}
+      />
+
+      {/* ── Merchant ── */}
       <Stack.Screen name="HalaInfo" component={HalaInfoScreen} />
       <Stack.Screen name="PartnerForm" component={BrandFormScreen} />
       <Stack.Screen
@@ -105,14 +139,9 @@ const HalaStack: React.FC = () => {
         component={NotificationTestScreen}
       />
 
-      {/* Map Screens */}
-
+      {/* ── Map ── */}
       <Stack.Screen name="MapProfile" component={MapProfile} />
       <Stack.Screen name="CaptureScreen" component={MapCaptureScreen} />
-      
-
-      {/* <Stack.Screen name='RBSHEET' component={FilterScreen} />
-       */}
     </Stack.Navigator>
   );
 };

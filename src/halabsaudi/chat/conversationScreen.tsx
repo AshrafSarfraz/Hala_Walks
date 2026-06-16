@@ -306,7 +306,7 @@ export default function ConversationsScreen({navigation}: any) {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={() => { setRefreshing(true); lastLoadedRef.current = 0; fetchChats(false, true); }}
-            colors={[Colors.Green]} tintColor={Colors.Green}
+            colors={[Colors.White]} tintColor={Colors.White}
           />
         }
         ListEmptyComponent={
@@ -348,10 +348,10 @@ const styles = StyleSheet.create({
   rowTop:      {alignItems: 'center', marginBottom: 3, justifyContent: 'space-between'},
   name:        {fontSize: 15, fontWeight: '600', color: Colors.Black2, flex: 1},
   nameUnread:  {fontWeight: '800', color: Colors.Black},
-  time:        {fontSize: 11, color: Colors.Grey9, fontWeight: '500', flexShrink: 0},
+  time:        {fontSize: 11, color: Colors.grey, fontWeight: '500', flexShrink: 0},
   timeUnread:  {color: Colors.btnRed, fontWeight: '700'},
   rowBottom:   {alignItems: 'center', justifyContent: 'space-between'},
-  preview:     {flex: 1, fontSize: 13, color: Colors.Grey9, fontWeight: '400'},
+  preview:     {flex: 1, fontSize: 13, color: Colors.grey, fontWeight: '400'},
   previewUnread:  {color: Colors.Black, fontWeight: '600'},
   previewDeleted: {fontStyle: 'italic', color: Colors.Grey9},
   mutedIcon:   {fontSize: 13, marginRight: 4},

@@ -28,6 +28,7 @@ const getStyles=(language:String)=> StyleSheet.create({
   header: {
     flexDirection: language==='en'?'row':'row-reverse',
     alignItems: 'center',
+    backgroundColor: Colors.darkgrey
   },
   backIcon: {
     width: 30,

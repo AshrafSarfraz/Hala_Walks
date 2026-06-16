@@ -15,6 +15,7 @@ export const HBS_Logo=require(ImgPath+'hbk_logo.png')
 
 
 
+
 const IconPath='../assets/Icons/'
 export const Back_Icon=require(IconPath+'Back.png')
 export const Profile_Img=require(IconPath+'profile.png')
@@ -30,3 +31,4 @@ export const Search=require(IconPath+'search.png')
 export const Location=require(IconPath+'Location.png')
 export const Remove=require(IconPath+'remove.png')
 export const chatMessage=require(IconPath+'chatMessage.png')
+export const Hala_logo_white=require(IconPath+'hala_logo_white.png')

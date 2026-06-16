@@ -13,23 +13,25 @@ import {
   Platform,
   ActivityIndicator,
   TouchableOpacity,
-  Alert,
   Image,
+  TextInput,
+  FlatList,
+  Keyboard,
 } from 'react-native';
 import MapView, {Marker, PROVIDER_GOOGLE, Region} from 'react-native-maps';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import axios from 'axios';
 import Ionicons from '@react-native-vector-icons/ionicons';
+import {Colors} from '../Themes/Colors';
 
-import {BASE_URL} from '../../config/api';
+import {BASE_URL, HBS_API} from '../../config/api';
 import {
   ensureLocationPermission,
   getDeviceLocation,
 } from '../utils/getDeviceLocation';
-import BottomSheet from './components/bottomSheet';
 
-// ─── Exported types ──────────────────────────────────────────────────────────
+// ─── Exported types ───────────────────────────────────────────────────────────
 
 export type PlaceSuggestion = {
   placeId: string;
@@ -37,6 +39,12 @@ export type PlaceSuggestion = {
   vicinity: string;
   types?: string[];
   location?: {lat: number; lng: number};
+};
+
+type AutocompletePrediction = {
+  placeId: string;
+  mainText: string;
+  secondaryText: string;
 };
 
 type VenueMarker = {
@@ -67,7 +75,6 @@ const GCC_OVERVIEW_REGION: Region = {
 
 const regionFromVenues = (venues: VenueMarker[]): Region => {
   if (venues.length === 0) return GCC_OVERVIEW_REGION;
-  
   const lats = venues.map(v => v.latitude);
   const lngs = venues.map(v => v.longitude);
   const minLat = Math.min(...lats);
@@ -76,7 +83,6 @@ const regionFromVenues = (venues: VenueMarker[]): Region => {
   const maxLng = Math.max(...lngs);
   const latPad = Math.max((maxLat - minLat) * 0.35, 0.4);
   const lngPad = Math.max((maxLng - minLng) * 0.35, 0.4);
-  
   return {
     latitude: (minLat + maxLat) / 2,
     longitude: (minLng + maxLng) / 2,
@@ -89,11 +95,10 @@ const MAX_VISIBLE_MARKERS = 45;
 const NEARBY_RADIUS_KM = 25;
 const NEAR_VENUE_RADIUS_KM = 120;
 
-const PRODUCTION_API = 'https://hala-b-saudi.onrender.com';
-const VENUES_API = `${PRODUCTION_API}/api/hbs/venues`;
-const BRANDS_API = `${PRODUCTION_API}/api/hbs/brands`;
+const VENUES_API = `${HBS_API}/api/hbs/venues`;
+const BRANDS_API = `${HBS_API}/api/hbs/brands`;
 
-// ─── Geo helpers ─────────────────────────────────────────────────────────────
+// ─── Geo helpers ──────────────────────────────────────────────────────────────
 
 const toRad = (v: number) => (v * Math.PI) / 180;
 
@@ -133,9 +138,12 @@ const isActiveStatus = (status: unknown) =>
     .trim()
     .toLowerCase() === 'active';
 
-// ─── Marker fetch / normalize ────────────────────────────────────────────────
+// ─── Marker fetch / normalize ─────────────────────────────────────────────────
 
-const buildMarkersFromCatalog = (venues: any[], brands: any[]): VenueMarker[] => {
+const buildMarkersFromCatalog = (
+  venues: any[],
+  brands: any[],
+): VenueMarker[] => {
   const venueMarkers: VenueMarker[] = venues
     .map(v => {
       const latitude = parseCoord(v?.latitude);
@@ -181,8 +189,12 @@ const isNearAnyVenue = (
 ) =>
   venues.some(
     v =>
-      haversineKm(coords.latitude, coords.longitude, v.latitude, v.longitude) <=
-      radiusKm,
+      haversineKm(
+        coords.latitude,
+        coords.longitude,
+        v.latitude,
+        v.longitude,
+      ) <= radiusKm,
   );
 
 const resolveMarkerFilterCenter = (
@@ -206,7 +218,12 @@ const pickVisibleMarkers = (
     .filter(m => m.type === 'brand')
     .map(m => ({
       ...m,
-      distance: haversineKm(center.latitude, center.longitude, m.latitude, m.longitude),
+      distance: haversineKm(
+        center.latitude,
+        center.longitude,
+        m.latitude,
+        m.longitude,
+      ),
     }))
     .filter(m => m.distance <= radiusKm)
     .sort((a, b) => a.distance - b.distance)
@@ -216,10 +233,12 @@ const pickVisibleMarkers = (
   return [...venues, ...nearbyBrands];
 };
 
+// ─── Pin components ───────────────────────────────────────────────────────────
+
 const PIN = {
-  venue: '#6C4EFF',
-  brand: '#9B7BFF',
-  brandFill: '#6C4EFF',
+  venue: Colors.btnRed,
+  brand: Colors.btnRed,
+  brandFill: Colors.btnRed,
   white: '#FFFFFF',
 };
 
@@ -232,7 +251,9 @@ const MapPin = memo(function MapPin({
 }) {
   if (type === 'venue') {
     return (
-      <View collapsable={false} style={[styles.venuePin, selected && styles.pinSelected]}>
+      <View
+        collapsable={false}
+        style={[styles.venuePin, selected && styles.pinSelected]}>
         <View style={styles.venuePinCore} />
       </View>
     );
@@ -256,7 +277,6 @@ const ImagePin = memo(function ImagePin({
 }) {
   const size = type === 'venue' ? 36 : 28;
   const borderColor = type === 'venue' ? PIN.venue : PIN.brandFill;
-
   return (
     <View
       collapsable={false}
@@ -267,7 +287,11 @@ const ImagePin = memo(function ImagePin({
       ]}>
       <Image
         source={{uri: imageUri}}
-        style={{width: size - 4, height: size - 4, borderRadius: (size - 4) / 2}}
+        style={{
+          width: size - 4,
+          height: size - 4,
+          borderRadius: (size - 4) / 2,
+        }}
         resizeMode="cover"
       />
     </View>
@@ -285,32 +309,15 @@ function CatalogMarker({
   uploadedImage?: string | null;
   onPress: () => void;
 }) {
-  const coordinate = {
-    latitude: item.latitude,
-    longitude: item.longitude,
-  };
-
-  // FIX: Android requires specific string colors or hues, NOT hex codes.
-  if (Platform.OS === 'android') {
-    return (
-      <Marker
-        coordinate={coordinate}
-        pinColor={item.type === 'venue' ? 'blueviolet' : 'violet'}
-        title={item.name}
-        description={item.type === 'venue' ? 'Venue' : 'Brand'}
-        zIndex={selected ? 10 : item.type === 'venue' ? 5 : 1}
-        onPress={onPress}
-      />
-    );
-  }
-
+  const coordinate = {latitude: item.latitude, longitude: item.longitude};
   const resolvedImage = uploadedImage ?? item.image ?? null;
   const useImagePin = !!resolvedImage;
   const [tracks, setTracks] = useState(useImagePin);
 
   useEffect(() => {
     if (!tracks) return;
-    const t = setTimeout(() => setTracks(false), 800);
+    const delay = Platform.OS === 'android' ? 500 : 800;
+    const t = setTimeout(() => setTracks(false), delay);
     return () => clearTimeout(t);
   }, [tracks, useImagePin]);
 
@@ -318,7 +325,7 @@ function CatalogMarker({
     <Marker
       coordinate={coordinate}
       tracksViewChanges={tracks}
-      zIndex={selected ? 10 : 1}
+      zIndex={selected ? 10 : item.type === 'venue' ? 5 : 1}
       anchor={{x: 0.5, y: 0.5}}
       onPress={onPress}>
       {useImagePin ? (
@@ -334,12 +341,409 @@ function CatalogMarker({
   );
 }
 
+// ─── Google Places helpers ────────────────────────────────────────────────────
+
+const GOOGLE_MAPS_API_KEY = 'AIzaSyB6CWvlf9f5twQnSjWbEjeNrxmGW2DOins';
+
+const AUTOCOMPLETE_URL =
+  'https://maps.googleapis.com/maps/api/place/autocomplete/json';
+const PLACE_DETAIL_URL =
+  'https://maps.googleapis.com/maps/api/place/details/json';
+
+const fetchGooglePredictions = async (
+  input: string,
+): Promise<AutocompletePrediction[]> => {
+  const url = `${AUTOCOMPLETE_URL}?input=${encodeURIComponent(
+    input,
+  )}&key=${GOOGLE_MAPS_API_KEY}&language=en&types=geocode|establishment`;
+
+  const res = await fetch(url);
+  const json = await res.json();
+
+  if (json.status !== 'OK' && json.status !== 'ZERO_RESULTS') {
+    throw new Error(
+      `Google Places: ${json.status} – ${json.error_message ?? ''}`,
+    );
+  }
+
+  return (json.predictions ?? []).slice(0, 6).map((p: any) => ({
+    placeId: p.place_id,
+    mainText: p.structured_formatting?.main_text ?? p.description,
+    secondaryText: p.structured_formatting?.secondary_text ?? '',
+  }));
+};
+
+const fetchGooglePlaceCoords = async (
+  placeId: string,
+): Promise<{lat: number; lng: number} | null> => {
+  const url = `${PLACE_DETAIL_URL}?place_id=${placeId}&fields=geometry&key=${GOOGLE_MAPS_API_KEY}`;
+  const res = await fetch(url);
+  const json = await res.json();
+  const loc = json?.result?.geometry?.location ?? null;
+  return loc ?? null;
+};
+
+// ─── LocationSearchBar ────────────────────────────────────────────────────────
+
+type LocationSearchBarProps = {
+  currentAddress: string;
+  onSearchResult: (result: {name: string; address: string} | null) => void;
+  onAnimateTo: (coords: {latitude: number; longitude: number}) => void;
+};
+
+const LocationSearchBar = ({
+  currentAddress,
+  onSearchResult,
+  onAnimateTo,
+}: LocationSearchBarProps) => {
+  const [expanded, setExpanded] = useState(false);
+  const [query, setQuery] = useState('');
+  const [predictions, setPredictions] = useState<AutocompletePrediction[]>([]);
+  const [searching, setSearching] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+  const [selectedLabel, setSelectedLabel] = useState<string | null>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const inputRef = useRef<TextInput>(null);
+
+  const openSearch = () => {
+    setExpanded(true);
+    setQuery('');
+    setPredictions([]);
+    setFetchError(null);
+    setTimeout(() => inputRef.current?.focus(), 150);
+  };
+
+  const closeSearch = () => {
+    Keyboard.dismiss();
+    setExpanded(false);
+    setQuery('');
+    setPredictions([]);
+    setFetchError(null);
+  };
+
+  const clearSelection = () => {
+    setSelectedLabel(null);
+    onSearchResult(null);
+    closeSearch();
+  };
+
+  const fetchPredictions = useCallback(async (text: string) => {
+    const trimmed = text.trim();
+    if (trimmed.length < 2) {
+      setPredictions([]);
+      setFetchError(null);
+      return;
+    }
+    setSearching(true);
+    setFetchError(null);
+    try {
+      const results = await fetchGooglePredictions(trimmed);
+      setPredictions(results);
+    } catch (err: any) {
+      console.warn('[LocationSearchBar] autocomplete error:', err?.message);
+      setPredictions([]);
+      setFetchError(err?.message ?? 'Search unavailable');
+    } finally {
+      setSearching(false);
+    }
+  }, []);
+
+  const onChangeText = (text: string) => {
+    setQuery(text);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => fetchPredictions(text), 350);
+  };
+
+  const handleSelectPrediction = async (p: AutocompletePrediction) => {
+    Keyboard.dismiss();
+    setExpanded(false);
+    setQuery('');
+    setPredictions([]);
+    setFetchError(null);
+    setSelectedLabel(p.mainText);
+
+    onSearchResult({
+      name: p.mainText,
+      address: [p.mainText, p.secondaryText].filter(Boolean).join(', '),
+    });
+
+    try {
+      const loc = await fetchGooglePlaceCoords(p.placeId);
+      if (loc) {
+        onAnimateTo({latitude: loc.lat, longitude: loc.lng});
+      }
+    } catch {
+      // Map stays put
+    }
+  };
+
+  const displayLabel = selectedLabel ?? currentAddress;
+  const isRemote = !!selectedLabel;
+
+  const showEmptyState =
+    expanded &&
+    !searching &&
+    !fetchError &&
+    query.trim().length >= 2 &&
+    predictions.length === 0;
+  const showError = expanded && !searching && !!fetchError;
+
+  return (
+    <View style={searchBarStyles.wrapper}>
+      {!expanded ? (
+        <TouchableOpacity
+          style={searchBarStyles.banner}
+          onPress={openSearch}
+          activeOpacity={0.85}>
+          <View style={searchBarStyles.bannerLeft}>
+            <Ionicons
+              name={isRemote ? 'search' : 'location'}
+              size={16}
+              color={Colors.btnRed}
+            />
+            <Text style={searchBarStyles.bannerText} numberOfLines={1}>
+              {displayLabel || 'Current Location'}
+            </Text>
+            {isRemote && (
+              <View style={searchBarStyles.remotePill}>
+                <Text style={searchBarStyles.remotePillText}>Remote</Text>
+              </View>
+            )}
+          </View>
+          <View style={searchBarStyles.bannerRight}>
+            {isRemote ? (
+              <TouchableOpacity
+                onPress={clearSelection}
+                hitSlop={{top: 8, bottom: 8, left: 8, right: 8}}>
+                <Ionicons name="close-circle" size={18} color="#aaa" />
+              </TouchableOpacity>
+            ) : (
+              <Ionicons name="chevron-down" size={16} color="#aaa" />
+            )}
+          </View>
+        </TouchableOpacity>
+      ) : (
+        <View style={searchBarStyles.searchBox}>
+          <Ionicons name="search" size={16} color={Colors.btnRed} />
+          <TextInput
+            ref={inputRef}
+            style={searchBarStyles.searchInput}
+            placeholder="Search any place…"
+            placeholderTextColor="#bbb"
+            value={query}
+            onChangeText={onChangeText}
+            returnKeyType="search"
+            autoCorrect={false}
+          />
+          {searching ? (
+            <ActivityIndicator size="small" color={Colors.btnRed} />
+          ) : (
+            <TouchableOpacity onPress={closeSearch}>
+              <Ionicons name="close" size={18} color="#aaa" />
+            </TouchableOpacity>
+          )}
+        </View>
+      )}
+
+      {expanded && predictions.length > 0 && (
+        <View style={searchBarStyles.dropdown}>
+          <FlatList
+            data={predictions}
+            keyExtractor={item => item.placeId}
+            keyboardShouldPersistTaps="always"
+            renderItem={({item}) => (
+              <TouchableOpacity
+                style={searchBarStyles.predictionRow}
+                onPress={() => handleSelectPrediction(item)}
+                activeOpacity={0.75}>
+                <View style={searchBarStyles.predictionIcon}>
+                  <Ionicons
+                    name="location-outline"
+                    size={14}
+                    color={Colors.btnRed}
+                  />
+                </View>
+                <View style={searchBarStyles.predictionText}>
+                  <Text
+                    style={searchBarStyles.predictionMain}
+                    numberOfLines={1}>
+                    {item.mainText}
+                  </Text>
+                  {!!item.secondaryText && (
+                    <Text
+                      style={searchBarStyles.predictionSub}
+                      numberOfLines={1}>
+                      {item.secondaryText}
+                    </Text>
+                  )}
+                </View>
+              </TouchableOpacity>
+            )}
+          />
+        </View>
+      )}
+
+      {showEmptyState && (
+        <View style={searchBarStyles.dropdown}>
+          <Text style={searchBarStyles.emptyText}>No places found</Text>
+        </View>
+      )}
+
+      {showError && (
+        <View
+          style={[searchBarStyles.dropdown, searchBarStyles.errorDropdown]}>
+          <Ionicons name="warning-outline" size={14} color="#C0392B" />
+          <Text style={searchBarStyles.errorText}>{fetchError}</Text>
+        </View>
+      )}
+    </View>
+  );
+};
+
+const searchBarStyles = StyleSheet.create({
+  wrapper: {
+    position: 'absolute',
+    top: 50,
+    left: 16,
+    right: 16,
+    zIndex: 20,
+  },
+  banner: {
+    backgroundColor: Colors.darkgrey,
+    borderRadius: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 11,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  bannerLeft: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginRight: 6,
+  },
+  bannerText: {
+    flex: 1,
+    fontSize: 14,
+    fontWeight: '600',
+    color: Colors.White,
+  },
+  bannerRight: {
+    paddingLeft: 4,
+  },
+  remotePill: {
+    backgroundColor: '#EDE9FF',
+    borderRadius: 6,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+  },
+  remotePillText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: Colors.btnRed,
+  },
+  searchBox: {
+    backgroundColor: '#fff',
+    borderRadius: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 11,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 5,
+    borderWidth: 1.5,
+    borderColor: Colors.btnRed,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#1A1A2E',
+    padding: 0,
+  },
+  dropdown: {
+    marginTop: 6,
+    backgroundColor: '#fff',
+    borderRadius: 14,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 8,
+    maxHeight: 240,
+  },
+  predictionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    borderBottomWidth: 1,
+    borderColor: '#F3F3F3',
+    gap: 10,
+  },
+  predictionIcon: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: '#F0EBFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  predictionText: {flex: 1},
+  predictionMain: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#1A1A2E',
+  },
+  predictionSub: {
+    fontSize: 12,
+    color: '#888',
+    marginTop: 2,
+  },
+  emptyText: {
+    fontSize: 13,
+    color: '#aaa',
+    textAlign: 'center',
+    paddingVertical: 16,
+  },
+  errorDropdown: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 14,
+    backgroundColor: '#FFF3F3',
+  },
+  errorText: {
+    flex: 1,
+    fontSize: 12,
+    color: '#C0392B',
+  },
+});
+
 // ─── Main screen ──────────────────────────────────────────────────────────────
 
 const MapScreen = () => {
   const navigation = useNavigation<any>();
   const mapRef = useRef<MapView>(null);
   const didFitRef = useRef(false);
+  const lastMetaCoordsRef = useRef<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
+  const metaDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [location, setLocation] = useState<{
     latitude: number;
@@ -361,11 +765,14 @@ const MapScreen = () => {
   const [mapReady, setMapReady] = useState(false);
   const [markersLoaded, setMarkersLoaded] = useState(false);
 
-  const [sheetVisible, setSheetVisible] = useState(false);
-  const [selectedMarker, setSelectedMarker] = useState<VenueMarker | null>(null);
-  const [uploadedImages, setUploadedImages] = useState<Record<string, string>>({});
+  const [selectedMarker, setSelectedMarker] = useState<VenueMarker | null>(
+    null,
+  );
+  const [uploadedImages, setUploadedImages] = useState<Record<string, string>>(
+    {},
+  );
 
-  // FIX: Force mapReady to true on Android as a fallback if onMapReady fails.
+  // FIX: Force mapReady on Android if onMapReady fires late
   useEffect(() => {
     if (Platform.OS === 'android') {
       const timer = setTimeout(() => setMapReady(true), 1500);
@@ -388,6 +795,47 @@ const MapScreen = () => {
 
   const resolveLocationMeta = useCallback(
     async (coords: {latitude: number; longitude: number}) => {
+      // ── Step 1: Google Reverse Geocoding for real place name ──────────────
+      // This always works regardless of your backend status.
+      try {
+        const geoUrl =
+          `https://maps.googleapis.com/maps/api/geocode/json` +
+          `?latlng=${coords.latitude},${coords.longitude}` +
+          `&key=${GOOGLE_MAPS_API_KEY}` +
+          `&language=en` +
+          `&result_type=neighborhood|sublocality|locality`;
+
+        const geoRes = await fetch(geoUrl);
+        const geoJson = await geoRes.json();
+
+        if (geoJson.status === 'OK' && geoJson.results?.length > 0) {
+          // Pick the most specific readable name:
+          // prefer neighborhood → sublocality → locality → formatted_address
+          const result = geoJson.results[0];
+          const components: {types: string[]; long_name: string}[] =
+            result.address_components ?? [];
+
+          const pick = (type: string) =>
+            components.find(c => c.types.includes(type))?.long_name ?? null;
+
+          const name =
+            pick('neighborhood') ??
+            pick('sublocality_level_1') ??
+            pick('sublocality') ??
+            pick('locality') ??
+            pick('administrative_area_level_2') ??
+            pick('administrative_area_level_1') ??
+            result.formatted_address?.split(',')[0] ??
+            null;
+
+          if (name) setAddress(name);
+        }
+      } catch (geoErr) {
+        console.log('[resolveLocationMeta] geocode error:', geoErr);
+      }
+
+      // ── Step 2: Your backend for locationId + suggestions ─────────────────
+      // Failures here do NOT reset the address we just set above.
       try {
         const [locRes, sugRes] = await Promise.all([
           axios.post(`${BASE_URL}/api/hbs/map/location`, {
@@ -398,24 +846,55 @@ const MapScreen = () => {
             params: {
               lat: coords.latitude,
               lng: coords.longitude,
-              radius: 200,
+              radius: 2000,
               limit: 10,
             },
           }),
         ]);
 
         const locData = locRes?.data?.data ?? locRes?.data;
+        // Only override the address if the backend returns something meaningful
         if (locData?.name) setAddress(locData.name);
         if (locData?._id) setLocationId(locData._id);
 
         const sugData = sugRes?.data?.data;
         if (Array.isArray(sugData)) setSuggestions(sugData);
       } catch (err) {
-        console.log('[resolveLocationMeta]', err);
-        setAddress('Current Location');
+        console.log('[resolveLocationMeta] backend error:', err);
+        // Don't reset address here — Google already set it above
         setLocationId(null);
         setSuggestions([]);
       }
+    },
+    [],
+  );
+
+  const resolveLocationMetaDebounced = useCallback(
+    (coords: {latitude: number; longitude: number}) => {
+      const last = lastMetaCoordsRef.current;
+      if (
+        last &&
+        haversineKm(
+          last.latitude,
+          last.longitude,
+          coords.latitude,
+          coords.longitude,
+        ) < 0.05
+      ) {
+        return;
+      }
+      if (metaDebounceRef.current) clearTimeout(metaDebounceRef.current);
+      metaDebounceRef.current = setTimeout(() => {
+        lastMetaCoordsRef.current = coords;
+        resolveLocationMeta(coords);
+      }, 800);
+    },
+    [resolveLocationMeta],
+  );
+
+  useEffect(
+    () => () => {
+      if (metaDebounceRef.current) clearTimeout(metaDebounceRef.current);
     },
     [],
   );
@@ -437,7 +916,7 @@ const MapScreen = () => {
 
     const permitted = await ensureLocationPermission();
     setHasLocationPermission(permitted);
-    
+
     if (!permitted) {
       setLocationError('Location permission denied');
       setLocation(DEFAULT_REGION);
@@ -462,22 +941,19 @@ const MapScreen = () => {
   }, [applyLocation]);
 
   const onUserLocationChange = useCallback(
-    (event: {nativeEvent: {coordinate?: {latitude: number; longitude: number}}}) => {
+    (event: {
+      nativeEvent: {coordinate?: {latitude: number; longitude: number}};
+    }) => {
       const coord = event.nativeEvent.coordinate;
       if (!coord) return;
-
-      const coords = {
-        latitude: coord.latitude,
-        longitude: coord.longitude,
-      };
-
-      setLocation(prev => prev ?? coords);
+      const coords = {latitude: coord.latitude, longitude: coord.longitude};
+      // FIX: update location state so the banner and map center stay correct
+      setLocation(coords);
       setLocationError(null);
       setLoading(false);
-
-      if (!locationId) resolveLocationMeta(coords);
+      resolveLocationMetaDebounced(coords);
     },
-    [locationId, resolveLocationMeta],
+    [resolveLocationMetaDebounced],
   );
 
   const fetchVenueMarkers = useCallback(async () => {
@@ -490,7 +966,6 @@ const MapScreen = () => {
       const brandsJson = brandsRes.ok ? await brandsRes.json() : {data: []};
       const venues = Array.isArray(venuesJson.data) ? venuesJson.data : [];
       const brands = Array.isArray(brandsJson.data) ? brandsJson.data : [];
-      
       const markers = buildMarkersFromCatalog(venues, brands);
       setAllMarkers(markers);
       didFitRef.current = false;
@@ -512,34 +987,32 @@ const MapScreen = () => {
 
   const visibleMarkers = useMemo(() => {
     if (allMarkers.length === 0) return [];
-    
-    if (Platform.OS === 'android') {
-      const venues = allMarkers.filter(m => m.type === 'venue');
-      const center = resolveMarkerFilterCenter(location, mapCenter, venues);
-      const nearUser = !!location && isNearAnyVenue(location, venues);
-      const radiusKm = nearUser ? NEARBY_RADIUS_KM : 80;
-      return pickVisibleMarkers(allMarkers, center, radiusKm);
-    }
-    return allMarkers;
+    const venues = allMarkers.filter(m => m.type === 'venue');
+    if (!location && !mapCenter) return allMarkers;
+    const center = resolveMarkerFilterCenter(location, mapCenter, venues);
+    const nearUser =
+      !!location && isNearAnyVenue(location, venues, NEAR_VENUE_RADIUS_KM);
+    const radiusKm = nearUser ? NEARBY_RADIUS_KM : NEAR_VENUE_RADIUS_KM;
+    return pickVisibleMarkers(allMarkers, center, radiusKm);
   }, [allMarkers, location, mapCenter]);
 
   const fitMapToContent = useCallback(() => {
     if (!mapRef.current || allMarkers.length === 0) return false;
-
     const venues = allMarkers.filter(m => m.type === 'venue');
-    const markersToFit = visibleMarkers.length > 0 ? visibleMarkers : allMarkers;
+    const markersToFit =
+      visibleMarkers.length > 0 ? visibleMarkers : allMarkers;
     const markerCoords = markersToFit.map(m => ({
       latitude: m.latitude,
       longitude: m.longitude,
     }));
-
     if (markerCoords.length === 0) return false;
-
     const userNearVenues = !!location && isNearAnyVenue(location, venues);
     const coords = userNearVenues
-      ? [{latitude: location!.latitude, longitude: location!.longitude}, ...markerCoords]
+      ? [
+          {latitude: location!.latitude, longitude: location!.longitude},
+          ...markerCoords,
+        ]
       : markerCoords;
-
     mapRef.current.fitToCoordinates(coords, {
       edgePadding: {top: 100, right: 50, bottom: 140, left: 50},
       animated: true,
@@ -562,10 +1035,8 @@ const MapScreen = () => {
 
   useEffect(() => {
     if (!markersLoaded || allMarkers.length === 0 || !mapReady) return;
-    
     const venues = allMarkers.filter(m => m.type === 'venue');
     const nearUser = !!location && isNearAnyVenue(location, venues);
-    
     const nextRegion =
       nearUser && location
         ? {
@@ -575,7 +1046,6 @@ const MapScreen = () => {
             longitudeDelta: 0.08,
           }
         : regionFromVenues(venues);
-        
     mapRef.current?.animateToRegion(nextRegion, 700);
   }, [allMarkers, location, mapReady, markersLoaded]);
 
@@ -599,28 +1069,33 @@ const MapScreen = () => {
 
   const openCamera = useCallback(async () => {
     return new Promise<{uri?: string} | null>(resolve => {
-      launchCamera({mediaType: 'photo', quality: 0.8, saveToPhotos: true}, r => {
-        if (r.didCancel || r.errorCode) return resolve(null);
-        const asset = r.assets?.[0] ?? null;
-        saveUploadedImage(asset);
-        resolve(asset);
-      });
+      launchCamera(
+        {mediaType: 'photo', quality: 0.8, saveToPhotos: true},
+        r => {
+          if (r.didCancel || r.errorCode) return resolve(null);
+          const asset = r.assets?.[0] ?? null;
+          saveUploadedImage(asset);
+          resolve(asset);
+        },
+      );
     });
   }, [saveUploadedImage]);
 
   const openGallery = useCallback(async () => {
     return new Promise<{uri?: string} | null>(resolve => {
-      launchImageLibrary({mediaType: 'photo', quality: 0.8, selectionLimit: 1}, r => {
-        if (r.didCancel || r.errorCode) return resolve(null);
-        const asset = r.assets?.[0] ?? null;
-        saveUploadedImage(asset);
-        resolve(asset);
-      });
+      launchImageLibrary(
+        {mediaType: 'photo', quality: 0.8, selectionLimit: 1},
+        r => {
+          if (r.didCancel || r.errorCode) return resolve(null);
+          const asset = r.assets?.[0] ?? null;
+          saveUploadedImage(asset);
+          resolve(asset);
+        },
+      );
     });
   }, [saveUploadedImage]);
 
-  // FIX: Removed `isFocused` as it causes markers to flash or hide unexpectedly
-  const showMarkers = markersLoaded && visibleMarkers.length > 0;
+  const showMarkers = markersLoaded && visibleMarkers.length > 0 && mapReady;
 
   return (
     <View style={styles.container}>
@@ -628,14 +1103,33 @@ const MapScreen = () => {
         ref={mapRef}
         provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
         style={styles.map}
-        showsUserLocation={true} // FIX: Forced true so OS handles the blue dot natively
+        // FIX: always show the built-in blue dot once permission is granted
+        showsUserLocation={hasLocationPermission}
         showsMyLocationButton={false}
+        followsUserLocation={false}
         moveOnMarkerPress={false}
         loadingEnabled
         initialRegion={GCC_OVERVIEW_REGION}
         onMapReady={() => setMapReady(true)}
         onUserLocationChange={onUserLocationChange}
         onRegionChangeComplete={onRegionChangeComplete}>
+        {/*
+         * FIX: only render a manual dot on Android as a supplement.
+         * On iOS the native showsUserLocation blue dot is sufficient.
+         * We still need the manual marker on Android because the native
+         * dot can sometimes lag behind when PROVIDER_GOOGLE is used.
+         */}
+        {location && hasLocationPermission && Platform.OS === 'android' && (
+          <Marker
+            coordinate={location}
+            anchor={{x: 0.5, y: 0.5}}
+            tracksViewChanges={false}
+            zIndex={20}>
+            <View collapsable={false} style={styles.userLocationDot}>
+              <View style={styles.userLocationCore} />
+            </View>
+          </Marker>
+        )}
         {showMarkers &&
           visibleMarkers.map(item => (
             <CatalogMarker
@@ -651,13 +1145,15 @@ const MapScreen = () => {
           ))}
       </MapView>
 
+      {/* ── Loading overlay ── */}
       {loading && (
         <View style={styles.loadingOverlay}>
-          <ActivityIndicator size="large" color="#6C4EFF" />
+          <ActivityIndicator size="large" color={Colors.btnRed} />
           <Text style={styles.loadingText}>Getting your location…</Text>
         </View>
       )}
 
+      {/* ── Error banner ── */}
       {!loading && locationError && (
         <View style={styles.errorBanner}>
           <Text style={styles.errorText}>{locationError}</Text>
@@ -667,35 +1163,21 @@ const MapScreen = () => {
         </View>
       )}
 
-      {!loading && address ? (
-        <View style={styles.locationBanner}>
-          <Ionicons name="location" size={16} color="#6C4EFF" />
-          <Text style={styles.locationBannerText} numberOfLines={1}>
-            {address}
-          </Text>
-        </View>
-      ) : null}
+      {/* ── Location search bar ── */}
+      {!loading && !locationError && (
+        <LocationSearchBar
+          currentAddress={address}
+          onSearchResult={() => {}}
+          onAnimateTo={coords => animateToLocation(coords, 0.04)}
+        />
+      )}
 
+      {/* ── FABs ── */}
       <View style={styles.fabRow}>
         <TouchableOpacity
           style={styles.fab}
           onPress={() => navigation.navigate('MapProfile')}>
           <Ionicons name="person" size={22} color="#fff" />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.fab, styles.fabPrimary]}
-          onPress={() => {
-            if (!location) {
-              Alert.alert(
-                'Location unavailable',
-                'Please allow location access to check in.',
-              );
-              return;
-            }
-            setSheetVisible(true);
-          }}>
-          <Ionicons name="add" size={28} color="#fff" />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -708,6 +1190,7 @@ const MapScreen = () => {
         </TouchableOpacity>
       </View>
 
+      {/* ── Selected marker card ── */}
       {selectedMarker && (
         <View style={styles.markerCard}>
           <Text style={styles.markerName}>{selectedMarker.name}</Text>
@@ -720,22 +1203,18 @@ const MapScreen = () => {
         </View>
       )}
 
-      <BottomSheet
-        visible={sheetVisible}
-        onClose={() => setSheetVisible(false)}
-        onCamera={openCamera}
-        onGallery={openGallery}
-        currentLocation={location}
-        address={address}
-        locationId={locationId}
-        suggestions={suggestions}
-        onLocationNameChanged={setAddress}
-      />
+      {/*
+       * BottomSheet has been REMOVED from MapScreen.
+       * It now lives as a standalone modal screen registered in the navigator.
+       * See bottomTabs.tsx — the Timeline screen is presented as a modal.
+       */}
     </View>
   );
 };
 
 export default MapScreen;
+
+// ─── Styles ───────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
   container: {
@@ -769,6 +1248,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     borderWidth: 1,
     borderColor: '#FFD0D0',
+    zIndex: 20,
   },
   errorText: {
     flex: 1,
@@ -779,35 +1259,11 @@ const styles = StyleSheet.create({
   retryText: {
     fontSize: 13,
     fontWeight: '700',
-    color: '#6C4EFF',
-  },
-  locationBanner: {
-    position: 'absolute',
-    top: 50,
-    left: 16,
-    right: 16,
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 4,
-  },
-  locationBannerText: {
-    flex: 1,
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#1A1A2E',
+    color: Colors.btnRed,
   },
   fabRow: {
     position: 'absolute',
-    bottom: 90,
+    bottom: 100,
     right: 16,
     alignItems: 'center',
     gap: 12,
@@ -824,12 +1280,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 5,
-  },
-  fabPrimary: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#6C4EFF',
   },
   markerCard: {
     position: 'absolute',
@@ -859,11 +1309,11 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 13,
     fontWeight: '600',
-    color: '#6C4EFF',
+    color: Colors.btnRed,
   },
   imagePin: {
     borderWidth: 2,
-    backgroundColor: PIN.white,
+    backgroundColor: Colors.White,
     overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
@@ -912,5 +1362,21 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
       },
     }),
+  },
+  userLocationDot: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: 'rgba(66, 133, 244, 0.25)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  userLocationCore: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: Colors.btnRed,
+    borderWidth: 2,
+    borderColor: '#fff',
   },
 });

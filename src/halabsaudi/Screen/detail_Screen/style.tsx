@@ -109,7 +109,7 @@ export const getStyles = (language: string) =>
       paddingVertical: 6,
       paddingHorizontal: 10,
       borderRadius: 10,
-      backgroundColor: Colors.whiteGrey,
+      backgroundColor: Colors.White,
     },
     Phone_Icon: {
       width: 18,
@@ -131,7 +131,7 @@ export const getStyles = (language: string) =>
       marginTop: 6,
       padding: 10,
       borderRadius: 12,
-      backgroundColor: Colors.whiteGrey,
+      backgroundColor: Colors.White,
     },
     Loc_Icon: {
       width: 16,
@@ -180,7 +180,7 @@ export const getStyles = (language: string) =>
       paddingVertical: 8,
       paddingHorizontal: 12,
       borderRadius: 12,
-      backgroundColor: Colors.whiteGrey,
+      backgroundColor: Colors.White,
     },
     branchBtnText: {
       color: Colors.Black,
@@ -216,7 +216,7 @@ export const getStyles = (language: string) =>
 
     Dis_Cont: {
       marginTop: 10,
-      backgroundColor: Colors.whiteGrey,
+      backgroundColor: Colors.White,
       paddingVertical: 14,
       paddingHorizontal: 12,
       borderRadius: 14,
@@ -229,7 +229,7 @@ export const getStyles = (language: string) =>
     Total_Discount: {
       flex: 1,
       fontSize: 14,
-      color: Colors.btnRed,
+      color: Colors.Black,
       fontFamily: Fonts.SF_Bold,
       lineHeight: 20,
       textAlign: language === 'en' ? 'left' : 'right',

@@ -135,7 +135,7 @@ const SignUp: React.FC<NativeStackScreenProps<any>> = ({ navigation }) => {
       <View>
         <Image
           source={HBS_Logo}
-          style={{ width: 100, height: 100, alignSelf: 'center', marginTop: 20, marginBottom: 40 }}
+          style={{ width: 150, height: 150, alignSelf: 'center', marginTop: 20, marginBottom: 20}}
         />
         <Text style={styles.Welcome_Txt}>{languageData[language].Register_yourself}</Text>
         <Text style={styles.SignUp_Txt}>{languageData[language].Join_Hala_to_Get_started}</Text>

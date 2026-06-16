@@ -289,6 +289,12 @@ const languageData = {
       redemption_label: 'استرداد',
       redemptions_label_pl: 'استردادات',
 
+      // Timeline
+      Timeline: 'الجدول الزمني',
+
+      //Map
+      Map: 'رسم خريطة',
+
   },
 };
 

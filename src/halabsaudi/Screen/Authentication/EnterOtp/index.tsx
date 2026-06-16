@@ -9,7 +9,7 @@ import {
   StatusBar,
 } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
-import {Back_Icon, Logo_W} from '../../../Themes/Images';
+import {Back_Icon, HBS_Logo} from '../../../Themes/Images';
 import CustomButton from '../../../Component/CustomButton/CustomButton';
 import {Colors} from '../../../Themes/Colors';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -204,12 +204,12 @@ const Otp: React.FC<OtpProps> = ({route, navigation}) => {
   };
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: Colors.Bg}}>
+    <SafeAreaView style={{flex: 1, backgroundColor: Colors.dargBg}}>
       <StatusBar
         hidden={false}
         translucent
         animated
-        backgroundColor={Colors.White4}
+        backgroundColor={Colors.dargBg}
         barStyle="dark-content"
       />
       <ScrollView contentContainerStyle={styles.MainCont}>
@@ -221,7 +221,7 @@ const Otp: React.FC<OtpProps> = ({route, navigation}) => {
           </TouchableOpacity>
         </View>
 
-        <Image source={Logo_W} style={styles.Logo} />
+        <Image source={HBS_Logo} style={styles.Logo} />
         <Text style={styles.digit_Txt}>{languageData[language].enter_otp}</Text>
         <Text style={styles.PhoneNumber}>{Phone}</Text>
 

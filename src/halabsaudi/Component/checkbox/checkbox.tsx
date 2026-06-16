@@ -62,8 +62,8 @@ const getStyles=(language:string) => StyleSheet.create({
     marginLeft:language==='ar'?10:0,
   },
   checked: {
-    borderColor: Colors.Green,
-    backgroundColor:Colors.Green // ✅ Green when checked
+    borderColor: Colors.Red,
+    backgroundColor:Colors.Red // ✅ Red when checked
   },
   tickIcon: {
     width: 10,
@@ -72,10 +72,10 @@ const getStyles=(language:string) => StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    color: Colors.Black2,
+    color: Colors.White,
   },
   linkText: {
-    color: Colors.Black, // ✅ Blue for privacy policy link
+    color: Colors.White, // ✅ Blue for privacy policy link
 
   },
 });

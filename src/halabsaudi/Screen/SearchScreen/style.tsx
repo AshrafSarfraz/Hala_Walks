@@ -6,8 +6,8 @@ export const getStyles = (language: String) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: Colors.dargBg,
-      paddingHorizontal: '4%',
+      backgroundColor: Colors.darkgrey,
+      // paddingHorizontal: '4%',
       marginTop: Platform.OS === 'ios' ? '0%' : '11%',
       marginBottom: Platform.OS === 'ios' ? '0%' : '2%',
     },

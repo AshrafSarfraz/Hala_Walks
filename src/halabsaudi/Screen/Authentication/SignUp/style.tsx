@@ -4,7 +4,7 @@ import { Fonts } from '../../../Themes/Fonts';
 
 export const getStyles =(language: string)=> StyleSheet.create({
     MainContainer: {
-      backgroundColor: Colors.White,
+      backgroundColor: Colors.dargBg,
       padding: 10,
       paddingHorizontal:'5%',
       paddingTop:'10%',
@@ -18,7 +18,7 @@ export const getStyles =(language: string)=> StyleSheet.create({
     Welcome_Txt: {
       fontSize: 24,
       fontFamily:Fonts.SF_Bold,
-      color:Colors.Green,
+      color:Colors.White,
       lineHeight:28,
       alignSelf: 'center',
     },

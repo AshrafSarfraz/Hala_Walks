@@ -57,7 +57,7 @@ function formatTime(createdAt: any): string {
 
 const Redeem_His: React.FC = () => {
   const navigation = useNavigation<any>();
-   useStatusBar('light-content', Colors.Green, true);
+   useStatusBar('light-content', Colors.Red, true);
   // ── Language / RTL ─────────────────────────────────────────────────
   const language = useSelector((state: RootState) => state.language.language);
   const t        = languageData[language];
@@ -200,7 +200,7 @@ const Redeem_His: React.FC = () => {
         {loading ? (
           /* Loading state */
           <View style={styles.loaderWrap}>
-            <ActivityIndicator size="large" color={Colors.Green} />
+            <ActivityIndicator size="large" color={Colors.Red} />
             <Text style={styles.loaderText}>{t.loading_history}</Text>
           </View>
 
@@ -208,7 +208,7 @@ const Redeem_His: React.FC = () => {
           /* Empty state */
           <View style={styles.emptyWrap}>
             <View style={styles.emptyRing}>
-              <Ionicons name="receipt-outline" size={42} color={Colors.Green} />
+              <Ionicons name="receipt-outline" size={42} color={Colors.Red} />
             </View>
             <Text style={styles.emptyTitle}>{t.no_redeem_history}</Text>
             <Text style={[styles.emptySub, {textAlign: 'center'}]}>{t.no_redeem_desc}</Text>
@@ -247,14 +247,14 @@ export default Redeem_His;
 
 const styles = StyleSheet.create({
   // ── Root — green for safe-area top edge to match header ──
-  safe: {flex: 1, backgroundColor: Colors.Green},
+  safe: {flex: 1, backgroundColor: Colors.Red},
 
   // ── Body — always Colors.Bg regardless of content state ──
   body: {flex: 1, backgroundColor: Colors.Bg},
 
   // ── Header ──
   header: {
-    backgroundColor: Colors.Green,
+    backgroundColor: Colors.Red,
     paddingTop: Platform.OS === 'ios' ? 4 : 10,
     paddingBottom: 20,
     paddingHorizontal: 18,
@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
   },
   headerText: {flex: 1},
   eyebrow: {
-    fontSize: 10, color: Colors.LightGreen,   fontFamily: Fonts.SF_Bold,
+    fontSize: 10, color: Colors.White,   fontFamily: Fonts.SF_Bold,
     letterSpacing: 1.1, textTransform: 'uppercase', marginBottom: 3,
   },
   headerTitle: {fontSize: 18,
@@ -325,7 +325,7 @@ const styles = StyleSheet.create({
   emptyRing: {
     width: 88, height: 88, borderRadius: 44, backgroundColor: '#E6F2EC',
     justifyContent: 'center', alignItems: 'center',
-    marginBottom: 8, borderWidth: 3, borderColor: Colors.LightGreen,
+    marginBottom: 8, borderWidth: 3, borderColor: Colors.White,
   },
   emptyTitle: {fontSize: 18, fontWeight: '700', color: Colors.Black2},
   emptySub:   {fontSize: 13, color: Colors.Grey9, lineHeight: 20},

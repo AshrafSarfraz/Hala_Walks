@@ -96,7 +96,7 @@ const Wishlist: React.FC<WishlistProps> = () => {
     <SafeAreaView style={s.safe} edges={['top']}>
       {/* ── Header ── */}
       <View style={s.header}>
-        <View style={s.arcDecor} />
+       
         <View style={[s.headerRow, { flexDirection: rowDir }]}>
 
           <View style={[s.headerText, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
@@ -132,7 +132,7 @@ const Wishlist: React.FC<WishlistProps> = () => {
           ListEmptyComponent={() => (
             <View style={s.emptyWrap}>
               <View style={s.emptyRing}>
-                <Ionicons name="heart-outline" size={42} color={Colors.Green} />
+                <Ionicons name="heart-outline" size={42} color={Colors.Black} />
               </View>
               <Text style={[s.emptyTitle, { textAlign: 'center' }]}>
                 {t.No_Items_Found}
@@ -220,7 +220,7 @@ const CARD_WIDTH = (width - 12 * 2 - 10) / 2;
 const s = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: Colors.Green,
+    backgroundColor: Colors.darkgrey,
   },
 
   // ── Header ──
@@ -231,13 +231,7 @@ const s = StyleSheet.create({
     paddingHorizontal: 18,
     overflow: 'hidden',
   },
-  arcDecor: {
-    position: 'absolute',
-    top: -55, right: -55,
-    width: 160, height: 160,
-    borderRadius: 80,
-    backgroundColor: 'rgba(124,196,166,0.11)',
-  },
+ 
   headerRow: {
     alignItems: 'center',
     gap: 12,
@@ -385,7 +379,7 @@ const s = StyleSheet.create({
     backgroundColor: '#E6F2EC',
     justifyContent: 'center', alignItems: 'center',
     marginBottom: 8,
-    borderWidth: 3, borderColor: Colors.btnRed,
+    borderWidth: 3, borderColor: Colors.Black,
   },
   emptyTitle: {
     fontSize: 17,

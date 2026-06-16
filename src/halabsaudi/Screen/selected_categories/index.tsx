@@ -194,19 +194,26 @@ const SelectedCategories: React.FC<{ route: any }> = ({ route }) => {
   /* ================= UI ================= */
   return (
     <View style={styles.container}>
-     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.White4, marginTop: 2 }}>
-        <CustomHeader
+     <SafeAreaView style={{  backgroundColor: Colors.darkgrey }}>
+      <View style={{paddingHorizontal: '4%',paddingBottom:8, backgroundColor: Colors.darkgrey}}>
+<CustomHeader
           title={language === 'en' ? item.text : item.categoryArabic}
           onBackPress={() => navigation.goBack()}
         />
+      </View>
+      </SafeAreaView>
+<View style={{ flex: 1,
 
+      paddingHorizontal: '4%',
+
+      backgroundColor: Colors.darkBg,}}>
         <View style={{ marginTop: '7%' }} />
         <View style={styles.searchContainer}>
           <Image source={Search} style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
             placeholder={languageData[language].Search_for_anything}
-            placeholderTextColor={Colors.Grey5}
+            placeholderTextColor={Colors.White}
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
@@ -294,7 +301,7 @@ const SelectedCategories: React.FC<{ route: any }> = ({ route }) => {
                             mText="m"
                           />
                         ) : (
-                          <Text style={{ fontSize: 10, color: 'green' }}>--</Text>
+                          <Text style={{ fontSize: 10, color: Colors.Red }}>--</Text>
                         )}
                       </View>
                     </View>
@@ -304,9 +311,11 @@ const SelectedCategories: React.FC<{ route: any }> = ({ route }) => {
             />
           )}
         </View>
-      </SafeAreaView>
+        
+      
 
       <DetectCountry onCountryDetect={value => setCountry(value)} />
+        </View>
     </View>
   );
 };

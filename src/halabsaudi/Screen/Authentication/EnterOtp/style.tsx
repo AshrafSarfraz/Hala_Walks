@@ -5,7 +5,7 @@ import { Fonts } from "../../../Themes/Fonts";
 
 export const getStyles=(language:string)=> StyleSheet.create({
     MainCont: {
-      backgroundColor: Colors.Bg,
+      backgroundColor: Colors.dargBg,
       flexGrow: 1,
       padding: '4%',
     },
@@ -18,7 +18,7 @@ export const getStyles=(language:string)=> StyleSheet.create({
     },
     BackIcon:{
      width:30,height:30,
-     tintColor:Colors.Green,
+     tintColor:Colors.White,
      transform:language==='en'?[{scaleX:1}]:[{scaleX:-1}]
     },
     Logo: {
@@ -29,7 +29,7 @@ export const getStyles=(language:string)=> StyleSheet.create({
     Number: {
       fontFamily: Fonts.SF_Medium,
       fontSize: 20,
-      color: Colors.Green,
+      color: Colors.White,
       alignSelf: 'center',
       lineHeight: 26,
       marginBottom: '7%',
@@ -37,7 +37,7 @@ export const getStyles=(language:string)=> StyleSheet.create({
     digit_Txt: {
       fontFamily: Fonts.SF_Medium,
       fontSize: 16,
-      color: Colors.Black,
+      color: Colors.whiteGrey,
       alignSelf: 'center',
       lineHeight: 20,
       marginTop: '5%',
@@ -46,7 +46,7 @@ export const getStyles=(language:string)=> StyleSheet.create({
     PhoneNumber:{
       fontFamily: Fonts.SF_Medium,
       fontSize: 20,
-      color: Colors.Green,
+      color: Colors.White,
       alignSelf: 'center',
       lineHeight: 26,
       marginTop: '1%',
@@ -86,13 +86,13 @@ export const getStyles=(language:string)=> StyleSheet.create({
     Already: {
       fontFamily: Fonts.SF_Regular,
       fontSize: 14,
-      color: Colors.Green,
+      color: Colors.White,
       lineHeight: 20,
     },
     Resend_Txt: {
       fontFamily: Fonts.SF_Bold,
       fontSize: 14,
-      color: Colors.Green,
+      color: Colors.White,
       lineHeight: 20,
     },
   });

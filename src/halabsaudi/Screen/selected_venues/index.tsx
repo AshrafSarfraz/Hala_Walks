@@ -38,7 +38,7 @@ type CacheShape = {
 
 const SelectedVenues: React.FC<{route: any}> = ({route}) => {
   const navigation = useNavigation<any>();
-  useStatusBar('dark-content', Colors.White4, true);
+  useStatusBar('dark-content', Colors.dargBg, true);
   const {item} = route.params;
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -224,9 +224,12 @@ const SelectedVenues: React.FC<{route: any}> = ({route}) => {
 
   return (
     <View style={styles.container}>
-      <SafeAreaView style={{flex: 1}}>
+      <SafeAreaView style={{ backgroundColor: Colors.darkgrey}}>
+        <View style={{paddingHorizontal:'4%', paddingBottom:5}}>
         <CustomHeader title={item?.venueName} onBackPress={() => navigation.goBack()} />
-
+          </View>
+</SafeAreaView>
+<View style={{flex: 1, paddingHorizontal: '4%'}}>
         <View style={{marginTop: '7%'}} />
 
         <View style={styles.searchContainer}>
@@ -234,7 +237,7 @@ const SelectedVenues: React.FC<{route: any}> = ({route}) => {
           <TextInput
             style={styles.searchInput}
             placeholder={languageData[language].Search_for_anything}
-            placeholderTextColor={Colors.Grey9}
+            placeholderTextColor={Colors.White}
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
@@ -271,8 +274,8 @@ const SelectedVenues: React.FC<{route: any}> = ({route}) => {
             </>
           )}
         </View>
-      </SafeAreaView>
-
+      
+</View>
       {/* keep if you want, it won't blank data now */}
       {/* <DetectCountry onCountryDetect={value => setCountry(value)} /> */}
     </View>

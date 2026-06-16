@@ -215,12 +215,15 @@ const SearchScreen: React.FC = () => {
   /* ================= UI ================= */
   return (
     <View style={styles.container}>
-      <SafeAreaView style={{flex: 1, backgroundColor: Colors.dargBg, marginTop: 2}}>
+      <SafeAreaView style={{ backgroundColor: Colors.darkgrey, marginTop: 2}}>
+        <View style={{paddingHorizontal: '4%', paddingBottom: 5}}>
         <CustomHeader
           title={language === 'en' ? 'Search Screen' : 'شاشة البحث'}
           onBackPress={() => navigation.goBack()}
         />
-
+        </View>
+        </SafeAreaView>
+<View style={{flex:1,paddingHorizontal: '4%', backgroundColor:Colors.dargBg}}>
         <View style={{marginTop: '7%'}} />
 
         <View style={styles.searchContainer}>
@@ -228,7 +231,7 @@ const SearchScreen: React.FC = () => {
           <TextInput
             style={styles.searchInput}
             placeholder={languageData[language].Search_for_anything}
-            placeholderTextColor={Colors.Grey5}
+            placeholderTextColor={Colors.White}
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
@@ -318,7 +321,7 @@ const SearchScreen: React.FC = () => {
             />
           )}
         </View>
-      </SafeAreaView>
+      </View>
     </View>
   );
 };

@@ -2,6 +2,7 @@
 import React from 'react';
 import {Text} from 'react-native';
 import {Fonts} from '../../Themes/Fonts';
+import {Colors} from '../../Themes/Colors';
 
 interface DistanceFromDeviceProps {
   userLat: number;
@@ -55,7 +56,7 @@ const DistanceFromDevice: React.FC<DistanceFromDeviceProps> = ({
 
 const textStyle = {
   fontSize: 10,
-  color: 'green',
+  color: Colors.dargBg,
   fontFamily: Fonts.SF_Medium,
   lineHeight: 14,
   marginLeft: 2,

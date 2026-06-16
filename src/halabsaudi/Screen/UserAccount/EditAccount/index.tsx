@@ -244,13 +244,13 @@ const EditAccountScreen: React.FC = ({navigation}: any) => {
             <Ionicons
               name={isRTL ? 'chevron-forward' : 'chevron-back'}
               size={26}
-              color={Colors.Green}
+              color={Colors.Red}
             />
           </TouchableOpacity>
           <Text style={s.headerTitle}>{t.edit_profile}</Text>
           <TouchableOpacity onPress={saveProfile}>
             {loading ? (
-              <ActivityIndicator color={Colors.Green} />
+              <ActivityIndicator color={Colors.Red} />
             ) : (
               <Text style={s.saveTxt}>{t.save}</Text>
             )}
@@ -432,7 +432,7 @@ const s = StyleSheet.create({
     backgroundColor: '#F2F2F7',
   },
   headerTitle: {fontSize: 17, fontWeight: '700', color: '#111827'},
-  saveTxt: {color: Colors.Green, fontSize: 16, fontWeight: '600'},
+  saveTxt: {color: Colors.Red, fontSize: 16, fontWeight: '600'},
 
   avatarSection: {alignItems: 'center', marginTop: 20, marginBottom: 8},
   avatarImg: {
@@ -440,13 +440,13 @@ const s = StyleSheet.create({
     height: 100,
     borderRadius: 50,
     borderWidth: 3,
-    borderColor: Colors.Green,
+    borderColor: Colors.Red,
   },
   avatarCircle: {
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: Colors.Green,
+    backgroundColor: Colors.Red,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -458,7 +458,7 @@ const s = StyleSheet.create({
     width: 26,
     height: 26,
     borderRadius: 13,
-    backgroundColor: Colors.Green,
+    backgroundColor: Colors.Red,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
@@ -467,7 +467,7 @@ const s = StyleSheet.create({
   changePhotoTxt: {
     marginTop: 10,
     fontSize: 13,
-    color: Colors.Green,
+    color: Colors.Red,
     fontWeight: '500',
   },
 

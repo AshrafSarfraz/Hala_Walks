@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { SafeAreaView, View, Text, Image, TouchableOpacity, ScrollView
  } from 'react-native';
-import { Full_logo_B, Full_logo_w, Logo_W, Scope } from '../../Themes/Images';
+import { Full_logo_B, Full_logo_w, Hala_logo_white, Logo_W, Scope } from '../../Themes/Images';
 import ImageSlider from './FlatOffer';
 import Categories from './Categories';
 import BestSeller from './BestSellers';
@@ -28,10 +28,10 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
   const [hasRecentlyAdded, setHasRecentlyAdded] = useState(false); // ✅
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.dargBg }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.darkgrey }}>
       <View style={styles.Container}>
         <View style={styles.header}>
-          <Image source={Full_logo_w} style={styles.logo} />
+          <Image source={Hala_logo_white} style={styles.logo} />
           <View style={styles.language_Cont}>
             <TouchableOpacity style={styles.Btn} onPress={() => navigation.navigate('SearchScreen')}>
               <Image source={Scope} style={styles.Scope_Icon} />

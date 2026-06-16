@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useSelector} from 'react-redux';
 import {languageData} from '../../redux_toolkit/language/languageSlice';
 import {RootState} from '../../redux_toolkit/store';
+import { Colors } from '../../Themes/Colors';
 
 export type MuteDuration = '8h' | '1w' | 'always' | null;
 
@@ -114,7 +115,7 @@ export default function MuteModal({
         {/* Unmute */}
         {isMuted ? (
           <TouchableOpacity style={styles.unmuteBtn} onPress={handleUnmute} activeOpacity={0.7}>
-            <Ionicons name="notifications-outline" size={20} color="#16A34A" />
+            <Ionicons name="notifications-outline" size={20} color={Colors.Red} />
             <Text style={styles.unmuteText}>{t.unmute_btn}</Text>
           </TouchableOpacity>
         ) : (
@@ -131,18 +132,18 @@ export default function MuteModal({
                 activeOpacity={0.7}>
                 <View style={[styles.optionRow, {flexDirection: rowDir}]}>
                   <View style={[styles.optionIcon,
-                    {backgroundColor: selected === opt.value ? '#DCFCE7' : '#F3F4F6'}]}>
+                    {backgroundColor: selected === opt.value ? '#FEE2E2' : '#F3F4F6'}]}>
                     <Ionicons
                       name={opt.icon}
                       size={18}
-                      color={selected === opt.value ? '#16A34A' : '#6B7280'}
+                      color={selected === opt.value ? Colors.Red : '#6B7280'}
                     />
                   </View>
                   <View style={{flex: 1, alignItems: isRTL ? 'flex-end' : 'flex-start'}}>
                     <Text style={[
                       styles.optionLabel,
                       {textAlign: isRTL ? 'right' : 'left'},
-                      selected === opt.value && {color: '#16A34A'},
+                      selected === opt.value && {color: Colors.Red},
                     ]}>
                       {opt.label}
                     </Text>
@@ -212,7 +213,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 12, borderRadius: 14, marginBottom: 2,
   },
   optionRow: {alignItems: 'center', gap: 12, paddingVertical: 7},
-  optionSelected: {backgroundColor: '#F0FDF4'},
+  optionSelected: {backgroundColor: '#fff0f0'},
   optionIcon: {
     width: 38, height: 38, borderRadius: 10,
     justifyContent: 'center', alignItems: 'center',
@@ -224,11 +225,11 @@ const styles = StyleSheet.create({
     borderWidth: 2, borderColor: '#D1D5DB',
     justifyContent: 'center', alignItems: 'center',
   },
-  radioSelected: {borderColor: '#16A34A'},
-  radioDot: {width: 10, height: 10, borderRadius: 5, backgroundColor: '#16A34A'},
+  radioSelected: {borderColor: Colors.Red},
+  radioDot: {width: 10, height: 10, borderRadius: 5, backgroundColor: Colors.Red},
   confirmBtn: {
     alignItems: 'center', justifyContent: 'center',
-    backgroundColor: '#111827', borderRadius: 16,
+    backgroundColor: Colors.Red, borderRadius: 16,
     height: 52, marginHorizontal: 20, marginTop: 20,
   },
   confirmText: {fontSize: 16, fontWeight: '700', color: '#fff'},
@@ -237,9 +238,9 @@ const styles = StyleSheet.create({
     gap: 10, marginHorizontal: 20, marginTop: 20,
     height: 52, borderRadius: 16,
     backgroundColor: '#F0FDF4',
-    borderWidth: 1, borderColor: '#BBF7D0',
+    borderWidth: 1, borderColor: '#FEE2E2',
   },
-  unmuteText: {fontSize: 15, fontWeight: '600', color: '#16A34A'},
+  unmuteText: {fontSize: 15, fontWeight: '600', color: Colors.Red},
 });
 
 

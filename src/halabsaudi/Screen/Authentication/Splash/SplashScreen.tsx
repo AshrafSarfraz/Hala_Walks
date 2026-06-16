@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, Image, StatusBar } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Colors } from '../../../Themes/Colors';
-import { Full_logo_w } from '../../../Themes/Images';
+import { Full_logo_w, Hala_logo_white } from '../../../Themes/Images';
 import { fetchBrandsFromFirebase, fetchFlatOfferFromFirebase, fetchVenuFromFirebase } from '../../../firebase/firebaseutils';
 
 
@@ -38,7 +38,7 @@ const Splash_Screen: React.FC<SplashScreenProps> = ({ navigation }) => {
         <StatusBar hidden={true} translucent={true} animated={true} />
       <View style={styles.Body}>
       <View style={styles.Img_Box} >
-      <Image source={Full_logo_w} style={styles.Logo_Img} />
+      <Image source={Hala_logo_white} style={styles.Logo_Img} />
       </View>
       <View style={styles.Footer} >
       <Text style={styles.Txt} >This Discount Application is Exclusively for Saudi Visitors</Text>
@@ -53,7 +53,7 @@ export default Splash_Screen;
 const styles = StyleSheet.create({
   Main_Container: {
     flex: 1,
-    backgroundColor: Colors.Green,
+    backgroundColor: Colors.dargBg,
     alignItems: 'center',
     justifyContent: 'center',
   },

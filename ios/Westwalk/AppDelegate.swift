@@ -3,6 +3,7 @@ import React
 import React_RCTAppDelegate
 import ReactAppDependencyProvider
 import Firebase   // Added For Firebase  A-Apr-2025  New Documentation
+import GoogleMaps
 
 
 @main
@@ -14,6 +15,8 @@ class AppDelegate: RCTAppDelegate {
     // You can add your custom initial props in the dictionary below.
     // They will be passed down to the ViewController used by React Native.
     self.initialProps = [:]
+
+   GMSServices.provideAPIKey("AIzaSyB6CWvlf9f5twQnSjWbEjeNrxmGW2DOins") // Google Map API Key
 
 
 // Firebase 
