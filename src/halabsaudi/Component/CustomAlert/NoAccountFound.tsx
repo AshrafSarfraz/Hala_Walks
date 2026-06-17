@@ -21,7 +21,7 @@ type Props = {
   onClose: () => void;
 };
 
-const AccountNotFoundModal: React.FC<Props> = ({ visible, onClose}) => {
+const AccountNotFoundModal: React.FC<Props> = ({ visible, onClose }) => {
   const navigation = useNavigation();
   const language = useSelector((state: RootState) => state.language.language);
 
@@ -76,18 +76,20 @@ const styles = StyleSheet.create({
     padding: 24,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(17, 24, 39, 0.6)', // soft dim
+    backgroundColor: 'rgba(0, 0, 0, 0.7)', // darker dim for dark theme
   },
   cardWrap: {
     width: '100%',
     maxWidth: CARD_MAX_WIDTH,
     borderRadius: 16,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.dargBg,        // ✅ dark card
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: 'rgba(255,255,255,0.12)', // subtle light border
     paddingTop: 20,
     paddingHorizontal: 20,
     paddingBottom: 16,
     shadowColor: '#000',
-    shadowOpacity: 0.12,
+    shadowOpacity: 0.3,
     shadowRadius: 12,
     shadowOffset: { width: 0, height: 8 },
     ...(Platform.OS === 'android' ? { elevation: 10 } : null),
@@ -96,7 +98,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 20,
     lineHeight: 28,
-    color: Colors.Black,
+    color: Colors.White,                   // ✅ white title
     fontFamily: Fonts.SF_Bold,
     letterSpacing: 0.2,
   },
@@ -105,13 +107,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 15,
     lineHeight: 22,
-    color: '#475569', // slate-600-ish
-    // If you don't have SF_Regular, keep it Bold or switch to your regular face
+    color: 'rgba(255,255,255,0.7)',        // ✅ soft white message
     fontFamily: (Fonts as any).SF_Regular ?? Fonts.SF_Bold,
   },
   divider: {
     height: StyleSheet.hairlineWidth,
-    backgroundColor: '#E5E7EB',
+    backgroundColor: 'rgba(255,255,255,0.12)', // ✅ light divider on dark
     marginVertical: 18,
   },
   actionsRow: {
@@ -123,30 +124,30 @@ const styles = StyleSheet.create({
     height: 48,
     borderRadius: 10,
     borderWidth: 2,
-    borderColor: Colors.Green,
+    borderColor: Colors.Red,
     justifyContent: 'center',
     alignItems: 'center',
   },
   btnSecondaryTxt: {
     fontSize: 14,
     fontFamily: Fonts.SF_Bold,
-    color: '#0F766E', // slightly darker green for better contrast
+    color: Colors.Red,                    // ✅ green text on dark
   },
   btnPrimary: {
     flex: 1,
     height: 48,
     borderRadius: 10,
-    backgroundColor: Colors.Green,
+    backgroundColor: Colors.Red,
     justifyContent: 'center',
     alignItems: 'center',
   },
   btnPrimarySpacing: {
-    marginLeft: 10, // safer than 'gap' for older RN versions
+    marginLeft: 10,
   },
   btnPrimaryTxt: {
     fontSize: 14,
     fontFamily: Fonts.SF_Bold,
-    color: '#FFFFFF',
+    color: Colors.White,
   },
 });
 

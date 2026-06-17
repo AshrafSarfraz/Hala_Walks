@@ -34,16 +34,15 @@ import ImagePreviewScreen from '../../chat/components/ImagePreviewScreen';
 import MapProfile from '../../Map/profileScreen';
 import MapCaptureScreen from '../../Map/capture';
 import Wishlist from '../../Screen/Wishlist';
-
-// ── Timeline screen import ────────────────────────────────────────────────────
-// Ye wo screen hai jo tab bar ke centre + button se open hogi.
-// Agar tumhari Timeline screen kisi aur path pe hai toh path adjust karo.
 import TimelineScreen from '../../Screen/Timeline';
 
-const Stack = createNativeStackNavigator();
 
+
+const Stack = createNativeStackNavigator();
 const HalaStack: React.FC = () => {
   const [initialRoute, setInitialRoute] = useState<string | null>(null);
+
+
 
   useEffect(() => {
     const checkInitialRoute = async () => {
@@ -54,14 +53,13 @@ const HalaStack: React.FC = () => {
         if (halaData === 'true' && token) {
           setInitialRoute('BottomTab');
         } else {
-          setInitialRoute('Onboarding');
+          setInitialRoute('Splash');
         }
       } catch (e) {
         console.log('Error reading login state', e);
         setInitialRoute('Splash');
       }
     };
-
     checkInitialRoute();
   }, []);
 
@@ -69,6 +67,8 @@ const HalaStack: React.FC = () => {
     return <Splash_Screen />;
   }
 
+
+  
   return (
     <Stack.Navigator
       initialRouteName={initialRoute}
@@ -86,18 +86,7 @@ const HalaStack: React.FC = () => {
       {/* ── Main app (bottom tabs) ── */}
       <Stack.Screen name="BottomTab" component={Bottom} />
 
-      {/*
-       * ── Timeline Modal ────────────────────────────────────────────────────
-       *
-       * presentation: 'modal'  → iOS pe neeche se slide up hoga
-       * gestureEnabled: true   → swipe down se band ho jaayega
-       *
-       * Tab bar ke centre button se kisi bhi tab pe ye screen khulti hai:
-       *   navigation.navigate('Timeline')
-       *
-       * Band karne ke liye Timeline screen ke andar:
-       *   navigation.goBack()
-       */}
+
       <Stack.Screen
         name="Timeline"
         component={TimelineScreen}

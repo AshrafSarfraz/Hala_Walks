@@ -18,7 +18,8 @@ export const getStyles =(language:String)=> StyleSheet.create({
     alignItems: 'center',
     backgroundColor:Colors.darkgrey,
     paddingBottom:4,
-
+    zIndex: 999,        // ✅
+    elevation: 999,     // ✅ Android — header sabse upar
   },
   logo: {
     width: 140,

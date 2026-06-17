@@ -107,6 +107,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux_toolkit/store';
 import { switchCountryName } from '../../redux_toolkit/selectcountry.tsx/countrySlice';
 import Geolocation from '@react-native-community/geolocation';
+import { Colors } from '../../Themes/Colors';
+import { COLORS } from '../../Themes/avatarColor';
 
 type Country = {
   name: 'Qatar' | 'Bahrain' | 'Saudi Arabia';
@@ -255,39 +257,40 @@ const CountryDropdown2: React.FC<Props> = ({ onSelectCountry }) => {
   );
 };
 
-const BORDER = '#E6E6E6';
-const TEXT = '#111';
+
 
 const styles = StyleSheet.create({
   container: {
-    width: 60,
-    backgroundColor: '#ffffff',
-    zIndex: 999,
-
+    width: 65,
+    backgroundColor: Colors.dargBg,
+    // zIndex: 999,
+    // elevation: 999,      // ✅ Android
+    borderRadius: 6,
+    paddingHorizontal: 7,
   },
   button: {
     flexDirection: 'row',
     alignItems: 'center',
     height: 36,
-    // borderWidth: 1, 
-    borderColor: BORDER, 
+    borderColor: Colors.White, 
     borderRadius: 20,
-    paddingHorizontal: 3, gap: 2, backgroundColor: '#ffffff',
+    paddingHorizontal: 3, gap: 2, backgroundColor:Colors.dargBg,
   },
   flag:     { width: 14, height: 14, borderRadius: 2 },
-  code:     { fontSize: 12, fontWeight: '600', color: TEXT },
-  icon:     { width: 12, height: 12, tintColor: TEXT, marginLeft: 'auto' },
+  code:     { fontSize: 12, fontWeight: '600', color: Colors.White,  },
+  icon:     { width: 12, height: 12, tintColor:Colors.White  , marginLeft: 'auto' },
   menu: {
     position: 'absolute', top: 35, left: 0, right: 0,
-    backgroundColor: '#fff', borderWidth: 1, borderColor: BORDER, borderRadius: 6,
-    zIndex: 999, elevation: 10, overflow: 'visible',
+    backgroundColor: Colors.dargBg, borderWidth: 1,
+    // zIndex: 999,
+    // elevation: 1000,     // ✅ menu sabse upar
+    overflow: 'visible',
   },
   item: {
     flexDirection: 'row', alignItems: 'center',
-    height: 34, paddingHorizontal: 6, gap: 6,
-    borderBottomWidth: 1, borderBottomColor: BORDER, backgroundColor: '#fff',
+    height: 30, paddingHorizontal: 6, gap: 6, backgroundColor: Colors.dargBg,
   },
-  itemCode: { fontSize: 12, fontWeight: '500', color: TEXT },
+  itemCode: { fontSize: 12, fontWeight: '500', color: Colors.White,    },
 });
 
 export default CountryDropdown2;

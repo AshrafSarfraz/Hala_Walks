@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, Image, StatusBar } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Colors } from '../../../Themes/Colors';
-import { Full_logo_w, Hala_logo_white } from '../../../Themes/Images';
+import { Hala_logo_white } from '../../../Themes/Images';
 import { fetchBrandsFromFirebase, fetchFlatOfferFromFirebase, fetchVenuFromFirebase } from '../../../firebase/firebaseutils';
 
 
@@ -35,7 +35,7 @@ const Splash_Screen: React.FC<SplashScreenProps> = ({ navigation }) => {
 
   return (
     <View style={styles.Main_Container}>
-        <StatusBar hidden={true} translucent={true} animated={true} />
+        <StatusBar hidden={true} animated={true} />
       <View style={styles.Body}>
       <View style={styles.Img_Box} >
       <Image source={Hala_logo_white} style={styles.Logo_Img} />

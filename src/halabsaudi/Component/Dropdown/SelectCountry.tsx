@@ -18,7 +18,14 @@ type Props = {
 // ✅ Country Options with correct image paths
 const countryOptions: Country[] = [
   { name: 'Saudi Arabia', code: '+966', image: require('../../assets/Icons/Saudi_Flag.png') },
-  //  { name: 'Qatar', code: '+974', image: require('../../assets/Icons/Saudi_Flag.png') },
+  { name: 'Qatar',        code: '+974', image: require('../../assets/Icons/Qatar_Flag.jpg') },
+  { name: 'Bahrain',      code: '+973', image:  require('../../assets/Icons/flag_bahrain.png') },
+  { name: 'Kuwait',       code: '+965', image: require('../../assets/Icons/Kuwait_flag.png') },
+  { name: 'Oman',         code: '+968', image: require('../../assets/Icons/Oman_flag.png') },
+  { name: 'UAE',          code: '+971', image: require('../../assets/Icons/Uae_Flag.png') },
+
+
+
 ];
 
 const CountryDropdown: React.FC<Props> = ({ onSelectCountry }) => {
@@ -111,13 +118,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 10,
-    height:50,
+    height:40,
     borderBottomWidth: 1,
     borderBottomColor: Colors.grey1,
   },
   dropdownText: {
-    fontSize: 10,
+    fontSize: 12,
     color: Colors.Black,
+    fontWeight:'bold'
   },
 });
 

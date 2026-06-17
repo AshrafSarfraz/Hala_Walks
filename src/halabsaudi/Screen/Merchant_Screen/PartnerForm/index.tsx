@@ -3,6 +3,7 @@ import { ActivityIndicator, SafeAreaView, View, } from 'react-native';
 import { WebView } from 'react-native-webview';
 import CustomHeader from '../../../Component/CustomHeader/CustomHeader';
 import { styles } from './style';
+import { Colors } from '../../../Themes/Colors';
 
 
 
@@ -23,15 +24,10 @@ const WebViewScreen:React.FC= ({navigation}) => {
   return (
     <SafeAreaView style={styles.container}>
     <View style={styles.Body} >
-    {/* {loading && (
-        <ActivityIndicator
-          size="large"
-          color="#005029"  // Your custom color here
-          style={styles.loader}
-        />
-      )} */}
+
     {showHeader && (
-          <CustomHeader title="Register Your Brand" onBackPress={() => navigation.goBack()} />
+          <CustomHeader title="Register Your Brand" onBackPress={() => navigation.goBack()}
+            textColor={Colors.Black} iconColor={Colors.Black} backgroundColor={Colors.White} />
         )}
       <WebView 
         source={{ uri: 'https://halab-saudi.vercel.app/AddBrand/12652154214641264521465124xxp1' }} 

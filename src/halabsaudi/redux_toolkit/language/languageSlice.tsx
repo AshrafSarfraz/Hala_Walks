@@ -2,7 +2,7 @@ import {createSlice} from '@reduxjs/toolkit';
 
 const languageData = {
   en: {
-    welcome_back: 'Welcome Back!', sign_in_message: 'Sign in with your account',
+    welcome_back: 'Welcome', sign_in_message: 'Sign in with your account',
     full_name: 'Full name', phone_number: 'phone number', login: 'login',
     logout: 'Logout', country: 'country', agree_to: 'I agree to the ',
     privacy_policy: 'privacy policy and term of condition', terms_of_use: 'Terms of Use', and: 'and',

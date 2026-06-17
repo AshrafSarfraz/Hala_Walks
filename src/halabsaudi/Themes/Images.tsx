@@ -10,6 +10,7 @@ export const Food2=require(ImgPath+'food2.png')
 export const Giftpack=require(ImgPath+'giftpack.png')
 export const WW_Icon=require(ImgPath+'ww_icon.png')
 export const HBS_Logo=require(ImgPath+'hbk_logo.png')
+export const Hbk_White=require(ImgPath+'HBK_WHITE.png')
 
 
 

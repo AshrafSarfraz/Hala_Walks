@@ -31,7 +31,7 @@ const BRANDS_API = 'https://hala-b-saudi.onrender.com/api/hbs/brands';
 
 const SearchScreen: React.FC = () => {
   const navigation = useNavigation<any>();
-  useStatusBar('dark-content', Colors.White4, true);
+  useStatusBar('light-content', Colors.dargBg);   // teesra arg hata do
   const [searchQuery, setSearchQuery] = useState('');
   const [brands, setBrands] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);

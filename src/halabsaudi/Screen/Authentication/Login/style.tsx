@@ -12,9 +12,10 @@ export const getStyles =(language: string)=> StyleSheet.create({
     },
   
     H_Logo: {
-      width: 150,
-      height: 150,
+      width: 110,
+      height: 110,
       alignSelf: 'center',
+      marginBottom:12
     },
     Welcome_Txt: {
       fontSize: 24,
@@ -33,7 +34,7 @@ export const getStyles =(language: string)=> StyleSheet.create({
      
     },
     InputContainer: {
-      marginTop:50,
+      marginTop:40,
     },
     Input_Field: {
       alignItems: 'flex-start',

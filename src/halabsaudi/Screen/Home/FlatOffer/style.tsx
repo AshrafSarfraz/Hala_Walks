@@ -14,8 +14,8 @@ export const getStyles = (language: string) =>
     },
     imageContainer: {
       width: width - 40,
-      height: 250,
-      borderRadius: 12,
+      height: 200,
+      borderRadius: 8,
       overflow: 'hidden', // ✅ fix for Android clipping
       marginRight: 8,
     },

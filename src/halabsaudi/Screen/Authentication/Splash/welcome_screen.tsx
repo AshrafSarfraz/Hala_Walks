@@ -29,7 +29,7 @@ type SplashBlankProps = {
 };
 
 const WelcomeScreen: React.FC<SplashBlankProps> = ({navigation}) => {
-  useStatusBar('light-content', Colors.Green, true);
+  useStatusBar('light-content', Colors.Green);
   const [selected, setSelected] = useState<'customer' | 'community' | null>( null,);
   const [alertVisible, setAlertVisible] = useState<boolean>(false);
   const [code, setCode] = useState('');
@@ -61,8 +61,7 @@ const WelcomeScreen: React.FC<SplashBlankProps> = ({navigation}) => {
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled">
           <View style={styles.Main_Container}>
-            <StatusBar hidden={false} translucent={true} animated={true} />
-            
+     
             <TouchableOpacity
               onPress={showAlert}
               activeOpacity={0.8}
@@ -190,7 +189,7 @@ const getStyles=(langauge:string) => StyleSheet.create({
   },
   languageFab: {
     position: 'absolute',
-    top: 70,              // login header se thoda gap
+    top: 70,        
     right: 35,
     width: 48,
     height: 48,
@@ -198,10 +197,9 @@ const getStyles=(langauge:string) => StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.95)', // soft white (glass look)
     alignItems: 'center',
     justifyContent: 'center',
-    // Border subtle
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: 'rgba(0,0,0,0.06)',
-    // Shadow
+
     ...Platform.select({
       ios: {
         shadowColor: '#000',
@@ -245,7 +243,7 @@ const getStyles=(langauge:string) => StyleSheet.create({
     textAlign:"center",
     alignSelf:"center",
     width:200,
-    marginTop:20,
+    marginTop:10,
     lineHeight:22
   },
   defaultButton: {
