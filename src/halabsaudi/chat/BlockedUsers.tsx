@@ -203,10 +203,10 @@ export default function BlockedUsers({navigation}: any) {
 }
 
 const styles = StyleSheet.create({
-  safe: {flex: 1, backgroundColor: Colors.Green},
-  body: {flex: 1, backgroundColor: Colors.Bg},
+  safe: {flex: 1, backgroundColor: Colors.dargBg},
+  body: {flex: 1, backgroundColor: Colors.dargBg},
   header: {
-    backgroundColor: Colors.Green,
+    backgroundColor: Colors.dargBg,
     paddingTop: Platform.OS === 'ios' ? 4 : 10,
     paddingBottom: 20, paddingHorizontal: 18, overflow: 'hidden',
   },
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)', flexShrink: 0,
   },
   headerText: {flex: 1},
-  eyebrow: {fontSize: 10, color: Colors.LightGreen, letterSpacing: 1.1, textTransform: 'uppercase', marginBottom: 3},
+  eyebrow: {fontSize: 10, color: Colors.White, letterSpacing: 1.1, textTransform: 'uppercase', marginBottom: 3},
   headerTitle: {fontSize: 18, fontWeight: '700', color: Colors.White, letterSpacing: -0.3},
   countBadge: {
     backgroundColor: 'rgba(255,255,255,0.18)', borderRadius: 20,
@@ -228,7 +228,7 @@ const styles = StyleSheet.create({
   countBadgeText: {color: Colors.White, fontSize: 13, fontWeight: '700'},
   listContent: {paddingHorizontal: 14, paddingTop: 12, paddingBottom: 36},
   listHeader: {paddingHorizontal: 4, paddingBottom: 8},
-  listHeaderText: {fontSize: 11, fontWeight: '700', color: Colors.Green, letterSpacing: 0.5, textTransform: 'uppercase'},
+  listHeaderText: {fontSize: 11, fontWeight: '700', color: Colors.Black, letterSpacing: 0.5, textTransform: 'uppercase'},
   row: {
     alignItems: 'center', backgroundColor: Colors.White,
     borderRadius: 16, paddingVertical: 12, paddingHorizontal: 14,

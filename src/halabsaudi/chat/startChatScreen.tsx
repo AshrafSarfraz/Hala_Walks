@@ -234,7 +234,7 @@ export default function StartChatScreen({navigation}: Props) {
   if (loading) {
     return (
       <View style={styles.loaderWrap}>
-        <ActivityIndicator size="large" color={Colors.LightGreen} />
+        <ActivityIndicator size="large" color={Colors.Red} />
         <Text style={styles.loaderText}>{t.finding_people}</Text>
       </View>
     );
@@ -273,9 +273,9 @@ export default function StartChatScreen({navigation}: Props) {
 
         <View style={[styles.msgChip, {flexDirection: rowDir, minWidth: 84, justifyContent: 'center'}]}>
           {isNavigating
-            ? <ActivityIndicator size="small" color={Colors.Green} />
+            ? <ActivityIndicator size="small" color={Colors.Red} />
             : <>
-                <Ionicons name="chatbubble-outline" size={13} color={Colors.Green} style={isRTL ? {marginLeft: 4} : {marginRight: 4}} />
+                <Ionicons name="chatbubble-outline" size={13} color={Colors.Red} style={isRTL ? {marginLeft: 4} : {marginRight: 4}} />
                 <Text style={styles.msgChipText}>{t.message}</Text>
               </>}
         </View>
@@ -337,7 +337,7 @@ export default function StartChatScreen({navigation}: Props) {
 const styles = StyleSheet.create({
   container:    {flex: 1, backgroundColor: Colors.dargBg},
   loaderWrap:   {flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.darkgrey, gap: 14},
-  loaderText:   {color: Colors.LightGreen, fontSize: 14, marginTop: 4, fontWeight: '500'},
+  loaderText:   {color: Colors.Red, fontSize: 14, marginTop: 4, fontWeight: '500'},
   header:       {backgroundColor: Colors.darkgrey, paddingTop: Platform.OS === 'ios' ? 56 : 44, paddingBottom: 14, paddingHorizontal: 20},
   headerRow:    {alignItems: 'flex-start', gap: 12, marginBottom: 18},
   backBtn:      {width: 38, height: 38, borderRadius: 19, backgroundColor: 'rgba(255,255,255,0.13)', justifyContent: 'center', alignItems: 'center', marginTop: 3, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)'},
@@ -360,7 +360,7 @@ const styles = StyleSheet.create({
   msgChip:      {alignItems: 'center', backgroundColor: '#E6F2EC', borderRadius: 20, paddingHorizontal: 12, paddingVertical: 7, borderWidth: 1, borderColor: Colors.btnRed},
   msgChipText:  {color: Colors.btnRed, fontSize: 12, fontWeight: '700'},
   emptyWrap:    {flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 40, gap: 10, marginTop: 80},
-  emptyRing:    {width: 84, height: 84, borderRadius: 42, backgroundColor: '#E6F2EC', justifyContent: 'center', alignItems: 'center', marginBottom: 8, borderWidth: 3, borderColor: Colors.LightGreen},
+  emptyRing:    {width: 84, height: 84, borderRadius: 42, backgroundColor: '#E6F2EC', justifyContent: 'center', alignItems: 'center', marginBottom: 8, borderWidth: 3, borderColor: Colors.Red},
   emptyEmoji:   {fontSize: 36},
   emptyTitle:   {fontSize: 18, fontWeight: '700', color: Colors.Black2},
   emptySub:     {fontSize: 13, color: Colors.Grey9, textAlign: 'center'},

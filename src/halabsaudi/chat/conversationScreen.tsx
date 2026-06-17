@@ -163,7 +163,7 @@ export default function ConversationsScreen({navigation}: any) {
     setConversations(prev => {
       const chatExists = prev.some(c => c._id === data.chatId);
       if (!chatExists) {
-        fetchChats(false, true); // force bypass cache — new chat turant dikhe
+        fetchChats(false, true);
         return prev;
       }
       const updated = prev.map(chat => {
