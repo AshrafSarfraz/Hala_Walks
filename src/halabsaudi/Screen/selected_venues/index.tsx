@@ -1,5 +1,3 @@
-
-
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {
   View,
@@ -8,10 +6,9 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
-  SafeAreaView,
-  StatusBar,
   ActivityIndicator,
 } from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {useNavigation} from '@react-navigation/native';
 import {Search} from '../../Themes/Images';
 import CustomHeader from '../../Component/CustomHeader/CustomHeader';
@@ -20,16 +17,14 @@ import {RootState} from '../../redux_toolkit/store';
 import {getStyles} from './style';
 import {languageData} from '../../redux_toolkit/language/languageSlice';
 import {Colors} from '../../Themes/Colors';
-// import DetectCountry from '../../Component/distanceCalculate/DetectCountry';
 import FastImage from 'react-native-fast-image';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useStatusBar } from '../../Component/UseStatusBar/useStatusBar';
+import {useStatusBar} from '../../Component/UseStatusBar/useStatusBar';
 
 const BRANDS_API = 'https://hala-b-saudi.onrender.com/api/hbs/brands';
 
-// ✅ cache keys + TTL (change if you want)
 const BRANDS_CACHE_KEY = 'H-brands_cache_v2';
-const BRANDS_CACHE_TTL_MS = 3 * 60 * 60 * 1000; // 6 hours
+const BRANDS_CACHE_TTL_MS = 3 * 60 * 60 * 1000;
 
 type CacheShape = {
   ts: number;
@@ -38,7 +33,7 @@ type CacheShape = {
 
 const SelectedVenues: React.FC<{route: any}> = ({route}) => {
   const navigation = useNavigation<any>();
-  useStatusBar('dark-content', Colors.dargBg, true);
+  useStatusBar('light-content', Colors.dargBg);
   const {item} = route.params;
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -60,7 +55,6 @@ const SelectedVenues: React.FC<{route: any}> = ({route}) => {
       .replace(/\s+/g, ' ')
       .replace(/＆/g, '&');
 
-  // ✅ soft match so "The Village - Bahrain" matches "The Village"
   const softMatch = (a: any, b: any) => {
     const A = norm(a);
     const B = norm(b);
@@ -70,10 +64,16 @@ const SelectedVenues: React.FC<{route: any}> = ({route}) => {
 
   const venueNameNorm = useMemo(() => norm(item?.venueName), [item?.venueName]);
 
+  const getBrandImage = (b: any) => {
+    const hero = String(b?.heroImage || '').trim();
+    if (hero) return hero;
+    return String(b?.img || '').trim();
+  };
+
   const filterByVenueAndActive = (arr: any[]) => {
     return arr
       .map((b: any) => ({id: b._id || b.id, ...b}))
-      .filter((b: any) => norm(b?.status) === 'active') // ✅ FIX
+      .filter((b: any) => norm(b?.status) === 'active')
       .filter((b: any) => softMatch(b?.selectedVenue, venueNameNorm));
   };
 
@@ -106,7 +106,6 @@ const SelectedVenues: React.FC<{route: any}> = ({route}) => {
   const loadData = async (opts?: {force?: boolean}) => {
     const force = opts?.force === true;
 
-    // 1) cache first (instant)
     const cached = await readCache();
     const cacheFresh =
       cached && cached.ts && Date.now() - cached.ts < BRANDS_CACHE_TTL_MS;
@@ -119,13 +118,11 @@ const SelectedVenues: React.FC<{route: any}> = ({route}) => {
       }
     }
 
-    // 2) if cache is fresh and not force, skip network (no background updates)
     if (!force && cacheFresh) {
       if (mountedRef.current) setLoading(false);
       return;
     }
 
-    // 3) fetch once (fresh)
     const controller = new AbortController();
     try {
       const freshArr = await fetchFresh(controller.signal);
@@ -133,7 +130,6 @@ const SelectedVenues: React.FC<{route: any}> = ({route}) => {
 
       const matchedFresh = filterByVenueAndActive(freshArr);
 
-      // ✅ IMPORTANT: fresh empty aaya to cached ko wipe NAHI karna
       if (mountedRef.current) {
         if (matchedFresh.length > 0) {
           setItems(matchedFresh);
@@ -160,10 +156,40 @@ const SelectedVenues: React.FC<{route: any}> = ({route}) => {
     return () => {
       mountedRef.current = false;
     };
-    // ✅ only when venue changes
   }, [venueNameNorm]);
 
-  // ✅ Search in already matched venue items
+  /* ========== PRELOAD IMAGES (detail screen ki bhi) ========== */
+  useEffect(() => {
+    if (!items.length) return;
+
+    const urls: {uri: string; priority: any; cache: any}[] = [];
+
+    const push = (u: any) => {
+      const s = String(u || '').trim();
+      if (s) {
+        urls.push({
+          uri: s,
+          priority: FastImage.priority.normal,
+          cache: FastImage.cacheControl.immutable,
+        });
+      }
+    };
+
+    items.slice(0, 15).forEach((b: any) => {
+      push(b?.heroImage);
+      push(b?.img);
+      if (Array.isArray(b?.multiImageUrls)) {
+        b.multiImageUrls.forEach(push);
+      }
+    });
+
+    items.slice(15).forEach((b: any) => {
+      push(b?.heroImage || b?.img);
+    });
+
+    if (urls.length) FastImage.preload(urls);
+  }, [items]);
+
   const searchFiltered = useMemo(() => {
     const q = norm(searchQuery);
     if (!q) return items;
@@ -175,19 +201,17 @@ const SelectedVenues: React.FC<{route: any}> = ({route}) => {
     });
   }, [items, searchQuery]);
 
-  // ✅ Country filter but NEVER blank out venue list
   const dataToShow = useMemo(() => {
     if (!country) return searchFiltered;
 
     const cf = searchFiltered.filter(b => softMatch(b?.selectedCountry, country));
 
-    // fallback (avoid blank screen)
     return cf.length === 0 ? searchFiltered : cf;
   }, [searchFiltered, country]);
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await loadData({force: true}); // manual refresh only
+    await loadData({force: true});
   };
 
   const renderRow = ({item: rowItem}: {item: any}) => {
@@ -196,7 +220,11 @@ const SelectedVenues: React.FC<{route: any}> = ({route}) => {
         style={styles.itemContainer}
         onPress={() => navigation.navigate('DetailScreen', {item: rowItem})}>
         <FastImage
-          source={{uri: rowItem.img, priority: FastImage.priority.normal}}
+          source={{
+            uri: getBrandImage(rowItem),
+            priority: FastImage.priority.normal,
+            cache: FastImage.cacheControl.immutable,
+          }}
           style={styles.itemImage}
           resizeMode={FastImage.resizeMode.contain}
         />
@@ -224,20 +252,21 @@ const SelectedVenues: React.FC<{route: any}> = ({route}) => {
 
   return (
     <View style={styles.container}>
-      <SafeAreaView style={{ backgroundColor: Colors.darkgrey}}>
-        <View style={{paddingHorizontal:'4%', paddingBottom:5}}>
-        <CustomHeader title={item?.venueName} onBackPress={() => navigation.goBack()} />
-          </View>
-</SafeAreaView>
-<View style={{flex: 1, paddingHorizontal: '4%'}}>
-        <View style={{marginTop: '7%'}} />
+      <SafeAreaView edges={['top']} style={{backgroundColor: Colors.darkgrey}}>
+        <View style={{paddingHorizontal: '4%', paddingBottom: 5}}>
+          <CustomHeader title={item?.venueName} onBackPress={() => navigation.goBack()} />
+        </View>
+      </SafeAreaView>
+
+      <View style={{flex: 1, paddingHorizontal: '4%', backgroundColor: Colors.dargBg}}>
+        <View style={{marginTop: '4%'}} />
 
         <View style={styles.searchContainer}>
           <Image source={Search} style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
             placeholder={languageData[language].Search_for_anything}
-            placeholderTextColor={Colors.White}
+            placeholderTextColor='#ccc'
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
@@ -274,10 +303,7 @@ const SelectedVenues: React.FC<{route: any}> = ({route}) => {
             </>
           )}
         </View>
-      
-</View>
-      {/* keep if you want, it won't blank data now */}
-      {/* <DetectCountry onCountryDetect={value => setCountry(value)} /> */}
+      </View>
     </View>
   );
 };

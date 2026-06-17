@@ -20,7 +20,7 @@ type HomeProps = {
 };
 
 const Home: React.FC<HomeProps> = ({ navigation }) => {
-  useStatusBar('light-content', Colors.darkgrey, true);
+  useStatusBar('light-content', Colors.darkgrey);
   const language = useSelector((state: RootState) => state.language.language);
   const styles = getStyles(language);
 

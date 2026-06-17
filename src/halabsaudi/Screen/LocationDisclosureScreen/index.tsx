@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { initVenueTracker } from '../../Notifications/index'
+import { Colors } from '../../Themes/Colors';
 const LocationDisclosure = ({ navigation }: any) => {
   const [loading, setLoading] = useState(false);
 
@@ -84,13 +85,13 @@ const LocationDisclosure = ({ navigation }: any) => {
       </Text>
 
       <View style={styles.tipBox}>
-        <Text style={styles.tipTitle}>💡 Important</Text>
+        <Text style={styles.tipTitle}>Important</Text>
         <Text style={styles.tipText}>
           You will see <Text style={styles.bold}>2 location prompts</Text>:{'\n\n'}
-          1️⃣ First: select{' '}
+          First: select{' '}
           <Text style={styles.bold}>"Allow"</Text>
           {'\n'}
-          2️⃣ Second: select{' '}
+          Second: select{' '}
           <Text style={styles.bold}>"Allow All The Time"</Text>
           {'\n\n'}
           This lets us notify you near venues even when the app is closed.
@@ -125,26 +126,26 @@ const LocationDisclosure = ({ navigation }: any) => {
 export default LocationDisclosure;
 
 const styles = StyleSheet.create({
-  container:    { flexGrow: 1, padding: 24, paddingTop: 60, backgroundColor: '#fff' },
+  container:    { flexGrow: 1, padding: 24, paddingTop: 60, backgroundColor:Colors.dargBg },
   icon:         { fontSize: 24, marginBottom: 12 },
-  title:        { fontSize: 26, fontWeight: '700', marginBottom: 24, color: '#000' },
-  sectionTitle: { fontSize: 16, fontWeight: '700', color: '#1E7A31', marginTop: 16, marginBottom: 6 },
-  text:         { fontSize: 15, lineHeight: 24, color: '#333' },
+  title:        { fontSize: 26, fontWeight: '700', marginBottom: 24, color: Colors.White },
+  sectionTitle: { fontSize: 16, fontWeight: '700', color:Colors.White, marginTop: 16, marginBottom: 6 },
+  text:         { fontSize: 15, lineHeight: 24, color: '#ccc' },
   bold:         { fontWeight: '700' },
   tipBox: {
-    backgroundColor: '#FFF8E1',
+    backgroundColor: '#FFF',
     borderRadius: 12,
     padding: 16,
     marginTop: 16,
     marginBottom: 8,
     borderLeftWidth: 4,
-    borderLeftColor: '#FFC107',
+    borderLeftColor: Colors.Red,
   },
   tipTitle:   { fontWeight: '700', color: '#F57C00', marginBottom: 8, fontSize: 15 },
-  tipText:    { fontSize: 12, lineHeight: 22, color: '#555' },
-  note:       { fontSize: 10, color: '#999', marginTop: 20, marginBottom: 8, fontStyle: 'italic' },
-  button:     { backgroundColor: '#1E7A31', paddingVertical: 15, borderRadius: 12, alignItems: 'center', marginTop: 28 },
+  tipText:    { fontSize: 12, lineHeight: 22, color: '#000' },
+  note:       { fontSize: 10, color: '#ccc', marginTop: 20, marginBottom: 8, fontStyle: 'italic' },
+  button:     { backgroundColor: Colors.Red, paddingVertical: 15, borderRadius: 12, alignItems: 'center', marginTop: 28 },
   buttonText: { color: '#fff', fontSize: 16, fontWeight: '700' },
   skipButton: { marginTop: 12, alignItems: 'center', paddingBottom: 30 },
-  skipText:   { color: '#aaa', fontSize: 14 },
+  skipText:   { color: '#ccc', fontSize: 14 },
 });

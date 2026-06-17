@@ -44,17 +44,19 @@ const getStyles = (language: String) => StyleSheet.create({
     flexDirection: language === 'en' ? 'row' : 'row-reverse',
     alignItems: 'center',
     backgroundColor: Colors.darkgrey,   // ✅ default
+    
+    height:45
   },
   backIcon: {
-    width: 30,
-    height: 30,
+    width: 26,
+    height: 26,
     marginRight: language === 'en' ? 12 : 0,
     marginLeft: language === 'ar' ? 12 : 0,
     tintColor: Colors.White,            // ✅ default
     transform: language === 'en' ? [{ scaleX: 1 }] : [{ scaleX: -1 }],
   },
   headerText: {
-    fontSize: language === 'en' ? 18 : 16,
+    fontSize: language === 'en' ? 18 : 15,
     fontFamily: Fonts.SF_Bold,
     lineHeight: language === 'en' ? 24 : 30,
     color: Colors.White,                // ✅ default

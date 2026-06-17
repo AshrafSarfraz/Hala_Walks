@@ -6,11 +6,10 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
-  SafeAreaView,
-  StatusBar,
   Platform,
   PermissionsAndroid,
 } from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 import CustomHeader from '../../Component/CustomHeader/CustomHeader';
@@ -21,17 +20,17 @@ import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import LinearGradient from 'react-native-linear-gradient';
 import FastImage from 'react-native-fast-image';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Geolocation from '@react-native-community/geolocation'; // ✅ wapas add kiya
+import Geolocation from '@react-native-community/geolocation';
 import DistanceFromDevice from '../../Component/distanceCalculate/distanceCalculate';
 import {getStyles} from './style';
 import {languageData} from '../../redux_toolkit/language/languageSlice';
-import { useStatusBar } from '../../Component/UseStatusBar/useStatusBar';
+import {useStatusBar} from '../../Component/UseStatusBar/useStatusBar';
 
 const BRANDS_API = 'https://hala-b-saudi.onrender.com/api/hbs/brands';
 
 const SearchScreen: React.FC = () => {
   const navigation = useNavigation<any>();
-  useStatusBar('light-content', Colors.dargBg);   // teesra arg hata do
+  useStatusBar('light-content', Colors.dargBg);
   const [searchQuery, setSearchQuery] = useState('');
   const [brands, setBrands] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -54,7 +53,7 @@ const SearchScreen: React.FC = () => {
     const getCurrentLocation = () => {
       Geolocation.getCurrentPosition(
         pos => {
-          console.log('✅ Location got:', pos.coords); // debug ke liye
+          console.log('✅ Location got:', pos.coords);
           setUserLocation({
             lat: pos.coords.latitude,
             long: pos.coords.longitude,
@@ -91,7 +90,6 @@ const SearchScreen: React.FC = () => {
             console.log('❌ Permission denied');
           }
         } else {
-          // iOS
           Geolocation.requestAuthorization();
           getCurrentLocation();
         }
@@ -180,6 +178,40 @@ const SearchScreen: React.FC = () => {
     loadBrands();
   }, []);
 
+  /* ========== PRELOAD IMAGES (detail screen ki bhi) ========== */
+  useEffect(() => {
+    if (!brands.length) return;
+
+    const urls: {uri: string; priority: any; cache: any}[] = [];
+
+    const push = (u: any) => {
+      const s = String(u || '').trim();
+      if (s) {
+        urls.push({
+          uri: s,
+          priority: FastImage.priority.normal,
+          cache: FastImage.cacheControl.immutable,
+        });
+      }
+    };
+
+    // top 15 brands ki saari images (heroImage + img + multiImageUrls)
+    brands.slice(0, 15).forEach((b: any) => {
+      push(b?.heroImage);
+      push(b?.img);
+      if (Array.isArray(b?.multiImageUrls)) {
+        b.multiImageUrls.forEach(push);
+      }
+    });
+
+    // baaki brands ki sirf list image
+    brands.slice(15).forEach((b: any) => {
+      push(b?.heroImage || b?.img);
+    });
+
+    if (urls.length) FastImage.preload(urls);
+  }, [brands]);
+
   /* ================= FILTER + SORT ================= */
   const filteredData = brands.filter(item => {
     if (norm(item.status) !== 'active') return false;
@@ -215,23 +247,24 @@ const SearchScreen: React.FC = () => {
   /* ================= UI ================= */
   return (
     <View style={styles.container}>
-      <SafeAreaView style={{ backgroundColor: Colors.darkgrey, marginTop: 2}}>
+      <SafeAreaView edges={['top']} style={{backgroundColor: Colors.darkgrey}}>
         <View style={{paddingHorizontal: '4%', paddingBottom: 5}}>
-        <CustomHeader
-          title={language === 'en' ? 'Search Screen' : 'شاشة البحث'}
-          onBackPress={() => navigation.goBack()}
-        />
+          <CustomHeader
+            title={language === 'en' ? 'Search Screen' : 'شاشة البحث'}
+            onBackPress={() => navigation.goBack()}
+          />
         </View>
-        </SafeAreaView>
-<View style={{flex:1,paddingHorizontal: '4%', backgroundColor:Colors.dargBg}}>
-        <View style={{marginTop: '7%'}} />
+      </SafeAreaView>
+
+      <View style={{flex: 1, paddingHorizontal: '4%', backgroundColor: Colors.dargBg}}>
+        <View style={{marginTop: '4%'}} />
 
         <View style={styles.searchContainer}>
           <Image source={Search} style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
             placeholder={languageData[language].Search_for_anything}
-            placeholderTextColor={Colors.White}
+            placeholderTextColor='#ccc'
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
@@ -279,6 +312,7 @@ const SearchScreen: React.FC = () => {
                     source={{
                       uri: getBrandImage(item),
                       priority: index <= 6 ? FastImage.priority.high : FastImage.priority.normal,
+                      cache: FastImage.cacheControl.immutable,
                     }}
                     style={styles.itemImage}
                     resizeMode={FastImage.resizeMode.contain}
@@ -300,7 +334,6 @@ const SearchScreen: React.FC = () => {
                     <View style={styles.Loc_Status_Cont}>
                       <View style={styles.Loc_Cont}>
                         <Image source={Location} style={styles.LocationIcon} />
-                        {/* ✅ userLocation mile tab hi show karo */}
                         {userLocation ? (
                           <DistanceFromDevice
                             userLat={userLocation.lat}

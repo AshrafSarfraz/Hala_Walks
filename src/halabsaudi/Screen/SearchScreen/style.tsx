@@ -7,9 +7,7 @@ export const getStyles = (language: String) =>
     container: {
       flex: 1,
       backgroundColor: Colors.darkgrey,
-      // paddingHorizontal: '4%',
-      marginTop: Platform.OS === 'ios' ? '0%' : '11%',
-      marginBottom: Platform.OS === 'ios' ? '0%' : '2%',
+
     },
     header: {
       flexDirection: 'row',
@@ -32,9 +30,9 @@ export const getStyles = (language: String) =>
       flexDirection: language === 'en' ? 'row' : 'row-reverse',
       alignItems: 'center',
       backgroundColor: Colors.darkgrey,
-      height: 55,
+      height: 45,
       paddingHorizontal: 12,
-      borderRadius: 14,
+      borderRadius: 9,
     },
     searchIcon: {
       width: 18,
@@ -47,7 +45,7 @@ export const getStyles = (language: String) =>
     searchInput: {
       flex: 1,
       fontSize: 14,
-      height: 50,
+      height: 40,
       lineHeight: language === 'en' ? 18 : 20,
       fontFamily: language === 'en' ? Fonts.SF_Medium : '',
       color: Colors.White,
@@ -56,11 +54,11 @@ export const getStyles = (language: String) =>
     },
     FlatlistContainer: {
       flex: 1,
-      marginVertical: 10,
+      marginVertical: 8,
     },
     FoundItem_Txt: {
       color: Colors.White,
-      fontSize: 16,
+      fontSize: 14,
       fontFamily: language === 'en' ? Fonts.SF_Medium : '',
       lineHeight: language === 'en' ? 22 : 30,
       fontWeight: '500',
@@ -72,15 +70,8 @@ export const getStyles = (language: String) =>
       alignItems: 'center',
       backgroundColor: Colors.cardBg,
       padding: 12,
-      marginBottom: 10,
-      borderRadius: 8,
-      borderWidth: 1,
-      borderColor: '#E0E0E0',
-      shadowColor: '#000',
-      shadowOffset: {width: 0, height: 2},
-      shadowOpacity: 0.1,
-      shadowRadius: 4,
-      elevation: 3,
+      marginBottom: 8,
+      borderRadius: 6,
     },
     itemImage: {
       width: 80,

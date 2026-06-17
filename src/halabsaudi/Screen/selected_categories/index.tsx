@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, FlatList, Image, TouchableOpacity, SafeAreaView, StatusBar, PermissionsAndroid, Platform } from 'react-native';
+import { View, Text, TextInput, FlatList, Image, TouchableOpacity, PermissionsAndroid, Platform } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import CustomHeader from '../../Component/CustomHeader/CustomHeader';
 import { Location, Search } from '../../Themes/Images';
@@ -14,14 +15,14 @@ import FastImage from 'react-native-fast-image';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DetectCountry from '../../Component/distanceCalculate/DetectCountry';
 import DistanceFromDevice from '../../Component/distanceCalculate/distanceCalculate';
-import Geolocation from '@react-native-community/geolocation'; // ✅ fixed import
+import Geolocation from '@react-native-community/geolocation';
 import { useStatusBar } from '../../Component/UseStatusBar/useStatusBar';
 
 const BRANDS_API = 'https://hala-b-saudi.onrender.com/api/hbs/brands';
 
 const SelectedCategories: React.FC<{ route: any }> = ({ route }) => {
   const navigation = useNavigation<any>();
-  useStatusBar('dark-content', Colors.White4, true);
+  useStatusBar('light-content', Colors.dargBg);
   const { item } = route.params;
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -82,7 +83,6 @@ const SelectedCategories: React.FC<{ route: any }> = ({ route }) => {
             console.log('❌ Permission denied');
           }
         } else {
-          // iOS
           Geolocation.requestAuthorization();
           getCurrentLocation();
         }
@@ -137,6 +137,40 @@ const SelectedCategories: React.FC<{ route: any }> = ({ route }) => {
 
     loadBrands();
   }, [item.text]);
+
+  /* ========== PRELOAD IMAGES (detail screen ki bhi) ========== */
+  useEffect(() => {
+    if (!brands.length) return;
+
+    const urls: { uri: string; priority: any; cache: any }[] = [];
+
+    const push = (u: any) => {
+      const s = String(u || '').trim();
+      if (s) {
+        urls.push({
+          uri: s,
+          priority: FastImage.priority.normal,
+          cache: FastImage.cacheControl.immutable,
+        });
+      }
+    };
+
+    // top 15 brands ki saari images (heroImage + img + multiImageUrls)
+    brands.slice(0, 15).forEach((b: any) => {
+      push(b?.heroImage);
+      push(b?.img);
+      if (Array.isArray(b?.multiImageUrls)) {
+        b.multiImageUrls.forEach(push);
+      }
+    });
+
+    // baaki brands ki sirf list image
+    brands.slice(15).forEach((b: any) => {
+      push(b?.heroImage || b?.img);
+    });
+
+    if (urls.length) FastImage.preload(urls);
+  }, [brands]);
 
   /* ================= DISTANCE ================= */
   const haversineDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
@@ -194,26 +228,24 @@ const SelectedCategories: React.FC<{ route: any }> = ({ route }) => {
   /* ================= UI ================= */
   return (
     <View style={styles.container}>
-     <SafeAreaView style={{  backgroundColor: Colors.darkgrey }}>
-      <View style={{paddingHorizontal: '4%',paddingBottom:8, backgroundColor: Colors.darkgrey}}>
-<CustomHeader
-          title={language === 'en' ? item.text : item.categoryArabic}
-          onBackPress={() => navigation.goBack()}
-        />
-      </View>
+      <SafeAreaView edges={['top']} style={{ backgroundColor: Colors.darkgrey }}>
+        <View style={{ paddingHorizontal: '4%', paddingBottom: 8, backgroundColor: Colors.darkgrey }}>
+          <CustomHeader
+            title={language === 'en' ? item.text : item.categoryArabic}
+            onBackPress={() => navigation.goBack()}
+          />
+        </View>
       </SafeAreaView>
-<View style={{ flex: 1,
 
-      paddingHorizontal: '4%',
+      <View style={{ flex: 1, paddingHorizontal: '4%', backgroundColor: Colors.dargBg }}>
+        <View style={{ marginTop: '4%' }} />
 
-      backgroundColor: Colors.darkBg,}}>
-        <View style={{ marginTop: '7%' }} />
         <View style={styles.searchContainer}>
           <Image source={Search} style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
             placeholder={languageData[language].Search_for_anything}
-            placeholderTextColor={Colors.White}
+            placeholderTextColor='#ccc'
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
@@ -261,6 +293,7 @@ const SelectedCategories: React.FC<{ route: any }> = ({ route }) => {
                     source={{
                       uri: getBrandImage(brandItem),
                       priority: index <= 6 ? FastImage.priority.high : FastImage.priority.normal,
+                      cache: FastImage.cacheControl.immutable,
                     }}
                     style={styles.itemImage}
                     resizeMode={FastImage.resizeMode.contain}
@@ -290,7 +323,6 @@ const SelectedCategories: React.FC<{ route: any }> = ({ route }) => {
                     <View style={styles.Loc_Status_Cont}>
                       <View style={styles.Loc_Cont}>
                         <Image source={Location} style={styles.LocationIcon} />
-                        {/* ✅ userLocation mile tab hi show karo */}
                         {userLocation ? (
                           <DistanceFromDevice
                             userLat={userLocation.lat}
@@ -311,11 +343,9 @@ const SelectedCategories: React.FC<{ route: any }> = ({ route }) => {
             />
           )}
         </View>
-        
-      
 
-      <DetectCountry onCountryDetect={value => setCountry(value)} />
-        </View>
+        <DetectCountry onCountryDetect={value => setCountry(value)} />
+      </View>
     </View>
   );
 };

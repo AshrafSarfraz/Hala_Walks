@@ -32,9 +32,9 @@ export const getStyles=(language:String) => StyleSheet.create({
     flexDirection:language==='en'?'row':'row-reverse' ,
     alignItems: 'center',
     backgroundColor: Colors.darkgrey,
-    height: 55,
+    height: 45,
     paddingHorizontal: 12,
-    borderRadius: 14,
+    borderRadius: 8,
   },
   searchIcon: {
     width: 18,
@@ -47,7 +47,7 @@ export const getStyles=(language:String) => StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: 14,
-    height:55,
+    height:45,
     lineHeight:language==='en'?18:20,
     fontFamily: language==='en'?Fonts.SF_Medium:'',
     color: Colors.White,

@@ -1,17 +1,15 @@
-
-
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {
   View,
   Text,
   Image,
-  SafeAreaView,
   TouchableOpacity,
   Platform,
   ScrollView,
   Linking,
   Dimensions,
 } from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import CustomHeader from '../../Component/CustomHeader/CustomHeader';
 import {useNavigation} from '@react-navigation/native';
 import CustomButton from '../../Component/CustomButton/CustomButton';
@@ -29,13 +27,13 @@ import {Colors} from '../../Themes/Colors';
 import FastImage from 'react-native-fast-image';
 import Branches from '../../Component/BottomSheet/Branches';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import { useStatusBar } from '../../Component/UseStatusBar/useStatusBar';
+import {useStatusBar} from '../../Component/UseStatusBar/useStatusBar';
 
 const {width} = Dimensions.get('screen');
 
 const DetailScreen: React.FC<{route: any}> = ({route}) => {
   const {item} = route.params;
-  useStatusBar('dark-content', Colors.White4, true);
+  useStatusBar('light-content', Colors.dargBg);
   const dispatch = useDispatch();
   const navigation = useNavigation<any>();
   const refRBSheet = useRef<RBSheet>(null);
@@ -47,14 +45,12 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
 
   const [alertVisible, setAlertVisible] = useState(false);
 
-  // ✅ discount text + value
   const [selectedDiscountText, setSelectedDiscountText] = useState<string>('');
   const [selectedDiscountValue, setSelectedDiscountValue] = useState<number>(0);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [showTimings, setShowTimings] = useState(false);
 
-  // image shimmer per index/key
   const [imageLoaded, setImageLoaded] = useState<{[k: string]: boolean}>({});
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -89,18 +85,26 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
 
   // ✅ preload / cache images (so bar bar load na ho)
   useEffect(() => {
-    const urls: string[] = [];
+    const urls: {uri: string; priority: any; cache: any}[] = [];
+
+    const push = (u: any) => {
+      const s = String(u || '').trim();
+      if (s) {
+        urls.push({
+          uri: s,
+          priority: FastImage.priority.high,
+          cache: FastImage.cacheControl.immutable,
+        });
+      }
+    };
 
     if (Array.isArray(item?.multiImageUrls)) {
-      item.multiImageUrls.forEach((u: any) => u && urls.push(String(u)));
+      item.multiImageUrls.forEach(push);
     }
-    if (item?.heroImage) urls.push(String(item.heroImage));
-    if (item?.img) urls.push(String(item.img));
+    push(item?.heroImage);
+    push(item?.img);
 
-    // preload all
-    if (urls.length) {
-      FastImage.preload(urls.map(u => ({uri: u})));
-    }
+    if (urls.length) FastImage.preload(urls);
   }, [item]);
 
   const hasOffer = Boolean(item?.pdfUrl || item?.menuUrl);
@@ -144,22 +148,21 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
 
   return (
     <View style={{flex: 1, backgroundColor: Colors.dargBg}}>
-    <SafeAreaView style={{ backgroundColor: Colors.darkgrey}}>
-    
-
-      <View style={styles.HeaderCont}>
-        <CustomHeader
-          title={languageData[language].Detail_Screen}
-          onBackPress={() => navigation.goBack()}
-        />
-        <TouchableOpacity onPress={handleToggleCart}>
-          <Image
-            source={isInCart ? Dark_Heart : Light_Heart}
-            style={styles.HeartStyle}
+      <SafeAreaView edges={['top']} style={{backgroundColor: Colors.darkgrey}}>
+        <View style={styles.HeaderCont}>
+          <CustomHeader
+            title={languageData[language].Detail_Screen}
+            onBackPress={() => navigation.goBack()}
           />
-        </TouchableOpacity>
-      </View>
- </SafeAreaView>
+          <TouchableOpacity onPress={handleToggleCart}>
+            <Image
+              source={isInCart ? Dark_Heart : Light_Heart}
+              style={styles.HeartStyle}
+            />
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <View style={styles.Body_Cont}>
@@ -319,7 +322,7 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
               </View>
               <Text style={styles.offerBtnArrow}>{language === 'ar' ? '‹' : '›'}</Text>
             </TouchableOpacity>
-            
+
             {/* Discounts */}
             <View style={{width: '100%', marginTop: 8}}>
               {Array.isArray(item?.discounts) && item.discounts.length > 0 ? (
@@ -342,7 +345,6 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
                 })
               ) : null}
             </View>
-
 
             {/* Description */}
             <View style={styles.Desc_Cont}>
@@ -386,7 +388,6 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
 
         <View style={{height: 80}} />
       </ScrollView>
-   
     </View>
   );
 };

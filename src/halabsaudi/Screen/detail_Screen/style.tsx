@@ -40,14 +40,14 @@ export const getStyles = (language: string) =>
           image: {
             width: '100%',
             height: 250,
-            borderRadius: 10,
+            borderRadius: 6,
             marginBottom: Platform.OS === 'ios' ? 20 : 16,
             resizeMode:"contain"
           },
       imageSlider: {
       width: width-40,
       height: 250,
-      borderRadius: 10,
+      borderRadius: 6,
       marginRight:10,
       resizeMode:"contain"
    
@@ -63,6 +63,7 @@ export const getStyles = (language: string) =>
       width: 7,
       height: 7,
       borderRadius: 99,
+      marginTop:4,
       backgroundColor: '#fff',
     },
     dotActive: {
@@ -77,7 +78,7 @@ export const getStyles = (language: string) =>
       paddingVertical: 6,
       paddingHorizontal: 10,
       marginBottom: 10,
-      borderRadius: 8,
+      borderRadius: 6,
     },
     Type_Text: {
       fontSize: 13,
@@ -108,7 +109,7 @@ export const getStyles = (language: string) =>
       alignItems: 'center',
       paddingVertical: 6,
       paddingHorizontal: 10,
-      borderRadius: 10,
+      borderRadius: 6,
       backgroundColor: Colors.White,
     },
     Phone_Icon: {
@@ -130,7 +131,7 @@ export const getStyles = (language: string) =>
       alignItems: 'center',
       marginTop: 6,
       padding: 10,
-      borderRadius: 12,
+      borderRadius: 6,
       backgroundColor: Colors.White,
     },
     Loc_Icon: {
@@ -179,7 +180,7 @@ export const getStyles = (language: string) =>
     branchBtn: {
       paddingVertical: 8,
       paddingHorizontal: 12,
-      borderRadius: 12,
+      borderRadius: 6,
       backgroundColor: Colors.White,
     },
     branchBtnText: {
@@ -191,7 +192,7 @@ export const getStyles = (language: string) =>
     timingsCard: {
       padding: 10,
       backgroundColor: Colors.darkgrey,
-      borderRadius: 12,
+      borderRadius: 6,
       marginTop: 10,
       borderWidth: 1,
       borderColor: '#EFEFEF',
@@ -219,7 +220,7 @@ export const getStyles = (language: string) =>
       backgroundColor: Colors.White,
       paddingVertical: 14,
       paddingHorizontal: 12,
-      borderRadius: 14,
+      borderRadius: 6,
       flexDirection: language === 'en' ? 'row' : 'row-reverse',
       justifyContent: 'space-between',
       alignItems: 'center',
@@ -244,7 +245,7 @@ export const getStyles = (language: string) =>
     // ✅ New modern offer button
     offerBtn: {
       width: '100%',
-      borderRadius: 16,
+      borderRadius: 6,
       paddingVertical: 14,
       paddingHorizontal: 14,
       backgroundColor: Colors.btnRed,
