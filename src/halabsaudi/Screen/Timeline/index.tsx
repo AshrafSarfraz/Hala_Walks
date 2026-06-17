@@ -1,16 +1,3 @@
-// Screen/Timeline.tsx
-//
-// Ye screen HalaStack mein modal ke taur pe register hai.
-// Kisi bhi tab ke centre + button se khulti hai.
-// navigation.goBack() se band hoti hai.
-//
-// ✅ Self-contained:
-//    - GPS via getDeviceLocation util (MapScreen jaisi)
-//    - Reverse geocoding via Google Maps API (same key as MapScreen)
-//    - Nearby places via Google Places API
-//    - Search any location via Google Places Autocomplete + Place Details
-//    - Camera/Gallery via react-native-image-picker (same as MapScreen)
-//    - Firebase upload + backend save
 
 import React, {useState, useEffect, useRef, useCallback} from 'react';
 import {
@@ -185,7 +172,7 @@ const cardStyles = StyleSheet.create({
   wrapper: {
     width: 100,
     height: 100,
-    borderRadius: 14,
+    borderRadius: 6,
     overflow: 'hidden',
     marginRight: 10,
     borderWidth: 1,
@@ -214,7 +201,7 @@ const cardStyles = StyleSheet.create({
     right: 6,
     width: 22,
     height: 22,
-    borderRadius: 11,
+    borderRadius: 6,
     backgroundColor: '#22c55e',
     justifyContent: 'center',
     alignItems: 'center',
@@ -227,7 +214,7 @@ const cardStyles = StyleSheet.create({
     right: 5,
     width: 22,
     height: 22,
-    borderRadius: 11,
+    borderRadius: 6,
     backgroundColor: 'rgba(0,0,0,0.60)',
     justifyContent: 'center',
     alignItems: 'center',
@@ -1051,7 +1038,7 @@ const styles = StyleSheet.create({
     right: 20,
     width: 36,
     height: 36,
-    borderRadius: 18,
+    borderRadius: 6,
     backgroundColor: Colors.dargBg,
     alignItems: 'center',
     justifyContent: 'center',
@@ -1066,7 +1053,7 @@ const styles = StyleSheet.create({
 
   card: {
     backgroundColor: Colors.White,
-    borderRadius: 18,
+    borderRadius: 6,
     padding: 16,
     borderWidth: 1,
     borderColor: Colors.darkgrey,
@@ -1132,7 +1119,7 @@ const styles = StyleSheet.create({
     height: 45,
     borderWidth: 1,
     borderColor: Colors.darkgrey,
-    borderRadius: 12,
+    borderRadius: 6,
     paddingHorizontal: 14,
     paddingRight: 36,
     color: Colors.dargBg,
@@ -1148,7 +1135,7 @@ const styles = StyleSheet.create({
   // Suggestions
   suggestionBox: {
     marginTop: 12,
-    borderRadius: 12,
+    borderRadius: 6,
     borderWidth: 1,
     borderColor: WHITE_10,
     overflow: 'hidden',
@@ -1206,7 +1193,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.dargBg,
     paddingHorizontal: 8,
     paddingVertical: 2,
-    borderRadius: 10,
+    borderRadius: 6,
   },
   photoActions: {flexDirection: 'row', gap: 10, marginBottom: 4},
   photoBtn: {
@@ -1218,7 +1205,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.Red,
     paddingVertical: 13,
     borderRadius: 12,
-    borderWidth: 1,
+
     borderColor: Colors.grey,
   },
   photoBtnDisabled: {opacity: 0.35},
@@ -1234,7 +1221,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 8,
     marginTop: 6,
-    backgroundColor: Colors.btnRed,
+    backgroundColor: Colors.Red,
     paddingVertical: 16,
     borderRadius: 28,
   },
