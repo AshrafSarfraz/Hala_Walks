@@ -1022,7 +1022,8 @@ const MapScreen = () => {
 
   useFocusEffect(
     useCallback(() => {
-      didFitRef.current = false;
+      // Sirf pehli baar fit karo, marker select/deselect pe nahi
+      if (didFitRef.current) return; // ← YEH ADD KARO
       const timer = setTimeout(() => {
         if (mapRef.current && allMarkers.length > 0) {
           fitMapToContent();
@@ -1035,18 +1036,20 @@ const MapScreen = () => {
 
   useEffect(() => {
     if (!markersLoaded || allMarkers.length === 0 || !mapReady) return;
+    if (didFitRef.current) return; // ← YEH ADD KARO
+    
     const venues = allMarkers.filter(m => m.type === 'venue');
     const nearUser = !!location && isNearAnyVenue(location, venues);
-    const nextRegion =
-      nearUser && location
-        ? {
-            latitude: location.latitude,
-            longitude: location.longitude,
-            latitudeDelta: 0.08,
-            longitudeDelta: 0.08,
-          }
-        : regionFromVenues(venues);
+    const nextRegion = nearUser && location
+      ? {
+          latitude: location.latitude,
+          longitude: location.longitude,
+          latitudeDelta: 0.08,
+          longitudeDelta: 0.08,
+        }
+      : regionFromVenues(venues);
     mapRef.current?.animateToRegion(nextRegion, 700);
+    didFitRef.current = true; // ← YEH ADD KARO
   }, [allMarkers, location, mapReady, markersLoaded]);
 
   const onRegionChangeComplete = useCallback((region: Region) => {
