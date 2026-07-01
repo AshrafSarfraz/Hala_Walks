@@ -859,7 +859,7 @@ const TimelineScreen: React.FC = () => {
                       <FlatList
                         data={nearbyPlaces}
                         keyExtractor={item => item.placeId}
-                        scrollEnabled={false}
+                        scrollEnabled={true}
                         renderItem={({item}) => {
                           const isActive =
                             selectedPlace?.placeId === item.placeId;
@@ -879,7 +879,7 @@ const TimelineScreen: React.FC = () => {
                                       : 'location-outline'
                                   }
                                   size={15}
-                                  color={isActive ? Colors.btnRed : WHITE_60}
+                                  color={isActive ? Colors.White :'#000'}
                                 />
                               </View>
                               <View style={styles.suggestionRight}>
@@ -892,7 +892,7 @@ const TimelineScreen: React.FC = () => {
                                 </Text>
                                 {!!item.vicinity && (
                                   <Text
-                                    style={styles.suggestionVicinity}
+                                    style={[styles.suggestionVicinity, isActive && styles.suggestionVicinityActive,]}
                                     numberOfLines={1}>
                                     {item.vicinity}
                                   </Text>
@@ -1116,18 +1116,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   searchInput: {
-    height: 45,
+    height: 40,
     borderWidth: 1,
     borderColor: Colors.darkgrey,
     borderRadius: 6,
     paddingHorizontal: 14,
     paddingRight: 36,
     color: Colors.dargBg,
+    alignItems:'center',
+    justifyContent:'center',
   },
   searchClearBtn: {
     position: 'absolute',
     right: 10,
-    height: 45,
+    height: 40,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -1140,6 +1142,7 @@ const styles = StyleSheet.create({
     borderColor: WHITE_10,
     overflow: 'hidden',
     backgroundColor: Colors.cardBg,
+    maxHeight: 220,
   },
   suggestionLoader: {
     flexDirection: 'row',
@@ -1167,8 +1170,9 @@ const styles = StyleSheet.create({
   suggestionLeft: {width: 20, alignItems: 'center'},
   suggestionRight: {flex: 1},
   suggestionName: {fontSize: 14, fontWeight: '600', color: Colors.grey},
-  suggestionNameActive: {color: Colors.Red},
+  suggestionNameActive: {color: Colors.White},
   suggestionVicinity: {fontSize: 12, color: Colors.grey, marginTop: 2},
+  suggestionVicinityActive:{color: Colors.White},
 
   // Caption
   input: {
@@ -1189,8 +1193,8 @@ const styles = StyleSheet.create({
   slotBadge: {
     fontSize: 11,
     fontWeight: '700',
-    color: Colors.btnRed,
-    backgroundColor: Colors.dargBg,
+    color: Colors.White,
+    backgroundColor: Colors.Red,
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 6,

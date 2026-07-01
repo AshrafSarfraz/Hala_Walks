@@ -44,20 +44,20 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>We need access to your camera to take photos</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>We use your location to show nearby discounts and company-approved offers when you are using the app.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>We need access to your location at all times to notify about nearby venues even when the app is in background.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>We need access to your location at all times to notify about nearby venues.</string>
-	<key>TSLocationManagerLicense</key>
-	<string>eyJhbGciOiJFZERTQSIsImtpZCI6ImVkMjU1MTktbWFpbi12MSJ9.eyJvcyI6ImlvcyIsImFwcF9pZCI6ImNvbS5oYWxhYnNhdWRpYXBwcmVhY3RuYXRpdmV2ZXJzaW9uIiwib3JkZXJfbnVtYmVyIjoxNTU3NywicmVuZXdhbF91cmwiOiJodHRwczovL3Nob3AudHJhbnNpc3RvcnNvZnQuY29tL2NhcnQvMTY1MDc4NjE1MDU6MT9ub3RlPTEwMzU2IiwiY3VzdG9tZXJfaWQiOjk0MjgsInByb2R1Y3QiOiJyZWFjdC1uYXRpdmUtYmFja2dyb3VuZC1nZW9sb2NhdGlvbiIsImtleV92ZXJzaW9uIjoxLCJhbGxvd2VkX3N1ZmZpeGVzIjpbIi5kZXYiLCIuZGV2ZWxvcG1lbnQiLCIuc3RhZ2luZyIsIi5zdGFnZSIsIi5xYSIsIi51YXQiLCIudGVzdCIsIi5kZWJ1ZyJdLCJtYXhfYnVpbGRfc3RhbXAiOjIwMjcwMzI2LCJncmFjZV9idWlsZHMiOjAsImVudGl0bGVtZW50cyI6WyJjb3JlIl0sImlhdCI6MTc3MjY5NTM1M30.Vyl0BaI-VANezUVWVtdmO2fPcbjlKCy0ULfNJUi2TrCPBrr-BJykiKLm-3LZNwa2gTdo1Kn9i44xvL1wDAbVAA</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>We use your location to show nearby discounts and company-approved offers when you are using the app.</string>
 	<key>NSMotionUsageDescription</key>
 	<string>We use motion detection to improve location accuracy and battery life.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>We need permission to save photos</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>We need access to your photo library</string>
+	<key>TSLocationManagerLicense</key>
+	<string>eyJhbGciOiJFZERTQSIsImtpZCI6ImVkMjU1MTktbWFpbi12MSJ9.eyJvcyI6ImlvcyIsImFwcF9pZCI6ImNvbS5oYWxhYnNhdWRpYXBwcmVhY3RuYXRpdmV2ZXJzaW9uIiwib3JkZXJfbnVtYmVyIjoxNTU3NywicmVuZXdhbF91cmwiOiJodHRwczovL3Nob3AudHJhbnNpc3RvcnNvZnQuY29tL2NhcnQvMTY1MDc4NjE1MDU6MT9ub3RlPTEwMzU2IiwiY3VzdG9tZXJfaWQiOjk0MjgsInByb2R1Y3QiOiJyZWFjdC1uYXRpdmUtYmFja2dyb3VuZC1nZW9sb2NhdGlvbiIsImtleV92ZXJzaW9uIjoxLCJhbGxvd2VkX3N1ZmZpeGVzIjpbIi5kZXYiLCIuZGV2ZWxvcG1lbnQiLCIuc3RhZ2luZyIsIi5zdGFnZSIsIi5xYSIsIi51YXQiLCIudGVzdCIsIi5kZWJ1ZyJdLCJtYXhfYnVpbGRfc3RhbXAiOjIwMjcwMzI2LCJncmFjZV9idWlsZHMiOjAsImVudGl0bGVtZW50cyI6WyJjb3JlIl0sImlhdCI6MTc3MjY5NTM1M30.Vyl0BaI-VANezUVWVtdmO2fPcbjlKCy0ULfNJUi2TrCPBrr-BJykiKLm-3LZNwa2gTdo1Kn9i44xvL1wDAbVAA</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>FilsonProBlack.otf</string>
@@ -91,8 +91,12 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
+		<string>UIInterfaceOrientationPortrait</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>

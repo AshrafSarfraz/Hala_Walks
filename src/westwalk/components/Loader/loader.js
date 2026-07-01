@@ -2,14 +2,7 @@ import React from 'react';
 import { Modal, View, StyleSheet, StatusBar } from 'react-native';
 import {
   BallIndicator,
-  BarIndicator,
-  DotIndicator,
-  MaterialIndicator,
-  PacmanIndicator,
-  PulseIndicator,
-  SkypeIndicator,
-  UIActivityIndicator,
-  WaveIndicator,
+  
 } from 'react-native-indicators';
 import { Colors } from '../../theme/Colors';
 

@@ -15,7 +15,8 @@ const devBaseUrl =
     : `http://${DEV_LAN_IP}:3000`;
 
 /** Map gallery routes (suggestions, check-in) — run local backend in dev. */
-export const BASE_URL ='http://10.182.97.140:3000';
+// export const BASE_URL ='http://10.182.97.140:3000';
+export const BASE_URL ='https://hala-b-saudi.onrender.com';
 
 /** Venues, brands, and other HBS data — always production (stable HTTPS). */
 export const HBS_API = 'https://hala-b-saudi.onrender.com';
