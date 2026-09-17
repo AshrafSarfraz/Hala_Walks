@@ -1,5 +1,9 @@
+import {BASE_URL} from '../../../config/api';
 
-export const API_BASE_URL = 'https://hala-b-saudi.onrender.com/api';
+// Authentication must use the same backend as chat/privacy. Otherwise a
+// production-issued token is sent to local MongoDB and the user cannot update
+// their privacy settings.
+export const API_BASE_URL = `${BASE_URL}/api`;
 
 export async function apiPost<T = any>(
   path: string,

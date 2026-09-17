@@ -229,7 +229,7 @@ function SwipeableMessage({children, onSwipeReply, disabled}: SwipeableProps) {
 
 // ─── Main Screen ──────────────────────────────────────────────────────────────
 export default function ChatScreen({route, navigation}: any) {
- useStatusBar('light-content', Colors.Green, true);
+ useStatusBar('light-content', Colors.darkgrey, true);
   const language = useSelector((state: RootState) => state.language.language);
   const t = languageData[language];
   const isRTL = language === 'ar';
@@ -536,6 +536,12 @@ export default function ChatScreen({route, navigation}: any) {
     };
     const onStatus = (data: any) => {
       setSending(false);
+      if (data.status === 'failed' && data.reason === 'message_not_allowed') {
+        Alert.alert('Message unavailable', 'You no longer have permission to message this account.');
+      }
+      if (data.status === 'failed' && data.reason === 'blocked') {
+        Alert.alert('Message unavailable', 'You cannot message this account.');
+      }
       setMessages(prev =>
         prev.map(m => {
           if (m.tempId !== data.tempId) return m;
@@ -3165,4 +3171,3 @@ const styles = StyleSheet.create({
 //   },
 //   blockedText: {color: '#6B7280', fontSize: 14},
 // });
-

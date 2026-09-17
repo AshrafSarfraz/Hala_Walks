@@ -23,8 +23,7 @@ import {disconnectSocket} from '../../chat/socket';
 import {unregisterFCMToken} from '../../chat/registerFCMToken';
 import {getStyles} from './style';
 import { useStatusBar } from '../../Component/UseStatusBar/useStatusBar';
-
-const BASE_URL = 'https://hala-b-saudi.onrender.com';
+import {BASE_URL} from '../../../config/api';
 
 const Profile: React.FC = () => {
   const navigation = useNavigation<any>();
@@ -34,6 +33,10 @@ const Profile: React.FC = () => {
   const [showOnlineStatus, setShowOnlineStatus] = useState(true);
   const [lastSeenLoading, setLastSeenLoading] = useState(false);
   const [onlineLoading, setOnlineLoading] = useState(false);
+  const [isPrivate, setIsPrivate] = useState(false);
+  const [messagePermission, setMessagePermission] = useState('followers');
+  const [privacySaving, setPrivacySaving] = useState(false);
+  const [messagePickerOpen, setMessagePickerOpen] = useState(false);
   const [userName, setUserName] = useState('');
   const [userPhone, setUserPhone] = useState('');
   const [userAvatar, setUserAvatar] = useState<string | null>(null);
@@ -69,6 +72,8 @@ const Profile: React.FC = () => {
             const data = await res.json();
             setShowLastSeen(!data.hideLastSeen);
             setShowOnlineStatus(!data.hideOnlineStatus);
+            setIsPrivate(!!data.isPrivate);
+            setMessagePermission(data.messagePermission || 'followers');
           }
         } catch {
           const ls = await AsyncStorage.getItem('hala_show_last_seen');
@@ -117,6 +122,31 @@ const Profile: React.FC = () => {
     } finally {
       if (key === 'hideLastSeen') setLastSeenLoading(false);
       else setOnlineLoading(false);
+    }
+  };
+
+  const updateAccountPrivacy = async (changes: Record<string, any>) => {
+    setPrivacySaving(true);
+    try {
+      const token = await getToken();
+      const res = await fetch(`${BASE_URL}/api/users/privacy`, {
+        method: 'PUT', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`},
+        body: JSON.stringify(changes),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body?.error || body?.message || `Server returned ${res.status}`);
+      }
+      const data = await res.json();
+      setIsPrivate(!!data.isPrivate);
+      setMessagePermission(data.messagePermission || 'followers');
+    } catch (error: any) {
+      const message = error?.message === 'Network request failed'
+        ? 'Cannot reach the backend. Start it on port 3000 and keep this phone on the same Wi-Fi.'
+        : error?.message || 'Could not save privacy settings.';
+      Alert.alert('Privacy not saved', message);
+    } finally {
+      setPrivacySaving(false);
     }
   };
 
@@ -246,6 +276,24 @@ const Profile: React.FC = () => {
             <Text style={s.menuLabel}>{t.blocked_accounts || 'Blocked Users'}</Text>
             <Text style={s.rightLabel}>{language === 'ar' ? 'إدارة' : 'Manage'}</Text>
           </TouchableOpacity>
+          <View style={s.divider} />
+          <TouchableOpacity style={s.menuRow} activeOpacity={0.6} onPress={() => navigation.navigate('SocialConnections', {mode: 'followers'})}>
+            <View style={s.iconBubble}><Ionicons name="people-outline" size={18} color={Colors.btnRed} /></View>
+            <Text style={s.menuLabel}>Followers</Text>
+            <Ionicons name="chevron-forward" size={15} color="#C7C7CC" />
+          </TouchableOpacity>
+          <View style={s.divider} />
+          <TouchableOpacity style={s.menuRow} activeOpacity={0.6} onPress={() => navigation.navigate('SocialConnections', {mode: 'following'})}>
+            <View style={s.iconBubble}><Ionicons name="person-add-outline" size={18} color={Colors.btnRed} /></View>
+            <Text style={s.menuLabel}>Following</Text>
+            <Ionicons name="chevron-forward" size={15} color="#C7C7CC" />
+          </TouchableOpacity>
+          <View style={s.divider} />
+          <TouchableOpacity style={s.menuRow} activeOpacity={0.6} onPress={() => navigation.navigate('SocialConnections', {mode: 'requests'})}>
+            <View style={s.iconBubble}><Ionicons name="person-add-outline" size={18} color={Colors.btnRed} /></View>
+            <Text style={s.menuLabel}>Follow requests</Text>
+            <Ionicons name="chevron-forward" size={15} color="#C7C7CC" />
+          </TouchableOpacity>
         </View>
 
         {/* Privacy */}
@@ -274,6 +322,27 @@ const Profile: React.FC = () => {
               />
             )}
           </View>
+          <View style={s.divider} />
+          <View style={s.switchRow}>
+            <View style={s.iconBubble}><Ionicons name="lock-closed-outline" size={18} color={Colors.btnRed} /></View>
+            <View style={{flex: 1}}>
+              <Text style={s.switchLabel}>Private account</Text>
+              <Text style={s.switchSub}>Approve follow requests before people can follow you</Text>
+            </View>
+            {privacySaving ? <ActivityIndicator size="small" color={Colors.Red} /> : (
+              <Switch value={isPrivate} onValueChange={value => updateAccountPrivacy({isPrivate: value})}
+                trackColor={{false: '#DDD', true: Colors.Red}} thumbColor="#fff" />
+            )}
+          </View>
+          <View style={s.divider} />
+          <TouchableOpacity style={s.menuRow} activeOpacity={0.6} onPress={() => setMessagePickerOpen(true)}>
+            <View style={s.iconBubble}><Ionicons name="chatbubble-ellipses-outline" size={18} color={Colors.btnRed} /></View>
+            <View style={{flex: 1}}>
+              <Text style={s.menuLabel}>Who can message you</Text>
+              <Text style={s.switchSub}>{messagePermission === 'everyone' ? 'Everyone' : messagePermission === 'followers' ? 'Followers' : messagePermission === 'following' ? 'People you follow' : messagePermission === 'mutual' ? 'Mutual follows' : 'Nobody'}</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={15} color="#C7C7CC" />
+          </TouchableOpacity>
           <View style={s.divider} />
           <View style={s.switchRow}>
             <View style={s.iconBubble}>
@@ -331,6 +400,24 @@ const Profile: React.FC = () => {
         <Text style={s.version}>Hala B Khaleeji v1.0</Text>
       </ScrollView>
 
+      <Modal visible={messagePickerOpen} transparent animationType="fade" onRequestClose={() => setMessagePickerOpen(false)}>
+        <View style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', justifyContent: 'flex-end'}}>
+          <View style={{backgroundColor: '#fff', borderTopLeftRadius: 22, borderTopRightRadius: 22, padding: 20, paddingBottom: 36}}>
+            <Text style={{fontSize: 18, fontWeight: '800', color: '#172033', marginBottom: 6}}>Who can message you?</Text>
+            <Text style={{fontSize: 13, color: '#6B7280', marginBottom: 14}}>This rule is applied whenever someone starts or sends a chat.</Text>
+            {[
+              ['everyone', 'Everyone'], ['followers', 'Followers'], ['following', 'People you follow'], ['mutual', 'Mutual follows'], ['nobody', 'Nobody'],
+            ].map(([value, label]) => (
+              <TouchableOpacity key={value} onPress={async () => { setMessagePickerOpen(false); await updateAccountPrivacy({messagePermission: value}); }}
+                style={{minHeight: 48, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: '#F0F1F3'}}>
+                <Text style={{fontSize: 16, color: '#172033'}}>{label}</Text>
+                {messagePermission === value && <Ionicons name="checkmark-circle" size={21} color={Colors.btnRed} />}
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      </Modal>
+
       {/* Full image viewer */}
       <Modal
         visible={showFullImage}
@@ -382,4 +469,3 @@ const Profile: React.FC = () => {
 };
 
 export default Profile;
-

@@ -1,10 +1,14 @@
-import { AppRegistry } from 'react-native';
+import {AppRegistry} from 'react-native';
 import App from './App';
-import { name as appName } from './app.json';
+import {name as appName} from './app.json';
 import BackgroundGeolocation from 'react-native-background-geolocation';
-import notifee, { AndroidImportance, EventType } from '@notifee/react-native';
+import notifee, {AndroidImportance, EventType} from '@notifee/react-native';
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  getCachedMessages,
+  setCachedMessages,
+} from './src/halabsaudi/chat/chatStorage';
 
 import {
   PENDING_VENUE_KEY,
@@ -18,36 +22,44 @@ const CHAT_CHANNEL_ID = 'chat_messages';
 // ─── Channels ─────────────────────────────────────────────────────────────────
 async function createChannels() {
   await notifee.createChannel({
-    id: CHAT_CHANNEL_ID, name: 'Chat Messages',
-    importance: AndroidImportance.HIGH, vibration: true, sound: 'default',
+    id: CHAT_CHANNEL_ID,
+    name: 'Chat Messages',
+    importance: AndroidImportance.HIGH,
+    vibration: true,
+    sound: 'default',
   });
   await notifee.createChannel({
-    id: CHANNEL_ID, name: 'Venue Alerts',
-    importance: AndroidImportance.HIGH, vibration: true, sound: 'default',
+    id: CHANNEL_ID,
+    name: 'Venue Alerts',
+    importance: AndroidImportance.HIGH,
+    vibration: true,
+    sound: 'default',
   });
 }
 
 // ─── Distance ─────────────────────────────────────────────────────────────────
 function getDistance(
-  lat1: number, lon1: number,
-  lat2: number, lon2: number,
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number,
 ): number {
-  const R    = 6371000;
+  const R = 6371000;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
   const dLon = ((lon2 - lon1) * Math.PI) / 180;
   const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.cos((lat1 * Math.PI) / 180) *
-    Math.cos((lat2 * Math.PI) / 180) *
-    Math.sin(dLon / 2) *
-    Math.sin(dLon / 2);
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
   return 6371000 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
 // ─── Cooldown helpers (same logic as venueTracker) ────────────────────────────
 async function canNotify(id: string): Promise<boolean> {
   try {
-    const raw  = await AsyncStorage.getItem(COOLDOWN_STORE);
+    const raw = await AsyncStorage.getItem(COOLDOWN_STORE);
     const data = raw ? JSON.parse(raw) : {};
     return data[id] !== new Date().toDateString();
   } catch {
@@ -59,14 +71,16 @@ async function markNotified(id: string): Promise<void> {
   try {
     const raw = await AsyncStorage.getItem(COOLDOWN_STORE);
     let data: Record<string, string> = {};
-    try { if (raw) data = JSON.parse(raw); } catch {}
+    try {
+      if (raw) data = JSON.parse(raw);
+    } catch {}
     data[id] = new Date().toDateString();
     await AsyncStorage.setItem(COOLDOWN_STORE, JSON.stringify(data));
   } catch {}
 }
 
 // ─── Notifee background press ─────────────────────────────────────────────────
-notifee.onBackgroundEvent(async ({ type, detail }) => {
+notifee.onBackgroundEvent(async ({type, detail}) => {
   if (type === EventType.PRESS) {
     const venueId = detail?.notification?.data?.venueId;
     if (venueId) await AsyncStorage.setItem(PENDING_VENUE_KEY, String(venueId));
@@ -74,27 +88,76 @@ notifee.onBackgroundEvent(async ({ type, detail }) => {
 });
 
 // ─── FCM background + killed state ────────────────────────────────────────────
+// messaging().setBackgroundMessageHandler(async remoteMessage => {
+//   try {
+//     await createChannels();
+//     const { chatId, senderId } = remoteMessage?.data || {};
+//     if (!chatId) return;
+
+//     await notifee.displayNotification({
+//       title: remoteMessage?.notification?.title || 'New Message',
+//       body:  remoteMessage?.notification?.body  || 'You have a new message',
+//       data:  { chatId: String(chatId), senderId: String(senderId || '') },
+//       android: {
+//         channelId:     CHAT_CHANNEL_ID,
+//         importance:    AndroidImportance.HIGH,
+//         pressAction:   { id: 'default' },
+//         showTimestamp: true,
+//         sound:         'default',
+//       },
+//       ios: {
+//         sound: 'default',
+//         foregroundPresentationOptions: {
+//           alert: true, badge: true, sound: true, banner: true,
+//         },
+//       },
+//     });
+//   } catch (e) {
+//     console.log('[FCM] Background handler error:', e);
+//   }
+// });
+
+// ─── YE KARNA HAI ───
 messaging().setBackgroundMessageHandler(async remoteMessage => {
   try {
     await createChannels();
-    const { chatId, senderId } = remoteMessage?.data || {};
+    const {chatId, senderId, message} = remoteMessage?.data || {};
     if (!chatId) return;
+
+    // ✅ NAYA: message ko local cache mein save karo, taake jab user
+    // chat screen kholay, message pehle se wahan mojood ho — socket
+    // reconnect hone ka intezar kiye bagair.
+    if (message) {
+      try {
+        const parsed = JSON.parse(message);
+        const existing = getCachedMessages(chatId) || [];
+        const already = existing.some(m => m._id === parsed._id);
+        if (!already) {
+          setCachedMessages(chatId, [parsed, ...existing]);
+        }
+      } catch (e) {
+        console.log('[FCM] Could not cache message:', e);
+      }
+    }
 
     await notifee.displayNotification({
       title: remoteMessage?.notification?.title || 'New Message',
-      body:  remoteMessage?.notification?.body  || 'You have a new message',
-      data:  { chatId: String(chatId), senderId: String(senderId || '') },
+      body: remoteMessage?.notification?.body || 'You have a new message',
+      data: {chatId: String(chatId), senderId: String(senderId || '')},
       android: {
-        channelId:     CHAT_CHANNEL_ID,
-        importance:    AndroidImportance.HIGH,
-        pressAction:   { id: 'default' },
+        channelId: CHAT_CHANNEL_ID,
+        importance: AndroidImportance.HIGH,
+        pressAction: {id: 'default'},
         showTimestamp: true,
-        sound:         'default',
+        sound: 'default',
       },
       ios: {
         sound: 'default',
         foregroundPresentationOptions: {
-          alert: true, badge: true, sound: true, banner: true,
+          alert: true,
+          badge: true,
+          sound: true,
+          banner: true,
         },
       },
     });
@@ -103,17 +166,15 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
   }
 });
 
-
 // ─── BackgroundGeolocation Headless Task ──────────────────────────────────────
 // App killed state mein location + geofence events yahan handle hote hain
 BackgroundGeolocation.registerHeadlessTask(async (event: any) => {
-
   // ✅ GEOFENCE EVENT — app killed ho, venue radius mein ghuse → fire
   if (event.name === 'geofence') {
     const geofence = event.params;
     if (geofence?.action !== 'ENTER') return;
 
-    const id   = geofence.identifier;
+    const id = geofence.identifier;
     const name = geofence.extras?.name || 'a nearby venue';
 
     console.log(`[Headless] GEOFENCE ENTER: ${name}`);
@@ -129,13 +190,13 @@ BackgroundGeolocation.registerHeadlessTask(async (event: any) => {
     await markNotified(id);
     await notifee.displayNotification({
       title: '🎉 Hala B Saudi',
-      body:  `You're near ${name}! Check exclusive offers now.`,
-      data:  { venueId: id },
+      body: `You're near ${name}! Check exclusive offers now.`,
+      data: {venueId: id},
       android: {
-        channelId:     CHANNEL_ID,
-        importance:    AndroidImportance.HIGH,
-        pressAction:   { id: 'default' },
-        smallIcon:     'ic_notification',
+        channelId: CHANNEL_ID,
+        importance: AndroidImportance.HIGH,
+        pressAction: {id: 'default'},
+        smallIcon: 'ic_notification',
         showTimestamp: true,
       },
     });
@@ -150,17 +211,18 @@ BackgroundGeolocation.registerHeadlessTask(async (event: any) => {
     if (!lat || !lon) return;
 
     try {
-      const raw    = await AsyncStorage.getItem('hbs_venues_v1');
+      const raw = await AsyncStorage.getItem('hbs_venues_v1');
       const venues = raw ? JSON.parse(raw) : [];
       if (!Array.isArray(venues) || venues.length === 0) return;
 
       for (const v of venues) {
         const vLat = Number(v?.latitude);
         const vLon = Number(v?.longitude);
-        const id   = String(v?._id || v?.id || '');
+        const id = String(v?._id || v?.id || '');
         const name = v?.venueName || v?.name || 'a nearby venue';
 
-        if (!id || isNaN(vLat) || isNaN(vLon) || vLat === 0 || vLon === 0) continue;
+        if (!id || isNaN(vLat) || isNaN(vLon) || vLat === 0 || vLon === 0)
+          continue;
 
         const dist = getDistance(lat, lon, vLat, vLon);
         if (dist > RADIUS_METERS) continue;
@@ -176,13 +238,13 @@ BackgroundGeolocation.registerHeadlessTask(async (event: any) => {
         await markNotified(id);
         await notifee.displayNotification({
           title: '🎉 Hala B Saudi',
-          body:  `You're near ${name}! Check exclusive offers now.`,
-          data:  { venueId: id },
+          body: `You're near ${name}! Check exclusive offers now.`,
+          data: {venueId: id},
           android: {
-            channelId:     CHANNEL_ID,
-            importance:    AndroidImportance.HIGH,
-            pressAction:   { id: 'default' },
-            smallIcon:     'ic_notification',
+            channelId: CHANNEL_ID,
+            importance: AndroidImportance.HIGH,
+            pressAction: {id: 'default'},
+            smallIcon: 'ic_notification',
             showTimestamp: true,
           },
         });
@@ -194,14 +256,7 @@ BackgroundGeolocation.registerHeadlessTask(async (event: any) => {
   }
 });
 
-
-
 AppRegistry.registerComponent(appName, () => App);
-
-
-
-
-
 
 // // index.js
 // import { AppRegistry } from 'react-native';
@@ -366,11 +421,9 @@ AppRegistry.registerComponent(appName, () => App);
 
 // AppRegistry.registerComponent(appName, () => App);
 
-
 // index.js
 // ✅ FIXES:
 //   1. RADIUS_METERS venueTracker se import — everywhere same 500m
 //   2. markNotified PEHLE, showNotification BAAD (race condition fix)
 //   3. COOLDOWN_STORE same key — geofence + headless + periodic sab share karte hain
 //   4. Geofencing headless event bhi handle karta hai (ENTER on killed state)
-

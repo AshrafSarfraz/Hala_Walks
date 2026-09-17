@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useCallback, useRef} from 'react';
 import {
   View, Text, FlatList, TouchableOpacity, StyleSheet,
-  TextInput, ActivityIndicator, Platform,  Image,
+  TextInput, ActivityIndicator, Platform, Image, Alert,
 } from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -15,7 +15,12 @@ import {languageData} from '../redux_toolkit/language/languageSlice';
 import {RootState} from '../redux_toolkit/store';
 import { useStatusBar } from '../Component/UseStatusBar/useStatusBar';
 
-type User = {_id: string; name: string; avatar?: string | null; isOnline?: boolean};
+type FollowStatus = 'none' | 'pending' | 'accepted';
+type User = {
+  _id: string; name: string; avatar?: string | null; isOnline?: boolean;
+  privacySettings?: {isPrivate?: boolean};
+  relationship?: {followingStatus: FollowStatus; followedByStatus: FollowStatus};
+};
 
 type RootStackParamList = {
   ChatScreen: {
@@ -52,6 +57,7 @@ export default function StartChatScreen({navigation}: Props) {
   const [loading,        setLoading]        = useState(!_memLoaded);
   const [search,         setSearch]         = useState('');
   const [navigatingId,   setNavigatingId]   = useState<string | null>(null);
+  const [followLoadingId, setFollowLoadingId] = useState<string | null>(null);
 
   const tokenRef     = useRef('');
   const cancelledRef = useRef(false);
@@ -100,7 +106,7 @@ export default function StartChatScreen({navigation}: Props) {
           axios.get(`${BASE_URL}/api/users`, {
             headers: {Authorization: `Bearer ${token}`}, timeout: 15000,
           }),
-          axios.get(`${BASE_URL}/api/chat/blocked-list`, {
+          axios.get(`${BASE_URL}/api/block/blocked-list`, {
             headers: {Authorization: `Bearer ${token}`}, timeout: 15000,
           }),
         ]);
@@ -156,7 +162,18 @@ export default function StartChatScreen({navigation}: Props) {
           });
         }
         return;
-      } catch {
+      } catch (error: any) {
+        // A privacy rejection is authoritative: never create an offline/local chat
+        // after the server says this account does not accept messages.
+        if (error?.response?.status === 403) {
+          Alert.alert(
+            'Message unavailable',
+            user.relationship?.followingStatus === 'pending'
+              ? 'Your follow request is waiting for approval.'
+              : 'Follow this account first. They control who can send them messages.',
+          );
+          return;
+        }
         // API failed or slow — continue offline
       }
 
@@ -209,6 +226,33 @@ export default function StartChatScreen({navigation}: Props) {
     }
   }, [navigation, navigatingId]);
 
+  const toggleFollow = useCallback(async (user: User) => {
+    if (followLoadingId) return;
+    setFollowLoadingId(user._id);
+    const currentlyFollowing = user.relationship?.followingStatus;
+    try {
+      const token = tokenRef.current || (await AsyncStorage.getItem('hala_token')) || '';
+      if (currentlyFollowing === 'accepted' || currentlyFollowing === 'pending') {
+        await axios.delete(`${BASE_URL}/api/users/follow/${user._id}`, {
+          headers: {Authorization: `Bearer ${token}`}, timeout: 10000,
+        });
+        setUsers(prev => prev.map(item => item._id === user._id
+          ? {...item, relationship: {...item.relationship, followingStatus: 'none'} as any} : item));
+      } else {
+        const res = await axios.post(`${BASE_URL}/api/users/follow/${user._id}`, {}, {
+          headers: {Authorization: `Bearer ${token}`}, timeout: 10000,
+        });
+        const status: FollowStatus = res.data?.status === 'pending' ? 'pending' : 'accepted';
+        setUsers(prev => prev.map(item => item._id === user._id
+          ? {...item, relationship: {...item.relationship, followingStatus: status} as any} : item));
+      }
+    } catch {
+      Alert.alert('Error', 'Could not update follow status. Please try again.');
+    } finally {
+      setFollowLoadingId(null);
+    }
+  }, [followLoadingId]);
+
   const filteredUsers = users.filter(
     u => !blockedUserIds.includes(String(u._id)) &&
          u.name.toLowerCase().includes(search.toLowerCase()),
@@ -250,6 +294,9 @@ export default function StartChatScreen({navigation}: Props) {
     }
     const avatarBg    = getAvatarColor(item._id);
     const isNavigating = navigatingId === item._id;
+    const followingStatus = item.relationship?.followingStatus || 'none';
+    const followLabel = followingStatus === 'accepted' ? 'Following'
+      : followingStatus === 'pending' ? 'Requested' : 'Follow';
 
     return (
       <TouchableOpacity
@@ -268,8 +315,21 @@ export default function StartChatScreen({navigation}: Props) {
         </View>
 
         <View style={[styles.rowInfo, {alignItems: isRTL ? 'flex-end' : 'flex-start'}]}>
-          <Text style={[styles.rowName, {textAlign: isRTL ? 'right' : 'left'}]}>{item.name}</Text>
+          <View style={[styles.nameLine, {flexDirection: rowDir}]}>
+            <Text style={[styles.rowName, {textAlign: isRTL ? 'right' : 'left'}]}>{item.name}</Text>
+            {item.privacySettings?.isPrivate && <Ionicons name="lock-closed" size={12} color={Colors.Grey9} />}
+          </View>
         </View>
+
+        <TouchableOpacity
+          style={[styles.followChip, followingStatus !== 'none' && styles.followingChip]}
+          onPress={() => toggleFollow(item)}
+          disabled={followLoadingId === item._id}
+          activeOpacity={0.75}>
+          {followLoadingId === item._id
+            ? <ActivityIndicator size="small" color={Colors.btnRed} />
+            : <Text style={styles.followChipText}>{followLabel}</Text>}
+        </TouchableOpacity>
 
         <View style={[styles.msgChip, {flexDirection: rowDir, minWidth: 84, justifyContent: 'center'}]}>
           {isNavigating
@@ -356,7 +416,11 @@ const styles = StyleSheet.create({
   avatarLetter: {color: Colors.White, fontSize: 19, fontWeight: '800'},
   onlineDot:    {width: 12, height: 12, borderRadius: 6, backgroundColor: Colors.btnRed, position: 'absolute', bottom: 0, right: 0, borderWidth: 2, borderColor: Colors.White},
   rowInfo:      {flex: 1},
+  nameLine:     {alignItems: 'center', gap: 5},
   rowName:      {fontSize: 15, fontWeight: '700', color: Colors.Black2},
+  followChip:   {minWidth: 72, alignItems: 'center', backgroundColor: Colors.btnRed, borderRadius: 18, paddingHorizontal: 9, paddingVertical: 7, marginRight: 8},
+  followingChip:{backgroundColor: '#F3F4F6', borderWidth: 1, borderColor: '#D1D5DB'},
+  followChipText:{color: Colors.White, fontSize: 11, fontWeight: '700'},
   msgChip:      {alignItems: 'center', backgroundColor: '#E6F2EC', borderRadius: 20, paddingHorizontal: 12, paddingVertical: 7, borderWidth: 1, borderColor: Colors.btnRed},
   msgChipText:  {color: Colors.btnRed, fontSize: 12, fontWeight: '700'},
   emptyWrap:    {flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 40, gap: 10, marginTop: 80},

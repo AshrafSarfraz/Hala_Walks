@@ -30,11 +30,13 @@ import UserProfileScreen from '../../chat/UserProfileScreen';
 import EditAccountScreen from '../../Screen/UserAccount/EditAccount';
 import AllMediaScreen from '../../chat/AllMediaScreen';
 import ImagePreviewScreen from '../../chat/components/ImagePreviewScreen';
+import SocialConnectionsScreen from '../../chat/SocialConnectionsScreen';
 
 import MapProfile from '../../Map/profileScreen';
 import MapCaptureScreen from '../../Map/capture';
 import Wishlist from '../../Screen/Wishlist';
 import TimelineScreen from '../../Screen/Timeline';
+import BrandDetailScreen from '../../Map/BrandDetailScreen';
 
 
 
@@ -113,6 +115,7 @@ const HalaStack: React.FC = () => {
       <Stack.Screen name="ChatScreen" component={ChatScreen} />
       <Stack.Screen name="BlockedUsers" component={BlockedUsers} />
       <Stack.Screen name="UserProfile" component={UserProfileScreen} />
+      <Stack.Screen name="SocialConnections" component={SocialConnectionsScreen} />
       <Stack.Screen name="AllMediaScreen" component={AllMediaScreen} />
       <Stack.Screen
         name="ImagePreview"
@@ -131,6 +134,7 @@ const HalaStack: React.FC = () => {
       {/* ── Map ── */}
       <Stack.Screen name="MapProfile" component={MapProfile} />
       <Stack.Screen name="CaptureScreen" component={MapCaptureScreen} />
+      <Stack.Screen name="BrandDetail" component={BrandDetailScreen} />
     </Stack.Navigator>
   );
 };

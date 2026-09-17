@@ -18,6 +18,7 @@ import {BASE_URL} from '../../config/api';
 import CustomHeader from '../Component/CustomHeader/CustomHeader';
 import {useNavigation} from '@react-navigation/native';
 import {Colors} from '../Themes/Colors';
+import ActivityIndicatorModal from  '../Component/Loader/ActivityIndicator';
 
 // ── Theme tokens (mirrors Profile screen) ──────────────────────────────────
 const C = {
@@ -139,7 +140,8 @@ const MapProfile = () => {
     if (loading) {
       return (
         <View style={styles.emptyWrap}>
-          <ActivityIndicator size="large" color={C.red} />
+          {/* <ActivityIndicator size="large" color={C.red} /> */}
+          <ActivityIndicatorModal visible={loading} />
         </View>
       );
     }

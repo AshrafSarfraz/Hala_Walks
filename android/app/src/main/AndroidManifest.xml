@@ -26,6 +26,7 @@
     
    
       android:allowBackup="false"
+      android:usesCleartextTraffic="true"
       android:theme="@style/AppTheme"
       android:supportsRtl="true">
 

@@ -83,7 +83,7 @@ export default function ChatSearchModal({ visible, onClose, data = [], onSelect 
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.Bg },
+  container: { flex: 1, backgroundColor: Colors.dargBg },
   header: { flexDirection: "row", alignItems: "center", padding: 10, borderBottomWidth: 1, borderColor: Colors.Grey4 },
   searchInput: { flex: 1, backgroundColor: Colors.White, borderRadius: 10, paddingHorizontal: 12, height: 40 },
   cancel: { marginLeft: 10, color: Colors.Green, fontWeight: "600" },

@@ -30,6 +30,7 @@ import {
   ensureLocationPermission,
   getDeviceLocation,
 } from '../utils/getDeviceLocation';
+import ActivityIndicatorModal from '../Component/Loader/ActivityIndicator';
 
 // ─── Exported types ───────────────────────────────────────────────────────────
 
@@ -835,34 +836,61 @@ const MapScreen = () => {
       }
 
       // ── Step 2: Your backend for locationId + suggestions ─────────────────
-      // Failures here do NOT reset the address we just set above.
-      try {
-        const [locRes, sugRes] = await Promise.all([
-          axios.post(`${BASE_URL}/api/hbs/map/location`, {
+      const [locResult, sugResult] = await Promise.allSettled([
+        axios.post(`${BASE_URL}/api/hbs/map/location`, {
+          lat: coords.latitude,
+          lng: coords.longitude,
+        }),
+        axios.get(`${BASE_URL}/api/hbs/map/suggestions`, {
+          params: {
             lat: coords.latitude,
             lng: coords.longitude,
-          }),
-          axios.get(`${BASE_URL}/api/hbs/map/suggestions`, {
-            params: {
-              lat: coords.latitude,
-              lng: coords.longitude,
-              radius: 2000,
-              limit: 10,
-            },
-          }),
-        ]);
+            radius: 2000,
+            limit: 10,
+          },
+        }),
+      ]);
 
-        const locData = locRes?.data?.data ?? locRes?.data;
-        // Only override the address if the backend returns something meaningful
+      // -- location id / name --
+      if (locResult.status === 'fulfilled') {
+        const locData = locResult.value?.data?.data ?? locResult.value?.data;
         if (locData?.name) setAddress(locData.name);
-        if (locData?._id) setLocationId(locData._id);
-
-        const sugData = sugRes?.data?.data;
-        if (Array.isArray(sugData)) setSuggestions(sugData);
-      } catch (err) {
-        console.log('[resolveLocationMeta] backend error:', err);
-        // Don't reset address here — Google already set it above
+        setLocationId(locData?._id ?? null);
+      } else {
+        console.log(
+          '[resolveLocationMeta] location error:',
+          (locResult.reason as any)?.response?.status,
+          (locResult.reason as any)?.response?.data ??
+            (locResult.reason as any)?.message,
+        );
         setLocationId(null);
+      }
+
+      // -- nearby suggestions --
+      if (sugResult.status === 'fulfilled') {
+        const raw = sugResult.value?.data;
+        const sugData: PlaceSuggestion[] | null =
+          (Array.isArray(raw?.data) && raw.data) ||
+          (Array.isArray(raw?.results) && raw.results) ||
+          (Array.isArray(raw) && raw) ||
+          null;
+
+        if (sugData) {
+          setSuggestions(sugData);
+        } else {
+          console.log(
+            '[resolveLocationMeta] suggestions: unexpected response shape:',
+            raw,
+          );
+          setSuggestions([]);
+        }
+      } else {
+        console.log(
+          '[resolveLocationMeta] suggestions error:',
+          (sugResult.reason as any)?.response?.status,
+          (sugResult.reason as any)?.response?.data ??
+            (sugResult.reason as any)?.message,
+        );
         setSuggestions([]);
       }
     },
@@ -947,7 +975,6 @@ const MapScreen = () => {
       const coord = event.nativeEvent.coordinate;
       if (!coord) return;
       const coords = {latitude: coord.latitude, longitude: coord.longitude};
-      // FIX: update location state so the banner and map center stay correct
       setLocation(coords);
       setLocationError(null);
       setLoading(false);
@@ -1022,8 +1049,7 @@ const MapScreen = () => {
 
   useFocusEffect(
     useCallback(() => {
-      // Sirf pehli baar fit karo, marker select/deselect pe nahi
-      if (didFitRef.current) return; // ← YEH ADD KARO
+      if (didFitRef.current) return;
       const timer = setTimeout(() => {
         if (mapRef.current && allMarkers.length > 0) {
           fitMapToContent();
@@ -1036,8 +1062,8 @@ const MapScreen = () => {
 
   useEffect(() => {
     if (!markersLoaded || allMarkers.length === 0 || !mapReady) return;
-    if (didFitRef.current) return; // ← YEH ADD KARO
-    
+    if (didFitRef.current) return;
+
     const venues = allMarkers.filter(m => m.type === 'venue');
     const nearUser = !!location && isNearAnyVenue(location, venues);
     const nextRegion = nearUser && location
@@ -1049,7 +1075,7 @@ const MapScreen = () => {
         }
       : regionFromVenues(venues);
     mapRef.current?.animateToRegion(nextRegion, 700);
-    didFitRef.current = true; // ← YEH ADD KARO
+    didFitRef.current = true;
   }, [allMarkers, location, mapReady, markersLoaded]);
 
   const onRegionChangeComplete = useCallback((region: Region) => {
@@ -1098,6 +1124,20 @@ const MapScreen = () => {
     });
   }, [saveUploadedImage]);
 
+  // NEW: open the full brand/venue detail screen (image slider + details + gallery)
+  const openBrandDetail = useCallback(
+    (marker: VenueMarker) => {
+      navigation.navigate('BrandDetail', {
+        id: marker._id,
+        type: marker.type,
+        name: marker.name,
+        address: marker.address,
+        image: uploadedImages[marker._id] ?? marker.image ?? null,
+      });
+    },
+    [navigation, uploadedImages],
+  );
+
   const showMarkers = markersLoaded && visibleMarkers.length > 0 && mapReady;
 
   return (
@@ -1106,7 +1146,6 @@ const MapScreen = () => {
         ref={mapRef}
         provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
         style={styles.map}
-        // FIX: always show the built-in blue dot once permission is granted
         showsUserLocation={hasLocationPermission}
         showsMyLocationButton={false}
         followsUserLocation={false}
@@ -1116,12 +1155,6 @@ const MapScreen = () => {
         onMapReady={() => setMapReady(true)}
         onUserLocationChange={onUserLocationChange}
         onRegionChangeComplete={onRegionChangeComplete}>
-        {/*
-         * FIX: only render a manual dot on Android as a supplement.
-         * On iOS the native showsUserLocation blue dot is sufficient.
-         * We still need the manual marker on Android because the native
-         * dot can sometimes lag behind when PROVIDER_GOOGLE is used.
-         */}
         {location && hasLocationPermission && Platform.OS === 'android' && (
           <Marker
             coordinate={location}
@@ -1148,15 +1181,8 @@ const MapScreen = () => {
           ))}
       </MapView>
 
-      {/* ── Loading overlay ── */}
-      {loading && (
-        <View style={styles.loadingOverlay}>
-          <ActivityIndicator size="large" color={Colors.btnRed} />
-          <Text style={styles.loadingText}>Getting your location…</Text>
-        </View>
-      )}
+      <ActivityIndicatorModal visible={loading} />
 
-      {/* ── Error banner ── */}
       {!loading && locationError && (
         <View style={styles.errorBanner}>
           <Text style={styles.errorText}>{locationError}</Text>
@@ -1166,7 +1192,6 @@ const MapScreen = () => {
         </View>
       )}
 
-      {/* ── Location search bar ── */}
       {!loading && !locationError && (
         <LocationSearchBar
           currentAddress={address}
@@ -1175,7 +1200,6 @@ const MapScreen = () => {
         />
       )}
 
-      {/* ── FABs ── */}
       <View style={styles.fabRow}>
         <TouchableOpacity
           style={styles.fab}
@@ -1193,23 +1217,67 @@ const MapScreen = () => {
         </TouchableOpacity>
       </View>
 
-      {/* ── Selected marker card ── */}
+      {/* ── Selected marker card → tap opens BrandDetailScreen ── */}
       {selectedMarker && (
-        <View style={styles.markerCard}>
-          <Text style={styles.markerName}>{selectedMarker.name}</Text>
-          {!!selectedMarker.address && (
-            <Text style={styles.markerAddress}>{selectedMarker.address}</Text>
-          )}
-          <TouchableOpacity onPress={() => setSelectedMarker(null)}>
-            <Text style={styles.markerClose}>Close</Text>
+        <TouchableOpacity
+          style={styles.markerCard}
+          activeOpacity={0.85}
+          onPress={() => openBrandDetail(selectedMarker)}>
+          <TouchableOpacity
+            style={styles.markerCloseBtn}
+            hitSlop={{top: 8, bottom: 8, left: 8, right: 8}}
+            onPress={e => {
+              e.stopPropagation();
+              setSelectedMarker(null);
+            }}>
+            <Ionicons name="close" size={16} color="#999" />
           </TouchableOpacity>
-        </View>
+
+          <View style={styles.markerCardRow}>
+            {uploadedImages[selectedMarker._id] || selectedMarker.image ? (
+              <Image
+                source={{
+                  uri:
+                    uploadedImages[selectedMarker._id] ??
+                    (selectedMarker.image as string),
+                }}
+                style={styles.markerCardImage}
+              />
+            ) : (
+              <View style={[styles.markerCardImage, styles.markerCardImageFallback]}>
+                <Ionicons
+                  name={selectedMarker.type === 'venue' ? 'business' : 'pricetag'}
+                  size={22}
+                  color={Colors.btnRed}
+                />
+              </View>
+            )}
+
+            <View style={styles.markerCardInfo}>
+              <Text style={styles.markerName} numberOfLines={1}>
+                {selectedMarker.name}
+              </Text>
+              {!!selectedMarker.address && (
+                <Text style={styles.markerAddress} numberOfLines={1}>
+                  {selectedMarker.address}
+                </Text>
+              )}
+              <Text style={styles.markerViewMore}>View details</Text>
+            </View>
+
+            <Ionicons name="chevron-forward" size={20} color="#ccc" />
+          </View>
+        </TouchableOpacity>
       )}
 
       {/*
        * BottomSheet has been REMOVED from MapScreen.
        * It now lives as a standalone modal screen registered in the navigator.
        * See bottomTabs.tsx — the Timeline screen is presented as a modal.
+       *
+       * NEW: BrandDetail is also a standalone screen (see BrandDetailScreen.tsx).
+       * Register it in your navigator, e.g.:
+       *   <Stack.Screen name="BrandDetail" component={BrandDetailScreen} />
        */}
     </View>
   );
@@ -1290,13 +1358,45 @@ const styles = StyleSheet.create({
     left: 16,
     right: 16,
     backgroundColor: '#fff',
-    borderRadius: 14,
-    padding: 16,
+    borderRadius: 16,
+    padding: 14,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.12,
     shadowRadius: 8,
     elevation: 6,
+  },
+  markerCloseBtn: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    zIndex: 2,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#F3F3F3',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  markerCardRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingRight: 20,
+  },
+  markerCardImage: {
+    width: 56,
+    height: 56,
+    borderRadius: 12,
+    backgroundColor: '#eee',
+  },
+  markerCardImageFallback: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#FFF3F3',
+  },
+  markerCardInfo: {
+    flex: 1,
   },
   markerName: {
     fontSize: 16,
@@ -1304,14 +1404,14 @@ const styles = StyleSheet.create({
     color: '#1A1A2E',
   },
   markerAddress: {
-    marginTop: 4,
+    marginTop: 3,
     fontSize: 13,
     color: '#666',
   },
-  markerClose: {
-    marginTop: 10,
-    fontSize: 13,
-    fontWeight: '600',
+  markerViewMore: {
+    marginTop: 6,
+    fontSize: 12,
+    fontWeight: '700',
     color: Colors.btnRed,
   },
   imagePin: {

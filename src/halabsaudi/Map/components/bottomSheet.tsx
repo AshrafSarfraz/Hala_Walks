@@ -9,8 +9,6 @@ import {
   TextInput,
   FlatList,
   Image,
-  Alert,
-  ActivityIndicator,
   Animated,
 } from 'react-native';
 import Modal from 'react-native-modal';
@@ -21,6 +19,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import type {PlaceSuggestion} from '../mapScreen';
 import {Colors} from '../../Themes/Colors';
+import ActivityIndicatorModal from '../../Component/Loader/ActivityIndicator';
+import {useCustomAlert} from './customAlert'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -341,6 +341,7 @@ const BottomSheet = ({
   const [renamingLocation, setRenamingLocation] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [locationMode, setLocationMode] = useState<LocationMode>('current');
+  const {alert, AlertComponent} = useCustomAlert();
 
   // Reset mode to 'current' when a new searched location arrives
   useEffect(() => {
@@ -386,7 +387,7 @@ const BottomSheet = ({
   const addPhoto = (asset: any) => {
     if (!asset?.uri) return;
     if (photos.length >= MAX_PHOTOS) {
-      Alert.alert('Limit reached', `Max ${MAX_PHOTOS} photos allowed.`);
+      alert('Limit reached', `Max ${MAX_PHOTOS} photos allowed.`);
       return;
     }
     setPhotos(prev => [...prev, makeEntry(asset.uri)]);
@@ -405,7 +406,7 @@ const BottomSheet = ({
 
   const handleToggleSuggestions = () => {
     if (!suggestions.length) {
-      Alert.alert('No nearby places', 'No suggestions found near you.');
+      alert('No nearby places', 'No suggestions found near you.');
       return;
     }
     setShowSuggestions(prev => !prev);
@@ -420,7 +421,7 @@ const BottomSheet = ({
       setRenamingLocation(true);
       const token = await AsyncStorage.getItem('hala_token');
       await axios.patch(
-        `${BASE_URL}/api/hbs/map/location/${locationId}/name`,
+        `${BASE_URL}/api/hbs/location/${locationId}/name`,
         {name: s.name},
         token ? {headers: {Authorization: `Bearer ${token}`}} : undefined,
       );
@@ -435,14 +436,14 @@ const BottomSheet = ({
 
   const handleCheckIn = async () => {
     if (!photos.length) {
-      Alert.alert('Missing photo', 'Please add at least one photo.');
+      alert('Missing photo', 'Please add at least one photo.');
       return;
     }
 
     const isRemote = locationMode === 'searched' && !!searchedLocation;
 
     if (!isRemote && !currentLocation) {
-      Alert.alert('Missing location', 'Unable to detect your location.');
+      alert('Missing location', 'Unable to detect your location.');
       return;
     }
 
@@ -476,7 +477,7 @@ const BottomSheet = ({
       }
 
       if (!targetId) {
-        Alert.alert('Location error', 'Unable to resolve location.');
+        alert('Location error', 'Unable to resolve location.');
         return;
       }
 
@@ -500,7 +501,7 @@ const BottomSheet = ({
 
       const failed = results.filter(r => !r.ok);
       if (failed.length) {
-        Alert.alert(
+        alert(
           'Upload error',
           `${failed.length} photo(s) failed. Remove them and try again.`,
         );
@@ -522,7 +523,7 @@ const BottomSheet = ({
         ),
       );
 
-      Alert.alert('Success', 'Check-in uploaded 🎉');
+      alert('Success', 'Check-in uploaded 🎉');
       setDescription('');
       setPhotos([]);
       setShowSuggestions(false);
@@ -534,7 +535,7 @@ const BottomSheet = ({
         err?.response?.status,
         err?.response?.data || err?.message,
       );
-      Alert.alert(
+      alert(
         'Upload failed',
         err?.response?.data?.message || 'Could not upload your check-in.',
       );
@@ -554,173 +555,180 @@ const BottomSheet = ({
   // ─── Render ───────────────────────────────────────────────────────────────
 
   return (
-    <Modal
-      isVisible={visible}
-      onBackdropPress={onClose}
-      style={styles.modal}
-      avoidKeyboard>
-      <View style={styles.container}>
+    <>
+      <Modal
+        isVisible={visible}
+        onBackdropPress={onClose}
+        style={styles.modal}
+        avoidKeyboard>
+        <View style={styles.container}>
 
-        {/* ── Drag handle ── */}
-        <View style={styles.handle} />
+          {/* ── Drag handle ── */}
+          <View style={styles.handle} />
 
-        {/* ── Location toggle (only when a searched place exists) ── */}
-        {!!searchedLocation && (
-          <LocationToggle
-            mode={locationMode}
-            currentLabel={address || 'My Location'}
-            searchedLabel={searchedLocation.name}
-            onChange={mode => {
-              setLocationMode(mode);
-              if (mode === 'searched') setShowSuggestions(false);
-            }}
-          />
-        )}
-
-        {/* ── Place name row ── */}
-        <View style={styles.locationRow}>
-          {renamingLocation ? (
-            <ActivityIndicator size="small" color="#6C4EFF" />
-          ) : (
-            <Text style={styles.title} numberOfLines={1}>
-              {displayName}
-            </Text>
+          {/* ── Location toggle (only when a searched place exists) ── */}
+          {!!searchedLocation && (
+            <LocationToggle
+              mode={locationMode}
+              currentLabel={address || 'My Location'}
+              searchedLabel={searchedLocation.name}
+              onChange={mode => {
+                setLocationMode(mode);
+                if (mode === 'searched') setShowSuggestions(false);
+              }}
+            />
           )}
-          {locationMode === 'searched' && (
-            <View style={styles.remoteBadge}>
-              <Text style={styles.remoteBadgeText}>Remote</Text>
+
+          {/* ── Place name row ── */}
+          <View style={styles.locationRow}>
+            {renamingLocation ? (
+              // <ActivityIndicator size="small" color="#6C4EFF" />
+              <ActivityIndicatorModal visible={renamingLocation} />
+            ) : (
+              <Text style={styles.title} numberOfLines={1}>
+                {displayName}
+              </Text>
+            )}
+            {locationMode === 'searched' && (
+              <View style={styles.remoteBadge}>
+                <Text style={styles.remoteBadgeText}>Remote</Text>
+              </View>
+            )}
+          </View>
+
+          {/* ── "Change location" link (current-GPS mode only) ── */}
+          {showChangeLocation && (
+            <TouchableOpacity
+              style={styles.changeRow}
+              onPress={handleToggleSuggestions}>
+              <Ionicons
+                name={showSuggestions ? 'chevron-up' : 'swap-horizontal'}
+                size={13}
+                color="#6C4EFF"
+              />
+              <Text style={styles.changeLocation}>
+                {showSuggestions ? 'Hide suggestions' : 'Change location'}
+              </Text>
+            </TouchableOpacity>
+          )}
+
+          {/* ── Suggestion picker ── */}
+          {showChangeLocation && showSuggestions && (
+            <View style={styles.suggestionList}>
+              <FlatList
+                data={suggestions}
+                keyExtractor={item => item.placeId}
+                style={{maxHeight: 180}}
+                renderItem={({item}) => (
+                  <TouchableOpacity
+                    style={styles.suggestionItem}
+                    onPress={() => handlePickSuggestion(item)}>
+                    <Text style={styles.suggestionName}>{item.name}</Text>
+                    {!!item.vicinity && (
+                      <Text
+                        style={styles.suggestionVicinity}
+                        numberOfLines={1}>
+                        {item.vicinity}
+                      </Text>
+                    )}
+                  </TouchableOpacity>
+                )}
+                ListEmptyComponent={
+                  <Text style={styles.emptyText}>No nearby places found</Text>
+                }
+              />
             </View>
           )}
-        </View>
 
-        {/* ── "Change location" link (current-GPS mode only) ── */}
-        {showChangeLocation && (
-          <TouchableOpacity
-            style={styles.changeRow}
-            onPress={handleToggleSuggestions}>
-            <Ionicons
-              name={showSuggestions ? 'chevron-up' : 'swap-horizontal'}
-              size={13}
-              color="#6C4EFF"
-            />
-            <Text style={styles.changeLocation}>
-              {showSuggestions ? 'Hide suggestions' : 'Change location'}
-            </Text>
-          </TouchableOpacity>
-        )}
-
-        {/* ── Suggestion picker ── */}
-        {showChangeLocation && showSuggestions && (
-          <View style={styles.suggestionList}>
-            <FlatList
-              data={suggestions}
-              keyExtractor={item => item.placeId}
-              style={{maxHeight: 180}}
-              renderItem={({item}) => (
-                <TouchableOpacity
-                  style={styles.suggestionItem}
-                  onPress={() => handlePickSuggestion(item)}>
-                  <Text style={styles.suggestionName}>{item.name}</Text>
-                  {!!item.vicinity && (
-                    <Text
-                      style={styles.suggestionVicinity}
-                      numberOfLines={1}>
-                      {item.vicinity}
-                    </Text>
-                  )}
-                </TouchableOpacity>
-              )}
-              ListEmptyComponent={
-                <Text style={styles.emptyText}>No nearby places found</Text>
-              }
-            />
-          </View>
-        )}
-
-        {/* ── Remote info callout ── */}
-        {locationMode === 'searched' && (
-          <View style={styles.remoteInfo}>
-            <Ionicons name="globe-outline" size={14} color="#6C4EFF" />
-            <Text style={styles.remoteInfoText}>
-              Your photo will be posted at{' '}
-              <Text style={styles.remoteInfoBold}>
-                {searchedLocation?.name}
+          {/* ── Remote info callout ── */}
+          {locationMode === 'searched' && (
+            <View style={styles.remoteInfo}>
+              <Ionicons name="globe-outline" size={14} color="#6C4EFF" />
+              <Text style={styles.remoteInfoText}>
+                Your photo will be posted at{' '}
+                <Text style={styles.remoteInfoBold}>
+                  {searchedLocation?.name}
+                </Text>
+                , regardless of where you are right now.
               </Text>
-              , regardless of where you are right now.
-            </Text>
-          </View>
-        )}
-
-        {/* ── Description ── */}
-        <TextInput
-          placeholder="What're you up to?"
-          placeholderTextColor="#bbb"
-          value={description}
-          onChangeText={setDescription}
-          style={styles.input}
-          multiline
-          maxLength={160}
-        />
-
-        {/* ── Photo buttons ── */}
-        <View style={styles.photoActions}>
-          <TouchableOpacity
-            style={[
-              styles.addPhotoBtn,
-              photos.length >= MAX_PHOTOS && styles.addPhotoBtnDisabled,
-            ]}
-            onPress={handleCamera}
-            disabled={photos.length >= MAX_PHOTOS}>
-            <Ionicons name="camera-outline" size={18} color="#333" />
-            <Text style={styles.addPhotoText}>Camera</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[
-              styles.addPhotoBtn,
-              photos.length >= MAX_PHOTOS && styles.addPhotoBtnDisabled,
-            ]}
-            onPress={handleGallery}
-            disabled={photos.length >= MAX_PHOTOS}>
-            <Ionicons name="image-outline" size={18} color="#333" />
-            <Text style={styles.addPhotoText}>Gallery</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* ── Slot counter ── */}
-        <Text style={styles.slotCounter}>
-          {photos.length} / {MAX_PHOTOS} photos
-        </Text>
-
-        {/* ── Photo thumbnails ── */}
-        {photos.length > 0 && (
-          <FlatList
-            horizontal
-            data={photos}
-            keyExtractor={item => item.id}
-            renderItem={({item}) => (
-              <PhotoCard entry={item} onRemove={() => removePhoto(item.id)} />
-            )}
-          />
-        )}
-
-        {/* ── Check-in button ── */}
-        <TouchableOpacity
-          style={[
-            styles.checkInBtn,
-            isCheckInDisabled && styles.checkInBtnDisabled,
-          ]}
-          onPress={handleCheckIn}
-          disabled={isCheckInDisabled}>
-          {uploading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text style={styles.checkInText}>Check in</Text>
+            </View>
           )}
-        </TouchableOpacity>
 
-      </View>
-    </Modal>
+          {/* ── Description ── */}
+          <TextInput
+            placeholder="What're you up to?"
+            placeholderTextColor="#bbb"
+            value={description}
+            onChangeText={setDescription}
+            style={styles.input}
+            multiline
+            maxLength={160}
+          />
+
+          {/* ── Photo buttons ── */}
+          <View style={styles.photoActions}>
+            <TouchableOpacity
+              style={[
+                styles.addPhotoBtn,
+                photos.length >= MAX_PHOTOS && styles.addPhotoBtnDisabled,
+              ]}
+              onPress={handleCamera}
+              disabled={photos.length >= MAX_PHOTOS}>
+              <Ionicons name="camera-outline" size={18} color="#333" />
+              <Text style={styles.addPhotoText}>Camera</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.addPhotoBtn,
+                photos.length >= MAX_PHOTOS && styles.addPhotoBtnDisabled,
+              ]}
+              onPress={handleGallery}
+              disabled={photos.length >= MAX_PHOTOS}>
+              <Ionicons name="image-outline" size={18} color="#333" />
+              <Text style={styles.addPhotoText}>Gallery</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* ── Slot counter ── */}
+          <Text style={styles.slotCounter}>
+            {photos.length} / {MAX_PHOTOS} photos
+          </Text>
+
+          {/* ── Photo thumbnails ── */}
+          {photos.length > 0 && (
+            <FlatList
+              horizontal
+              data={photos}
+              keyExtractor={item => item.id}
+              renderItem={({item}) => (
+                <PhotoCard entry={item} onRemove={() => removePhoto(item.id)} />
+              )}
+            />
+          )}
+
+          {/* ── Check-in button ── */}
+          <TouchableOpacity
+            style={[
+              styles.checkInBtn,
+              isCheckInDisabled && styles.checkInBtnDisabled,
+            ]}
+            onPress={handleCheckIn}
+            disabled={isCheckInDisabled}>
+            {uploading ? (
+              // <ActivityIndicator color="#fff" />
+              <ActivityIndicatorModal visible={uploading} />
+            ) : (
+              <Text style={styles.checkInText}>Check in</Text>
+            )}
+          </TouchableOpacity>
+
+        </View>
+      </Modal>
+
+      {/* ── Custom alert modal (replaces Alert.alert) ── */}
+      <AlertComponent />
+    </>
   );
 };
 

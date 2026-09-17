@@ -5,7 +5,6 @@ import {
   Text,
   Button,
   Image,
-  Alert,
   PermissionsAndroid,
   Platform,
 } from 'react-native';
@@ -14,6 +13,7 @@ import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
 import { BASE_URL } from '../../config/api';
+import {useCustomAlert} from './components/customAlert';
 
 
 
@@ -21,6 +21,7 @@ const MapCaptureScreen = () => {
   const [image, setImage] = useState<any>(null);
   const [location, setLocation] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const {alert, AlertComponent} = useCustomAlert();
 
   // ✅ Request Location Permission (Android)
   const requestLocationPermission = async () => {
@@ -38,7 +39,7 @@ const MapCaptureScreen = () => {
     const hasPermission = await requestLocationPermission();
 
     if (!hasPermission) {
-      Alert.alert('Permission denied', 'Location permission is required');
+      alert('Permission denied', 'Location permission is required');
       return;
     }
 
@@ -48,7 +49,7 @@ const MapCaptureScreen = () => {
       },
       error => {
         console.log(error);
-        Alert.alert('Error', 'Unable to fetch location');
+        alert('Error', 'Unable to fetch location');
       },
       {
         enableHighAccuracy: true,
@@ -102,7 +103,7 @@ const MapCaptureScreen = () => {
       }
 
       if (response.errorCode) {
-        Alert.alert(
+        alert(
           'Camera Error',
           `${response.errorCode} - ${response.errorMessage}`,
         );
@@ -119,7 +120,7 @@ const MapCaptureScreen = () => {
   // 🚀 Upload Flow
   const upload = async () => {
     if (!image || !location) {
-      Alert.alert('Missing', 'Please capture image & location');
+      alert('Missing', 'Please capture image & location');
       return;
     }
 
@@ -144,14 +145,14 @@ const MapCaptureScreen = () => {
         caption: 'Uploaded from app',
       });
 
-      Alert.alert('Success', 'Photo uploaded 🎉');
+      alert('Success', 'Photo uploaded 🎉');
 
       // Reset
       setImage(null);
       setLocation(null);
     } catch (err) {
       console.log(err);
-      Alert.alert('Error', 'Upload failed');
+      alert('Error', 'Upload failed');
     } finally {
       setLoading(false);
     }
@@ -186,6 +187,9 @@ const MapCaptureScreen = () => {
           Lat: {location.latitude} | Lng: {location.longitude}
         </Text>
       )}
+
+      {/* Custom alert modal (replaces Alert.alert) */}
+      <AlertComponent />
     </View>
   );
 };

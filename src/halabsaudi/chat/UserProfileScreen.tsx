@@ -26,6 +26,7 @@ const PREVIEW_SIZE  = (W - 57 - (PREVIEW_COL - 1) * 3) / PREVIEW_COL;
 type UserProfile = {
   _id: string; name: string; bio?: string;
   birthday?: string; profilePhoto?: string; avatar?: string;
+  relationship?: {followingStatus?: 'none' | 'pending' | 'accepted'};
 };
 
 export type MediaItem = {
@@ -69,6 +70,7 @@ export default function UserProfileScreen({route, navigation}: Props) {
   const [allMedia, setAllMedia]             = useState<MediaItem[]>([]);
   const [mediaLoading, setMediaLoading]     = useState(false);
   const [viewerItem, setViewerItem]         = useState<MediaItem | null>(null);
+  const [followLoading, setFollowLoading]   = useState(false);
 
   const isMuted    = muteDuration !== null;
   const tokenRef   = useRef('');
@@ -152,6 +154,23 @@ export default function UserProfileScreen({route, navigation}: Props) {
     } catch { Alert.alert('Error', 'Could not complete action.'); }
     finally { setBlockLoading(false); }
   }, [iBlockedThem, participantId]);
+
+  const handleFollow = useCallback(async () => {
+    if (!profile || followLoading) return;
+    setFollowLoading(true);
+    const status = profile.relationship?.followingStatus || 'none';
+    try {
+      if (status === 'accepted' || status === 'pending') {
+        await axios.delete(`${BASE_URL}/api/users/follow/${participantId}`, {headers: {Authorization: `Bearer ${tokenRef.current}`}});
+        setProfile(prev => prev ? {...prev, relationship: {...prev.relationship, followingStatus: 'none'}} : prev);
+      } else {
+        const res = await axios.post(`${BASE_URL}/api/users/follow/${participantId}`, {}, {headers: {Authorization: `Bearer ${tokenRef.current}`}});
+        const next = res.data?.status === 'pending' ? 'pending' : 'accepted';
+        setProfile(prev => prev ? {...prev, relationship: {...prev.relationship, followingStatus: next}} : prev);
+      }
+    } catch { Alert.alert('Error', 'Could not update follow status.'); }
+    finally { setFollowLoading(false); }
+  }, [profile, followLoading, participantId]);
 
   // ── Animations ────────────────────────────────────────────────────
   const navOpacity = scrollY.interpolate({
@@ -253,6 +272,13 @@ export default function UserProfileScreen({route, navigation}: Props) {
         {/* ── Actions card ── */}
         <View style={s.card}>
           <SectionTitle label={t.actions} isRTL={isRTL} />
+          <ActionRow
+            icon="person-add-outline" iconColor={Colors.Red} iconBg="#FEE2E2"
+            label={followLoading ? 'Updating…' : profile?.relationship?.followingStatus === 'accepted' ? 'Following' : profile?.relationship?.followingStatus === 'pending' ? 'Requested' : 'Follow'}
+            sublabel={profile?.relationship?.followingStatus === 'pending' ? 'Waiting for approval' : undefined}
+            onPress={handleFollow} isRTL={isRTL}
+          />
+          <Divider />
           <ActionRow
             icon="chatbubble-outline" iconColor={Colors.Red} iconBg='#FEE2E2'
             label={t.send_message}
@@ -514,7 +540,6 @@ const s = StyleSheet.create({
   },
   viewAllStripText: {fontSize: 13, color: Colors.Green, fontWeight: '600'},
 });
-
 
 
 

@@ -247,14 +247,14 @@ export default Redeem_His;
 
 const styles = StyleSheet.create({
   // ── Root — green for safe-area top edge to match header ──
-  safe: {flex: 1, backgroundColor: Colors.Red},
+  safe: {flex: 1, backgroundColor: Colors.darkgrey},
 
   // ── Body — always Colors.Bg regardless of content state ──
   body: {flex: 1, backgroundColor: Colors.Bg},
 
   // ── Header ──
   header: {
-    backgroundColor: Colors.Red,
+    backgroundColor: Colors.darkgrey,
     paddingTop: Platform.OS === 'ios' ? 4 : 10,
     paddingBottom: 20,
     paddingHorizontal: 18,
