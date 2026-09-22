@@ -1,0 +1,28 @@
+import React from 'react';
+import {act, create, ReactTestRenderer} from 'react-test-renderer';
+import {Pressable, Text} from 'react-native';
+import axios from 'axios';
+import Profile from '../src/halabsaudi/Map/profileScreen';
+jest.mock('axios');
+jest.mock('@react-native-async-storage/async-storage', () => ({getItem: jest.fn((key: string) => Promise.resolve(key === 'hala_user_backend' ? JSON.stringify({_id: 'me', name: 'Ashraf'}) : key === 'hala_token' ? 'token' : null)), setItem: jest.fn(() => Promise.resolve())}));
+jest.mock('@react-navigation/native', () => ({useFocusEffect: (fn: any) => require('react').useEffect(fn, [fn])}));
+jest.mock('react-native-safe-area-context', () => ({SafeAreaView: require('react-native').View}));
+jest.mock('react-redux', () => ({useSelector: (fn: any) => fn({language: {language: 'en'}})}));
+jest.mock('@react-native-vector-icons/ionicons', () => 'Icon');
+jest.mock('../src/halabsaudi/Component/UseStatusBar/useStatusBar', () => ({useStatusBar: jest.fn()}));
+test('empty check-ins still show account identity and working settings/friends actions', async () => {
+  (axios.get as jest.Mock).mockImplementation((url: string) => Promise.resolve({data: url.includes('my-checkins') ? {data: []} : []}));
+  const navigation = {navigate: jest.fn()}; let view!: ReactTestRenderer;
+  await act(async () => {view = create(<Profile navigation={navigation} route={{name: 'Profile'}} />);});
+  expect(view.root.findAllByType(Text).some(node => node.props.children === 'Ashraf')).toBe(true);
+  const settings = view.root.findAllByType(Pressable).find(p => p.props.accessibilityLabel === 'Settings');
+  await act(async () => {settings!.props.onPress();});
+  expect(navigation.navigate).toHaveBeenCalledWith('Settings');
+  expect(view.root.findAllByType(Text).some(node => node.props.children === 'Add+')).toBe(true);
+  const add = view.root.findAllByType(Pressable).find(p => p.props.accessibilityLabel === 'Add friends');
+  await act(async () => {add!.props.onPress();});
+  expect(navigation.navigate).toHaveBeenCalledWith('StartChatScreen');
+  const labels = view.root.findAllByType(Text).map(n => n.props.children).filter(t => ['Posts', 'Following', 'Followers'].includes(t));
+  expect(labels).toEqual(['Posts', 'Following', 'Followers']);
+  await act(async () => view.unmount());
+});

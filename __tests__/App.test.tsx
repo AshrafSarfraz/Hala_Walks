@@ -1,13 +1,30 @@
-/**
- * @format
- */
-
+jest.mock('react-native-gesture-handler', () => ({}));
 import React from 'react';
-import ReactTestRenderer from 'react-test-renderer';
+import {act, create, ReactTestRenderer} from 'react-test-renderer';
+import messaging from '@react-native-firebase/messaging';
+import {displayChatNotification} from '../src/halabsaudi/Notifications/badge';
 import App from '../App';
-
-test('renders correctly', async () => {
-  await ReactTestRenderer.act(() => {
-    ReactTestRenderer.create(<App />);
-  });
+jest.mock('../src/HandlebothApp/handleNavigation', () => 'AppStack');
+jest.mock('../src/westwalk/redux/store', () => ({store: {}, persistor: {}}));
+jest.mock('react-redux', () => ({Provider: ({children}: any) => children}));
+jest.mock('redux-persist/integration/react', () => ({PersistGate: ({children}: any) => children}));
+jest.mock('react-native-safe-area-context', () => ({SafeAreaProvider: ({children}: any) => children}));
+jest.mock('@react-native-async-storage/async-storage', () => ({getItem: jest.fn(() => Promise.resolve(null))}));
+jest.mock('@notifee/react-native', () => ({__esModule: true, default: {createChannel: jest.fn(() => Promise.resolve()), getNotificationSettings: jest.fn(() => Promise.resolve({authorizationStatus: 1})), onForegroundEvent: jest.fn(() => jest.fn())}, AndroidImportance: {HIGH: 4}, EventType: {PRESS: 1}, AuthorizationStatus: {NOT_DETERMINED: -1, DENIED: 0}}));
+jest.mock('@react-native-firebase/messaging', () => {
+  const api = {getInitialNotification: jest.fn(() => Promise.resolve(null)), onNotificationOpenedApp: jest.fn(() => jest.fn()), onMessage: jest.fn(() => jest.fn())};
+  return () => api;
+});
+jest.mock('../src/halabsaudi/Notifications/RootNavigation', () => ({navigate: jest.fn()}));
+jest.mock('../src/halabsaudi/Notifications', () => ({checkPendingNavigation: jest.fn()}));
+jest.mock('../src/halabsaudi/chat/socket', () => ({connectSocket: jest.fn(), getSocket: jest.fn()}));
+jest.mock('../src/halabsaudi/chat/registerFCMToken', () => ({registerFCMToken: jest.fn()}));
+jest.mock('../src/halabsaudi/Notifications/badge', () => ({displayChatNotification: jest.fn(() => Promise.resolve()), clearChatNotifications: jest.fn(), syncBadgeWithTray: jest.fn()}));
+test('app mounts and forwards foreground messages with their chat identity', async () => {
+  let app!: ReactTestRenderer;
+  await act(async () => {app = create(<App />);});
+  const callback = (messaging().onMessage as jest.Mock).mock.calls[0][0];
+  await act(async () => {await callback({data: {chatId: 'chat-1', senderName: 'Ashraf'}, notification: {title: 'Ashraf', body: 'Hello'}});});
+  expect(displayChatNotification).toHaveBeenCalledWith(expect.objectContaining({chatId: 'chat-1', title: 'Ashraf', body: 'Hello'}));
+  await act(async () => app.unmount());
 });
