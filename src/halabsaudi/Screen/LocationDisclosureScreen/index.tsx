@@ -1,14 +1,8 @@
+import {Text} from '../../../ui/Text';
+
 // src/halabsaudi/Notifications/LocationDisclosure.tsx
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  Platform,
-  PermissionsAndroid,
-} from 'react-native';
+import {View, TouchableOpacity, StyleSheet, ScrollView, Platform, PermissionsAndroid} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { initVenueTracker } from '../../Notifications/index'
 import { Colors } from '../../Themes/Colors';
@@ -133,7 +127,7 @@ const styles = StyleSheet.create({
   text:         { fontSize: 15, lineHeight: 24, color: '#ccc' },
   bold:         { fontWeight: '700' },
   tipBox: {
-    backgroundColor: '#FFF',
+    backgroundColor: '#191B20',
     borderRadius: 12,
     padding: 16,
     marginTop: 16,
@@ -142,7 +136,7 @@ const styles = StyleSheet.create({
     borderLeftColor: Colors.Red,
   },
   tipTitle:   { fontWeight: '700', color: '#F57C00', marginBottom: 8, fontSize: 15 },
-  tipText:    { fontSize: 12, lineHeight: 22, color: '#000' },
+  tipText:    { fontSize: 12, lineHeight: 22, color: Colors.White},
   note:       { fontSize: 10, color: '#ccc', marginTop: 20, marginBottom: 8, fontStyle: 'italic' },
   button:     { backgroundColor: Colors.Red, paddingVertical: 15, borderRadius: 12, alignItems: 'center', marginTop: 28 },
   buttonText: { color: '#fff', fontSize: 16, fontWeight: '700' },

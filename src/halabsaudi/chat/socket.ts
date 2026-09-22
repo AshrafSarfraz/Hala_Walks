@@ -3,9 +3,13 @@ import { io, Socket } from 'socket.io-client';
 import { BASE_URL } from '../../config/api';
 
 let socket: Socket | null = null;
+let activeToken: string | null = null;
 
 export const connectSocket = (token: string): Socket => {
-  if (socket?.connected) return socket;
+  if (socket && activeToken === token) {
+    if (!socket.connected) socket.connect();
+    return socket;
+  }
 
   if (socket) {
     socket.removeAllListeners();
@@ -13,6 +17,7 @@ export const connectSocket = (token: string): Socket => {
     socket = null;
   }
 
+  activeToken = token;
   socket = io(BASE_URL, {
     // ✅ FIX: polling pehle, phir websocket upgrade
     // Render free tier pe pure websocket transport error deta hai
@@ -44,6 +49,7 @@ export const connectSocket = (token: string): Socket => {
 export const getSocket = (): Socket | null => socket;
 
 export const disconnectSocket = (): void => {
+  activeToken = null;
   if (socket) {
     socket.removeAllListeners();
     socket.disconnect();

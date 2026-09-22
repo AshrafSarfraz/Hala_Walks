@@ -1,14 +1,8 @@
+import {fetchBrandCatalog} from '../../../api/brandCatalog';
+import {Text} from '../../../../ui/Text';
+import {ActivityIndicator} from '../../../../ui/ActivityIndicator';
 import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  Image,
-  TouchableOpacity,
-  Platform,
-  ActivityIndicator,
-  PermissionsAndroid,
-} from 'react-native';
+import {View, FlatList, Image, TouchableOpacity, Platform, PermissionsAndroid} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -26,7 +20,7 @@ const RECENT_TTL_MS = 3 * 60 * 60 * 1000;
 
 type CacheShape = {ts: number; data: any[]};
 
-const RecentlyAdded: React.FC<{onDataLoaded?: (hasData: boolean) => void}> = ({onDataLoaded}) => {
+const RecentlyAdded: React.FC<{onDataLoaded?: (hasData: boolean) => void; onLoadError?: () => void}> = ({onDataLoaded, onLoadError}) => {
   const navigation = useNavigation<any>();
   const mountedRef = useRef(true);
 
@@ -45,8 +39,8 @@ const RecentlyAdded: React.FC<{onDataLoaded?: (hasData: boolean) => void}> = ({o
 
   const RECENT_CACHE_KEY = useMemo(() => {
     return selectedCountry
-      ? `H-recent_cache_${norm(selectedCountry)}`
-      : 'H-recent_cache_unknown';
+      ? `H-recent_cache_v7_${norm(selectedCountry)}`
+      : 'H-recent_cache_v7_unknown';
   }, [selectedCountry]);
 
   /* ---------------- location ---------------- */
@@ -120,8 +114,8 @@ const RecentlyAdded: React.FC<{onDataLoaded?: (hasData: boolean) => void}> = ({o
 
   /* ---------------- fetch ---------------- */
   const fetchBrands = async (signal?: AbortSignal) => {
-    const res = await fetch(BRANDS_API, {signal});
-    const json = await res.json().catch(() => ({}));
+    const res = await fetchBrandCatalog(BRANDS_API, {signal});
+    const json = await res.json();
     if (!res.ok) throw new Error('Brands API failed');
     const raw = (json as any)?.data ? (json as any).data : json;
     return Array.isArray(raw) ? raw : [];
@@ -172,7 +166,7 @@ const RecentlyAdded: React.FC<{onDataLoaded?: (hasData: boolean) => void}> = ({o
       setItems(recent);
       await writeCache(recent);
     } catch (e) {
-      // keep cache silently
+      onLoadError?.(); // Keep cached content visible and expose retry on Home.
     } finally {
       if (mountedRef.current) setLoading(false);
     }

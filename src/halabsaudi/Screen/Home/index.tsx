@@ -1,6 +1,10 @@
+import {Text} from '../../../ui/Text';
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, View, Text, Image, TouchableOpacity, ScrollView
- } from 'react-native';
+// ✅ FIX: 'react-native' wala SafeAreaView ANDROID PAR KUCH NAHI KARTA.
+// Isi wajah se style me `marginTop: '8%'` ka jugaar lagana para tha —
+// jo har phone par alag pixel banta hai. Ye wala asli insets deta hai.
+import { SafeAreaView } from 'react-native-safe-area-context';
+import {View, Image, TouchableOpacity, ScrollView} from 'react-native';
 import { Full_logo_B, Full_logo_w, Hala_logo_white, Logo_W, Scope } from '../../Themes/Images';
 import ImageSlider from './FlatOffer';
 import Categories from './Categories';
@@ -24,11 +28,15 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
   const language = useSelector((state: RootState) => state.language.language);
   const styles = getStyles(language);
 
+  const [catalogError, setCatalogError] = useState(false);
+  const [revision, setRevision] = useState(0);
+  const retryCatalog = () => {setCatalogError(false); setRevision(v => v + 1);};
+
   const [hasBestSeller, setHasBestSeller] = useState(false);     // ✅
   const [hasRecentlyAdded, setHasRecentlyAdded] = useState(false); // ✅
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.darkgrey }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.darkgrey }} edges={['top']}>
       <View style={styles.Container}>
         <View style={styles.header}>
           <Image source={Hala_logo_white} style={styles.logo} />
@@ -40,8 +48,11 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
           </View>
         </View>
 
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <ImageSlider navigation={navigation} />
+        <ScrollView key={revision} showsVerticalScrollIndicator={false}>
+          {catalogError && <TouchableOpacity accessibilityRole="button" onPress={retryCatalog} style={{margin: 16, padding: 14, borderRadius: 12, backgroundColor: Colors.cardBg}}>
+            <Text style={{color: Colors.White, lineHeight: 21}}>{language === 'ar' ? 'تعذر تحديث بعض العناصر. اضغط لإعادة المحاولة.' : 'Some items could not refresh. Tap to retry.'}</Text>
+          </TouchableOpacity>}
+          <ImageSlider onLoadError={() => setCatalogError(true)} />
 
           <View style={[styles.Categories_Cont, { marginTop: 7 }]}>
             <View style={styles.txt_cont}>
@@ -54,7 +65,7 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
             <View style={styles.txt_cont}>
               <Text style={styles.Categories_Txt}>{languageData[language].Location}</Text>
             </View>
-            <Venues navigation={navigation} />
+            <Venues />
           </View>
 
           {/* ✅ Best Seller - sirf tab show karo jab data ho */}
@@ -64,7 +75,7 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
                 <Text style={styles.BestSeller_Txt}>{languageData[language].best_sellers}</Text>
               </View>
             )}
-            <BestSeller onDataLoaded={setHasBestSeller} />
+            <BestSeller onDataLoaded={setHasBestSeller} onLoadError={() => setCatalogError(true)} />
           </View>
 
           {/* ✅ Recently Added - sirf tab show karo jab data ho */}
@@ -74,7 +85,7 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
                 <Text style={styles.BestSeller_Txt}>{languageData[language].recently_added}</Text>
               </View>
             )}
-            <RecentlyAdded onDataLoaded={setHasRecentlyAdded} />
+            <RecentlyAdded onDataLoaded={setHasRecentlyAdded} onLoadError={() => setCatalogError(true)} />
           </View>
         </ScrollView>
       </View>

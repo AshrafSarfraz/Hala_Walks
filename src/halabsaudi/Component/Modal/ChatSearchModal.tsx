@@ -1,13 +1,7 @@
+import {Text} from '../../../ui/Text';
+import {TextInput} from '../../../ui/TextInput';
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  Modal,
-  TextInput,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-} from "react-native";
+import {View, Modal, FlatList, TouchableOpacity, StyleSheet} from "react-native";
 import { Colors } from "../../Themes/Colors";
 import { getAvatarColor } from "../../Themes/avatarColor";
 
@@ -85,11 +79,11 @@ export default function ChatSearchModal({ visible, onClose, data = [], onSelect 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.dargBg },
   header: { flexDirection: "row", alignItems: "center", padding: 10, borderBottomWidth: 1, borderColor: Colors.Grey4 },
-  searchInput: { flex: 1, backgroundColor: Colors.White, borderRadius: 10, paddingHorizontal: 12, height: 40 },
-  cancel: { marginLeft: 10, color: Colors.Green, fontWeight: "600" },
+  searchInput: { flex: 1, backgroundColor: '#191B20', borderRadius: 10, paddingHorizontal: 12, height: 40 },
+  cancel: { marginLeft: 10, color: Colors.White, fontWeight: "600" },
   row: { flexDirection: "row", alignItems: "center", padding: 14, borderBottomWidth: 0.5, borderColor: Colors.Grey4 },
   avatar: { width: 40, height: 40, borderRadius: 20, justifyContent: "center", alignItems: "center", marginRight: 12 },
   avatarText: { color: Colors.White, fontWeight: "bold", fontSize: 16 },
-  name: { fontSize: 16, color: Colors.Black2, fontWeight: "500" },
+  name: { fontSize: 16, color: Colors.White, fontWeight: "500" },
   empty: { textAlign: "center", marginTop: 30, color: Colors.Grey5 },
 });

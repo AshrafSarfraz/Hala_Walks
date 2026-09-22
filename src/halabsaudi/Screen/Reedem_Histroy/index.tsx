@@ -1,9 +1,8 @@
+import {Text} from '../../../ui/Text';
+import {ActivityIndicator} from '../../../ui/ActivityIndicator';
 // src/screens/Redeem/Redeem_His.tsx
 import React, {useEffect, useState} from 'react';
-import {
-  Text, View, FlatList, StatusBar, TouchableOpacity,
-  StyleSheet, ActivityIndicator, Platform,
-} from 'react-native';
+import {View, FlatList, StatusBar, TouchableOpacity, StyleSheet, Platform} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Ionicons from '@react-native-vector-icons/ionicons';
@@ -250,7 +249,7 @@ const styles = StyleSheet.create({
   safe: {flex: 1, backgroundColor: Colors.darkgrey},
 
   // ── Body — always Colors.Bg regardless of content state ──
-  body: {flex: 1, backgroundColor: Colors.Bg},
+  body: {flex: 1, backgroundColor: '#191B20'},
 
   // ── Header ──
   header: {
@@ -270,7 +269,7 @@ const styles = StyleSheet.create({
   headerText: {flex: 1},
   eyebrow: {
     fontSize: 10, color: Colors.White,   fontFamily: Fonts.SF_Bold,
-    letterSpacing: 1.1, textTransform: 'uppercase', marginBottom: 3,
+    letterSpacing: 0.2, textTransform: 'uppercase', marginBottom: 3,
   },
   headerTitle: {fontSize: 18,
         fontFamily: Fonts.SF_Bold,
@@ -286,14 +285,14 @@ const styles = StyleSheet.create({
   listContent: {paddingHorizontal: 14, paddingTop: 12, paddingBottom: 36},
   listHeader:  {paddingHorizontal: 4, paddingBottom: 8},
   listHeaderText: {
-    fontSize: 11, fontWeight: '700', color: Colors.Green,
-    letterSpacing: 0.5, textTransform: 'uppercase',
+    fontSize: 11, fontWeight: '700', color: Colors.White,
+    letterSpacing: 0.2, textTransform: 'uppercase',
   },
 
   // ── Card ──
   card: {
     alignItems: 'center',
-    backgroundColor: Colors.White,
+    backgroundColor: '#191B20',
     borderRadius: 16,
     paddingVertical: 13, paddingHorizontal: 14,
     shadowColor: '#1A202C',
@@ -308,7 +307,7 @@ const styles = StyleSheet.create({
   brandLetter: {color: Colors.White, fontSize: 20, fontWeight: '800'},
 
   cardInfo: {flex: 1, minWidth: 0},
-  cardBrand: {fontSize: 13, fontWeight: '700', color: Colors.Black2, marginBottom: 5},
+  cardBrand: {fontSize: 13, fontWeight: '700', color: Colors.White, marginBottom: 5},
   cardMeta:  {alignItems: 'center', gap: 3},
   cardDate:  {fontSize: 10, color: Colors.Grey9, fontWeight: '500'},
   metaDot:   {width: 3, height: 3, borderRadius: 2, backgroundColor: Colors.Grey4},
@@ -323,11 +322,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40, gap: 10,
   },
   emptyRing: {
-    width: 88, height: 88, borderRadius: 44, backgroundColor: '#E6F2EC',
+    width: 88, height: 88, borderRadius: 44, backgroundColor: '#191B20',
     justifyContent: 'center', alignItems: 'center',
     marginBottom: 8, borderWidth: 3, borderColor: Colors.White,
   },
-  emptyTitle: {fontSize: 18, fontWeight: '700', color: Colors.Black2},
+  emptyTitle: {fontSize: 18, fontWeight: '700', color: Colors.White},
   emptySub:   {fontSize: 13, color: Colors.Grey9, lineHeight: 20},
 
   // ── Loader ──

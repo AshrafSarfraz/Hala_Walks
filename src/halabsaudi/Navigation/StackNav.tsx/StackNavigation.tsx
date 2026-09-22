@@ -1,3 +1,7 @@
+import type {HalaStackParamList} from '../types';
+import {View} from 'react-native';
+import {ActivityIndicator} from '../../../ui/ActivityIndicator';
+import Settings from '../../Screen/Profile';
 import React, {useEffect, useState} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -40,7 +44,7 @@ import BrandDetailScreen from '../../Map/BrandDetailScreen';
 
 
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<HalaStackParamList>();
 const HalaStack: React.FC = () => {
   const [initialRoute, setInitialRoute] = useState<string | null>(null);
 
@@ -66,7 +70,7 @@ const HalaStack: React.FC = () => {
   }, []);
 
   if (!initialRoute) {
-    return <Splash_Screen />;
+    return <View style={{flex: 1, backgroundColor: '#101114', alignItems: 'center', justifyContent: 'center'}}><ActivityIndicator size="large" /></View>;
   }
 
 
@@ -74,7 +78,7 @@ const HalaStack: React.FC = () => {
   return (
     <Stack.Navigator
       initialRouteName={initialRoute}
-      screenOptions={{headerShown: false}}>
+      screenOptions={{headerShown: false, contentStyle: {backgroundColor: '#101114'}}}>
       {/* ── Auth & Onboarding ── */}
       <Stack.Screen name="Splash" component={Splash_Screen} />
       <Stack.Screen name="LocationDisclosure" component={LocationDisclosure} />
@@ -133,6 +137,7 @@ const HalaStack: React.FC = () => {
 
       {/* ── Map ── */}
       <Stack.Screen name="MapProfile" component={MapProfile} />
+      <Stack.Screen name="Settings" component={Settings} />
       <Stack.Screen name="CaptureScreen" component={MapCaptureScreen} />
       <Stack.Screen name="BrandDetail" component={BrandDetailScreen} />
     </Stack.Navigator>

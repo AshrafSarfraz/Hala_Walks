@@ -1,16 +1,9 @@
+import {Text} from '../../../ui/Text';
+import {TextInput} from '../../../ui/TextInput';
 // /src/halabsaudi/Map/components/bottomSheet.tsx
 
 import React, {useState, useEffect, useRef} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  TextInput,
-  FlatList,
-  Image,
-  Animated,
-} from 'react-native';
+import {View, StyleSheet, TouchableOpacity, FlatList, Image, Animated} from 'react-native';
 import Modal from 'react-native-modal';
 import axios from 'axios';
 import storage from '@react-native-firebase/storage';
@@ -283,7 +276,7 @@ const toggleStyles = StyleSheet.create({
     fontWeight: '600',
     color: '#aaa',
     textTransform: 'uppercase',
-    letterSpacing: 0.6,
+    letterSpacing: 0.2,
     marginBottom: 8,
   },
   row: {
@@ -300,8 +293,8 @@ const toggleStyles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 20,
     borderWidth: 1.5,
-    borderColor: '#E0D9FF',
-    backgroundColor: '#F7F5FF',
+    borderColor: '#343841',
+    backgroundColor: '#191B20',
   },
   pillActive: {
     backgroundColor: '#6C4EFF',
@@ -421,7 +414,12 @@ const BottomSheet = ({
       setRenamingLocation(true);
       const token = await AsyncStorage.getItem('hala_token');
       await axios.patch(
-        `${BASE_URL}/api/hbs/location/${locationId}/name`,
+        // ✅ FIX: URL me `/map` missing tha.
+        //    Frontend: /api/hbs/location/:id/name
+        //    Backend:  /api/hbs/map/location/:id/name   ← sahi
+        //    Is wajah se location rename HAMESHA 404 deta tha, aur naam
+        //    kabhi save nahi hota tha (error catch me chup-chaap chala jata).
+        `${BASE_URL}/api/hbs/map/location/${locationId}/name`,
         {name: s.name},
         token ? {headers: {Authorization: `Bearer ${token}`}} : undefined,
       );
@@ -674,7 +672,7 @@ const BottomSheet = ({
               ]}
               onPress={handleCamera}
               disabled={photos.length >= MAX_PHOTOS}>
-              <Ionicons name="camera-outline" size={18} color="#333" />
+              <Ionicons name="camera-outline" size={18} color='#F5F6F8' />
               <Text style={styles.addPhotoText}>Camera</Text>
             </TouchableOpacity>
 
@@ -685,7 +683,7 @@ const BottomSheet = ({
               ]}
               onPress={handleGallery}
               disabled={photos.length >= MAX_PHOTOS}>
-              <Ionicons name="image-outline" size={18} color="#333" />
+              <Ionicons name="image-outline" size={18} color='#F5F6F8' />
               <Text style={styles.addPhotoText}>Gallery</Text>
             </TouchableOpacity>
           </View>
@@ -750,7 +748,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 4,
     borderRadius: 2,
-    backgroundColor: Colors.White ,
+    backgroundColor: '#191B20' ,
     alignSelf: 'center',
     marginBottom: 16,
   },
@@ -787,7 +785,7 @@ const styles = StyleSheet.create({
 
   // Remote badge
   remoteBadge: {
-    backgroundColor: '#EDE9FF',
+    backgroundColor: '#191B20',
     borderRadius: 8,
     paddingHorizontal: 7,
     paddingVertical: 3,
@@ -803,7 +801,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: 7,
-    backgroundColor: '#F0EBFF',
+    backgroundColor: '#191B20',
     borderRadius: 10,
     padding: 10,
     marginTop: 10,
@@ -822,7 +820,7 @@ const styles = StyleSheet.create({
   // Suggestion list
   suggestionList: {
     borderWidth: 1,
-    borderColor: '#eee',
+    borderColor: '#343841',
     borderRadius: 12,
     marginBottom: 10,
     overflow: 'hidden',
@@ -831,29 +829,29 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 14,
     borderBottomWidth: 1,
-    borderColor: '#f2f2f2',
+    borderColor: '#343841',
   },
-  suggestionName: {fontSize: 14, fontWeight: '600', color: '#111'},
-  suggestionVicinity: {fontSize: 12, color: '#888', marginTop: 2},
-  emptyText: {color: '#777', textAlign: 'center', paddingVertical: 10},
+  suggestionName: {fontSize: 14, fontWeight: '600', color: Colors.White},
+  suggestionVicinity: {fontSize: 12, color: '#ABB2BF', marginTop: 2},
+  emptyText: {color: '#ABB2BF', textAlign: 'center', paddingVertical: 10},
 
   // Description input
   input: {
     borderWidth: 1,
-    borderColor: '#eee',
+    borderColor: '#343841',
     borderRadius: 12,
     padding: 12,
     height: 88,
     marginTop: 12,
     textAlignVertical: 'top',
     fontSize: 14,
-    color: '#1A1A2E',
+    color: Colors.White,
   },
 
   // Photo buttons
   photoActions: {flexDirection: 'row', gap: 10, marginTop: 12},
   addPhotoBtn: {
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#191B20',
     paddingVertical: 12,
     paddingHorizontal: 10,
     borderRadius: 12,
@@ -864,7 +862,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   addPhotoBtnDisabled: {opacity: 0.4},
-  addPhotoText: {fontSize: 14, fontWeight: '600', color: '#333'},
+  addPhotoText: {fontSize: 14, fontWeight: '600', color: Colors.White},
   slotCounter: {
     fontSize: 12,
     color: '#bbb',

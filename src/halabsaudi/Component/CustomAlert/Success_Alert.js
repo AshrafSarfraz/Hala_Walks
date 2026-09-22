@@ -1,5 +1,7 @@
+import {Text} from '../../../ui/Text';
+
 import React from 'react';
-import { View, Text, Modal, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import {View, Modal, TouchableOpacity, StyleSheet, Image} from 'react-native';
 import { Colors } from '../../Themes/Colors';
 import { Device } from '../../Themes/Images';
 import { Fonts } from '../../Themes/Fonts';
@@ -29,7 +31,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   alertContainer: {
-    backgroundColor: 'white',
+    backgroundColor: '#191B20',
     borderRadius: 10,
     padding: '5%',
     width: '90%',
@@ -41,13 +43,13 @@ const styles = StyleSheet.create({
     Header_Txt:{
       fontSize:20,
       fontFamily:Fonts.SF_Bold,
-      color:Colors.Black,
+      color:'#F5F6F8',
       lineHeight:26,
     },
     Txt:{
       fontSize:16,
       fontFamily:Fonts.SF_Medium,
-      color:Colors.Black,
+      color:'#F5F6F8',
       lineHeight:20,
       textAlign:"center",
       marginVertical:"5%"

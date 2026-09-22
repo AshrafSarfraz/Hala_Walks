@@ -1,5 +1,7 @@
+import {Text} from '../../../ui/Text';
+
 import React from 'react';
-import { View, Text, Modal, TouchableOpacity, StyleSheet, StatusBar } from 'react-native';
+import {View, Modal, TouchableOpacity, StyleSheet, StatusBar} from 'react-native';
 import { Colors } from '../../Themes/Colors';
 import { Fonts } from '../../Themes/Fonts';
 import CustomButton from '../CustomButton/CustomButton';
@@ -19,7 +21,7 @@ const IncorrectPin: React.FC<LanProps> = ({ visible, onClose, message }) => {
 
   return (
     <Modal transparent visible={visible} animationType="fade">
-      <StatusBar hidden={true} translucent={true} animated={true} />
+      <StatusBar barStyle="light-content" />
       <View style={styles.overlay}>
         <View style={styles.container}>
         <Text style={styles.messageText}>{message}</Text>
@@ -38,7 +40,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.8)',
   },
   container: {
-    backgroundColor: 'white',
+    backgroundColor: '#191B20',
     paddingVertical: 30,
     paddingHorizontal: 20,
     width: '85%',
@@ -53,7 +55,7 @@ const styles = StyleSheet.create({
   messageText: {
     fontSize: 18,
     fontFamily: Fonts.SF_Bold,
-    color: Colors.Black,
+    color: '#F5F6F8',
     marginBottom: 20,
     textAlign: 'center',
   },

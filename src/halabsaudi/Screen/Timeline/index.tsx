@@ -1,22 +1,11 @@
+import type {NavigationProp, ParamListBase} from '@react-navigation/native';
+import {Text} from '../../../ui/Text';
+import {TextInput} from '../../../ui/TextInput';
+import {Alert} from '../../../ui/Alert';
+import {ActivityIndicator} from '../../../ui/ActivityIndicator';
 
 import React, {useState, useEffect, useRef, useCallback} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  SafeAreaView,
-  StatusBar,
-  TextInput,
-  FlatList,
-  Image,
-  Alert,
-  ActivityIndicator,
-  Animated,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-} from 'react-native';
+import {View, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar, FlatList, Image, Animated, ScrollView, KeyboardAvoidingView, Platform} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import storage from '@react-native-firebase/storage';
@@ -39,10 +28,10 @@ const NEARBY_RADIUS = 2000; // metres — same as MapScreen suggestions call
 const MAX_PHOTOS = 2;
 const SEARCH_DEBOUNCE_MS = 350;
 
-const PURPLE = '#6C4EFF';
-const BG = '#1A1A2E';
-const CARD_BG = '#16213E';
-const SURFACE = '#0F3460';
+const PURPLE = '#E75049';
+const BG = '#101114';
+const CARD_BG = '#191B20';
+const SURFACE = '#23262D';
 const WHITE = '#FFFFFF';
 const WHITE_60 = 'rgba(255,255,255,0.6)';
 const WHITE_30 = 'rgba(255,255,255,0.3)';
@@ -225,7 +214,7 @@ const cardStyles = StyleSheet.create({
 // ─── TimelineScreen ───────────────────────────────────────────────────────────
 
 const TimelineScreen: React.FC = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
 
   // ── Location ────────────────────────────────────────────────────────────────
   const [coords, setCoords] = useState<Coords | null>(null);
@@ -729,13 +718,13 @@ const TimelineScreen: React.FC = () => {
               <Ionicons name="location" size={16} color={Colors.btnRed} />
               <Text style={styles.cardLabel}>Location</Text>
               {nearbyLoading && (
-                <ActivityIndicator size="small" color={Colors.grey} />
+                <ActivityIndicator size="small" color={Colors.btnRed} />
               )}
             </View>
 
             {locationLoading ? (
               <View style={styles.locationLoadingRow}>
-                <ActivityIndicator size="small" color={Colors.grey} />
+                <ActivityIndicator size="small" color={Colors.btnRed} />
                 <Text style={styles.locationLoadingText}>
                   Fetching your location…
                 </Text>
@@ -783,7 +772,7 @@ const TimelineScreen: React.FC = () => {
                   <View style={styles.suggestionBox}>
                     {searchLoading ? (
                       <View style={styles.suggestionLoader}>
-                        <ActivityIndicator size="small" color={Colors.grey} />
+                        <ActivityIndicator size="small" color={Colors.btnRed} />
                         <Text style={styles.suggestionLoaderText}>
                           Searching…
                         </Text>
@@ -804,7 +793,7 @@ const TimelineScreen: React.FC = () => {
                               <Ionicons
                                 name="location-outline"
                                 size={15}
-                                color={Colors.grey}
+                                color={Colors.btnRed}
                               />
                             </View>
                             <View style={styles.suggestionRight}>
@@ -846,7 +835,7 @@ const TimelineScreen: React.FC = () => {
                   <View style={styles.suggestionBox}>
                     {nearbyLoading ? (
                       <View style={styles.suggestionLoader}>
-                        <ActivityIndicator size="small" color={Colors.grey} />
+                        <ActivityIndicator size="small" color={Colors.btnRed} />
                         <Text style={styles.suggestionLoaderText}>
                           Loading nearby places…
                         </Text>
@@ -1052,11 +1041,11 @@ const styles = StyleSheet.create({
   },
 
   card: {
-    backgroundColor: Colors.White,
+    backgroundColor: '#191B20',
     borderRadius: 6,
     padding: 16,
     borderWidth: 1,
-    borderColor: Colors.darkgrey,
+    borderColor: '#343841',
   },
   cardHeader: {
     flexDirection: 'row',
@@ -1067,9 +1056,9 @@ const styles = StyleSheet.create({
   cardLabel: {
     fontSize: 11,
     fontWeight: '700',
-    color: Colors.grey,
+    color: Colors.White,
     textTransform: 'uppercase',
-    letterSpacing: 0.8,
+    letterSpacing: 0.2,
     flex: 1,
   },
 
@@ -1080,7 +1069,7 @@ const styles = StyleSheet.create({
     gap: 10,
     paddingVertical: 6,
   },
-  locationLoadingText: {fontSize: 14, color: Colors.grey},
+  locationLoadingText: {fontSize: 14, color: Colors.White},
   errorRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1091,12 +1080,12 @@ const styles = StyleSheet.create({
   locationName: {
     fontSize: 17,
     fontWeight: '700',
-    color: Colors.dargBg,
+    color: Colors.White,
     marginBottom: 2,
   },
   addressLine: {
     fontSize: 12,
-    color: Colors.grey,
+    color: Colors.White,
     marginBottom: 10,
     lineHeight: 18,
   },
@@ -1107,7 +1096,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     marginTop: 6,
   },
-  changeText: {fontSize: 13, fontWeight: '600', color: Colors.grey},
+  changeText: {fontSize: 13, fontWeight: '600', color: Colors.White},
 
   // Search
   searchWrap: {
@@ -1118,11 +1107,11 @@ const styles = StyleSheet.create({
   searchInput: {
     height: 40,
     borderWidth: 1,
-    borderColor: Colors.darkgrey,
+    borderColor: '#343841',
     borderRadius: 6,
     paddingHorizontal: 14,
     paddingRight: 36,
-    color: Colors.dargBg,
+    color: Colors.White,
     alignItems:'center',
     justifyContent:'center',
   },
@@ -1141,7 +1130,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: WHITE_10,
     overflow: 'hidden',
-    backgroundColor: Colors.cardBg,
+    backgroundColor: '#23262D',
     maxHeight: 220,
   },
   suggestionLoader: {
@@ -1150,7 +1139,7 @@ const styles = StyleSheet.create({
     gap: 10,
     padding: 14,
   },
-  suggestionLoaderText: {fontSize: 13, color: Colors.grey},
+  suggestionLoaderText: {fontSize: 13, color: Colors.White},
   emptyText: {
     color: WHITE,
     textAlign: 'center',
@@ -1169,22 +1158,22 @@ const styles = StyleSheet.create({
   suggestionItemActive: {backgroundColor: Colors.dargBg},
   suggestionLeft: {width: 20, alignItems: 'center'},
   suggestionRight: {flex: 1},
-  suggestionName: {fontSize: 14, fontWeight: '600', color: Colors.grey},
+  suggestionName: {fontSize: 14, fontWeight: '600', color: Colors.White},
   suggestionNameActive: {color: Colors.White},
-  suggestionVicinity: {fontSize: 12, color: Colors.grey, marginTop: 2},
+  suggestionVicinity: {fontSize: 13, color: '#ABB2BF', marginTop: 2},
   suggestionVicinityActive:{color: Colors.White},
 
   // Caption
   input: {
     height: 90,
-    color: Colors.dargBg,
+    color: Colors.White,
     fontSize: 15,
     textAlignVertical: 'top',
     lineHeight: 22,
   },
   charCount: {
     fontSize: 11,
-    color: Colors.grey,
+    color: Colors.White,
     textAlign: 'right',
     marginTop: 6,
   },

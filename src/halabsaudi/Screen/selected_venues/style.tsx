@@ -8,7 +8,8 @@ export const getStyles=(language:String) => StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.dargBg,
     // paddingHorizontal: "4%",
-    marginTop:Platform.OS==='ios'?'0%':'10%',
+    // ✅ marginTop '10%' HATAYA — DOUBLE padding tha.
+    // index.tsx me <SafeAreaView edges={['top']}> pehle se hai.
     marginBottom:Platform.OS==='ios'?'0%':'2%'
   },
   header: {
@@ -70,7 +71,7 @@ export const getStyles=(language:String) => StyleSheet.create({
   itemContainer: {
     flexDirection: language==='en'?'row':"row-reverse",
     alignItems: 'center',
-    backgroundColor: Colors.whiteGrey,
+    backgroundColor: Colors.cardBg,
     padding: 12,
     marginBottom: 10,
     borderRadius: 8,
@@ -97,7 +98,7 @@ export const getStyles=(language:String) => StyleSheet.create({
     fontFamily: language==='en'?Fonts.SF_Bold:"",
     lineHeight: language==='en'?22:30,
     fontWeight:'500',
-    color: Colors.grey,
+    color: Colors.White,
     marginLeft:language==='ar'?"2%":0,
     textAlign:language==='en'?'left':'right'
   },
@@ -106,7 +107,7 @@ export const getStyles=(language:String) => StyleSheet.create({
     fontFamily: language==='en'?Fonts.SF_Medium:"",
     lineHeight: language==='en'?14:24,
     fontWeight:'300',
-    color: Colors.grey,
+    color: Colors.White,
     marginLeft:language==='ar'?"2%":0,
      textAlign:language==='en'?'left':'right'
   
@@ -116,7 +117,7 @@ export const getStyles=(language:String) => StyleSheet.create({
     fontFamily: language==='en'?Fonts.SF_Bold:"",
     lineHeight: language==='en'?14:24,
     fontWeight:'500',
-    color: Colors.grey,
+    color: Colors.White,
     marginLeft:language==='ar'?"2%":0,
      textAlign:language==='en'?'left':'right'
   },
@@ -133,7 +134,7 @@ export const getStyles=(language:String) => StyleSheet.create({
    fontSize:16,
    marginTop:12,
    fontWeight:'bold',
-   color:Colors.Black
+   color:Colors.White
   },
 
   Loc_Status_Cont: {

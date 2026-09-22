@@ -1,11 +1,7 @@
+import {fetchBrandCatalog} from '../../../api/brandCatalog';
+import {ActivityIndicator} from '../../../../ui/ActivityIndicator';
 import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {
-  View,
-  FlatList,
-  Dimensions,
-  TouchableOpacity,
-  ActivityIndicator,
-} from 'react-native';
+import {View, FlatList, Dimensions, TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../redux_toolkit/store';
@@ -15,12 +11,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const {width} = Dimensions.get('screen');
 
-const OFFERS_CACHE_KEY = 'H-Offer_cache_v2';
+const OFFERS_CACHE_KEY = 'H-Offer_cache_v7';
 const OFFERS_TTL_MS = 6 * 60 * 60 * 1000; // 6 hours (adjust)
 
 type CacheShape = {ts: number; data: any[]};
 
-const ImageSlider: React.FC = () => {
+const ImageSlider: React.FC<{onLoadError?: () => void}> = ({onLoadError}) => {
   const navigation = useNavigation<any>();
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -92,8 +88,8 @@ const ImageSlider: React.FC = () => {
   };
 
   const fetchBrands = async (signal?: AbortSignal) => {
-    const res = await fetch('https://hala-b-saudi.onrender.com/api/hbs/brands', {signal});
-    const json = await res.json().catch(() => ({}));
+    const res = await fetchBrandCatalog('https://hala-b-saudi.onrender.com/api/hbs/brands', {signal});
+    const json = await res.json();
     if (!res.ok) throw new Error('Brands API failed');
     const raw = (json as any)?.data ? (json as any).data : json;
     return Array.isArray(raw) ? raw : [];
@@ -139,7 +135,7 @@ const ImageSlider: React.FC = () => {
         setOffers(flatOffers);
       }
     } catch (e) {
-      // keep cached if fetch failed
+      onLoadError?.(); // Keep cached content, expose retry on Home.
     } finally {
       if (mountedRef.current) setLoading(false);
     }
@@ -211,7 +207,7 @@ const ImageSlider: React.FC = () => {
             style={[
               styles.dot,
               {
-                backgroundColor: index === currentIndex ? '#fff' : '#fff',
+                backgroundColor: index === currentIndex ? '#191B20' : '#191B20',
                 width: index === currentIndex ? 30 : 8,
               },
             ]}

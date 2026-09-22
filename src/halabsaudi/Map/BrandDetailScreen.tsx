@@ -1,17 +1,7 @@
+import {Text} from '../../ui/Text';
+import {ActivityIndicator} from '../../ui/ActivityIndicator';
 import React, {useCallback, useEffect, useState} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  FlatList,
-  TouchableOpacity,
-  ActivityIndicator,
-  Dimensions,
-  Modal,
-  Platform,
-  StatusBar,
-} from 'react-native';
+import {View, StyleSheet, Image, FlatList, TouchableOpacity, Dimensions, Modal, Platform, StatusBar} from 'react-native';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import axios from 'axios';
@@ -305,7 +295,7 @@ const BrandDetailScreen = () => {
 
         {!!detail?.address && (
           <View style={styles.addressRow}>
-            <Ionicons name="location-outline" size={15} color="#888" />
+            <Ionicons name="location-outline" size={15} color='#ABB2BF' />
             <Text style={styles.detailAddress} numberOfLines={2}>
               {detail.address}
             </Text>
@@ -400,13 +390,13 @@ export default BrandDetailScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#191B20',
   },
   loadingContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: Colors.dargBg,
   },
 
   // Overlay header
@@ -432,7 +422,7 @@ const styles = StyleSheet.create({
   slide: {
     width: SCREEN_WIDTH,
     height: SLIDER_HEIGHT,
-    backgroundColor: '#eee',
+    backgroundColor: '#191B20',
   },
   sliderEmpty: {
     alignItems: 'center',
@@ -459,7 +449,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.5)',
   },
   dotActive: {
-    backgroundColor: '#fff',
+    backgroundColor: '#191B20',
     width: 8,
     height: 8,
     borderRadius: 4,
@@ -481,10 +471,10 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 21,
     fontWeight: '700',
-    color: '#1A1A2E',
+    color: Colors.White,
   },
   typeBadge: {
-    backgroundColor: '#FFF3F3',
+    backgroundColor: '#191B20',
     borderRadius: 8,
     paddingHorizontal: 10,
     paddingVertical: 4,
@@ -504,13 +494,13 @@ const styles = StyleSheet.create({
   detailAddress: {
     flex: 1,
     fontSize: 13,
-    color: '#888',
+    color: '#ABB2BF',
   },
   detailDescription: {
     marginTop: 12,
     fontSize: 14,
     lineHeight: 20,
-    color: '#444',
+    color: Colors.White,
   },
 
   // Photos section header
@@ -522,13 +512,13 @@ const styles = StyleSheet.create({
     paddingTop: 14,
     paddingBottom: 10,
     borderTopWidth: 1,
-    borderColor: '#F1F1F1',
+    borderColor: '#343841',
     marginTop: 8,
   },
   photosHeaderTitle: {
     fontSize: 15,
     fontWeight: '700',
-    color: '#1A1A2E',
+    color: Colors.White,
   },
   addPhotoBtn: {
     flexDirection: 'row',
@@ -551,7 +541,7 @@ const styles = StyleSheet.create({
   gridImage: {
     width: GRID_ITEM_SIZE,
     height: GRID_ITEM_SIZE,
-    backgroundColor: '#eee',
+    backgroundColor: '#191B20',
     marginBottom: GRID_GAP,
   },
   emptyGrid: {
@@ -563,7 +553,7 @@ const styles = StyleSheet.create({
   emptyGridText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#999',
+    color: '#ABB2BF',
   },
   emptyGridSubtext: {
     fontSize: 12,

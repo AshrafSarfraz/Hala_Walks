@@ -1,17 +1,7 @@
+import {Text} from '../../../ui/Text';
+
 import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  Image,
-  TouchableOpacity,
-  StatusBar,
-  Platform,
-  ImageBackground,
-  PermissionsAndroid,
-  StyleSheet,
-  Dimensions,
-} from 'react-native';
+import {View, FlatList, Image, TouchableOpacity, StatusBar, Platform, ImageBackground, PermissionsAndroid, StyleSheet, Dimensions} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
@@ -32,7 +22,7 @@ const { width } = Dimensions.get('screen');
 type WishlistProps = { navigation: any };
 
 const Wishlist: React.FC<WishlistProps> = () => {
- useStatusBar('light-content', Colors.Green, true);
+ useStatusBar('light-content', Colors.darkgrey, true);
   const navigation = useNavigation<any>();
   const dispatch = useDispatch();
 
@@ -99,6 +89,7 @@ const Wishlist: React.FC<WishlistProps> = () => {
        
         <View style={[s.headerRow, { flexDirection: rowDir }]}>
 
+          <TouchableOpacity accessibilityRole="button" accessibilityLabel="Back" onPress={() => navigation.canGoBack() ? navigation.goBack() : navigation.navigate('BottomTab', {screen: 'Home'})} style={{width: 44, height: 44, justifyContent: 'center', alignItems: 'center', marginRight: 8}}><Ionicons name="arrow-back" size={25} color={Colors.White} /></TouchableOpacity>
           <View style={[s.headerText, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
             <Text style={[s.eyebrow, { textAlign }]}>{t.hala_community}</Text>
             <Text style={[s.headerTitle, { textAlign }]}>{t.Wishlist}</Text>
@@ -240,7 +231,7 @@ const s = StyleSheet.create({
   eyebrow: {
     fontSize: 10,
     color: Colors.White,
-    letterSpacing: 1.1,
+    letterSpacing: 0.2,
     textTransform: 'uppercase',
     marginBottom: 3,
   },
@@ -279,7 +270,7 @@ const s = StyleSheet.create({
   // ── Card ──
   card: {
     width: CARD_WIDTH,
-    backgroundColor: Colors.cardBg,
+    backgroundColor: '#191B20',
     borderRadius: 16,
     overflow: 'hidden',
     shadowColor: '#1A202C',
@@ -322,7 +313,7 @@ const s = StyleSheet.create({
   cardName: {
     fontSize: 13,
     fontFamily: Fonts.SF_Bold,
-    color: Colors.Black,
+    color: Colors.White,
     marginBottom: 6,
   },
   categoryPill: {
@@ -376,7 +367,7 @@ const s = StyleSheet.create({
   },
   emptyRing: {
     width: 84, height: 84, borderRadius: 42,
-    backgroundColor: '#E6F2EC',
+    backgroundColor: '#191B20',
     justifyContent: 'center', alignItems: 'center',
     marginBottom: 8,
     borderWidth: 3, borderColor: Colors.Black,
@@ -384,13 +375,10 @@ const s = StyleSheet.create({
   emptyTitle: {
     fontSize: 17,
     fontWeight: '700',
-    color: Colors.Black2,
+    color: Colors.White,
   },
   emptySub: {
     fontSize: 13,
     color: Colors.Grey9,
   },
 });
-
-
-

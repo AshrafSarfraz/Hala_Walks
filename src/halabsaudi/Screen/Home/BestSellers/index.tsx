@@ -1,5 +1,7 @@
+import {fetchBrandCatalog} from '../../../api/brandCatalog';
+import {Text} from '../../../../ui/Text';
 import React, {useEffect, useState} from 'react';
-import {View, Text, FlatList, TouchableOpacity, Dimensions} from 'react-native';
+import {View, FlatList, TouchableOpacity, Dimensions} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
@@ -13,7 +15,7 @@ import {getStyles} from './style';
 const {width} = Dimensions.get('screen');
 const BRANDS_API = 'https://hala-b-saudi.onrender.com/api/hbs/brands';
 
-const BestSeller: React.FC<{onDataLoaded?: (hasData: boolean) => void}> = ({onDataLoaded}) => {
+const BestSeller: React.FC<{onDataLoaded?: (hasData: boolean) => void; onLoadError?: () => void}> = ({onDataLoaded, onLoadError}) => {
   const navigation = useNavigation<any>();
   const reduxCountry = useSelector((s: RootState) => s.country?.countryName ?? null);
   const language = useSelector((state: RootState) => state.language.language);
@@ -45,12 +47,10 @@ const BestSeller: React.FC<{onDataLoaded?: (hasData: boolean) => void}> = ({onDa
           const arr = Array.isArray(parsed) ? parsed : [];
           setBrands(arr);
           setLoading(false);
-        } else {
-          setTimeout(() => setLoading(false), 1000);
         }
 
-        const res = await fetch(BRANDS_API);
-        const json = await res.json().catch(() => ({}));
+        const res = await fetchBrandCatalog(BRANDS_API);
+        const json = await res.json();
 
         if (!res.ok) {
           console.warn('Brands API failed:', json);
@@ -65,12 +65,11 @@ const BestSeller: React.FC<{onDataLoaded?: (hasData: boolean) => void}> = ({onDa
           ...item,
         }));
 
-        if (freshOffers.length) {
-          setBrands(freshOffers);
-          await AsyncStorage.setItem('H-brands_cache', JSON.stringify(freshOffers));
-        }
+        setBrands(freshOffers);
+        await AsyncStorage.setItem('H-brands_cache', JSON.stringify(freshOffers));
       } catch (error) {
         console.error('Error loading offers:', error);
+        onLoadError?.();
       } finally {
         setLoading(false);
       }

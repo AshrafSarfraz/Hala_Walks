@@ -1,16 +1,9 @@
+import {Text} from '../../../ui/Text';
+
 // src/halabsaudi/chat/components/WhatsAppMessageModal.tsx
 
 import React, {useEffect, useRef, useState} from 'react';
-import {
-  Modal,
-  View,
-  Text,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  StyleSheet,
-  Animated,
-  Dimensions,
-} from 'react-native';
+import {Modal, View, TouchableOpacity, TouchableWithoutFeedback, StyleSheet, Animated, Dimensions} from 'react-native';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {Colors} from '../../Themes/Colors';
@@ -21,7 +14,7 @@ const REACTION_EMOJIS = ['❤️', '😂', '👍', '😮', '😢', '🙏', '🔥
 
 export type MessageAction = {
   label: string;
-  icon: string;
+  icon: React.ComponentProps<typeof Ionicons>['name'];
   destructive?: boolean;
   onPress: () => void;
 };
@@ -229,7 +222,7 @@ const styles = StyleSheet.create({
 
   reactionBar: {
     flexDirection: 'row',
-    backgroundColor: '#fff',
+    backgroundColor: '#191B20',
     borderRadius: 30,
     padding: 6,
     marginBottom: 8,
@@ -243,7 +236,7 @@ const styles = StyleSheet.create({
   },
 
   menu: {
-    backgroundColor: '#fff',
+    backgroundColor: '#191B20',
     borderRadius: 14,
     overflow: 'hidden',
     elevation: 6,
@@ -255,11 +248,11 @@ const styles = StyleSheet.create({
   },
   border: {
     borderBottomWidth: 0.5,
-    borderColor: '#eee',
+    borderColor: '#343841',
   },
   label: {
     fontSize: 15,
-    color: '#111',
+    color: '#F5F6F8',
   },
 
   // ✅ TOAST

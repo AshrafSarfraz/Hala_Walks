@@ -1,9 +1,10 @@
+import {Text} from '../../ui/Text';
+import {fetchCollection} from '../api/collection';
+import {ActivityIndicator} from '../../ui/ActivityIndicator';
+import {Alert} from '../../ui/Alert';
 // src/halabsaudi/chat/UserProfileScreen.tsx
 import React, {useEffect, useRef, useState, useCallback} from 'react';
-import {
-  View, Text, StyleSheet, TouchableOpacity, Image,
-  ActivityIndicator, Alert, Animated, StatusBar, Dimensions,
-} from 'react-native';
+import {View, StyleSheet, TouchableOpacity, Image, Animated, StatusBar, Dimensions} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
@@ -17,6 +18,8 @@ import BlockUserModal from './components/BlockUserModal';
 import {languageData} from '../redux_toolkit/language/languageSlice';
 import {RootState} from '../redux_toolkit/store';
 import { useStatusBar } from '../Component/UseStatusBar/useStatusBar';
+// ✅ media endpoint ab { media, hasMore } deta hai
+import {unwrapMedia} from '../api/unwrap';
 
 const {width: W}    = Dimensions.get('window');
 const HEADER_HEIGHT = 240;
@@ -130,8 +133,9 @@ export default function UserProfileScreen({route, navigation}: Props) {
     if (!tok || !chatId) return;
     setMediaLoading(true);
     try {
-      const res = await axios.get(`${BASE_URL}/api/chat/${chatId}/media`, {headers: {Authorization: `Bearer ${tok}`}});
-      const items: MediaItem[] = (res.data || [])
+      const mediaItems = await fetchCollection(`${BASE_URL}/api/chat/${chatId}/media`, {headers: {Authorization: `Bearer ${tok}`}}, 'media');
+      // ✅ FIX: object par .filter nahi chalta — gallery khali rehti thi
+      const items: MediaItem[] = mediaItems
         .filter((m: any) => (m.mediaType === 'image' || m.mediaType === 'video') && m.mediaUrl && !m.deleted)
         .map((m: any) => ({id: String(m._id), uri: m.mediaUrl, mediaType: m.mediaType, createdAt: m.createdAt}));
       setAllMedia(items);
@@ -183,7 +187,7 @@ export default function UserProfileScreen({route, navigation}: Props) {
     inputRange: [0, HEADER_HEIGHT], outputRange: [0, -30], extrapolate: 'clamp',
   });
 
-  if (loading) return <View style={s.loader}><ActivityIndicator size="large" color={Colors.Green} /></View>;
+  if (loading) return <View style={s.loader}><ActivityIndicator size="large" color={Colors.btnRed} /></View>;
 
   const displayName  = profile?.name || participantName || 'User';
   const avatarLetter = displayName.charAt(0).toUpperCase();
@@ -312,7 +316,7 @@ export default function UserProfileScreen({route, navigation}: Props) {
 
           {mediaLoading ? (
             <View style={s.mediaEmpty}>
-              <ActivityIndicator size="small" color={Colors.Green} />
+              <ActivityIndicator size="small" color={Colors.btnRed} />
             </View>
           ) : previewMedia.length === 0 ? (
             <View style={s.mediaEmpty}>
@@ -344,7 +348,7 @@ export default function UserProfileScreen({route, navigation}: Props) {
                   </Text>
                   <Ionicons
                     name={isRTL ? 'arrow-back' : 'arrow-forward'}
-                    size={15} color={Colors.Green}
+                    size={15} color={Colors.btnRed}
                   />
                 </TouchableOpacity>
               )}
@@ -445,13 +449,13 @@ function ActionRow({icon, iconColor, iconBg, label, sublabel, onPress, danger, i
 }
 
 function Divider() {
-  return <View style={{height: 0.5, backgroundColor: '#F3F4F6', marginLeft: 66}} />;
+  return <View style={{height: 0.5, backgroundColor: '#191B20', marginLeft: 66}} />;
 }
 
 // ── Styles ─────────────────────────────────────────────────────────────────
 const s = StyleSheet.create({
   root:   {flex: 1, backgroundColor: Colors.dargBg},
-  loader: {flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F2F2F7'},
+  loader: {flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#191B20'},
 
   stickyNav: {
     position: 'absolute', top: 0, left: 0, right: 0, zIndex: 99,
@@ -472,11 +476,11 @@ const s = StyleSheet.create({
     justifyContent: 'center', alignItems: 'center',
   },
   avatarWrap: {zIndex: 5},
-  avatarImg: {width: 96, height: 96, borderRadius: 48, borderWidth: 3, borderColor: '#fff'},
+  avatarImg: {width: 96, height: 96, borderRadius: 48, borderWidth: 3, borderColor: '#343841'},
   avatarPlaceholder: {
     width: 96, height: 96, borderRadius: 48,
     backgroundColor: 'rgba(255,255,255,0.25)',
-    borderWidth: 3, borderColor: '#fff',
+    borderWidth: 3, borderColor: '#343841',
     justifyContent: 'center', alignItems: 'center',
   },
   avatarLetter: {fontSize: 38, fontWeight: '700', color: '#fff'},
@@ -485,38 +489,40 @@ const s = StyleSheet.create({
     width: 24, height: 24, borderRadius: 12,
     backgroundColor: 'rgba(0,0,0,0.4)',
     justifyContent: 'center', alignItems: 'center',
-    borderWidth: 1.5, borderColor: '#fff',
+    borderWidth: 1.5, borderColor: '#343841',
   },
 
   nameSection: {
-    alignItems: 'center', paddingVertical: 0, backgroundColor: '#fff',
-    marginBottom: 10, borderBottomWidth: 0.5, borderBottomColor: '#F0F0F0', gap: 6,
+    // ✅ FIX: yahan backgroundColor '#fff' tha aur `name` ka color bhi
+    //    '#fff' — safaid par safaid, naam bilkul nazar nahi aata tha.
+    alignItems: 'center', paddingVertical: 0, backgroundColor: 'transparent',
+    marginBottom: 10, borderBottomWidth: 0.5, borderBottomColor: '#343841', gap: 6,
   },
   name: {fontSize: 16, fontWeight: '400', color: '#fff', marginTop: 10},
 
   card: {
-    backgroundColor: Colors.cardBg, borderRadius: 16,
+    backgroundColor: '#191B20', borderRadius: 16,
     marginHorizontal: 14, marginBottom: 12,
-    overflow: 'hidden', borderWidth: 0.5, borderColor: '#F0F0F0',
+    overflow: 'hidden', borderWidth: 0.5, borderColor: '#343841',
   },
   sectionTitleText: {
     fontSize: 11, fontWeight: '700', color: '#9CA3AF',
-    textTransform: 'uppercase', letterSpacing: 0.7,
+    textTransform: 'uppercase', letterSpacing: 0.2,
     paddingHorizontal: 16, paddingTop: 14, paddingBottom: 10,
   },
 
   infoRow: {alignItems: 'flex-start', paddingHorizontal: 16, paddingVertical: 13, gap: 14},
   infoIcon: {
-    width: 36, height: 36, borderRadius: 10, backgroundColor: '#FEE2E2',
+    width: 36, height: 36, borderRadius: 10, backgroundColor: '#191B20',
     justifyContent: 'center', alignItems: 'center', marginTop: 1,
   },
   infoLabel:    {fontSize: 11, color: '#9CA3AF', marginBottom: 2, fontWeight: '600'},
-  infoValue:    {fontSize: 15, color: '#111827'},
-  infoSublabel: {fontSize: 12, color: '#6B7280', marginTop: 2},
+  infoValue:    {fontSize: 15, color: '#F5F6F8'},
+  infoSublabel: {fontSize: 12, color: '#ABB2BF', marginTop: 2},
 
   actionRow: {alignItems: 'center', paddingHorizontal: 16, paddingVertical: 14, gap: 14},
   actionIcon: {width: 40, height: 40, borderRadius: 12, justifyContent: 'center', alignItems: 'center'},
-  actionLabel:    {fontSize: 15, fontWeight: '500', color: '#111827'},
+  actionLabel:    {fontSize: 15, fontWeight: '500', color: '#F5F6F8'},
   actionSublabel: {fontSize: 12, color: '#9CA3AF', marginTop: 1},
 
   mediaHeader:      {alignItems: 'center', justifyContent: 'space-between', paddingRight: 12},
@@ -524,7 +530,7 @@ const s = StyleSheet.create({
   mediaCount:       {fontSize: 12, color: '#9CA3AF'},
 
   mediaGrid: {flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 12, paddingBottom: 4, gap: 3},
-  mediaCell: {width: PREVIEW_SIZE, height: PREVIEW_SIZE, borderRadius: 8, overflow: 'hidden', backgroundColor: '#F3F4F6'},
+  mediaCell: {width: PREVIEW_SIZE, height: PREVIEW_SIZE, borderRadius: 8, overflow: 'hidden', backgroundColor: '#191B20'},
   mediaImg:  {width: '100%', height: '100%'},
   videoOverlay: {
     ...StyleSheet.absoluteFillObject,
@@ -536,9 +542,9 @@ const s = StyleSheet.create({
 
   viewAllStrip: {
     alignItems: 'center', justifyContent: 'center', gap: 6,
-    paddingVertical: 13, borderTopWidth: 0.5, borderTopColor: '#F3F4F6',
+    paddingVertical: 13, borderTopWidth: 0.5, borderTopColor: '#343841',
   },
-  viewAllStripText: {fontSize: 13, color: Colors.Green, fontWeight: '600'},
+  viewAllStripText: {fontSize: 13, color: Colors.btnRed, fontWeight: '600'},
 });
 
 

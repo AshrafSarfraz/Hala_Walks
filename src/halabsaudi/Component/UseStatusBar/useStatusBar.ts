@@ -6,11 +6,12 @@ import {useFocusEffect} from '@react-navigation/native';
 export function useStatusBar(
   barStyle: StatusBarStyle,
   backgroundColor: string,
+  _legacyTranslucent?: boolean,
 ) {
   useFocusEffect(
     useCallback(() => {
       StatusBar.setHidden(false, 'fade');   // ✅ splash ke baad bar wapas show
-      StatusBar.setBarStyle(barStyle, true);
+      StatusBar.setBarStyle('light-content', true);
       if (Platform.OS === 'android') {
         StatusBar.setTranslucent(false);     // ✅ solid bar
         StatusBar.setBackgroundColor(backgroundColor, true);

@@ -6,7 +6,7 @@ import {
 } from '@react-navigation/bottom-tabs';
 import {useSafeAreaInsets, SafeAreaProvider} from 'react-native-safe-area-context';
 import Home from '../../Screen/Home';
-import Profile from '../../Screen/Profile';
+import Profile from '../../Map/profileScreen';
 import {Colors} from '../../Themes/Colors';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../redux_toolkit/store';
@@ -71,19 +71,29 @@ const MyTabs: React.FC = () => {
           return (
             <Image
               source={iconSource}
-              style={{width: 18, height: 18, resizeMode: 'contain', tintColor}}
+              style={{width: 16, height: 16, resizeMode: 'contain', tintColor}}
             />
           );
         },
-        tabBarLabelStyle: {paddingBottom: 6, fontSize: 10},
+        tabBarLabelStyle: {paddingBottom: 4, fontSize: 10, fontWeight: '500'},
         tabBarActiveTintColor: Colors.btnRed,
         tabBarInactiveTintColor: Colors.White,
         tabBarStyle: {
-          height: 60 + insets.bottom,
-          paddingTop: 7,
-          paddingBottom: Math.max(6, insets.bottom),
-          backgroundColor: Colors.darkgrey,
+          height: 40 + insets.bottom,
+          width:'85%',
+          alignSelf:'center',
+          marginBottom:insets.bottom-5,
+          borderRadius:100,
+          paddingHorizontal:14,
+          paddingTop:8,
+          backgroundColor: 'rgba(255, 255, 255, 0.08)',
+          borderWidth: 1,
+          borderColor: 'rgba(255, 255, 255, 0.15)',
+          overflow: 'hidden',
           position: 'absolute',
+          marginRight:'7.5%',
+          marginLeft:'7.5%'
+
         },
         headerShown: false,
         tabBarHideOnKeyboard: true,
@@ -126,7 +136,7 @@ const MyTabs: React.FC = () => {
       <Tab.Screen
         name="Explore"
         component={MapScreen}
-        options={{tabBarLabel: languageData[language].Map}}
+        options={{tabBarLabel: language === 'ar' ? 'استكشف' : 'Explore'}}
       />
 
       <Tab.Screen
@@ -140,9 +150,9 @@ const MyTabs: React.FC = () => {
 
 // ─── Root ─────────────────────────────────────────────────────────────────────
 const Bottom: React.FC = () => (
-  <SafeAreaProvider>
+  <>
     <MyTabs />
-  </SafeAreaProvider>
+  </>
 );
 
 export default Bottom;

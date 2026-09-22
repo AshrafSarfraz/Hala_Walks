@@ -1,18 +1,10 @@
+import {Text} from '../../../../ui/Text';
+import {TextInput} from '../../../../ui/TextInput';
+import {ActivityIndicator} from '../../../../ui/ActivityIndicator';
+import {Alert} from '../../../../ui/Alert';
 
 import React, {useState, useEffect} from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  ScrollView,
-  ActivityIndicator,
-  StatusBar,
-  Alert,
-  Platform,
-  StyleSheet,
-  KeyboardAvoidingView,
-} from 'react-native';
+import {View, TouchableOpacity, ScrollView, StatusBar, Platform, StyleSheet, KeyboardAvoidingView} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
@@ -100,7 +92,7 @@ const EditAccountScreen: React.FC = ({navigation}: any) => {
           {
             uri: data.avatar,
             priority: FastImage.priority.high,
-            cache: FastImage.cacheControl.reload,
+            cache: FastImage.cacheControl.web,
           },
         ]);
       }
@@ -233,7 +225,7 @@ const EditAccountScreen: React.FC = ({navigation}: any) => {
   };
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor:Colors.White4}}>
+    <SafeAreaView style={{flex: 1, backgroundColor:'#191B20'}}>
       <KeyboardAvoidingView
         style={{flex: 1}}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
@@ -370,7 +362,7 @@ const EditAccountScreen: React.FC = ({navigation}: any) => {
                 style={[s.dateInput, {flexDirection: rowDir}]}
                 onPress={() => setShowDatePicker(true)}
                 activeOpacity={0.7}>
-                <Text style={{color: birthday ? '#111827' : '#9CA3AF'}}>
+                <Text style={{color: birthday ? '#F5F6F8' : '#9CA3AF'}}>
                   {birthday || t.select_birthday}
                 </Text>
                 <Ionicons name="calendar-outline" size={20} color="#9CA3AF" />
@@ -383,6 +375,7 @@ const EditAccountScreen: React.FC = ({navigation}: any) => {
         {/* Date Picker */}
         {showDatePicker && (
           <DateTimePicker
+            themeVariant="dark"
             value={dateObj || new Date()}
             mode="date"
             display={Platform.OS === 'ios' ? 'spinner' : 'default'}
@@ -429,9 +422,9 @@ const s = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 14,
-    backgroundColor: '#F2F2F7',
+    backgroundColor: '#191B20',
   },
-  headerTitle: {fontSize: 17, fontWeight: '700', color: '#111827'},
+  headerTitle: {fontSize: 17, fontWeight: '700', color: '#F5F6F8'},
   saveTxt: {color: Colors.Red, fontSize: 16, fontWeight: '600'},
 
   avatarSection: {alignItems: 'center', marginTop: 20, marginBottom: 8},
@@ -462,7 +455,7 @@ const s = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: '#fff',
+    borderColor: '#343841',
   },
   changePhotoTxt: {
     marginTop: 10,
@@ -476,31 +469,31 @@ const s = StyleSheet.create({
   label: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#6B7280',
+    color: '#ABB2BF',
     marginBottom: 8,
     textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    letterSpacing: 0.2,
   },
   input: {
-    backgroundColor: '#fff',
+    backgroundColor: '#191B20',
     borderRadius: 12,
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontSize: 15,
-    color: '#111827',
+    color: '#F5F6F8',
   },
   charCount: {fontSize: 11, color: '#9CA3AF', marginTop: 4},
   readonlyInput: {
-    backgroundColor: '#F9FAFB',
+    backgroundColor: '#191B20',
     borderRadius: 12,
     paddingHorizontal: 14,
     paddingVertical: 12,
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  readonlyText: {fontSize: 15, color: '#6B7280'},
+  readonlyText: {fontSize: 15, color: '#ABB2BF'},
   dateInput: {
-    backgroundColor: '#fff',
+    backgroundColor: '#191B20',
     borderRadius: 12,
     paddingHorizontal: 14,
     paddingVertical: 12,

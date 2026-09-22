@@ -1,5 +1,7 @@
+import {Text} from '../../../ui/Text';
+
 import React, { useState } from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {Image, StyleSheet, TouchableOpacity, View} from 'react-native';
 import { Colors } from '../../Themes/Colors';
 import { DropdownIcon } from '../../Themes/Images';
 import { useSelector } from 'react-redux';
@@ -89,7 +91,7 @@ const styles = StyleSheet.create({
   dropdown_Icon: {
     width: 12,
     height: 12,
-    tintColor: Colors.Black,
+    tintColor: Colors.White,
   },
   flag: {
     width: 16,
@@ -99,7 +101,7 @@ const styles = StyleSheet.create({
   selectedText: {
     fontSize: 10,
     fontWeight: '500',
-    color: Colors.Black,
+    color: '#F5F6F8',
     flex: 1, // Push the icon to the right
   },
   dropdown_Container: {
@@ -107,7 +109,7 @@ const styles = StyleSheet.create({
     top: 54, // Positioning dropdown slightly lower for better spacing
     left: 0,
     right: 0,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#191B20',
     borderRadius: 4,
     zIndex: 10,
     borderWidth: 1,
@@ -124,7 +126,7 @@ const styles = StyleSheet.create({
   },
   dropdownText: {
     fontSize: 12,
-    color: Colors.Black,
+    color: '#F5F6F8',
     fontWeight:'bold'
   },
 });

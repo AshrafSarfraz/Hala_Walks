@@ -1,13 +1,9 @@
+import {fetchBrandCatalog} from '../../api/brandCatalog';
+import {Text} from '../../../ui/Text';
+
 // src/components/Branches/Branches.tsx
 import React, {forwardRef, useEffect, useMemo, useState} from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  FlatList,
-  StyleSheet,
-  Platform,
-} from 'react-native';
+import {View, TouchableOpacity, FlatList, StyleSheet, Platform} from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
@@ -79,7 +75,7 @@ const Branches = forwardRef<RBSheetRef, Props>(
           }
 
           // 2) Fetch fresh data from API
-          const res = await fetch(BRANDS_API);
+          const res = await fetchBrandCatalog(BRANDS_API);
           const json = await res.json();
 
           // API may return {data: []} or []
@@ -248,7 +244,7 @@ const Branches = forwardRef<RBSheetRef, Props>(
     return (
       <RBSheet
         ref={ref as any}
-        closeOnDragDown
+        draggable
         closeOnPressMask
         height={height}
         customStyles={{
@@ -256,10 +252,10 @@ const Branches = forwardRef<RBSheetRef, Props>(
           container: {
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
-            backgroundColor: '#f9f9f9',
+            backgroundColor: '#191B20',
             elevation: 10,
           },
-          draggableIcon: {backgroundColor: '#bbb'},
+          draggableIcon: {backgroundColor: '#191B20'},
         }}>
         <View style={styles.container}>
           <Text style={styles.sheetTitle}>
@@ -300,14 +296,14 @@ const getStyles = (language: string) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: Colors.White4,
+      backgroundColor: '#191B20',
       paddingHorizontal: '4%',
       paddingTop: Platform.OS === 'ios' ? '5%' : '5%',
       paddingBottom: Platform.OS === 'ios' ? '2%' : '2%',
     },
     sheetTitle: {
       fontSize: 16,
-      color: Colors.Black,
+      color: '#F5F6F8',
       fontFamily: Fonts.SF_Bold,
       textAlign: language === 'ar' ? 'right' : 'left',
       marginBottom: 10,
@@ -318,12 +314,12 @@ const getStyles = (language: string) =>
     itemContainer: {
       flexDirection: language === 'ar' ? 'row-reverse' : 'row',
       alignItems: 'center',
-      backgroundColor: Colors.White,
+      backgroundColor: '#191B20',
       padding: 12,
       marginBottom: 10,
       borderRadius: 8,
       borderWidth: 1,
-      borderColor: '#E0E0E0',
+      borderColor: '#343841',
       shadowColor: '#000',
       shadowOffset: {width: 0, height: 2},
       shadowOpacity: 0.1,
@@ -337,26 +333,26 @@ const getStyles = (language: string) =>
       marginRight: language === 'ar' ? 0 : 10,
       marginLeft: language === 'ar' ? 10 : 0,
       resizeMode: 'cover',
-      backgroundColor: '#eee',
+      backgroundColor: '#191B20',
     },
     imgPlaceholder: {
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: '#e9ecef',
+      backgroundColor: '#191B20',
     },
     itemInfo: {
       flex: 1,
     },
     itemTitle: {
       fontSize: 16,
-      color: Colors.Black,
+      color: '#F5F6F8',
       fontFamily: Fonts.SF_Bold,
       textAlign: language === 'ar' ? 'right' : 'left',
     },
     itemDescription: {
       marginTop: 4,
       fontSize: 12,
-      color: '#555',
+      color: '#ABB2BF',
       fontFamily: Fonts.SF_Regular,
       lineHeight: 18,
       textAlign: language === 'ar' ? 'right' : 'left',
@@ -364,14 +360,14 @@ const getStyles = (language: string) =>
     itemVenue: {
       marginTop: 6,
       fontSize: 12,
-      color: Colors.Green,
+      color: '#F5F6F8',
       fontFamily: Fonts.SF_Medium,
       textAlign: language === 'ar' ? 'right' : 'left',
     },
     emptyText: {
       paddingVertical: 24,
       textAlign: 'center',
-      color: '#666',
+      color: '#ABB2BF',
       fontFamily: Fonts.SF_Regular,
     },
   });

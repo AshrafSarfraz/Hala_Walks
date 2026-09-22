@@ -1,13 +1,14 @@
+import type {NativeStackScreenProps} from '@react-navigation/native-stack';
+import type {HalaStackParamList} from '../../Navigation/types';
+import {Text} from '../../../ui/Text';
+import {TextInput} from '../../../ui/TextInput';
+import {ActivityIndicator} from '../../../ui/ActivityIndicator';
 // src/halabsaudi/chat/components/ImagePreviewScreen.tsx
 // ✅ WhatsApp-style image preview before sending
 //    User image select kare → yeh screen → caption type kare → Send
 
 import React, {useState, useRef} from 'react';
-import {
-  View, Text, Image, TextInput, TouchableOpacity,
-  StyleSheet,ActivityIndicator,
-  KeyboardAvoidingView, Platform, Dimensions,
-} from 'react-native';
+import {View, Image, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Dimensions} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import {useSelector} from 'react-redux';
@@ -18,19 +19,7 @@ import { useStatusBar } from '../../Component/UseStatusBar/useStatusBar';
 
 const {width: W, height: H} = Dimensions.get('window');
 
-type Props = {
-  route: {
-    params: {
-      asset: {
-        uri: string;
-        type?: string;
-        fileName?: string;
-      };
-      onSend: (asset: any, caption: string) => void;
-    };
-  };
-  navigation: any;
-};
+type Props = NativeStackScreenProps<HalaStackParamList, 'ImagePreview'>;
 
 export default function ImagePreviewScreen({route, navigation}: Props) {
   const {asset, onSend} = route.params;

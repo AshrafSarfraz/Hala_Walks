@@ -1,14 +1,8 @@
+import {fetchBrandCatalog} from '../../api/brandCatalog';
+import {Text} from '../../../ui/Text';
+import {TextInput} from '../../../ui/TextInput';
 import React, {useEffect, useState} from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  FlatList,
-  Image,
-  TouchableOpacity,
-  Platform,
-  PermissionsAndroid,
-} from 'react-native';
+import {View, FlatList, Image, TouchableOpacity, Platform, PermissionsAndroid} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
@@ -154,8 +148,8 @@ const SearchScreen: React.FC = () => {
           setLoading(false);
         }
 
-        const res = await fetch(BRANDS_API);
-        const json = await res.json().catch(() => ({}));
+        const res = await fetchBrandCatalog(BRANDS_API);
+        const json = await res.json();
 
         if (!res.ok) {
           setLoading(false);

@@ -1,6 +1,7 @@
+import {Text} from '../../../ui/Text';
 // CustomButton.tsx
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, } from 'react-native';
+import {TouchableOpacity, StyleSheet} from 'react-native';
 import { Colors } from '../../Themes/Colors';
 import { Fonts } from '../../Themes/Fonts';
 import { useSelector } from 'react-redux';
@@ -8,15 +9,16 @@ import { RootState } from '../../redux_toolkit/store';
 
 type buttonProps={
  title:string,
- onPress:()=>void
+ onPress:()=>void,
+ disabled?: boolean
 }
 
-const CustomButton:React.FC<buttonProps>= ({ title, onPress, }) => {
+const CustomButton:React.FC<buttonProps>= ({ title, onPress, disabled = false }) => {
   const language = useSelector((state: RootState) => state.language.language); // Get the current language from Redux
   const styles = getStyles(language);
   
   return (
-    <TouchableOpacity style={styles.button} onPress={onPress} >
+    <TouchableOpacity style={[styles.button, disabled && {opacity: 0.45}]} onPress={onPress} disabled={disabled} accessibilityRole="button" accessibilityState={{disabled}} >
       <Text style={styles.buttonText}>{title}</Text>
     </TouchableOpacity>
   );
@@ -29,7 +31,7 @@ const getStyles=(language:string) => StyleSheet.create({
     alignSelf:"center",
     height:55,
     justifyContent:"center",
-    borderRadius: 5,
+    borderRadius: 14,
   },
   buttonText: {
     color: 'white',

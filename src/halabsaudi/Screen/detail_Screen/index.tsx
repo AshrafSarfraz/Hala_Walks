@@ -1,14 +1,6 @@
+import {Text} from '../../../ui/Text';
 import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  Platform,
-  ScrollView,
-  Linking,
-  Dimensions,
-} from 'react-native';
+import {View, Image, TouchableOpacity, Platform, ScrollView, Linking, Dimensions} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import CustomHeader from '../../Component/CustomHeader/CustomHeader';
 import {useNavigation} from '@react-navigation/native';
@@ -36,7 +28,7 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
   useStatusBar('light-content', Colors.dargBg);
   const dispatch = useDispatch();
   const navigation = useNavigation<any>();
-  const refRBSheet = useRef<RBSheet>(null);
+  const refRBSheet = useRef<React.ElementRef<typeof RBSheet>>(null);
 
   const latitude = item?.latitude ?? null;
   const longitude = item?.longitude ?? null;
@@ -211,7 +203,7 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
 
                 {sliderUrls.length > 1 ? (
                   <View style={styles.dotsRow}>
-                    {sliderUrls.map((_, i) => (
+                    {sliderUrls.map((_: unknown, i: number) => (
                       <View
                         key={`dot-${i}`}
                         style={[styles.dot, i === activeIndex ? styles.dotActive : null]}

@@ -1,5 +1,7 @@
+import type {NavigationProp, ParamListBase} from '@react-navigation/native';
+import {Text} from '../../../../ui/Text';
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, ImageBackground, } from 'react-native';
+import {View, FlatList, TouchableOpacity, ImageBackground} from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
@@ -27,7 +29,7 @@ type CategoriesProps={
 }
 
 const Categories:React.FC<CategoriesProps> = () => {
-  const navigation=useNavigation()
+  const navigation=useNavigation<NavigationProp<ParamListBase>>()
   const [currentIndex, setCurrentIndex] = useState(0);
   const language = useSelector((state: RootState) => state.language.language); // Get the current language from Redux
   const styles = getStyles(language);

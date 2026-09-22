@@ -1,13 +1,9 @@
+import {fetchBrandCatalog} from '../../api/brandCatalog';
+import {Text} from '../../../ui/Text';
+import {TextInput} from '../../../ui/TextInput';
+import {ActivityIndicator} from '../../../ui/ActivityIndicator';
 import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  FlatList,
-  Image,
-  TouchableOpacity,
-  ActivityIndicator,
-} from 'react-native';
+import {View, FlatList, Image, TouchableOpacity} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useNavigation} from '@react-navigation/native';
 import {Search} from '../../Themes/Images';
@@ -23,7 +19,7 @@ import {useStatusBar} from '../../Component/UseStatusBar/useStatusBar';
 
 const BRANDS_API = 'https://hala-b-saudi.onrender.com/api/hbs/brands';
 
-const BRANDS_CACHE_KEY = 'H-brands_cache_v2';
+const BRANDS_CACHE_KEY = 'H-brands_cache_v7';
 const BRANDS_CACHE_TTL_MS = 3 * 60 * 60 * 1000;
 
 type CacheShape = {
@@ -95,8 +91,8 @@ const SelectedVenues: React.FC<{route: any}> = ({route}) => {
   };
 
   const fetchFresh = async (signal?: AbortSignal) => {
-    const res = await fetch(BRANDS_API, {signal});
-    const json = await res.json().catch(() => ({}));
+    const res = await fetchBrandCatalog(BRANDS_API, {signal});
+    const json = await res.json();
     if (!res.ok) throw new Error('Brands API failed');
     const raw = (json as any)?.data ? (json as any).data : json;
     const arr = Array.isArray(raw) ? raw : [];

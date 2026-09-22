@@ -1,9 +1,9 @@
+import {Text} from '../../../../ui/Text';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {TextInput} from '../../../../ui/TextInput';
 // src/halabsaudi/Component/ChatHeaders/conversation.tsx
 import React, {useState, useRef} from 'react';
-import {
-  View, Text, TouchableOpacity, StyleSheet, TextInput,
-  Animated, Platform,
-} from 'react-native';
+import {View, TouchableOpacity, StyleSheet, Animated, Platform} from 'react-native';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import {useSelector} from 'react-redux';
 import {getAvatarColor} from '../../../Themes/avatarColor';
@@ -24,6 +24,7 @@ export default function ConversationHeader({
   onProfilePress,
   onSearch,
 }: Props) {
+  const insets = useSafeAreaInsets();
   const language = useSelector((state: RootState) => state.language.language);
   const t        = languageData[language];
   const isRTL    = language === 'ar';
@@ -63,7 +64,7 @@ export default function ConversationHeader({
   });
 
   return (
-    <View style={styles.wrapper}>
+    <View style={[styles.wrapper, {paddingTop: insets.top + 16}]}>
       
 
       {/* ── Top row ── */}
@@ -86,7 +87,7 @@ export default function ConversationHeader({
             style={[styles.avatar, {backgroundColor: avatarBg}]}
             onPress={onProfilePress}>
             <Text style={styles.avatarText}>{avatarLetter}</Text>
-            <View style={styles.onlineDot} />
+            
           </TouchableOpacity>
         </View>
       </View>
@@ -110,20 +111,20 @@ export default function ConversationHeader({
               style={isRTL ? {marginLeft: 7} : {marginRight: 7}}
             />
             <TextInput
-              autoFocus
-              placeholder={t.search_messages}
-              placeholderTextColor="rgba(255,255,255,0.45)"
-              style={[
-                styles.searchInput,
-                {
-                  textAlign: isRTL ? 'right' : 'left',
-                  writingDirection: isRTL ? 'rtl' : 'ltr',
-                },
-              ]}
-              value={searchText}
-              onChangeText={handleChange}
-              returnKeyType="search"
-            />
+  autoFocus
+  placeholder={t.search_messages}
+  underlineColorAndroid="transparent"
+  style={[
+    styles.searchInput,
+    {
+      textAlign: isRTL ? 'right' : 'left',
+      writingDirection: isRTL ? 'rtl' : 'ltr',
+    },
+  ]}
+  value={searchText}
+  onChangeText={handleChange}
+  returnKeyType="search"
+/>
             {searchText.length > 0 && (
               <TouchableOpacity onPress={() => handleChange('')}>
                 <Ionicons name="close-circle" size={16} color="rgba(255,255,255,0.6)" />
@@ -140,11 +141,6 @@ export default function ConversationHeader({
       {/* ── Stats strip ── */}
       {!searchActive && (
         <View style={[styles.statsStrip, {flexDirection: rowDir}]}>
-          <View style={[styles.statItem, {flexDirection: rowDir}]}>
-            <View style={styles.statDot} />
-            <Text style={styles.statText}>{t.active_now}</Text>
-          </View>
-          <View style={styles.statDivider} />
           <Text style={styles.statText}>{t.long_press_delete}</Text>
         </View>
       )}
@@ -164,7 +160,7 @@ const styles = StyleSheet.create({
   topRow: {justifyContent: 'space-between', alignItems: 'flex-start'},
   eyebrow: {
     fontSize: 11, color: Colors.White,
-    letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 3,
+    letterSpacing: 0.2, textTransform: 'uppercase', marginBottom: 3,
   },
   title: {color: Colors.White, fontSize: 26, fontWeight: '800', letterSpacing: -0.4},
   actions: {alignItems: 'center', gap: 10, marginTop: 4},
@@ -190,11 +186,23 @@ const styles = StyleSheet.create({
   searchRow: {alignItems: 'center', marginTop: 14, gap: 10},
   searchBox: {
     flex: 1, alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.15)',
-    borderRadius: 24, paddingHorizontal: 14, paddingVertical: 9,
+    borderRadius: 24, paddingHorizontal: 14, height: 46,
     borderWidth: 1, borderColor: 'rgba(255,255,255,0.12)',
+    overflow: 'hidden',
   },
-  searchInput: {flex: 1, color: Colors.White, fontSize: 14, paddingVertical: 0},
+  searchInput: {
+    flex: 1,
+    color: Colors.White,
+    fontSize: 14,
+    // wrapper / Android ki default styling reset
+    backgroundColor: 'transparent',
+    borderWidth: 0,
+    margin: 0,
+    paddingVertical: 0,
+    paddingHorizontal: 0,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
+  },
   cancelBtn: {paddingVertical: 4},
   cancelText: {color: Colors.LightGreen, fontSize: 14, fontWeight: '600'},
   statsStrip: {alignItems: 'center', marginTop: 14, gap: 10},
@@ -203,6 +211,8 @@ const styles = StyleSheet.create({
   statText: {fontSize: 11, color: 'rgba(255,255,255,0.55)', fontWeight: '500'},
   statDivider: {width: 1, height: 10, backgroundColor: 'rgba(255,255,255,0.2)'},
 });
+
+
 
 
 

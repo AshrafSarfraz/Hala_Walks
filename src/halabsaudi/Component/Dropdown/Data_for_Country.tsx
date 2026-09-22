@@ -1,3 +1,4 @@
+import {Text} from '../../../ui/Text';
 // import React, { useEffect, useState } from 'react';
 // import { Image, StyleSheet, Text, TouchableOpacity, View, ImageSourcePropType } from 'react-native';
 // import { DropdownIcon } from '../../Themes/Images';
@@ -101,7 +102,7 @@
 
 
 import React, { useEffect, useState } from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View, ImageSourcePropType, Platform, PermissionsAndroid } from 'react-native';
+import {Image, StyleSheet, TouchableOpacity, View, ImageSourcePropType, Platform, PermissionsAndroid} from 'react-native';
 import { DropdownIcon } from '../../Themes/Images';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux_toolkit/store';

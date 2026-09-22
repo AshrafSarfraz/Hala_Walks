@@ -1,5 +1,7 @@
+import {Text} from '../../../ui/Text';
+
 import React, { useState, useRef } from 'react';
-import { View, Text, Image, TouchableOpacity, StatusBar } from 'react-native';
+import {View, Image, TouchableOpacity, StatusBar} from 'react-native';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import CustomButton from '../../Component/CustomButton/CustomButton';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -60,21 +62,21 @@ const OnBoarding: React.FC<OnBoardingProps> = ({ navigation }) => {
       Title: langData[language].restaurants_discounts.title, // Fetch title based on language
       text: langData[language].restaurants_discounts.text,   // Fetch text based on language
       image: require('../../assets/Images/slider1.png'),
-      backgroundColor: Colors.Bg,
+      backgroundColor: '#191B20',
     },
     {
       key: 2,
       Title: langData[language].shopping_discounts.title, // Fetch title based on language
       text: langData[language].shopping_discounts.text,   // Fetch text based on language
       image: require('../../assets/Images/slider2.png'),
-      backgroundColor: Colors.Bg,
+      backgroundColor: '#191B20',
     },
     {
       key: 3,
       Title: langData[language].hotels_discounts.title, // Fetch title based on language
       text: langData[language].hotels_discounts.text,   // Fetch text based on language
       image: require('../../assets/Images/slider3.png'),
-      backgroundColor: Colors.Bg,
+      backgroundColor: '#191B20',
     }
   ];
 
@@ -98,7 +100,7 @@ const OnBoarding: React.FC<OnBoardingProps> = ({ navigation }) => {
 
     return (
       <SafeAreaView style={[styles.slide]}>
-          <StatusBar hidden={false} translucent={true} animated={true} backgroundColor={Colors.dargBg} barStyle='dark-content' />
+          <StatusBar hidden={false} translucent={true} animated={true} backgroundColor={Colors.dargBg} barStyle='light-content' />
         {!isFirstSlide && (
           <TouchableOpacity style={styles.prevButton} onPress={handlePrevSlide}>
             <Image source={require('../../assets/Icons/Back.png')} style={styles.backIcon} />

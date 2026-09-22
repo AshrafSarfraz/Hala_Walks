@@ -1,6 +1,7 @@
+import {Text} from '../../../ui/Text';
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
-import {Text} from 'react-native';
+import {} from 'react-native';
 import {Fonts} from '../../Themes/Fonts';
 import {Colors} from '../../Themes/Colors';
 

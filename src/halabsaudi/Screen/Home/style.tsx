@@ -8,7 +8,9 @@ export const getStyles =(language:String)=> StyleSheet.create({
     flex:1,
     backgroundColor: Colors.dargBg,
     paddingHorizontal: Platform.OS === 'ios' ? '0%' : '0%',
-    marginTop: Platform.OS === 'ios' ? 0 : '8%',
+    // ✅ marginTop: Platform.OS === 'ios' ? 0 : '8%'  HATAYA.
+    // 8% har phone par alag pixel banta tha (SE=25px, Pro Max=58px).
+    // Ab index.tsx me SafeAreaView edges={['top']} asli inset deta hai.
 
   },
   header: {
@@ -42,7 +44,7 @@ export const getStyles =(language:String)=> StyleSheet.create({
     width: 25,
     height: 25,
     resizeMode: 'contain',
-    tintColor: '#000',
+    tintColor: '#F5F6F8',
   },
 
   Scope_Icon: {

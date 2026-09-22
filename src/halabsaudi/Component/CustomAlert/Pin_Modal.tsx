@@ -1,14 +1,8 @@
+import {Text} from '../../../ui/Text';
+import {TextInput} from '../../../ui/TextInput';
+import {ActivityIndicator} from '../../../ui/ActivityIndicator';
 import React, {useEffect, useRef, useState} from 'react';
-import {
-  View,
-  Text,
-  Modal,
-  TouchableOpacity,
-  StyleSheet,
-  TextInput,
-  StatusBar,
-  ActivityIndicator,
-} from 'react-native';
+import {View, Modal, TouchableOpacity, StyleSheet, StatusBar} from 'react-native';
 import {Colors} from '../../Themes/Colors';
 import {Fonts} from '../../Themes/Fonts';
 import IncorrectPin from './IncorrectPin';
@@ -49,7 +43,7 @@ const Pin_Modal: React.FC<Props> = ({
   discountText,
   discountValue,
 }) => {
-  const refRBSheet = useRef<RBSheet>(null);
+  const refRBSheet = useRef<React.ElementRef<typeof RBSheet>>(null);
 
   const [pin, setPin] = useState('');
   const [discountCode, setDiscountCode] = useState('');
@@ -264,7 +258,7 @@ const getStyles = (language: string) =>
     },
     container: {
       width: '90%',
-      backgroundColor: '#fff',
+      backgroundColor: '#191B20',
       borderRadius: 12,
       padding: 25,
       alignItems: 'center',
@@ -307,7 +301,7 @@ const getStyles = (language: string) =>
     closeButtonText: {
       marginTop: 10,
       fontSize: 16,
-      color: Colors.Black,
+      color: '#F5F6F8',
     },
   });
 

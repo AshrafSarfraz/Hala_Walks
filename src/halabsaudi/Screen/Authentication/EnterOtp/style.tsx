@@ -1,3 +1,4 @@
+
 import { StyleSheet } from "react-native";
 import { Colors } from "../../../Themes/Colors";
 import { Fonts } from "../../../Themes/Fonts";
@@ -57,25 +58,25 @@ export const getStyles = (language: string) => StyleSheet.create({
   otpInput: {
     width: '100%',
     height: 60,
-    backgroundColor: Colors.White4,
-    borderColor: '#E0E0E0',
+    backgroundColor: '#191B20',
+    borderColor: '#343841',
     borderWidth: 1.5,
     borderRadius: 14,
     paddingHorizontal: 16,
     fontSize: 16,
-    letterSpacing: 8,
+    letterSpacing: 0.2,
     textAlign: 'center',
-    color: Colors.Black,
+    color: Colors.White,
     fontFamily: Fonts.SF_Bold,
   },
   otpInputFocused: {
     borderColor: Colors.Green,
-    backgroundColor: Colors.White,
+    backgroundColor: '#191B20',
   },
   otpInputFilled: {
     borderColor: Colors.Green,
     borderWidth: 2,
-    backgroundColor: Colors.White,
+    backgroundColor: '#191B20',
   },
   Error: {
     fontFamily: Fonts.SF_Medium,

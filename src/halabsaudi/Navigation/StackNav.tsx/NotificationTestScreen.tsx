@@ -1,13 +1,8 @@
+import {Text} from '../../../ui/Text';
+import {Alert} from '../../../ui/Alert';
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  Alert,
-} from 'react-native';
-import { showGeofenceNotification } from '../../Notifications';
+import {View, TouchableOpacity, StyleSheet, ScrollView} from 'react-native';
+import { showNotification } from '../../Notifications';
 
 const TEST_VENUES = [
   { id: '693a90ac7cb8c3489f12842c', name: 'Katara' },
@@ -25,7 +20,7 @@ const NotificationTestScreen: React.FC = () => {
   const testNotification = async (venueName: string, venueId: string) => {
     try {
       addLog(`🔔 Sending notification for: ${venueName}`);
-      await showGeofenceNotification(venueName, venueId);
+      await showNotification(venueName, venueId);
       addLog(`✅ Notification sent! Now click it to test navigation.`);
     } catch (e) {
       addLog(`❌ Error: ${e}`);
@@ -73,7 +68,7 @@ const NotificationTestScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#191B20',
     padding: 20,
     paddingTop: 60,
   },
@@ -85,7 +80,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 13,
-    color: '#666',
+    color: '#ABB2BF',
     textAlign: 'center',
     marginBottom: 30,
     lineHeight: 20,
@@ -127,7 +122,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   emptyLog: {
-    color: '#666',
+    color: '#ABB2BF',
     fontStyle: 'italic',
   },
   logText: {

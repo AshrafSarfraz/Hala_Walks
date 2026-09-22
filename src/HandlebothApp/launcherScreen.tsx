@@ -1,11 +1,13 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import {Text} from '../ui/Text';
 
-const LauncherScreen = ({ navigation }) => {
+import React from 'react';
+import {View, TouchableOpacity, StyleSheet} from 'react-native';
+
+const LauncherScreen = ({ navigation }: {navigation: import('@react-navigation/native').NavigationProp<import('@react-navigation/native').ParamListBase>}) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Select App</Text>
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('HalaStack')}>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('HalabStack')}>
         <Text style={styles.buttonText}>Go to Hala B Saudi</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('WestwalkStack')}>
@@ -19,7 +21,7 @@ export default LauncherScreen;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff'
+    flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#191B20'
   },
   title: {
     fontSize: 22, marginBottom: 30

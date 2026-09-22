@@ -1,4 +1,5 @@
 
+
 import {Dimensions, Platform, StyleSheet} from 'react-native';
 import {Colors} from '../../Themes/Colors';
 import {Fonts} from '../../Themes/Fonts';
@@ -7,6 +8,7 @@ const {width} = Dimensions.get('window');
 
 export const getStyles = (language: string) =>
   StyleSheet.create({
+  imageContainer: {width: '100%', height: 220, overflow: 'hidden', borderRadius: 16},
     container: {
       paddingHorizontal: '4%',
       paddingBottom: 10,
@@ -64,11 +66,11 @@ export const getStyles = (language: string) =>
       height: 7,
       borderRadius: 99,
       marginTop:4,
-      backgroundColor: '#fff',
+      backgroundColor: '#191B20',
     },
     dotActive: {
       width: 18,
-      backgroundColor: Colors.White,
+      backgroundColor: '#191B20',
     },
 
     Type_Cont: {
@@ -110,7 +112,7 @@ export const getStyles = (language: string) =>
       paddingVertical: 6,
       paddingHorizontal: 10,
       borderRadius: 6,
-      backgroundColor: Colors.White,
+      backgroundColor: '#191B20',
     },
     Phone_Icon: {
       width: 18,
@@ -122,7 +124,7 @@ export const getStyles = (language: string) =>
     call_txt: {
       fontSize: 12,
       lineHeight: 15,
-      color: Colors.Black,
+      color: '#F5F6F8',
       fontFamily: Fonts.SF_Bold,
     },
 
@@ -132,7 +134,7 @@ export const getStyles = (language: string) =>
       marginTop: 6,
       padding: 10,
       borderRadius: 6,
-      backgroundColor: Colors.White,
+      backgroundColor: '#191B20',
     },
     Loc_Icon: {
       width: 16,
@@ -146,7 +148,7 @@ export const getStyles = (language: string) =>
       flex: 1,
       fontSize: 12,
       lineHeight: 16,
-      color: Colors.Black,
+      color: '#F5F6F8',
       textAlign: language === 'en' ? 'left' : 'right',
       opacity: 0.9,
     },
@@ -181,10 +183,10 @@ export const getStyles = (language: string) =>
       paddingVertical: 8,
       paddingHorizontal: 12,
       borderRadius: 6,
-      backgroundColor: Colors.White,
+      backgroundColor: '#191B20',
     },
     branchBtnText: {
-      color: Colors.Black,
+      color: '#F5F6F8',
       fontSize: 12,
       fontFamily: Fonts.SF_Medium,
     },
@@ -195,14 +197,14 @@ export const getStyles = (language: string) =>
       borderRadius: 6,
       marginTop: 10,
       borderWidth: 1,
-      borderColor: '#EFEFEF',
+      borderColor: '#343841',
     },
     item_cont: {
       flexDirection: language === 'en' ? 'row' : 'row-reverse',
       justifyContent: 'space-between',
       paddingVertical: 8,
       borderBottomWidth: 0.5,
-      borderColor: '#eee',
+      borderColor: '#343841',
     },
     timingDay: {
       fontSize: 13,
@@ -211,13 +213,13 @@ export const getStyles = (language: string) =>
     },
     timingTime: {
       fontSize: 13,
-      color: '#000',
+      color: '#F5F6F8',
       fontFamily: Fonts.SF_Bold,
     },
 
     Dis_Cont: {
       marginTop: 10,
-      backgroundColor: Colors.White,
+      backgroundColor: '#191B20',
       paddingVertical: 14,
       paddingHorizontal: 12,
       borderRadius: 6,
@@ -225,12 +227,12 @@ export const getStyles = (language: string) =>
       justifyContent: 'space-between',
       alignItems: 'center',
       borderWidth: 1,
-      borderColor: '#EFEFEF',
+      borderColor: '#343841',
     },
     Total_Discount: {
       flex: 1,
       fontSize: 14,
-      color: Colors.Black,
+      color: '#F5F6F8',
       fontFamily: Fonts.SF_Bold,
       lineHeight: 20,
       textAlign: language === 'en' ? 'left' : 'right',
@@ -255,7 +257,7 @@ export const getStyles = (language: string) =>
       marginTop: 12,
     },
     offerBtnDisabled: {
-      backgroundColor: '#B9B9B9',
+      backgroundColor: '#191B20',
     },
     offerBtnLeft: {
       flex: 1,

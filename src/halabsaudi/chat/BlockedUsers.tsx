@@ -1,9 +1,9 @@
+import {Text} from '../../ui/Text';
+import {ActivityIndicator} from '../../ui/ActivityIndicator';
+import {Alert} from '../../ui/Alert';
 // src/halabsaudi/chat/BlockedUsersScreen.tsx
 import React, {useEffect, useState, useCallback} from 'react';
-import {
-  View, Text, FlatList, TouchableOpacity, StyleSheet,
-  ActivityIndicator, Alert, Platform, StatusBar,
-} from 'react-native';
+import {View, FlatList, TouchableOpacity, StyleSheet, Platform, StatusBar} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
@@ -123,7 +123,7 @@ export default function BlockedUsers({navigation}: any) {
   const renderEmpty = () => (
     <View style={styles.emptyWrap}>
       <View style={styles.emptyRing}>
-        <Ionicons name="shield-checkmark-outline" size={42} color={Colors.Green} />
+        <Ionicons name="shield-checkmark-outline" size={42} color={Colors.btnRed} />
       </View>
       <Text style={styles.emptyTitle}>{t.no_blocked_users}</Text>
       <Text style={[styles.emptySub, {textAlign: 'center'}]}>{t.no_blocked_desc}</Text>
@@ -169,7 +169,7 @@ export default function BlockedUsers({navigation}: any) {
       <View style={styles.body}>
         {loading ? (
           <View style={styles.loaderWrap}>
-            <ActivityIndicator size="large" color={Colors.Green} />
+            <ActivityIndicator size="large" color={Colors.btnRed} />
             <Text style={styles.loaderText}>{t.loading_text}</Text>
           </View>
         ) : (
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)', flexShrink: 0,
   },
   headerText: {flex: 1},
-  eyebrow: {fontSize: 10, color: Colors.White, letterSpacing: 1.1, textTransform: 'uppercase', marginBottom: 3},
+  eyebrow: {fontSize: 10, color: Colors.White, letterSpacing: 0.2, textTransform: 'uppercase', marginBottom: 3},
   headerTitle: {fontSize: 18, fontWeight: '700', color: Colors.White, letterSpacing: -0.3},
   countBadge: {
     backgroundColor: 'rgba(255,255,255,0.18)', borderRadius: 20,
@@ -228,9 +228,9 @@ const styles = StyleSheet.create({
   countBadgeText: {color: Colors.White, fontSize: 13, fontWeight: '700'},
   listContent: {paddingHorizontal: 14, paddingTop: 12, paddingBottom: 36},
   listHeader: {paddingHorizontal: 4, paddingBottom: 8},
-  listHeaderText: {fontSize: 11, fontWeight: '700', color: Colors.Black, letterSpacing: 0.5, textTransform: 'uppercase'},
+  listHeaderText: {fontSize: 11, fontWeight: '700', color: Colors.White, letterSpacing: 0.2, textTransform: 'uppercase'},
   row: {
-    alignItems: 'center', backgroundColor: Colors.White,
+    alignItems: 'center', backgroundColor: Colors.darkgrey,
     borderRadius: 16, paddingVertical: 12, paddingHorizontal: 14,
     shadowColor: '#1A202C', shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.05, shadowRadius: 8,
@@ -241,17 +241,17 @@ const styles = StyleSheet.create({
   },
   avatarLetter: {color: Colors.White, fontWeight: '800', fontSize: 19},
   info: {flex: 1},
-  name: {fontSize: 15, fontWeight: '700', color: Colors.Black2, marginBottom: 5},
+  name: {fontSize: 15, fontWeight: '700', color: Colors.White, marginBottom: 5},
   blockedPill: {
     alignItems: 'center', gap: 4, alignSelf: 'flex-start',
-    backgroundColor: '#FFF0F0', paddingHorizontal: 8, paddingVertical: 3,
-    borderRadius: 20, borderWidth: 1, borderColor: '#FFCDD2',
+    backgroundColor: '#191B20', paddingHorizontal: 8, paddingVertical: 3,
+    borderRadius: 20, borderWidth: 1, borderColor: '#343841',
   },
   blockedPillText: {fontSize: 10, color: Colors.Red, fontWeight: '700'},
   unblockChip: {
     alignItems: 'center', gap: 5,
-    borderWidth: 1, borderColor: '#FFCDD2', borderRadius: 20,
-    paddingHorizontal: 13, paddingVertical: 8, backgroundColor: '#FFF5F5',
+    borderWidth: 1, borderColor: '#343841', borderRadius: 20,
+    paddingHorizontal: 13, paddingVertical: 8, backgroundColor: '#191B20',
     minWidth: 88, justifyContent: 'center',
   },
   unblockChipText: {fontSize: 12, color: Colors.Red, fontWeight: '700'},
@@ -260,11 +260,11 @@ const styles = StyleSheet.create({
     paddingBottom: 60, paddingHorizontal: 40, gap: 10,
   },
   emptyRing: {
-    width: 88, height: 88, borderRadius: 44, backgroundColor: '#E6F2EC',
+    width: 88, height: 88, borderRadius: 44, backgroundColor: '#191B20',
     justifyContent: 'center', alignItems: 'center', marginBottom: 8,
     borderWidth: 3, borderColor: Colors.LightGreen,
   },
-  emptyTitle: {fontSize: 18, fontWeight: '700', color: Colors.Black2},
+  emptyTitle: {fontSize: 18, fontWeight: '700', color: Colors.White},
   emptySub: {fontSize: 13, color: Colors.Grey9, lineHeight: 20},
   loaderWrap: {flex: 1, justifyContent: 'center', alignItems: 'center', gap: 12},
   loaderText: {fontSize: 14, color: Colors.Grey9, marginTop: 4},

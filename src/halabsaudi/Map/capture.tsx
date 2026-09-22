@@ -1,13 +1,7 @@
+import {Text} from '../../ui/Text';
 // /src/halabsaudi/Map/capture.tsx
 import React, {useState} from 'react';
-import {
-  View,
-  Text,
-  Button,
-  Image,
-  PermissionsAndroid,
-  Platform,
-} from 'react-native';
+import {View, Button, Image, PermissionsAndroid, Platform} from 'react-native';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
 import Geolocation from '@react-native-community/geolocation';

@@ -1,16 +1,15 @@
+import {Text} from '../../ui/Text';
+
 // src/halabsaudi/chat/AllMediaScreen.tsx
 import React, {useState} from 'react';
-import {
-  View, Text, StyleSheet, TouchableOpacity,
-  Image, FlatList, Dimensions
-} from 'react-native';
+import {View, StyleSheet, TouchableOpacity, Image, FlatList, Dimensions} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import {useSelector} from 'react-redux';
 import {Colors} from '../Themes/Colors';
 import {getSocket} from './socket';
 import ImageViewerModal from './components/ImageViewerModal';
-import WhatsAppMessageModal from './components/WhatsAppMessageModal';
+import WhatsAppMessageModal, {MessageAction} from './components/WhatsAppMessageModal';
 import DeleteMessageModal from './components/DeleteMessageModal';
 import {languageData} from '../redux_toolkit/language/languageSlice';
 import {RootState} from '../redux_toolkit/store';
@@ -60,7 +59,7 @@ export default function AllMediaScreen({route, navigation}: Props) {
     setMedia(prev => prev.filter(m => m.id !== selectedItem.id));
   };
 
-  const actions = [
+  const actions: MessageAction[] = [
     {label: t.media_view,   icon: 'eye-outline',   onPress: () => setViewerItem(selectedItem)},
     {label: t.media_delete, icon: 'trash-outline', destructive: true, onPress: () => setDeleteModalVisible(true)},
   ];
@@ -94,7 +93,7 @@ export default function AllMediaScreen({route, navigation}: Props) {
           <Ionicons
             name={isRTL ? 'arrow-forward' : 'arrow-back'}
             size={24}
-            color="#1C1C1E"
+            color='#F5F6F8'
           />
         </TouchableOpacity>
 
@@ -163,22 +162,22 @@ export default function AllMediaScreen({route, navigation}: Props) {
 }
 
 const s = StyleSheet.create({
-  root:   {flex: 1, backgroundColor:Colors.White4},
+  root:   {flex: 1, backgroundColor:Colors.dargBg},
   header: {
     alignItems: 'center',
     paddingHorizontal: 8, paddingVertical: 10,
-    borderBottomWidth: 0.5, borderBottomColor: '#E5E5EA',
-    backgroundColor: '#fff',
+    borderBottomWidth: 0.5, borderBottomColor: '#343841',
+    backgroundColor: '#191B20',
   },
   backBtn:      {width: 40, height: 40, justifyContent: 'center', alignItems: 'center', borderRadius: 20},
   headerCenter: {flex: 1, alignItems: 'center'},
-  headerTitle:  {fontSize: 16, fontWeight: '700', color: '#1C1C1E'},
-  headerSub:    {fontSize: 12, color: '#8E8E93', marginTop: 1},
+  headerTitle:  {fontSize: 16, fontWeight: '700', color: Colors.White},
+  headerSub:    {fontSize: 12, color: '#ABB2BF', marginTop: 1},
   grid: {padding: 2},
   row:  {gap: 2},
   cell: {
     width: ITEM_SIZE, height: ITEM_SIZE, margin: 1,
-    backgroundColor: '#F3F4F6', borderRadius: 4, overflow: 'hidden',
+    backgroundColor: Colors.darkgrey, borderRadius: 4, overflow: 'hidden',
   },
   cellImg:      {width: '100%', height: '100%'},
   videoOverlay: {

@@ -1,3 +1,4 @@
+
 import {Platform, StyleSheet} from 'react-native';
 import {Colors} from '../../Themes/Colors';
 import {Fonts} from '../../Themes/Fonts';
@@ -68,7 +69,7 @@ export const getStyles = (language: String) =>
     itemContainer: {
       flexDirection: language === 'en' ? 'row' : 'row-reverse',
       alignItems: 'center',
-      backgroundColor: Colors.cardBg,
+      backgroundColor: '#191B20',
       padding: 12,
       marginBottom: 8,
       borderRadius: 6,
@@ -89,7 +90,7 @@ export const getStyles = (language: String) =>
       fontFamily: language === 'en' ? Fonts.SF_Bold : '',
       lineHeight: language === 'en' ? 18 : 22,
       fontWeight: '500',
-      color: Colors.Black,
+      color: Colors.White,
       marginBottom: 5,
       textAlign: language === 'en' ? 'left' : 'right',
     },
@@ -98,7 +99,7 @@ export const getStyles = (language: String) =>
       fontFamily: language === 'en' ? Fonts.SF_Medium : '',
       lineHeight: language === 'en' ? 13 : 16,
       fontWeight: '300',
-      color: Colors.Black,
+      color: Colors.White,
       marginHorizontal: language === 'ar' ? '2%' : 0,
       textAlign: language === 'en' ? 'left' : 'right',
     },
@@ -125,7 +126,7 @@ export const getStyles = (language: String) =>
       fontSize: 16,
       marginTop: 12,
       fontWeight: 'bold',
-      color: Colors.Black,
+      color: Colors.White,
     },
     Loc_Status_Cont: {
       flexDirection: language === 'en' ? 'row' : 'row-reverse',

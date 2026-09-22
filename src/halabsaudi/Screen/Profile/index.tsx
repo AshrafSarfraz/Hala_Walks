@@ -1,14 +1,12 @@
+import {Text} from '../../../ui/Text';
+import {clearAllChatData} from '../../chat/chatStorage';
+import {clearChatSession} from '../../chat/chatScreen';
+import {clearPeopleCache} from '../../chat/startChatScreen';
+import CustomHeader from '../../Component/CustomHeader/CustomHeader';
+import {Alert} from '../../../ui/Alert';
+import {ActivityIndicator} from '../../../ui/ActivityIndicator';
 import React, {useState, useCallback} from 'react';
-import {
-  Text,
-  View,
-  TouchableOpacity,
-  ScrollView,
-  Switch,
-  Alert,
-  Modal,
-  ActivityIndicator,
-} from 'react-native';
+import {View, TouchableOpacity, ScrollView, Switch, Modal} from 'react-native';
 import FastImage from 'react-native-fast-image';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Ionicons from '@react-native-vector-icons/ionicons';
@@ -142,7 +140,7 @@ const Profile: React.FC = () => {
       setMessagePermission(data.messagePermission || 'followers');
     } catch (error: any) {
       const message = error?.message === 'Network request failed'
-        ? 'Cannot reach the backend. Start it on port 3000 and keep this phone on the same Wi-Fi.'
+        ? 'Unable to connect. Please check your connection and try again.'
         : error?.message || 'Could not save privacy settings.';
       Alert.alert('Privacy not saved', message);
     } finally {
@@ -161,11 +159,12 @@ const Profile: React.FC = () => {
           try {
             await unregisterFCMToken();
             disconnectSocket();
+            clearChatSession(); clearPeopleCache(); clearAllChatData();
             await AsyncStorage.multiRemove([
               'hala_user', 'hala_token', 'hala_user_data',
               'hala_user_backend', 'geofence_cooldown',
               'pending_venue_navigate', 'hala_show_last_seen',
-              'hala_show_online_status', 'hala_conversations',
+              'hala_show_online_status', 'hala_conversations', 'hala_users_cache', 'hala_blocked_cache', 'map_profile_checkins_cache_v1',
             ]);
             navigation.reset({index: 0, routes: [{name: 'WelcomeScreen'}]});
           } catch (e) {
@@ -179,7 +178,8 @@ const Profile: React.FC = () => {
   };
 
   return (
-    <SafeAreaView style={s.safe} edges={['top']}>
+    <SafeAreaView style={s.safe} edges={['top', 'bottom']}>
+      <CustomHeader title={language === 'ar' ? 'الإعدادات' : 'Settings'} onBackPress={() => navigation.goBack()} />
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{paddingBottom: 48}}>
@@ -228,7 +228,7 @@ const Profile: React.FC = () => {
           <Text style={s.profileName}>{userName || '—'}</Text>
           {!!userPhone && (
             <View style={s.phonePill}>
-              <Ionicons name="call-outline" size={13} color="#8E8E93" />
+              <Ionicons name="call-outline" size={13} color='#ABB2BF' />
               <Text style={s.phoneText}>{userPhone}</Text>
             </View>
           )}
@@ -389,7 +389,7 @@ const Profile: React.FC = () => {
         <Text style={s.sectionLabel}> </Text>
         <View style={s.card}>
           <TouchableOpacity style={s.logoutRow} onPress={handleLogout} activeOpacity={0.7}>
-            <View style={[s.iconBubble, {backgroundColor: '#FEE2E2'}]}>
+            <View style={[s.iconBubble, {backgroundColor: '#191B20'}]}>
               <Ionicons name="log-out-outline" size={18} color={Colors.Red} />
             </View>
             <Text style={s.logoutTxt}>{t.logout}</Text>
@@ -402,15 +402,15 @@ const Profile: React.FC = () => {
 
       <Modal visible={messagePickerOpen} transparent animationType="fade" onRequestClose={() => setMessagePickerOpen(false)}>
         <View style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', justifyContent: 'flex-end'}}>
-          <View style={{backgroundColor: '#fff', borderTopLeftRadius: 22, borderTopRightRadius: 22, padding: 20, paddingBottom: 36}}>
-            <Text style={{fontSize: 18, fontWeight: '800', color: '#172033', marginBottom: 6}}>Who can message you?</Text>
-            <Text style={{fontSize: 13, color: '#6B7280', marginBottom: 14}}>This rule is applied whenever someone starts or sends a chat.</Text>
+          <View style={{backgroundColor: '#191B20', borderTopLeftRadius: 22, borderTopRightRadius: 22, padding: 20, paddingBottom: 36}}>
+            <Text style={{fontSize: 18, fontWeight: '800', color: '#F5F6F8', marginBottom: 6}}>Who can message you?</Text>
+            <Text style={{fontSize: 13, color: '#ABB2BF', marginBottom: 14}}>This rule is applied whenever someone starts or sends a chat.</Text>
             {[
               ['everyone', 'Everyone'], ['followers', 'Followers'], ['following', 'People you follow'], ['mutual', 'Mutual follows'], ['nobody', 'Nobody'],
             ].map(([value, label]) => (
               <TouchableOpacity key={value} onPress={async () => { setMessagePickerOpen(false); await updateAccountPrivacy({messagePermission: value}); }}
-                style={{minHeight: 48, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: '#F0F1F3'}}>
-                <Text style={{fontSize: 16, color: '#172033'}}>{label}</Text>
+                style={{minHeight: 48, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: '#343841'}}>
+                <Text style={{fontSize: 16, color: '#F5F6F8'}}>{label}</Text>
                 {messagePermission === value && <Ionicons name="checkmark-circle" size={21} color={Colors.btnRed} />}
               </TouchableOpacity>
             ))}

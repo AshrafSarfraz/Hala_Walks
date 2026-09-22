@@ -7,9 +7,9 @@
 // npm install react-native-mmkv
 // (then `cd ios && pod install` if you're on bare RN with iOS)
 
-import {MMKV} from 'react-native-mmkv';
+import {createMMKV} from 'react-native-mmkv';
 
-const storage = new MMKV({id: 'hala-chat-cache'});
+const storage = createMMKV({id: 'hala-chat-cache'});
 
 // ── Message cache ───────────────────────────────────────────────────────────
 export function getCachedMessages<T>(chatId: string): T[] | null {
@@ -54,7 +54,7 @@ export function removeFromQueue<T extends {tempId: string}>(
 }
 
 export function clearQueue(chatId: string) {
-  storage.delete(`queue:${chatId}`);
+  storage.remove(`queue:${chatId}`);
 }
 
 // ── Last-synced marker (optional, for a future delta-sync API) ─────────────

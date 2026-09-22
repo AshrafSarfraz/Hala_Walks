@@ -1,8 +1,7 @@
+import {Text} from '../../../../ui/Text';
 // src/halabsaudi/Component/ChatHeaders/ChatScreenHeader.tsx
 import React from 'react';
-import {
-  View, Text, TouchableOpacity, Image, StyleSheet, Platform,
-} from 'react-native';
+import {View, TouchableOpacity, Image, StyleSheet, Platform} from 'react-native';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import {useSelector} from 'react-redux';
 import {Colors} from '../../../Themes/Colors';

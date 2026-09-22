@@ -1,19 +1,7 @@
+import {Text} from '../../../ui/Text';
 // src/halabsaudi/chat/components/ImageViewerModal.tsx
 import React, {useRef, useState} from 'react';
-import {
-  Modal,
-  View,
-  Image,
-  TouchableOpacity,
-  StyleSheet,
-  StatusBar,
-  Animated,
-  PanResponder,
-  Dimensions,
-  Text,
-  Share,
-  Platform,
-} from 'react-native';
+import {Modal, View, Image, TouchableOpacity, StyleSheet, StatusBar, Animated, PanResponder, Dimensions, Share, Platform} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Ionicons from '@react-native-vector-icons/ionicons';
 
@@ -171,7 +159,7 @@ export default function ImageViewerModal({
       <View style={styles.bg} {...panResponder.panHandlers}>
         {/* Image */}
         {uri ? (
-          <Animated.Image
+          <View onTouchEnd={handleTap}><Animated.Image
             source={{uri}}
             style={[
               styles.image,
@@ -184,8 +172,7 @@ export default function ImageViewerModal({
               },
             ]}
             resizeMode="contain"
-            onTouchEnd={handleTap}
-          />
+          /></View>
         ) : null}
 
         {/* Top bar */}

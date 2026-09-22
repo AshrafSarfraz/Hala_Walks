@@ -1,5 +1,6 @@
+import {Text} from '../../../ui/Text';
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import {View, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import { Colors } from '../../Themes/Colors';
 import { Tick } from '../../Themes/Images';
 import { useSelector } from 'react-redux';

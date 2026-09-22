@@ -1,8 +1,8 @@
+import {Text} from '../../../ui/Text';
+
 // src/halabsaudi/chat/components/MuteModal.tsx
 import React, {useEffect, useRef, useState} from 'react';
-import {  Modal, View, Text, TouchableOpacity, StyleSheet,
-  Animated, TouchableWithoutFeedback,
-} from 'react-native';
+import {Modal, View, TouchableOpacity, StyleSheet, Animated, TouchableWithoutFeedback} from 'react-native';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useSelector} from 'react-redux';
@@ -35,9 +35,9 @@ export default function MuteModal({
 
   // Options built from translated strings
   const OPTIONS = [
-    {label: t.mute_8h,     sublabel: t.mute_8h_sub,     value: '8h'    as MuteDuration, icon: 'time-outline'},
-    {label: t.mute_1w,     sublabel: t.mute_1w_sub,     value: '1w'    as MuteDuration, icon: 'calendar-outline'},
-    {label: t.mute_always, sublabel: t.mute_always_sub,  value: 'always'as MuteDuration, icon: 'notifications-off-outline'},
+    {label: t.mute_8h,     sublabel: t.mute_8h_sub,     value: '8h'    as MuteDuration, icon: 'time-outline' as const},
+    {label: t.mute_1w,     sublabel: t.mute_1w_sub,     value: '1w'    as MuteDuration, icon: 'calendar-outline' as const},
+    {label: t.mute_always, sublabel: t.mute_always_sub,  value: 'always'as MuteDuration, icon: 'notifications-off-outline' as const},
   ];
 
   useEffect(() => { setSelected(currentMute); }, [currentMute, visible]);
@@ -132,7 +132,7 @@ export default function MuteModal({
                 activeOpacity={0.7}>
                 <View style={[styles.optionRow, {flexDirection: rowDir}]}>
                   <View style={[styles.optionIcon,
-                    {backgroundColor: selected === opt.value ? '#FEE2E2' : '#F3F4F6'}]}>
+                    {backgroundColor: selected === opt.value ? '#191B20' : '#191B20'}]}>
                     <Ionicons
                       name={opt.icon}
                       size={18}
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
   backdrop: {...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.45)'},
   sheet: {
     position: 'absolute', bottom: 0, left: 0, right: 0,
-    backgroundColor: '#fff',
+    backgroundColor: '#191B20',
     borderTopLeftRadius: 22, borderTopRightRadius: 22,
     paddingBottom: 40,
     shadowColor: '#000', shadowOffset: {width: 0, height: -4},
@@ -191,21 +191,21 @@ const styles = StyleSheet.create({
   },
   handle: {
     width: 36, height: 4, borderRadius: 2,
-    backgroundColor: '#D1D5DB',
+    backgroundColor: '#191B20',
     alignSelf: 'center', marginTop: 10, marginBottom: 6,
   },
   header: {alignItems: 'center', paddingHorizontal: 20, paddingVertical: 14},
   muteIconWrap: {
     width: 44, height: 44, borderRadius: 22,
-    backgroundColor: '#F3F4F6',
+    backgroundColor: '#191B20',
     justifyContent: 'center', alignItems: 'center',
   },
-  headerTitle: {fontSize: 17, fontWeight: '700', color: '#111827'},
-  headerSub:   {fontSize: 13, color: '#6B7280', marginTop: 2},
-  divider: {height: 0.5, backgroundColor: '#E5E7EB'},
+  headerTitle: {fontSize: 17, fontWeight: '700', color: '#F5F6F8'},
+  headerSub:   {fontSize: 13, color: '#ABB2BF', marginTop: 2},
+  divider: {height: 0.5, backgroundColor: '#191B20'},
   sectionLabel: {
     fontSize: 12, fontWeight: '600', color: '#9CA3AF',
-    textTransform: 'uppercase', letterSpacing: 0.6,
+    textTransform: 'uppercase', letterSpacing: 0.2,
     marginHorizontal: 20, marginTop: 16, marginBottom: 8,
   },
   option: {
@@ -213,16 +213,16 @@ const styles = StyleSheet.create({
     marginHorizontal: 12, borderRadius: 14, marginBottom: 2,
   },
   optionRow: {alignItems: 'center', gap: 12, paddingVertical: 7},
-  optionSelected: {backgroundColor: '#fff0f0'},
+  optionSelected: {backgroundColor: '#191B20'},
   optionIcon: {
     width: 38, height: 38, borderRadius: 10,
     justifyContent: 'center', alignItems: 'center',
   },
-  optionLabel: {fontSize: 15, fontWeight: '500', color: '#111827'},
+  optionLabel: {fontSize: 15, fontWeight: '500', color: '#F5F6F8'},
   optionSub:   {fontSize: 12, color: '#9CA3AF', marginTop: 1},
   radio: {
     width: 20, height: 20, borderRadius: 10,
-    borderWidth: 2, borderColor: '#D1D5DB',
+    borderWidth: 2, borderColor: '#343841',
     justifyContent: 'center', alignItems: 'center',
   },
   radioSelected: {borderColor: Colors.Red},
@@ -237,8 +237,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     gap: 10, marginHorizontal: 20, marginTop: 20,
     height: 52, borderRadius: 16,
-    backgroundColor: '#F0FDF4',
-    borderWidth: 1, borderColor: '#FEE2E2',
+    backgroundColor: '#191B20',
+    borderWidth: 1, borderColor: '#343841',
   },
   unmuteText: {fontSize: 15, fontWeight: '600', color: Colors.Red},
 });

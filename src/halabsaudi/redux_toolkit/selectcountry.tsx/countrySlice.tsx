@@ -2,7 +2,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface CountryState {
-  countryName: 'Qatar' | 'Bahrain';
+  countryName: 'Qatar' | 'Bahrain' | 'Saudi Arabia';
 }
 
 const initialState: CountryState = { countryName: 'Qatar' }; // ✅ default Qatar

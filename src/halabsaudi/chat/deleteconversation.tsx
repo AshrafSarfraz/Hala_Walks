@@ -1,13 +1,8 @@
+import {Text} from '../../ui/Text';
+
 // src/halabsaudi/chat/components/DeleteChatModal.tsx
 import React from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Modal,
-  Pressable,
-} from 'react-native';
+import {View, TouchableOpacity, StyleSheet, Modal, Pressable} from 'react-native';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import {Colors} from '../Themes/Colors';
 
@@ -79,7 +74,7 @@ const s = StyleSheet.create({
   },
   box: {
     width: '100%',
-    backgroundColor: '#fff',
+    backgroundColor: '#191B20',
     borderRadius: 20,
     paddingHorizontal: 24,
     paddingTop: 28,
@@ -90,7 +85,7 @@ const s = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#FEE2E2',
+    backgroundColor: '#191B20',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 16,
@@ -98,19 +93,19 @@ const s = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#111827',
+    color: '#F5F6F8',
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 14,
-    color: '#6B7280',
+    color: '#ABB2BF',
     textAlign: 'center',
     lineHeight: 20,
     marginBottom: 24,
   },
   name: {
     fontWeight: '700',
-    color: '#111827',
+    color: '#F5F6F8',
   },
   btnRow: {
     flexDirection: 'row',
@@ -119,7 +114,7 @@ const s = StyleSheet.create({
   },
   cancelBtn: {
     flex: 1,
-    backgroundColor: '#F3F4F6',
+    backgroundColor: '#191B20',
     borderRadius: 12,
     paddingVertical: 13,
     alignItems: 'center',
@@ -127,7 +122,7 @@ const s = StyleSheet.create({
   cancelText: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#374151',
+    color: '#F5F6F8',
   },
   deleteBtn: {
     flex: 1,

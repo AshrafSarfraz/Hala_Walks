@@ -5,7 +5,7 @@ const screenHeight = Dimensions.get('window').height;
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor:Colors.White
+    backgroundColor:Colors.dargBg
   },
   Body:{
     flex:1,

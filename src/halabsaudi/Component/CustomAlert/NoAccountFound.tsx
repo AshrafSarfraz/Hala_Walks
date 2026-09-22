@@ -1,14 +1,7 @@
+import type {NavigationProp, ParamListBase} from '@react-navigation/native';
+import {Text} from '../../../ui/Text';
 import React from 'react';
-import {
-  View,
-  Text,
-  Modal,
-  TouchableOpacity,
-  StyleSheet,
-  StatusBar,
-  Pressable,
-  Platform,
-} from 'react-native';
+import {View, Modal, TouchableOpacity, StyleSheet, StatusBar, Pressable, Platform} from 'react-native';
 import { Colors } from '../../Themes/Colors';
 import { Fonts } from '../../Themes/Fonts';
 import { useNavigation } from '@react-navigation/native';
@@ -22,7 +15,7 @@ type Props = {
 };
 
 const AccountNotFoundModal: React.FC<Props> = ({ visible, onClose }) => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const language = useSelector((state: RootState) => state.language.language);
 
   return (

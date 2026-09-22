@@ -1,8 +1,8 @@
+import {Text} from '../../../ui/Text';
+import {Alert} from '../../../ui/Alert';
 
 import React, {useRef, useEffect} from 'react';
-import {
-  View, Text, TouchableOpacity, StyleSheet, Modal, Pressable, Animated, Alert,
-} from 'react-native';
+import {View, TouchableOpacity, StyleSheet, Modal, Pressable, Animated} from 'react-native';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import {useSelector} from 'react-redux';
 import {Colors} from '../../Themes/Colors';
@@ -47,7 +47,7 @@ export default function AttachmentSheet({
       icon: 'camera-outline',
       label: t.camera,
       sublabel: t.camera_sub,
-      color: Colors.Green,
+      color: '#F5F6F8',
       bg: '#E6F4EC',
       onPress: () => { onClose(); setTimeout(onCamera, 250); },
     },
@@ -155,16 +155,16 @@ const s = StyleSheet.create({
   },
   sheet: {
     position: 'absolute', bottom: 0, left: 0, right: 0,
-    backgroundColor: '#fff',
+    backgroundColor: '#191B20',
     borderTopLeftRadius: 24, borderTopRightRadius: 24,
     paddingHorizontal: 20, paddingBottom: 36, paddingTop: 14,
   },
   handle: {
     width: 40, height: 4, borderRadius: 2,
-    backgroundColor: '#E5E7EB',
+    backgroundColor: '#191B20',
     alignSelf: 'center', marginBottom: 18,
   },
-  title:    {fontSize: 17, fontWeight: '700', color: '#111827', textAlign: 'center'},
+  title:    {fontSize: 17, fontWeight: '700', color: '#F5F6F8', textAlign: 'center'},
   subtitle: {fontSize: 13, color: '#9CA3AF', textAlign: 'center', marginTop: 4, marginBottom: 24},
 
   optionsRow: {flexDirection: 'row', justifyContent: 'center', gap: 16, marginBottom: 24},
@@ -173,7 +173,7 @@ const s = StyleSheet.create({
     width: 64, height: 64, borderRadius: 18,
     justifyContent: 'center', alignItems: 'center', marginBottom: 8,
   },
-  optionLabel: {fontSize: 14, fontWeight: '700', color: '#111827', marginBottom: 3},
+  optionLabel: {fontSize: 14, fontWeight: '700', color: '#F5F6F8', marginBottom: 3},
   optionSub:   {fontSize: 11, color: '#9CA3AF', textAlign: 'center', lineHeight: 15},
 
   // ✅ Bottom row
@@ -182,12 +182,12 @@ const s = StyleSheet.create({
   },
   cancelBtn: {
     flex: 1,
-    backgroundColor: '#F3F4F6',
+    backgroundColor: '#191B20',
     borderRadius: 14,
     paddingVertical: 14,
     alignItems: 'center',
   },
-  cancelText: {fontSize: 15, fontWeight: '600', color: '#374151'},
+  cancelText: {fontSize: 15, fontWeight: '600', color: '#F5F6F8'},
 
   // ✅ Delete button
   deleteBtn: {
@@ -196,7 +196,7 @@ const s = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
-    backgroundColor: '#FEE2E2',
+    backgroundColor: '#191B20',
     borderRadius: 14,
     paddingVertical: 14,
   },

@@ -1,3 +1,4 @@
+
 import { StyleSheet, Dimensions, Platform } from 'react-native';
 import { Fonts } from '../../../Themes/Fonts';
 import { Colors } from '../../../Themes/Colors';
@@ -22,10 +23,10 @@ Flatlist_Cont: {
     width: width * 0.70, // Reduced width for better spacing
     margin:6,
     borderRadius: 10,
-    backgroundColor: Colors.White,
+    backgroundColor: '#191B20',
     height: Platform.OS === 'ios' ? 250 : 250,
     alignItems:'flex-start',
-    borderColor: '#E0E0E0',
+    borderColor: '#343841',
     overflow: 'hidden',
     shadowColor: '#000', // Adding shadow effect for iOS
     shadowOpacity: 0.1,
@@ -43,7 +44,7 @@ Flatlist_Cont: {
       fontSize: 12,
       marginVertical: Platform.OS==='ios'?3:2,
       fontFamily: Fonts.SF_Bold,
-      color: Colors.Black,
+      color: '#F5F6F8',
       marginHorizontal:"4%",
       textAlign:language==='en'?'left':"right",
     },

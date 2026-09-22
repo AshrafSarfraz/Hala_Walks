@@ -1,3 +1,4 @@
+
 import { Dimensions, Platform, StyleSheet } from "react-native";
 import { Fonts } from "../../../Themes/Fonts";
 import { Colors } from "../../../Themes/Colors";
@@ -13,7 +14,7 @@ export const getStyles=(language:String) => StyleSheet.create({
     Flatlist_Cont:{
       width:280,
       height:language==='en'?100:110,
-      backgroundColor:'#f5f5f5',
+      backgroundColor:'#191B20',
       marginRight:10,
       paddingLeft:10,
       borderRadius:10,
@@ -41,7 +42,7 @@ export const getStyles=(language:String) => StyleSheet.create({
       fontSize:language==='en'?14:12,
       fontFamily:language==='en'?Fonts.SF_Bold:'',
       fontWeight :language==='en'?'400':'bold',
-      color:Colors.Green,
+      color:'#F5F6F8',
       lineHeight:language==='en'?20:20,
       letterSpacing:language==='en'?0.2:0,
       textAlign:language==='en'?'left':'right',
@@ -53,7 +54,7 @@ export const getStyles=(language:String) => StyleSheet.create({
       lineHeight:language==='en'?13:13,
       letterSpacing:0.2,
       marginTop:2,
-      color:Colors.Black,
+      color:'#F5F6F8',
       textAlign:language==='en'?'left':'right',
     }
   });

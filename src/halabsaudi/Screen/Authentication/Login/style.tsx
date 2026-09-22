@@ -1,136 +1,140 @@
-import {Platform, StyleSheet} from 'react-native'
-import { Colors } from '../../../Themes/Colors';
-import { Fonts } from '../../../Themes/Fonts';
+import {StyleSheet} from 'react-native';
+import {Colors} from '../../../Themes/Colors';
+import {Fonts} from '../../../Themes/Fonts';
 
-export const getStyles =(language: string)=> StyleSheet.create({
-    MainContainer: {
+export const getStyles = (language: string) =>
+  StyleSheet.create({
+    Root: {
+      flex: 1,
       backgroundColor: Colors.dargBg,
-      padding: 10,
-      paddingHorizontal:'5%',
-      paddingTop:'18%',
-      flexGrow: 1,
     },
-  
+    Flex: {
+      flex: 1,
+    },
+    MainContainer: {
+      flexGrow: 1,
+      paddingHorizontal: 24,
+      paddingBottom: 24,
+    },
+
+    // ── Hero ──────────────────────────────
+    HeroBlock: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingBottom: 20,
+      // backgroundColor:'yellow'
+    },
     H_Logo: {
-      width: 110,
-      height: 110,
-      alignSelf: 'center',
-      marginBottom:12
+      width: 96,
+      height: 96,
     },
     Welcome_Txt: {
-      fontSize: 24,
-      fontFamily:Fonts.SF_Bold,
-      color:Colors.White,
-      lineHeight:28,
-      alignSelf: 'center',
+      fontSize: 26,
+      fontFamily: Fonts.SF_Bold,
+      color: Colors.White,
+      lineHeight: 32,
+      textAlign: 'center',
     },
     SignUp_Txt: {
-      fontSize: 16,
-      color: Colors.White,
-      fontFamily:Fonts.SF_Medium,
-      alignSelf: 'center',
-      lineHeight:20,
-      marginTop:'1%'
-     
+      fontSize: 15,
+      color: Colors.Grey9,
+      fontFamily: Fonts.SF_Medium,
+      lineHeight: 21,
+      textAlign: 'center',
+      marginTop: 8,
+      maxWidth: 300,
     },
+
+    // ── Form ──────────────────────────────
     InputContainer: {
-      marginTop:40,
+      width: '100%',
+      // backgroundColor:'red'
     },
-    Input_Field: {
-      alignItems: 'flex-start',
-      height:60,
-      backgroundColor:Colors.White4,
-      borderWidth:2,
-      borderColor:Colors.grey1,
-      borderRadius: 10,
-      paddingHorizontal: 12,
-      paddingVertical: 6,
-      marginBottom: 14,
-    },
-    Active_Input_Field:{
-       borderWidth:2,
-       borderColor:Colors.Green,
-       backgroundColor:Colors.White
-    },
-    PhoneInput_Field:{
-      flexDirection: language==='en'?'row':'row-reverse',
+    PhoneInput_Field: {
+      flexDirection: language === 'en' ? 'row' : 'row-reverse',
       alignItems: 'center',
-      height:60,
-      backgroundColor:Colors.White4,
-      borderWidth:2,
-      borderColor:Colors.grey1,
-      borderRadius: 10,
+      height: 58,
+      backgroundColor: '#191B20',
+      borderWidth: 1.5,
+      borderColor: Colors.grey1,
+      borderRadius: 14,
       paddingHorizontal: 6,
-      paddingVertical: 6,
-      marginBottom: 14,
-      zIndex:10
+      zIndex: 10,
     },
-    User_Input: {
+    Active_Input_Field: {
+      borderColor: Colors.Green,
+    },
+    PhoneNumber_Input: {
       flex: 1,
-      width:"100%",
-      fontSize: 14,
-      color: Colors.Black2,
-      lineHeight:18,
-      textAlign:language==='en'?'left':'right'
-    },
-    PhoneNumber_Input:{
-      textAlign:language==='en'?'left':'right',
-      fontSize: 14,
-      color: Colors.Black2,
-      paddingHorizontal:"3%",
-      borderLeftWidth:language==='en'?1:0,
-      borderRightWidth:language==='en'?0:1,
-      borderColor:Colors.Grey9,
-      width:200,
-      height:59,
-      letterSpacing:0.3
-
-    },
-    SignUp_Btn:{
-     marginVertical:'10%',
-    },
-    DropdownContainer: {
-      backgroundColor: Colors.White,
-      paddingHorizontal: 10,
-      paddingVertical: 8,
-      borderRightWidth: 1,
+      minWidth: 0,
+      height: 44,
+      fontSize: 15,
+      color: Colors.White,
+      paddingVertical: 0,
+      paddingHorizontal: 12,
+      textAlign: language === 'en' ? 'left' : 'right',
+      borderLeftWidth: language === 'en' ? 1 : 0,
+      borderRightWidth: language === 'en' ? 0 : 1,
       borderColor: Colors.Grey9,
-      alignItems: "center",
-      justifyContent: "center"
+      backgroundColor: 'transparent',
+      letterSpacing: 0.3,
     },
-    DropdownText: {
-      fontSize: 16,
-      color: Colors.Black2
+    ErrorSlot: {
+      minHeight: 26,
+      justifyContent: 'center',
     },
-    CombinedText: {
-      marginTop: 10,
-      fontSize: 16,
-      fontWeight: "bold",
-      color: Colors.White
-    },
-    Error:{
-      marginVertical: 5,
-      marginBottom:15,
+    Error: {
       fontSize: 12,
-      fontWeight: 'bold',
-      color:'red'
+      fontWeight: '600',
+      color: '#FF5A5A',
+      textAlign: language === 'en' ? 'left' : 'right',
     },
-    Partner_Btn:{
-      width:'100%',
-
+    Link_Btn: {
+      alignSelf: 'center',
+      marginTop: 22,
+      paddingVertical: 6,
     },
-    Partner_Txt:{
+    Link_Txt: {
+      color: Colors.White,
       fontSize: 14,
-      color:Colors.White,
-      textAlign:'center',
-      paddingVertical:10,
-      fontWeight:'bold',
-    }
-  
-    
+      fontWeight: '600',
+      textDecorationLine: 'underline',
+    },
 
-    
+    // ── Footer ────────────────────────────
+    Footer: {
+      flex: 1,
+      justifyContent: 'flex-end',
+      paddingTop: 32,
+    },
+    DividerRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 18,
+    },
+    DividerLine: {
+      flex: 1,
+      height: 1,
+      backgroundColor: 'rgba(255,255,255,0.12)',
+    },
+    DividerTxt: {
+      color: Colors.Grey9,
+      fontSize: 12,
+      marginHorizontal: 12,
+    },
+    Partner_Btn: {
+      width: '100%',
+      height: 52,
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: 'rgba(255,255,255,0.22)',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    Partner_Txt: {
+      fontSize: 14,
+      color: Colors.White,
+      fontWeight: '600',
+    },
   });
-  
-
-  

@@ -1,12 +1,7 @@
+import {Text} from '../../../../ui/Text';
+import {TextInput} from '../../../../ui/TextInput';
 import React, {useState, useEffect, useRef, useCallback} from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  Image,
-  TouchableOpacity,
-  TextInput,
-} from 'react-native';
+import {View, ScrollView, Image, TouchableOpacity} from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {Back_Icon, Hbk_White, HBS_Logo} from '../../../Themes/Images';
 import CustomButton from '../../../Component/CustomButton/CustomButton';
@@ -230,7 +225,7 @@ const Otp: React.FC<OtpProps> = ({route, navigation}) => {
 
         {!isDummy && (
           <View style={styles.resendRow}>
-            <Text style={styles.resendHint}>{languageData[language].didnt_receive_code ?? "Didn't receive the code?"}</Text>
+            <Text style={styles.resendHint}>{language === 'ar' ? 'لم تستلم الرمز؟' : 'Didn’t receive a code?'}</Text>
             <TouchableOpacity
               disabled={resendCooldown > 0 || isResending}
               onPress={handleResendOtp}>

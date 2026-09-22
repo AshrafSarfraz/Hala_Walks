@@ -1,3 +1,4 @@
+
 import { Platform, StyleSheet } from "react-native";
 import { Colors } from "../../Themes/Colors";
 
@@ -31,18 +32,18 @@ export const getStyles = (language: string) =>
         flexDirection: 'row',
         alignItems: 'center',
         gap: 5,
-        backgroundColor: Colors.White,
+        backgroundColor: '#191B20',
         paddingHorizontal: 12,
         paddingVertical: 4,
         borderRadius: 20,
         marginBottom: 6,
       },
-      phoneText: {fontSize: 13, color: Colors.grey},
+      phoneText: {fontSize: 13, color: Colors.whiteGrey},   // dark bg par — safaid theek
       sectionLabel: {
         fontSize: 11,
         fontWeight: '700',
         color: Colors.White,
-        letterSpacing: 0.8,
+        letterSpacing: 0.2,
         textTransform: 'uppercase',
         marginHorizontal: 18,
         marginTop: 20,
@@ -50,7 +51,7 @@ export const getStyles = (language: string) =>
         textAlign: language === 'ar' ? 'right' : 'left', // ✅
       },
       card: {
-        backgroundColor: Colors.White,
+        backgroundColor: '#191B20',
         marginHorizontal: 14,
         borderRadius: 14,
         overflow: 'hidden',
@@ -66,14 +67,16 @@ export const getStyles = (language: string) =>
         width: 36,
         height: 36,
         borderRadius: 10,
-        backgroundColor: '#FEE2E2',
+        backgroundColor: '#191B20',
         justifyContent: 'center',
         alignItems: 'center',
       },
       menuLabel: {
         flex: 1,
         fontSize: 15,
-        color: '#1C1C1E',
+        // ⚠️ Ye label WHITE CARD par baithta hai (card.backgroundColor =
+        //    Colors.White). Is liye yahan text DARK hona chahiye.
+        color: '#F5F6F8',
         textAlign: language === 'ar' ? 'right' : 'left', // ✅
       },
       rightLabel: {fontSize: 13, color: Colors.btnRed, fontWeight: '500'},
@@ -86,13 +89,13 @@ export const getStyles = (language: string) =>
       },
       switchLabel: {
         fontSize: 15,
-        color: '#1C1C1E',
+        color: '#F5F6F8',   // white card par — dark text
         fontWeight: '500',
         textAlign: language === 'ar' ? 'right' : 'left', // ✅
       },
       switchSub: {
         fontSize: 12,
-        color: '#8E8E93',
+        color: '#ABB2BF',
         marginTop: 2,
         textAlign: language === 'ar' ? 'right' : 'left', // ✅
       },
@@ -110,7 +113,7 @@ export const getStyles = (language: string) =>
         fontWeight: '600',
         textAlign: language === 'ar' ? 'right' : 'left', // ✅
       },
-      divider: {height: 0.5, backgroundColor: '#E5E5EA', marginLeft: language === 'ar' ? 0 : 66, marginRight: language === 'ar' ? 66 : 0},
+      divider: {height: 0.5, backgroundColor: '#191B20', marginLeft: language === 'ar' ? 0 : 66, marginRight: language === 'ar' ? 66 : 0},
       version: {textAlign: 'center', marginTop: 28, fontSize: 12, color: '#C7C7CC'},
       imageOverlay: {
         flex: 1,
@@ -164,12 +167,12 @@ export const getStyles = (language: string) =>
         zIndex: 99,
       },
       overlayBox: {
-        backgroundColor: '#fff',
+        backgroundColor: '#191B20',
         borderRadius: 16,
         paddingVertical: 24,
         paddingHorizontal: 36,
         alignItems: 'center',
         gap: 12,
       },
-      overlayText: {fontSize: 14, color: '#1C1C1E', fontWeight: '500'},
+      overlayText: {fontSize: 14, color: '#F5F6F8', fontWeight: '500'},   // white card par
     });

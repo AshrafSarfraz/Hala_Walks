@@ -1,3 +1,5 @@
+import {Text} from '../../../ui/Text';
+import {TextInput} from '../../../ui/TextInput';
 
 //
 // Custom animated bottom sheet for the Map screen.
@@ -13,22 +15,7 @@ import React, {
   useState,
   memo,
 } from 'react';
-import {
-  Animated,
-  Dimensions,
-  FlatList,
-  Keyboard,
-  KeyboardAvoidingView,
-  Modal,
-  PanResponder,
-  Platform,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {Animated, Dimensions, FlatList, Keyboard, KeyboardAvoidingView, Modal, PanResponder, Platform, Pressable, StyleSheet, TouchableOpacity, View} from 'react-native';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import type {PlaceSuggestion} from '../mapScreen';
 
@@ -48,17 +35,17 @@ const ANIM_CONFIG = {
 } as const;
 
 const COLORS = {
-  purple: '#6C4EFF',
-  purpleLight: '#EDE9FF',
-  purpleMid: '#9B7BFF',
-  white: '#FFFFFF',
-  bg: '#F7F6FF',
-  border: '#E8E3FF',
-  text: '#1A1A2E',
-  sub: '#6B6B8A',
+  purple: '#E75049',
+  purpleLight: '#3B2427',
+  purpleMid: '#FF827C',
+  white: '#F5F6F8',
+  bg: '#191B20',
+  border: '#343841',
+  text: '#F5F6F8',
+  sub: '#ABB2BF',
   placeholder: '#B0ABCC',
   overlay: 'rgba(10,8,30,0.45)',
-  divider: '#EEEBFF',
+  divider: '#343841',
   red: '#FF4D6D',
 };
 
@@ -344,7 +331,7 @@ const BottomModal: React.FC<BottomModalProps> = ({
               style={styles.mediaBtn}
               activeOpacity={0.8}
               onPress={handleGalleryPress}>
-              <View style={[styles.mediaIconWrap, {backgroundColor: '#FFF0F3'}]}>
+              <View style={[styles.mediaIconWrap, {backgroundColor: '#191B20'}]}>
                 <Ionicons name="images" size={22} color={COLORS.red} />
               </View>
               <Text style={styles.mediaBtnLabel}>Gallery</Text>
@@ -404,7 +391,7 @@ const styles = StyleSheet.create({
   // ── Sheet container ───────────────────────────────────────────────────────
   sheet: {
     height: SHEET_HEIGHT,
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.bg,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     shadowColor: '#000',
@@ -516,7 +503,7 @@ const styles = StyleSheet.create({
   sectionLabel: {
     fontSize: 12,
     fontWeight: '700',
-    letterSpacing: 0.8,
+    letterSpacing: 0.2,
     color: COLORS.sub,
     textTransform: 'uppercase',
     marginHorizontal: 20,

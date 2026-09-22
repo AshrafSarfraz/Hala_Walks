@@ -1,3 +1,4 @@
+
 import {StyleSheet, Dimensions, Platform} from 'react-native';
 import {Fonts} from '../../Themes/Fonts';
 import {Colors} from '../../Themes/Colors';
@@ -7,8 +8,10 @@ const {width} = Dimensions.get('screen');
 export default StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.Bg,
-    marginTop: Platform.OS === 'ios' ? 0 : '10%',
+    backgroundColor: Colors.dargBg,
+    // ✅ marginTop '10%' HATAYA — ye DOUBLE padding de raha tha.
+    // index.tsx me pehle se <SafeAreaView edges={['top']}> maujood hai,
+    // to inset do baar lag raha tha.
     marginHorizontal:"2%"
   },
   Header_Txt: {
@@ -16,7 +19,7 @@ export default StyleSheet.create({
     marginBottom: 20,
     fontSize: 18,
     fontFamily: Fonts.SF_Bold,
-    color: Colors.Green,
+    color: Colors.White,
     textAlign: 'center',
   },
   row: {
@@ -28,10 +31,10 @@ export default StyleSheet.create({
     width: width * 0.45, // Reduced width for better spacing
     margin: 8,
     borderRadius: 10,
-    backgroundColor: Colors.White,
+    backgroundColor: '#191B20',
     height: Platform.OS === 'ios' ? 210 : 210,
     alignItems:'flex-start',
-    borderColor: '#E0E0E0',
+    borderColor: '#343841',
     overflow: 'hidden',
     shadowColor: '#000', // Adding shadow effect for iOS
     shadowOpacity: 0.1,
@@ -48,7 +51,7 @@ export default StyleSheet.create({
     fontSize: 13,
     marginVertical: Platform.OS==='ios'?7:2,
     fontFamily: Fonts.SF_Bold,
-    color: Colors.Green,
+    color: Colors.White,
     marginHorizontal:"4%",
   },
   Type_Cont: {
@@ -123,6 +126,6 @@ export default StyleSheet.create({
    fontSize:16,
    marginTop:12,
    fontWeight:'bold',
-   color:Colors.Black
+   color:Colors.White
   }
 });

@@ -1,9 +1,8 @@
+import {Text} from '../../../ui/Text';
+
 // src/halabsaudi/chat/components/DeleteMessageModal.tsx
 import React, {useEffect, useRef} from 'react';
-import {
-  Modal, View, Text, TouchableOpacity, TouchableWithoutFeedback,
-  StyleSheet, Animated,
-} from 'react-native';
+import {Modal, View, TouchableOpacity, TouchableWithoutFeedback, StyleSheet, Animated} from 'react-native';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import {useSelector} from 'react-redux';
 import {languageData} from '../../redux_toolkit/language/languageSlice';
@@ -89,11 +88,11 @@ export default function DeleteMessageModal({
             onPress={() => { onClose(); setTimeout(() => onDeleteForMe(), 200); }}
             activeOpacity={0.7}>
             <View style={[{flexDirection: rowDir, alignItems: 'center', gap: 14, flex: 1}]}>
-              <View style={[styles.optionIconWrap, {backgroundColor: '#F3F4F6'}]}>
-                <Ionicons name="person-outline" size={18} color="#6B7280" />
+              <View style={[styles.optionIconWrap, {backgroundColor: '#191B20'}]}>
+                <Ionicons name="person-outline" size={18} color='#ABB2BF' />
               </View>
               <View style={{flex: 1, alignItems: isRTL ? 'flex-end' : 'flex-start'}}>
-                <Text style={[styles.optionLabel, {color: '#374151', textAlign: isRTL ? 'right' : 'left'}]}>
+                <Text style={[styles.optionLabel, {color: '#F5F6F8', textAlign: isRTL ? 'right' : 'left'}]}>
                   {t.delete_for_me}
                 </Text>
                 <Text style={[styles.optionSub, {textAlign: isRTL ? 'right' : 'left'}]}>
@@ -120,34 +119,34 @@ const styles = StyleSheet.create({
   backdrop: {...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.5)'},
   center: {flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 32},
   card: {
-    width: '100%', backgroundColor: '#fff', borderRadius: 22,
+    width: '100%', backgroundColor: '#191B20', borderRadius: 22,
     overflow: 'hidden',
     shadowColor: '#000', shadowOffset: {width: 0, height: 10},
     shadowOpacity: 0.15, shadowRadius: 28, elevation: 18,
   },
   iconCircle: {
     width: 60, height: 60, borderRadius: 30,
-    backgroundColor: '#FEE2E2',
+    backgroundColor: '#191B20',
     justifyContent: 'center', alignItems: 'center',
     alignSelf: 'center', marginTop: 24, marginBottom: 12,
   },
-  title: {fontSize: 18, fontWeight: '700', color: '#111827', textAlign: 'center', marginBottom: 4},
+  title: {fontSize: 18, fontWeight: '700', color: '#F5F6F8', textAlign: 'center', marginBottom: 4},
   subtitle: {fontSize: 13, color: '#9CA3AF', textAlign: 'center', marginBottom: 20},
-  divider: {height: 0.5, backgroundColor: '#F3F4F6'},
+  divider: {height: 0.5, backgroundColor: '#191B20'},
   optionRow: {
     flexDirection: 'row', alignItems: 'center',
     paddingHorizontal: 20, paddingVertical: 14, gap: 14,
   },
-  optionBorder: {borderTopWidth: 0.5, borderTopColor: '#F3F4F6'},
+  optionBorder: {borderTopWidth: 0.5, borderTopColor: '#343841'},
   optionIconWrap: {
     width: 38, height: 38, borderRadius: 10,
-    backgroundColor: '#FEE2E2',
+    backgroundColor: '#191B20',
     justifyContent: 'center', alignItems: 'center',
   },
   optionLabel: {fontSize: 15, fontWeight: '600', color: '#EF4444'},
   optionSub:   {fontSize: 12, color: '#9CA3AF', marginTop: 1},
   cancelRow:   {paddingVertical: 16, alignItems: 'center'},
-  cancelText:  {fontSize: 15, fontWeight: '600', color: '#6B7280'},
+  cancelText:  {fontSize: 15, fontWeight: '600', color: '#ABB2BF'},
 });
 
 

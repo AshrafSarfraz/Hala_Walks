@@ -1,9 +1,8 @@
+import {Text} from '../../../ui/Text';
+import {ActivityIndicator} from '../../../ui/ActivityIndicator';
 // src/halabsaudi/chat/components/BlockUserModal.tsx
 import React, {useEffect, useRef} from 'react';
-import {
-  Modal, View, Text, TouchableOpacity, StyleSheet,
-  Animated, TouchableWithoutFeedback, ActivityIndicator,
-} from 'react-native';
+import {Modal, View, TouchableOpacity, StyleSheet, Animated, TouchableWithoutFeedback} from 'react-native';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import {useSelector} from 'react-redux';
 import {languageData} from '../../redux_toolkit/language/languageSlice';
@@ -67,7 +66,7 @@ export default function BlockUserModal({
         <Animated.View style={[styles.card, {opacity: opacityAnim, transform: [{scale: scaleAnim}]}]}>
 
           {/* Icon */}
-          <View style={[styles.iconCircle, {backgroundColor: isBlocked ? '#DCFCE7' : '#FEE2E2'}]}>
+          <View style={[styles.iconCircle, {backgroundColor: isBlocked ? '#191B20' : '#191B20'}]}>
             <Ionicons
               name={isBlocked ? 'checkmark-circle-outline' : 'ban-outline'}
               size={34}
@@ -119,7 +118,7 @@ const styles = StyleSheet.create({
   backdrop: {...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.5)'},
   center: {flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 32},
   card: {
-    width: '100%', backgroundColor: '#fff', borderRadius: 24,
+    width: '100%', backgroundColor: '#191B20', borderRadius: 24,
     padding: 24, alignItems: 'center',
     shadowColor: '#000', shadowOffset: {width: 0, height: 8},
     shadowOpacity: 0.12, shadowRadius: 24, elevation: 16,
@@ -128,20 +127,20 @@ const styles = StyleSheet.create({
     width: 72, height: 72, borderRadius: 36,
     justifyContent: 'center', alignItems: 'center', marginBottom: 16,
   },
-  title: {fontSize: 20, fontWeight: '700', color: '#111827', marginBottom: 8},
-  desc:  {fontSize: 14, color: '#6B7280', lineHeight: 20, marginBottom: 16},
+  title: {fontSize: 20, fontWeight: '700', color: '#F5F6F8', marginBottom: 8},
+  desc:  {fontSize: 14, color: '#ABB2BF', lineHeight: 20, marginBottom: 16},
   bulletList: {
-    width: '100%', backgroundColor: '#F9FAFB',
+    width: '100%', backgroundColor: '#191B20',
     borderRadius: 14, padding: 14, gap: 8, marginBottom: 20,
   },
   bulletRow: {alignItems: 'flex-start', gap: 8},
-  bulletText: {fontSize: 13, color: '#374151', flex: 1, lineHeight: 18},
+  bulletText: {fontSize: 13, color: '#F5F6F8', flex: 1, lineHeight: 18},
   btnRow: {gap: 10, width: '100%'},
   cancelBtn: {
     flex: 1, height: 48, borderRadius: 14,
-    justifyContent: 'center', alignItems: 'center', backgroundColor: '#F3F4F6',
+    justifyContent: 'center', alignItems: 'center', backgroundColor: '#191B20',
   },
-  cancelText:  {fontSize: 15, fontWeight: '600', color: '#374151'},
+  cancelText:  {fontSize: 15, fontWeight: '600', color: '#F5F6F8'},
   confirmBtn:  {flex: 1, height: 48, borderRadius: 14, justifyContent: 'center', alignItems: 'center'},
   confirmText: {fontSize: 15, fontWeight: '700', color: '#fff'},
 });

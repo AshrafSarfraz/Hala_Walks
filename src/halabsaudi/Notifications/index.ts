@@ -290,24 +290,23 @@ export async function initVenueTracker() {
     setupNotificationHandlers();
 
     await BackgroundGeolocation.ready({
-      distanceFilter:  200,
-      desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_HIGH,
-      stopOnTerminate:   false,
-      startOnBoot:       true,
-      foregroundService: true,
-      locationAuthorizationRequest:      'Always',
-      disableMotionActivityUpdates:      true,
-      disableLocationAuthorizationAlert: false,
-      pausesLocationUpdatesAutomatically: false,
-      activityType:         BackgroundGeolocation.ACTIVITY_TYPE_OTHER,
-      geofenceModeHighAccuracy: true,
-      notification: {
-        title:     'Hala B Saudi',
-        text:      'Watching for nearby venues...',
-        channelId: CHANNEL_ID,
+      geolocation: {
+        distanceFilter: 200,
+        desiredAccuracy: BackgroundGeolocation.DesiredAccuracy.High,
+        locationAuthorizationRequest: 'Always',
+        disableLocationAuthorizationAlert: false,
+        pausesLocationUpdatesAutomatically: false,
+        activityType: BackgroundGeolocation.ActivityType.Other,
+        geofenceModeHighAccuracy: true,
       },
-      debug:    false,
-      logLevel: BackgroundGeolocation.LOG_LEVEL_OFF,
+      app: {
+        stopOnTerminate: false,
+        startOnBoot: true,
+        enableHeadless: true,
+        notification: {title: 'Hala B Saudi', text: 'Watching for nearby venues...', channelId: CHANNEL_ID},
+      },
+      activity: {disableMotionActivityUpdates: true},
+      logger: {debug: false, logLevel: BackgroundGeolocation.LogLevel.Off},
     });
 
     // ✅ System 1: Geofence listener

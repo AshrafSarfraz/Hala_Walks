@@ -1,19 +1,8 @@
+import {Text} from '../../../../ui/Text';
+import {TextInput} from '../../../../ui/TextInput';
+import {Alert} from '../../../../ui/Alert';
 import React, {useState} from 'react';
-import {
-  View,
-  StyleSheet,
-  StatusBar,
-  Image,
-  TouchableOpacity,
-  Text,
-  TextInput,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  TouchableWithoutFeedback,
-  Keyboard,
-  Alert,
-} from 'react-native';
+import {View, StyleSheet, StatusBar, Image, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, TouchableWithoutFeedback, Keyboard} from 'react-native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {Colors} from '../../../Themes/Colors';
 import { Full_logo_B, Full_logo_w, languageIcon, Profile_Img,WW_Icon} from '../../../Themes/Images';
@@ -194,7 +183,7 @@ const getStyles=(langauge:string) => StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 8,
-    backgroundColor: 'rgba(255,255,255,0.95)', // soft white (glass look)
+    backgroundColor: '#191B20', // soft white (glass look)
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: StyleSheet.hairlineWidth,
@@ -218,7 +207,7 @@ const getStyles=(langauge:string) => StyleSheet.create({
     width: 22,
     height: 22,
     resizeMode: 'contain',
-    tintColor: '#14171A', // ya Colors.Black/Theme primary
+    tintColor: '#F5F6F8', // ya Colors.Black/Theme primary
   },
 
 
@@ -247,12 +236,12 @@ const getStyles=(langauge:string) => StyleSheet.create({
     lineHeight:22
   },
   defaultButton: {
-    borderColor: 'white',
+    borderColor: '#343841',
     backgroundColor: 'transparent',
   },
   selectedButton: {
     borderColor: Colors.darkgrey,
-    backgroundColor: 'white',
+    backgroundColor: '#191B20',
   },
   buttonImage: {
     width: 50,
@@ -270,7 +259,7 @@ const getStyles=(langauge:string) => StyleSheet.create({
     fontFamily: Fonts.SF_Bold,
   },
   selectedText: {
-    color: Colors.darkgrey,
+    color: Colors.White,
   },
   inputContainer: {
     marginTop: 30,
@@ -279,17 +268,17 @@ const getStyles=(langauge:string) => StyleSheet.create({
   input: {
     width: '100%',
     height: 55,
-    backgroundColor: 'white',
+    backgroundColor: '#191B20',
     borderRadius: 10,
     paddingHorizontal: 15,
     fontSize: 14,
     marginBottom: 20,
-    color: Colors.Green,
+    color: Colors.White,
     fontFamily: Fonts.SF_Bold,
   },
   continueButton: {
     width: '100%',
-    backgroundColor: 'white',
+    backgroundColor: '#191B20',
     height: 55,
     borderRadius: 8,
     alignItems: 'center',
@@ -297,7 +286,7 @@ const getStyles=(langauge:string) => StyleSheet.create({
     marginTop: 10,
   },
   continueText: {
-    color: Colors.Green,
+    color: Colors.btnRed,
     fontSize: 16,
     fontFamily: Fonts.SF_Bold,
     lineHeight: 20,

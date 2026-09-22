@@ -1,5 +1,6 @@
+import {Text} from '../../../ui/Text';
 import React from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {Image, StyleSheet, TouchableOpacity, View} from 'react-native';
 import { Colors } from '../../Themes/Colors';
 import { Fonts } from '../../Themes/Fonts';
 import { Back_Icon } from '../../Themes/Images';
@@ -26,7 +27,7 @@ const CustomHeader: React.FC<HeaderProps> = ({
 
   return (
     <View style={[styles.header, backgroundColor ? { backgroundColor } : null]}>
-      <TouchableOpacity onPress={onBackPress}>
+      <TouchableOpacity onPress={onBackPress} accessibilityRole="button" accessibilityLabel="Back" style={{minWidth: 44, minHeight: 44, justifyContent: 'center'}}>
         <Image
           source={Back_Icon}
           style={[styles.backIcon, iconColor ? { tintColor: iconColor } : null]}
@@ -45,7 +46,8 @@ const getStyles = (language: String) => StyleSheet.create({
     alignItems: 'center',
     backgroundColor: Colors.darkgrey,   // ✅ default
     
-    height:45
+    minHeight:56,
+    paddingHorizontal: 16
   },
   backIcon: {
     width: 26,
@@ -56,7 +58,7 @@ const getStyles = (language: String) => StyleSheet.create({
     transform: language === 'en' ? [{ scaleX: 1 }] : [{ scaleX: -1 }],
   },
   headerText: {
-    fontSize: language === 'en' ? 18 : 15,
+    fontSize: 18,
     fontFamily: Fonts.SF_Bold,
     lineHeight: language === 'en' ? 24 : 30,
     color: Colors.White,                // ✅ default

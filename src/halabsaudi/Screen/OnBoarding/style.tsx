@@ -1,3 +1,4 @@
+
 import {StyleSheet} from 'react-native';
 import {Colors} from '../../Themes/Colors';
 import {Fonts} from '../../Themes/Fonts';
@@ -75,11 +76,11 @@ export const getStyles = (language: string) =>
       width: 8,
       height: 8,
       borderRadius: 4,
-      backgroundColor: Colors.whiteGrey,
+      backgroundColor: Colors.cardBg,
       marginHorizontal: 2,
     },
     activePaginationDot: {
-      backgroundColor: Colors.White,
+      backgroundColor: '#191B20',
       width: 30,
       height: 8,
       borderRadius: 6,

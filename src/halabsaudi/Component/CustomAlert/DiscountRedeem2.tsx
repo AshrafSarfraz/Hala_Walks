@@ -1,12 +1,7 @@
+import {Text} from '../../../ui/Text';
+
 import React from 'react';
-import {
-  View,
-  Text,
-  Modal,
-  StyleSheet,
-  Image,
-  StatusBar,
-} from 'react-native';
+import {View, Modal, StyleSheet, Image, StatusBar} from 'react-native';
 import { Colors } from '../../Themes/Colors';
 import { Fonts } from '../../Themes/Fonts';
 import { Giftpack } from '../../Themes/Images';
@@ -16,16 +11,17 @@ interface DiscountProps {
   visible: boolean;
   onClose: () => void;
   item: {
-    code: string;
-    percentage: string;
-    createdAt: any;
+    code?: string;
+    percentage?: string;
+    createdAt?: any;
     brand?: string;
   } | null;
 }
 
 const Discount_Redeem2: React.FC<DiscountProps> = ({ visible, onClose, item }) => {
   if (!item) return null;
-  const date = item.createdAt?.toDate?.().toLocaleString() ?? 'Unknown';
+  const created = item.createdAt?.toDate?.() ?? (item.createdAt ? new Date(item.createdAt) : null);
+  const date = created && !Number.isNaN(created.getTime()) ? created.toLocaleString() : '—';
 
   return (
     <Modal transparent visible={visible} animationType="fade">
@@ -77,7 +73,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.85)',
   },
   container: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#191B20',
     width: '85%',
     paddingVertical: 25,
     paddingHorizontal: 22,
@@ -87,7 +83,7 @@ const styles = StyleSheet.create({
   brandHeader: {
     fontSize: 20,
     fontFamily: Fonts.SF_Bold,
-    color: Colors.Black,
+    color: '#F5F6F8',
     marginBottom: 5,
     textAlign: 'center',
   },
@@ -100,26 +96,26 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 15,
     fontFamily: Fonts.SF_Regular,
-    color: Colors.Green,
+    color: '#F5F6F8',
     marginTop: 10,
   },
   codeText: {
     fontSize: 26,
     fontFamily: Fonts.SF_Bold,
-    color: Colors.Green,
-    letterSpacing: 1.5,
+    color: '#F5F6F8',
+    letterSpacing: 0.2,
 
   },
   percentageText: {
     fontSize: 22,
     fontFamily: Fonts.SF_Bold,
-    color: Colors.Green,
+    color: '#F5F6F8',
 
   },
   dateText: {
     fontSize: 13,
     fontFamily: Fonts.SF_Regular,
-    color: '#757575',
+    color: '#ABB2BF',
 
   },
   expiryText: {
@@ -131,7 +127,7 @@ const styles = StyleSheet.create({
   noteText: {
     fontSize: 11,
     fontFamily: Fonts.SF_Regular,
-    color: '#616161',
+    color: '#ABB2BF',
     marginVertical: 10,
     textAlign: 'center',
   },

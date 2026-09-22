@@ -1,3 +1,4 @@
+import {Text} from '../../../ui/Text';
 // /src/halabsaudi/Component/CustomAlert/CustomAlertModal.tsx
 //
 // Drop-in replacement for RN's `Alert.alert(title, message, buttons)`.
@@ -13,7 +14,7 @@
 //   <AlertComponent />
 
 import React, {useState, useCallback} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {View, TouchableOpacity, StyleSheet} from 'react-native';
 import Modal from 'react-native-modal';
 
 export type AlertButton = {
@@ -122,7 +123,7 @@ const styles = StyleSheet.create({
   card: {
     width: '100%',
     maxWidth: 320,
-    backgroundColor: '#ca2323',
+    backgroundColor: '#191B20',
     borderRadius: 16,
     paddingTop: 20,
     paddingHorizontal: 20,
@@ -132,13 +133,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 17,
     fontWeight: '700',
-    color: '#0606e2',
+    color: '#F5F6F8',
     textAlign: 'center',
     marginBottom: 6,
   },
   message: {
     fontSize: 14,
-    color: '#db1616',
+    color: '#ABB2BF',
     textAlign: 'center',
     lineHeight: 20,
     marginBottom: 16,
@@ -146,7 +147,7 @@ const styles = StyleSheet.create({
   btnRow: {
     flexDirection: 'row',
     borderTopWidth: 1,
-    borderColor: '#b72a2a',
+    borderColor: '#343841',
     marginTop: 8,
   },
   btnCol: {flexDirection: 'column'},
@@ -158,15 +159,15 @@ const styles = StyleSheet.create({
   },
   btnDivider: {
     borderLeftWidth: 1,
-    borderColor: '#b72828',
+    borderColor: '#343841',
   },
   btnText: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#6C4EFF',
+    color: '#F5F6F8',
   },
   btnTextCancel: {
-    color: '#bc3535',
+    color: '#ABB2BF',
     fontWeight: '500',
   },
   btnTextDestructive: {

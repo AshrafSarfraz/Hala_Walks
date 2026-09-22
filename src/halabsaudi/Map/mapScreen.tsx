@@ -1,3 +1,8 @@
+import {fetchBrandCatalog} from '../api/brandCatalog';
+import {Text} from '../../ui/Text';
+import {darkMapStyle} from '../../ui/darkMap';
+import {ActivityIndicator} from '../../ui/ActivityIndicator';
+import {TextInput} from '../../ui/TextInput';
 import React, {
   memo,
   useCallback,
@@ -6,18 +11,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import {
-  View,
-  StyleSheet,
-  Text,
-  Platform,
-  ActivityIndicator,
-  TouchableOpacity,
-  Image,
-  TextInput,
-  FlatList,
-  Keyboard,
-} from 'react-native';
+import {View, StyleSheet, Platform, TouchableOpacity, Image, FlatList, Keyboard} from 'react-native';
 import MapView, {Marker, PROVIDER_GOOGLE, Region} from 'react-native-maps';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
@@ -146,7 +140,7 @@ const buildMarkersFromCatalog = (
   brands: any[],
 ): VenueMarker[] => {
   const venueMarkers: VenueMarker[] = venues
-    .map(v => {
+    .map((v): VenueMarker | null => {
       const latitude = parseCoord(v?.latitude);
       const longitude = parseCoord(v?.longitude);
       if (!isValidCoord(latitude, longitude)) return null;
@@ -164,7 +158,7 @@ const buildMarkersFromCatalog = (
 
   const brandMarkers: VenueMarker[] = brands
     .filter(b => isActiveStatus(b?.status))
-    .map(b => {
+    .map((b): VenueMarker | null => {
       const latitude = parseCoord(b.latitude);
       const longitude = parseCoord(b.longitude);
       if (!isValidCoord(latitude, longitude)) return null;
@@ -640,7 +634,7 @@ const searchBarStyles = StyleSheet.create({
     paddingLeft: 4,
   },
   remotePill: {
-    backgroundColor: '#EDE9FF',
+    backgroundColor: '#191B20',
     borderRadius: 6,
     paddingHorizontal: 6,
     paddingVertical: 2,
@@ -651,7 +645,7 @@ const searchBarStyles = StyleSheet.create({
     color: Colors.btnRed,
   },
   searchBox: {
-    backgroundColor: '#fff',
+    backgroundColor: '#191B20',
     borderRadius: 14,
     paddingHorizontal: 14,
     paddingVertical: 11,
@@ -670,12 +664,12 @@ const searchBarStyles = StyleSheet.create({
     flex: 1,
     fontSize: 14,
     fontWeight: '500',
-    color: '#1A1A2E',
+    color: '#F5F6F8',
     padding: 0,
   },
   dropdown: {
     marginTop: 6,
-    backgroundColor: '#fff',
+    backgroundColor: '#191B20',
     borderRadius: 14,
     overflow: 'hidden',
     shadowColor: '#000',
@@ -691,14 +685,14 @@ const searchBarStyles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 14,
     borderBottomWidth: 1,
-    borderColor: '#F3F3F3',
+    borderColor: '#343841',
     gap: 10,
   },
   predictionIcon: {
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: '#F0EBFF',
+    backgroundColor: '#191B20',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -706,11 +700,11 @@ const searchBarStyles = StyleSheet.create({
   predictionMain: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#1A1A2E',
+    color: '#F5F6F8',
   },
   predictionSub: {
     fontSize: 12,
-    color: '#888',
+    color: '#ABB2BF',
     marginTop: 2,
   },
   emptyText: {
@@ -725,7 +719,7 @@ const searchBarStyles = StyleSheet.create({
     gap: 8,
     paddingHorizontal: 14,
     paddingVertical: 14,
-    backgroundColor: '#FFF3F3',
+    backgroundColor: '#191B20',
   },
   errorText: {
     flex: 1,
@@ -987,7 +981,7 @@ const MapScreen = () => {
     try {
       const [venuesRes, brandsRes] = await Promise.all([
         fetch(VENUES_API),
-        fetch(BRANDS_API),
+        fetchBrandCatalog(BRANDS_API),
       ]);
       const venuesJson = venuesRes.ok ? await venuesRes.json() : {data: []};
       const brandsJson = brandsRes.ok ? await brandsRes.json() : {data: []};
@@ -1143,6 +1137,10 @@ const MapScreen = () => {
   return (
     <View style={styles.container}>
       <MapView
+        userInterfaceStyle="dark"
+        customMapStyle={darkMapStyle}
+        loadingBackgroundColor="#101114"
+        loadingIndicatorColor="#E75049"
         ref={mapRef}
         provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
         style={styles.map}
@@ -1203,7 +1201,7 @@ const MapScreen = () => {
       <View style={styles.fabRow}>
         <TouchableOpacity
           style={styles.fab}
-          onPress={() => navigation.navigate('MapProfile')}>
+          onPress={() => navigation.navigate('BottomTab', {screen: 'Profile'})}>
           <Ionicons name="person" size={22} color="#fff" />
         </TouchableOpacity>
 
@@ -1230,7 +1228,7 @@ const MapScreen = () => {
               e.stopPropagation();
               setSelectedMarker(null);
             }}>
-            <Ionicons name="close" size={16} color="#999" />
+            <Ionicons name="close" size={16} color='#ABB2BF' />
           </TouchableOpacity>
 
           <View style={styles.markerCardRow}>
@@ -1290,7 +1288,7 @@ export default MapScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#e8e8e8',
+    backgroundColor: '#191B20',
   },
   map: {
     ...StyleSheet.absoluteFillObject,
@@ -1304,21 +1302,21 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 12,
     fontSize: 14,
-    color: '#333',
+    color: '#F5F6F8',
   },
   errorBanner: {
     position: 'absolute',
     top: 50,
     left: 16,
     right: 16,
-    backgroundColor: '#FFF3F3',
+    backgroundColor: '#191B20',
     borderRadius: 10,
     padding: 12,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     borderWidth: 1,
-    borderColor: '#FFD0D0',
+    borderColor: '#343841',
     zIndex: 20,
   },
   errorText: {
@@ -1357,7 +1355,7 @@ const styles = StyleSheet.create({
     bottom: 160,
     left: 16,
     right: 16,
-    backgroundColor: '#fff',
+    backgroundColor: '#191B20',
     borderRadius: 16,
     padding: 14,
     shadowColor: '#000',
@@ -1374,7 +1372,7 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: '#F3F3F3',
+    backgroundColor: '#191B20',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -1388,12 +1386,12 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 12,
-    backgroundColor: '#eee',
+    backgroundColor: '#191B20',
   },
   markerCardImageFallback: {
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#FFF3F3',
+    backgroundColor: '#191B20',
   },
   markerCardInfo: {
     flex: 1,
@@ -1401,12 +1399,12 @@ const styles = StyleSheet.create({
   markerName: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#1A1A2E',
+    color: '#F5F6F8',
   },
   markerAddress: {
     marginTop: 3,
     fontSize: 13,
-    color: '#666',
+    color: '#ABB2BF',
   },
   markerViewMore: {
     marginTop: 6,
@@ -1416,7 +1414,7 @@ const styles = StyleSheet.create({
   },
   imagePin: {
     borderWidth: 2,
-    backgroundColor: Colors.White,
+    backgroundColor: '#191B20',
     overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
@@ -1480,6 +1478,6 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     backgroundColor: Colors.btnRed,
     borderWidth: 2,
-    borderColor: '#fff',
+    borderColor: '#343841',
   },
 });

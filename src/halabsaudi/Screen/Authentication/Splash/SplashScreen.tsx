@@ -1,5 +1,6 @@
+import {Text} from '../../../../ui/Text';
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, Image, StatusBar } from 'react-native';
+import {View, StyleSheet, Image, StatusBar} from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Colors } from '../../../Themes/Colors';
 import { Hala_logo_white } from '../../../Themes/Images';

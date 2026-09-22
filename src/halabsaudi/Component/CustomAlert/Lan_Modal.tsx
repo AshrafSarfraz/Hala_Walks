@@ -1,5 +1,7 @@
+import {Text} from '../../../ui/Text';
+
 import React from 'react';
-import { View, Text, Modal, TouchableOpacity, StyleSheet, StatusBar } from 'react-native';
+import {View, Modal, TouchableOpacity, StyleSheet, StatusBar} from 'react-native';
 import { Colors } from '../../Themes/Colors';
 import { Fonts } from '../../Themes/Fonts';
 import { RootState } from '../../redux_toolkit/store';
@@ -22,7 +24,7 @@ const LanguageModal: React.FC<LanProps> = ({ visible, onClose }) => {
 
   return (
     <Modal transparent visible={visible} animationType="fade">
-        <StatusBar hidden={true} translucent={true} animated={true} />
+        <StatusBar barStyle="light-content" />
       <View style={styles.overlay}>
         <View style={styles.container}>
           <Text style={styles.headerText}>
@@ -60,7 +62,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.8)',
   },
   container: {
-    backgroundColor: 'white',
+    backgroundColor: '#191B20',
     paddingTop: 15,
     width: '85%',
     height: 255,
@@ -75,12 +77,12 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 20,
     fontFamily: Fonts.SF_Bold,
-    color: Colors.Black,
+    color: '#F5F6F8',
     marginBottom: 15,
     lineHeight: 30,
   },
   languageButton: {
-    backgroundColor: '#fff',
+    backgroundColor: '#191B20',
     borderWidth:2,
     borderColor:Colors.Red,
     width: '80%',
@@ -108,7 +110,7 @@ const styles = StyleSheet.create({
   },
   closeButtonText: {
     fontSize: 16,
-    color: Colors.Black,
+    color: '#F5F6F8',
     fontFamily: Fonts.SF_Bold,
   },
 });

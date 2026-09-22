@@ -1,5 +1,7 @@
+import type {NavigationProp, ParamListBase} from '@react-navigation/native';
+import {Text} from '../../../../ui/Text';
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import {View, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux_toolkit/store';
@@ -12,7 +14,7 @@ import CustomButton from '../../../Component/CustomButton/CustomButton';
 import { useStatusBar } from '../../../Component/UseStatusBar/useStatusBar';
 
 const HalaInfoScreen = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
   useStatusBar('light-content', Colors.dargBg);
   const language = useSelector((state: RootState) => state.language.language);
   const styles = getStyles(language);

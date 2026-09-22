@@ -1,3 +1,4 @@
+
 // src/screens/Redeem/style.ts
 import { Platform, StyleSheet } from 'react-native';
 import { Colors } from '../../Themes/Colors';
@@ -6,7 +7,7 @@ export const getStyles = (language: 'en' | 'ar') =>
   StyleSheet.create({
     Container: {
       flex: 1,
-      backgroundColor: Colors.White4,
+      backgroundColor: Colors.dargBg,
       marginVertical: Platform.OS === 'ios' ? '2%' : '10%',
       marginHorizontal: '4%',
     },
@@ -26,14 +27,14 @@ export const getStyles = (language: 'en' | 'ar') =>
     },
     noDataText: {
       fontSize: 18,
-      color: 'black',
+      color: Colors.White,
       alignSelf: 'center',
       marginTop: 30,
     },
 
     itemContainer: {
       marginTop: '1%',
-      backgroundColor: 'white',
+      backgroundColor: '#191B20',
       padding: 15,
       borderRadius: 10,
       marginBottom: 10,
@@ -42,11 +43,11 @@ export const getStyles = (language: 'en' | 'ar') =>
     codeText: {
       fontSize: 16,
       fontWeight: 'bold',
-      color: Colors.Green,
+      color: Colors.White,
     },
     percentageText: {
       fontSize: 14,
-      color: 'black',
+      color: Colors.White,
       marginTop: 5,
     },
     dateText: {
@@ -69,6 +70,6 @@ export const getStyles = (language: 'en' | 'ar') =>
       fontSize: 16,
       marginTop: 12,
       fontWeight: 'bold',
-      color: Colors.Black,
+      color: Colors.White,
     },
   });

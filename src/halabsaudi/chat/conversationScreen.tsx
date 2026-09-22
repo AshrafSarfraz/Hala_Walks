@@ -1,9 +1,9 @@
+import {Text} from '../../ui/Text';
+import {fetchCollection} from '../api/collection';
+import {ActivityIndicator} from '../../ui/ActivityIndicator';
 // src/halabsaudi/chat/conversationScreen.tsx
 import React, {useEffect, useRef, useState, useCallback, useMemo} from 'react';
-import {
-  View, Text, FlatList, TouchableOpacity, StyleSheet,
-  ActivityIndicator, Image, StatusBar, RefreshControl, Platform,
-} from 'react-native';
+import {View, FlatList, TouchableOpacity, StyleSheet, Image, StatusBar, RefreshControl, Platform} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useFocusEffect} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -20,11 +20,24 @@ import DeleteConversation from './deleteconversation';
 import {languageData} from '../redux_toolkit/language/languageSlice';
 import {RootState} from '../redux_toolkit/store';
 import { useStatusBar } from '../Component/UseStatusBar/useStatusBar';
+// ✅ backend ab { chats, hasMore } deta hai — array nahi
+import {unwrapChats} from '../api/unwrap';
+// ✅ app icon ka badge
+import {setBadgeFromChats, clearChatNotifications} from '../Notifications/badge';
 
 type Conversation = {
   _id: string;
   participant: {_id: string; name: string; avatar?: string | null};
-  lastMessage: {text: string; sender?: {_id: string}; deleted?: boolean} | null;
+  // ✅ FIX: pehle yahan sirf {text, sender, deleted} tha. Media fields
+  //    the hi nahi — is liye image message list me KHALI dikhta tha.
+  lastMessage: {
+    text: string;
+    sender?: {_id: string};
+    deleted?: boolean;
+    mediaType?: 'image' | 'video' | 'audio' | 'document' | null;
+    mediaUrl?: string | null;
+    thumbnailUrl?: string | null;
+  } | null;
   lastMessageAt: string;
   unreadCount: number;
   isMuted?: boolean;
@@ -69,6 +82,7 @@ export default function ConversationsScreen({navigation}: any) {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading,       setLoading]       = useState(true);
   const [refreshing,    setRefreshing]    = useState(false);
+  const [loadError, setLoadError] = useState(false);
   const [searchQuery,   setSearchQuery]   = useState('');
   const [currentUserId, setCurrentUserId] = useState('');
   const [myname,        setMyname]        = useState('');
@@ -135,18 +149,24 @@ export default function ConversationsScreen({navigation}: any) {
     if (showLoader) setLoading(true);
 
     try {
-      const res = await axios.get(`${BASE_URL}/api/chat`, {
+      const chatItems = await fetchCollection(`${BASE_URL}/api/chat`, {
         headers: {Authorization: `Bearer ${tok}`},
         timeout: 15000,
-      });
+      }, 'chats');
+      // ✅ FIX: pehle `(res.data || []).map(...)` tha. Naya backend object
+      //    bhejta hai ({chats: [...]}) — object par .map crash karta tha
+      //    aur list khali reh jati thi.
       const sorted: Conversation[] = sortByRecent(
-        (res.data || []).map((c: any) => ({...c, unreadCount: c.unreadCount ?? 0})),
+        chatItems.map((c: any) => ({...c, unreadCount: c.unreadCount ?? 0})),
       );
       lastLoadedRef.current = Date.now();
       setConversations(sorted);
+      setLoadError(false);
       debouncedSave(sorted);
+      // ✅ badge hamesha asli unread counts se — atak nahi sakta
+      setBadgeFromChats(sorted);
     } catch (err: any) {
-      console.log('[ConvScreen] fetchChats error:', err?.message);
+      setLoadError(true);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -208,7 +228,14 @@ export default function ConversationsScreen({navigation}: any) {
   );
 
   const openChat = useCallback((chat: Conversation) => {
-    setConversations(prev => prev.map(c => c._id === chat._id ? {...c, unreadCount: 0} : c));
+    // ✅ chat kholte hi us chat ki notifications tray se hatao
+    clearChatNotifications(chat._id);
+
+    setConversations(prev => {
+      const updated = prev.map(c => c._id === chat._id ? {...c, unreadCount: 0} : c);
+      setBadgeFromChats(updated);   // badge foran update
+      return updated;
+    });
     navigation.navigate('ChatScreen', {
       chatId:                   chat._id,
       participantName:          chat.participant?.name   || 'User',
@@ -238,7 +265,23 @@ export default function ConversationsScreen({navigation}: any) {
     const name        = item.participant?.name   || 'User';
     const avatarUri   = item.participant?.avatar || null;
     const isDeleted   = item.lastMessage?.deleted;
-    const last        = isDeleted ? t.deleted_message_text : item.lastMessage?.text || '';
+    // ✅ FIX: "image bhejo to list me kuch dikhta hi nahi"
+    //
+    // Pehle sirf `lastMessage.text` dikhta tha. Image message me text
+    // khali hota hai — is liye row bilkul khali reh jati thi.
+    // Ab media ka type dekh kar saaf label dikhta hai.
+    const lm = item.lastMessage;
+    const mediaLabel =
+      lm?.mediaType === 'image'    ? '📷 Photo'
+      : lm?.mediaType === 'video'  ? '🎥 Video'
+      : lm?.mediaType === 'audio'  ? '🎤 Voice message'
+      : lm?.mediaType === 'document' ? '📎 Document'
+      : '';
+    const last = isDeleted
+      ? t.deleted_message_text
+      : (lm?.text && lm.text.trim())
+        ? lm.text
+        : mediaLabel;
     const time        = item.lastMessageAt ? timeAgo(item.lastMessageAt) : '';
     const hasUnread   = (item.unreadCount ?? 0) > 0;
     const isMine      = item.lastMessage?.sender &&
@@ -285,7 +328,7 @@ export default function ConversationsScreen({navigation}: any) {
   const keyExtractor = useCallback((item: Conversation) => item._id, []);
 
   if (loading) {
-    return <View style={styles.loader}><ActivityIndicator size="large" color={Colors.Green} /></View>;
+    return <View style={styles.loader}><ActivityIndicator size="large" color={Colors.btnRed} /></View>;
   }
 
   return (
@@ -298,7 +341,8 @@ export default function ConversationsScreen({navigation}: any) {
       <FlatList
         data={filtered} keyExtractor={keyExtractor} renderItem={renderItem}
         keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}
-        contentContainerStyle={{paddingTop: 10, paddingBottom: 120}}
+        contentContainerStyle={{paddingTop: 8, paddingBottom: 100}}
+        ListHeaderComponent={loadError ? <TouchableOpacity onPress={() => fetchChats(false, true)} style={{padding: 16}}><Text style={{color: '#FF827C', textAlign: 'center'}}>{isRTL ? 'تعذر تحديث المحادثات · إعادة المحاولة' : 'Could not refresh conversations · Tap to retry'}</Text></TouchableOpacity> : null}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         windowSize={11} maxToRenderPerBatch={10}
         removeClippedSubviews={Platform.OS === 'android'}
@@ -321,7 +365,7 @@ export default function ConversationsScreen({navigation}: any) {
         }
       />
       <TouchableOpacity
-        style={[styles.fab, {bottom: 80 + insets.bottom}, isRTL ? {left: 20} : {right: 20}]}
+        style={[styles.fab, {bottom: 120}, isRTL ? {left: 20} : {right: 20}]}
         onPress={() => navigation.navigate('StartChatScreen')} activeOpacity={0.85}>
         <Image source={chatMessage} style={styles.fabIcon} />
         <Text style={styles.fabText}>{t.new_chat}</Text>
@@ -338,30 +382,31 @@ export default function ConversationsScreen({navigation}: any) {
 
 const styles = StyleSheet.create({
   container:   {flex: 1, backgroundColor: Colors.dargBg},
-  loader:      {flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.Bg},
-  row:         {alignItems: 'center', paddingHorizontal: 18, paddingVertical: 13, backgroundColor: Colors.cardBg, marginHorizontal: 14, borderRadius: 16},
-  separator:   {height: 8},
+  loader:      {flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#191B20'},
+
+  row:         {alignItems: 'center', paddingHorizontal: 18, paddingVertical: 13, backgroundColor: 'transparent', marginHorizontal: 0, borderRadius: 0},
+  separator:   {height: 1, backgroundColor: '#23262D', marginLeft: 82, marginRight: 20},
   avatarImg:   {width: 50, height: 50, borderRadius: 25, flexShrink: 0},
   avatarWrap:  {width: 50, height: 50, borderRadius: 25, justifyContent: 'center', alignItems: 'center', flexShrink: 0},
   avatarText:  {color: Colors.White, fontWeight: '800', fontSize: 19},
   rowContent:  {flex: 1},
   rowTop:      {alignItems: 'center', marginBottom: 3, justifyContent: 'space-between'},
-  name:        {fontSize: 15, fontWeight: '600', color: Colors.Black2, flex: 1},
-  nameUnread:  {fontWeight: '800', color: Colors.Black},
-  time:        {fontSize: 11, color: Colors.grey, fontWeight: '500', flexShrink: 0},
+  name:        {fontSize: 15, fontWeight: '600', color: Colors.White, flex: 1},
+  nameUnread:  {fontWeight: '800', color: Colors.White},
+  time:        {fontSize: 11, color: Colors.White, fontWeight: '500', flexShrink: 0},
   timeUnread:  {color: Colors.btnRed, fontWeight: '700'},
   rowBottom:   {alignItems: 'center', justifyContent: 'space-between'},
-  preview:     {flex: 1, fontSize: 13, color: Colors.grey, fontWeight: '400'},
-  previewUnread:  {color: Colors.Black, fontWeight: '600'},
+  preview:     {flex: 1, fontSize: 13, color: '#ABB2BF', fontWeight: '400'},
+  previewUnread:  {color: Colors.White, fontWeight: '600'},
   previewDeleted: {fontStyle: 'italic', color: Colors.Grey9},
   mutedIcon:   {fontSize: 13, marginRight: 4},
   badge:       {backgroundColor: Colors.btnRed, borderRadius: 12, minWidth: 20, height: 20, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 5, flexShrink: 0},
   badgeMuted:  {backgroundColor: Colors.Grey9},
   badgeText:   {color: Colors.White, fontSize: 11, fontWeight: '700'},
   emptyState:  {alignItems: 'center', marginTop: 160, paddingHorizontal: 40, gap: 10},
-  emptyIcon:   {width: 80, height: 80, borderRadius: 40, backgroundColor: '#E8F3EE', justifyContent: 'center', alignItems: 'center', marginBottom: 8},
+  emptyIcon:   {width: 80, height: 80, borderRadius: 40, backgroundColor: '#191B20', justifyContent: 'center', alignItems: 'center', marginBottom: 8},
   emptyEmoji:  {fontSize: 36},
-  emptyTitle:  {fontSize: 18, fontWeight: '700', color: Colors.Black2},
+  emptyTitle:  {fontSize: 18, fontWeight: '700', color: Colors.White},
   emptySub:    {fontSize: 13, color: Colors.Grey9, lineHeight: 18},
   emptyBtn:    {marginTop: 8, backgroundColor: Colors.btnRed, borderRadius: 24, paddingHorizontal: 28, paddingVertical: 12},
   emptyBtnText:{color: Colors.White, fontWeight: '700', fontSize: 14},

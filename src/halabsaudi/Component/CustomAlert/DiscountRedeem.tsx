@@ -1,11 +1,7 @@
+import {Text} from '../../../ui/Text';
+
 import React from 'react';
-import {
-  Modal,
-  View,
-  Text,
-  StyleSheet,
-  Image,
-} from 'react-native';
+import {Modal, View, StyleSheet, Image} from 'react-native';
 import { Colors } from '../../Themes/Colors';
 import { Fonts } from '../../Themes/Fonts';
 import { Giftpack } from '../../Themes/Images';
@@ -74,7 +70,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.8)',
   },
   container: {
-    backgroundColor: 'white',
+    backgroundColor: '#191B20',
     width: '80%',
     paddingVertical: 20,
     paddingHorizontal: 20,
@@ -96,20 +92,20 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: Fonts.SF_Regular,
     lineHeight: 20,
-    color: Colors.Green,
+    color: '#F5F6F8',
     marginVertical: 10,
   },
   code_Text: {
     fontSize: 20,
     lineHeight: 30,
     fontFamily: Fonts.SF_Bold,
-    color: Colors.Green,
+    color: '#F5F6F8',
   },
   dis_Text: {
     fontSize: 18,
     lineHeight: 30,
     fontFamily: Fonts.SF_Bold,
-    color: Colors.Green,
+    color: '#F5F6F8',
     marginTop: '3%',
   },
   desc_Text: {
@@ -152,7 +148,7 @@ export default Discount_Redeem;
 
 //   return (
 //     <Modal transparent visible={visible} animationType="fade">
-//     <StatusBar hidden={true} translucent={true} animated={true} />
+//     <StatusBar barStyle="light-content" />
 //   <View style={styles.overlay}>
 //     <View style={styles.container}>
 //       <Image

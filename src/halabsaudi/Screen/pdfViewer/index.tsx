@@ -1,5 +1,10 @@
+import type {NavigationProp, ParamListBase} from '@react-navigation/native';
+import {Text} from '../../../ui/Text';
+
 import React from 'react';
-import { View, StyleSheet, Dimensions, TouchableOpacity, Text, StatusBar, SafeAreaView, Platform } from 'react-native';
+import {View, StyleSheet, Dimensions, TouchableOpacity, StatusBar, Platform} from 'react-native';
+// ✅ FIX: RN ka SafeAreaView Android par no-op hai — isi liye '8%' hack lagana para tha
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Pdf from 'react-native-pdf';
 import { Colors } from '../../Themes/Colors';
 import { Fonts } from '../../Themes/Fonts';
@@ -7,12 +12,12 @@ import { useNavigation } from '@react-navigation/native';
 import { useStatusBar } from '../../Component/UseStatusBar/useStatusBar';
 
 const PDFViewerScreen:React.FC = ({ route }: any) => {
-  const navigation=useNavigation()
+  const navigation=useNavigation<NavigationProp<ParamListBase>>()
   const { pdfUrl } = route.params;
   const source = { uri: pdfUrl, cache: true };
 
   return (
-   <SafeAreaView style={{flex:1,backgroundColor:Colors.White}} >
+   <SafeAreaView style={{flex:1,backgroundColor:'#191B20'}} edges={['top']}>
    <View style={styles.container}>
       <Pdf
        trustAllCerts={false}
@@ -42,8 +47,8 @@ const PDFViewerScreen:React.FC = ({ route }: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor:Colors.White,
-    marginTop:Platform.OS==='ios'?'0%':'8%'
+    backgroundColor:'#191B20',
+    // ✅ marginTop '8%' hack hataya — ab SafeAreaView asli inset deta hai
   },
   pdf: {
     flex: 1,
