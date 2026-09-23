@@ -1,5 +1,3 @@
-
-
 import {Text} from '../../../ui/Text';
 import {clearAllChatData} from '../../chat/chatStorage';
 import {clearChatSession} from '../../chat/chatScreen';
@@ -8,7 +6,7 @@ import CustomHeader from '../../Component/CustomHeader/CustomHeader';
 import {Alert} from '../../../ui/Alert';
 import {ActivityIndicator} from '../../../ui/ActivityIndicator';
 import React, {useState, useCallback} from 'react';
-import {View, TouchableOpacity, ScrollView, Switch, Modal} from 'react-native';
+import {View, TouchableOpacity, ScrollView, Switch, Modal, Pressable} from 'react-native';
 import FastImage from 'react-native-fast-image';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Ionicons from '@react-native-vector-icons/ionicons';
@@ -22,8 +20,11 @@ import LanguageModal from '../../Component/CustomAlert/Lan_Modal';
 import {disconnectSocket} from '../../chat/socket';
 import {unregisterFCMToken} from '../../chat/registerFCMToken';
 import {getStyles} from './style';
-import { useStatusBar } from '../../Component/UseStatusBar/useStatusBar';
+import {useStatusBar} from '../../Component/UseStatusBar/useStatusBar';
 import {BASE_URL} from '../../../config/api';
+
+const CHEVRON_COLOR = '#5C616B';
+const ICON_COLOR = Colors.btnRed;
 
 const Profile: React.FC = () => {
   const navigation = useNavigation<any>();
@@ -38,14 +39,16 @@ const Profile: React.FC = () => {
   const [privacySaving, setPrivacySaving] = useState(false);
   const [messagePickerOpen, setMessagePickerOpen] = useState(false);
   const [userName, setUserName] = useState('');
-  const [userPhone, setUserPhone] = useState('');
   const [userAvatar, setUserAvatar] = useState<string | null>(null);
   const [showFullImage, setShowFullImage] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
 
   const language = useSelector((state: RootState) => state.language.language);
+  const isAr = language === 'ar';
   const t = languageData[language];
   const s = getStyles(language);
+  const chevron = isAr ? 'chevron-back' : 'chevron-forward';
+  const tr = (en: string, ar: string) => (isAr ? ar : en);
 
   const getToken = async () => await AsyncStorage.getItem('hala_token');
 
@@ -56,8 +59,6 @@ const Profile: React.FC = () => {
         if (raw) {
           const user = JSON.parse(raw);
           setUserName(user.name ?? '');
-          setUserPhone(user.phone ?? '');
-          // ✅ Sirf tab re-render karo jab URL actually change hua ho
           setUserAvatar(prev =>
             prev === (user.avatar ?? null) ? prev : (user.avatar ?? null),
           );
@@ -85,15 +86,6 @@ const Profile: React.FC = () => {
       load();
     }, []),
   );
-
-  const initials = userName
-    ? userName
-        .trim()
-        .split(/\s+/)
-        .slice(0, 2)
-        .map(p => p[0]?.toUpperCase() ?? '')
-        .join('')
-    : 'U';
 
   const updatePrivacy = async (
     key: 'hideLastSeen' | 'hideOnlineStatus',
@@ -130,7 +122,8 @@ const Profile: React.FC = () => {
     try {
       const token = await getToken();
       const res = await fetch(`${BASE_URL}/api/users/privacy`, {
-        method: 'PUT', headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`},
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`},
         body: JSON.stringify(changes),
       });
       if (!res.ok) {
@@ -141,9 +134,10 @@ const Profile: React.FC = () => {
       setIsPrivate(!!data.isPrivate);
       setMessagePermission(data.messagePermission === 'nobody' ? 'nobody' : 'mutual');
     } catch (error: any) {
-      const message = error?.message === 'Network request failed'
-        ? 'Unable to connect. Please check your connection and try again.'
-        : error?.message || 'Could not save privacy settings.';
+      const message =
+        error?.message === 'Network request failed'
+          ? 'Unable to connect. Please check your connection and try again.'
+          : error?.message || 'Could not save privacy settings.';
       Alert.alert('Privacy not saved', message);
     } finally {
       setPrivacySaving(false);
@@ -161,12 +155,15 @@ const Profile: React.FC = () => {
           try {
             await unregisterFCMToken();
             disconnectSocket();
-            clearChatSession(); clearPeopleCache(); clearAllChatData();
+            clearChatSession();
+            clearPeopleCache();
+            clearAllChatData();
             await AsyncStorage.multiRemove([
               'hala_user', 'hala_token', 'hala_user_data',
               'hala_user_backend', 'geofence_cooldown',
               'pending_venue_navigate', 'hala_show_last_seen',
-              'hala_show_online_status', 'hala_conversations', 'hala_users_cache', 'hala_blocked_cache', 'map_profile_checkins_cache_v1',
+              'hala_show_online_status', 'hala_conversations', 'hala_users_cache',
+              'hala_blocked_cache', 'map_profile_checkins_cache_v1',
             ]);
             navigation.reset({index: 0, routes: [{name: 'WelcomeScreen'}]});
           } catch (e) {
@@ -179,198 +176,213 @@ const Profile: React.FC = () => {
     ]);
   };
 
+  // ── Reusable row pieces ───────────────────────────
+  const Icon = ({name}: {name: string}) => (
+    <View style={s.iconBubble}>
+      <Ionicons name={name as any} size={18} color={ICON_COLOR} />
+    </View>
+  );
+
+  const NavRow = ({
+    icon,
+    label,
+    onPress,
+    right,
+  }: {
+    icon: string;
+    label: string;
+    onPress: () => void;
+    right?: React.ReactNode;
+  }) => (
+    <TouchableOpacity style={s.menuRow} activeOpacity={0.6} onPress={onPress}>
+      <Icon name={icon} />
+      <Text style={s.menuLabel}>{label}</Text>
+      {right ?? <Ionicons name={chevron} size={16} color={CHEVRON_COLOR} />}
+    </TouchableOpacity>
+  );
+
+  const SwitchRow = ({
+    icon,
+    label,
+    sub,
+    value,
+    loading,
+    onChange,
+  }: {
+    icon: string;
+    label: string;
+    sub: string;
+    value: boolean;
+    loading: boolean;
+    onChange: (v: boolean) => void;
+  }) => (
+    <View style={s.switchRow}>
+      <Icon name={icon} />
+      <View style={s.rowText}>
+        <Text style={s.switchLabel}>{label}</Text>
+        <Text style={s.switchSub}>{sub}</Text>
+      </View>
+      <View style={s.switchSlot}>
+        {loading ? (
+          <ActivityIndicator size="small" color={Colors.Red} />
+        ) : (
+          <Switch
+            value={value}
+            onValueChange={onChange}
+            trackColor={{false: '#3A3E47', true: Colors.Red}}
+            thumbColor="#fff"
+            ios_backgroundColor="#3A3E47"
+            style={s.switch}
+          />
+        )}
+      </View>
+    </View>
+  );
+
+  const Divider = () => <View style={s.divider} />;
+
+  const messageOptions: [string, string][] = [
+    ['mutual', tr('Mutual follows', 'المتابَعون المتبادلون')],
+    ['nobody', tr('Nobody', 'لا أحد')],
+  ];
+
   return (
     <SafeAreaView style={s.safe} edges={['top', 'bottom']}>
+      <CustomHeader title={tr('Settings', 'الإعدادات')} onBackPress={() => navigation.goBack()} />
 
-      <CustomHeader title={language === 'ar' ? 'الإعدادات' : 'Settings'} onBackPress={() => navigation.goBack()} />
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{paddingBottom: 48}}>
-
-       
-
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: 48}}>
         {/* Account */}
-        <Text style={s.sectionLabel}>
-          {language === 'ar' ? 'الحساب' : 'Account'}
-        </Text>
+        <Text style={s.sectionLabel}>{tr('Account', 'الحساب')}</Text>
         <View style={s.card}>
-          <TouchableOpacity style={s.menuRow} activeOpacity={0.6} onPress={() => navigation.navigate('EditAccount')}>
-            <View style={s.iconBubble}>
-              <Ionicons name="person-outline" size={18} color={Colors.btnRed} />
-            </View>
-            <Text style={s.menuLabel}>{t.account}</Text>
-            <Ionicons name={language === 'ar' ? 'chevron-back' : 'chevron-forward'} size={15} color="#C7C7CC" />
-          </TouchableOpacity>
-          <View style={s.divider} />
-          <TouchableOpacity style={s.menuRow} activeOpacity={0.6} onPress={() => navigation.navigate('ReedemHistroy')}>
-            <View style={s.iconBubble}>
-              <Ionicons name="gift-outline" size={18} color={Colors.btnRed} />
-            </View>
-            <Text style={s.menuLabel}>{t.redeem_history}</Text>
-            <Ionicons name={language === 'ar' ? 'chevron-back' : 'chevron-forward'} size={15} color="#C7C7CC" />
-          </TouchableOpacity>
-          <View style={s.divider} />
-          <TouchableOpacity style={s.menuRow} activeOpacity={0.6} onPress={() => setAlertVisible(true)}>
-            <View style={s.iconBubble}>
-              <Ionicons name="language-outline" size={18} color={Colors.btnRed} />
-            </View>
-            <Text style={s.menuLabel}>{t.language}</Text>
-            <Ionicons name={language === 'ar' ? 'chevron-back' : 'chevron-forward'} size={15} color="#C7C7CC" />
-          </TouchableOpacity>
+          <NavRow icon="person-outline" label={t.account} onPress={() => navigation.navigate('EditAccount')} />
+          <Divider />
+          <NavRow icon="gift-outline" label={t.redeem_history} onPress={() => navigation.navigate('ReedemHistroy')} />
+          <Divider />
+          <NavRow icon="heart-outline" label={t.Wishlist} onPress={() => navigation.navigate('Wishlist')} />
+          <Divider />
+          <NavRow icon="language-outline" label={t.language} onPress={() => setAlertVisible(true)} />
         </View>
 
-        {/* Chat */}
-        <Text style={s.sectionLabel}>
-          {language === 'ar' ? 'الدردشة' : 'Chat'}
-        </Text>
+        {/* Chat & people */}
+        <Text style={s.sectionLabel}>{tr('Chat', 'الدردشة')}</Text>
         <View style={s.card}>
-          <TouchableOpacity style={s.menuRow} activeOpacity={0.6} onPress={() => navigation.navigate('BlockedUsers')}>
-            <View style={s.iconBubble}>
-              <Ionicons name="ban-outline" size={18} color={Colors.btnRed} />
-            </View>
-            <Text style={s.menuLabel}>{t.blocked_accounts || 'Blocked Users'}</Text>
-            <Text style={s.rightLabel}>{language === 'ar' ? 'إدارة' : 'Manage'}</Text>
-          </TouchableOpacity>
-          <View style={s.divider} />
-          <TouchableOpacity style={s.menuRow} activeOpacity={0.6} onPress={() => navigation.navigate('SocialConnections', {mode: 'followers'})}>
-            <View style={s.iconBubble}><Ionicons name="people-outline" size={18} color={Colors.btnRed} /></View>
-            <Text style={s.menuLabel}>Followers</Text>
-            <Ionicons name="chevron-forward" size={15} color="#C7C7CC" />
-          </TouchableOpacity>
-          <View style={s.divider} />
-          <TouchableOpacity style={s.menuRow} activeOpacity={0.6} onPress={() => navigation.navigate('SocialConnections', {mode: 'following'})}>
-            <View style={s.iconBubble}><Ionicons name="person-add-outline" size={18} color={Colors.btnRed} /></View>
-            <Text style={s.menuLabel}>Following</Text>
-            <Ionicons name="chevron-forward" size={15} color="#C7C7CC" />
-          </TouchableOpacity>
-          <View style={s.divider} />
-          <TouchableOpacity style={s.menuRow} activeOpacity={0.6} onPress={() => navigation.navigate('SocialConnections', {mode: 'requests'})}>
-            <View style={s.iconBubble}><Ionicons name="person-add-outline" size={18} color={Colors.btnRed} /></View>
-            <Text style={s.menuLabel}>Follow requests</Text>
-            <Ionicons name="chevron-forward" size={15} color="#C7C7CC" />
-          </TouchableOpacity>
+          <NavRow
+            icon="people-outline"
+            label={tr('Followers', 'المتابِعون')}
+            onPress={() => navigation.navigate('SocialConnections', {mode: 'followers'})}
+          />
+          <Divider />
+          <NavRow
+            icon="person-circle-outline"
+            label={tr('Following', 'تتابعهم')}
+            onPress={() => navigation.navigate('SocialConnections', {mode: 'following'})}
+          />
+          <Divider />
+          <NavRow
+            icon="person-add-outline"
+            label={tr('Follow requests', 'طلبات المتابعة')}
+            onPress={() => navigation.navigate('SocialConnections', {mode: 'requests'})}
+          />
+          <Divider />
+          <NavRow
+            icon="ban-outline"
+            label={t.blocked_accounts || tr('Blocked users', 'المستخدمون المحظورون')}
+            onPress={() => navigation.navigate('BlockedUsers')}
+            right={<Text style={s.rightLabel}>{tr('Manage', 'إدارة')}</Text>}
+          />
         </View>
 
         {/* Privacy */}
-        <Text style={s.sectionLabel}>
-          {language === 'ar' ? 'الخصوصية' : 'Privacy'}
-        </Text>
+        <Text style={s.sectionLabel}>{tr('Privacy', 'الخصوصية')}</Text>
         <View style={s.card}>
-          <View style={s.switchRow}>
-            <View style={s.iconBubble}>
-              <Ionicons name="time-outline" size={18} color={Colors.btnRed} />
-            </View>
-            <View style={{flex: 1}}>
-              <Text style={s.switchLabel}>{t.show_last_seen}</Text>
+          <SwitchRow
+            icon="lock-closed-outline"
+            label={tr('Private account', 'حساب خاص')}
+            sub={tr(
+              'Only approved followers can see your posts and follower/following lists. Counts stay visible.',
+              'فقط المتابعون المعتمدون يمكنهم رؤية منشوراتك وقوائم المتابعة. تبقى الأعداد ظاهرة.',
+            )}
+            value={isPrivate}
+            loading={privacySaving}
+            onChange={value => updateAccountPrivacy({isPrivate: value})}
+          />
+          <Divider />
+          <TouchableOpacity style={s.switchRow} activeOpacity={0.6} onPress={() => setMessagePickerOpen(true)}>
+            <Icon name="chatbubble-ellipses-outline" />
+            <View style={s.rowText}>
+              <Text style={s.switchLabel}>{tr('Who can message you', 'من يمكنه مراسلتك')}</Text>
               <Text style={s.switchSub}>
-                {showLastSeen ? t.last_seen_desc : (language === 'ar' ? 'آخر ظهور مخفي' : 'Last seen hidden from everyone')}
+                {messagePermission === 'nobody' ? messageOptions[1][1] : messageOptions[0][1]}
               </Text>
             </View>
-            {lastSeenLoading ? (
-              <ActivityIndicator size="small" color={Colors.Red} style={{marginRight: 4}} />
-            ) : (
-              <Switch
-                value={showLastSeen}
-                onValueChange={val => updatePrivacy('hideLastSeen', val)}
-                trackColor={{false: '#DDD', true: Colors.Red}}
-                thumbColor="#fff"
-              />
-            )}
-          </View>
-          <View style={s.divider} />
-          <View style={s.switchRow}>
-            <View style={s.iconBubble}><Ionicons name="lock-closed-outline" size={18} color={Colors.btnRed} /></View>
-            <View style={{flex: 1}}>
-              <Text style={s.switchLabel}>Private account</Text>
-              <Text style={s.switchSub}>Only approved followers can see your posts and follower/following lists. Counts stay visible.</Text>
-            </View>
-            {privacySaving ? <ActivityIndicator size="small" color={Colors.Red} /> : (
-              <Switch value={isPrivate} onValueChange={value => updateAccountPrivacy({isPrivate: value})}
-                trackColor={{false: '#DDD', true: Colors.Red}} thumbColor="#fff" />
-            )}
-          </View>
-          <View style={s.divider} />
-          <TouchableOpacity style={s.menuRow} activeOpacity={0.6} onPress={() => setMessagePickerOpen(true)}>
-            <View style={s.iconBubble}><Ionicons name="chatbubble-ellipses-outline" size={18} color={Colors.btnRed} /></View>
-            <View style={{flex: 1}}>
-              <Text style={s.menuLabel}>Who can message you</Text>
-              <Text style={s.switchSub}>{messagePermission === 'nobody' ? 'Nobody' : 'Mutual follows'}</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={15} color="#C7C7CC" />
+            <Ionicons name={chevron} size={16} color={CHEVRON_COLOR} />
           </TouchableOpacity>
-          <View style={s.divider} />
-          <View style={s.switchRow}>
-            <View style={s.iconBubble}>
-              <Ionicons name="radio-button-on-outline" size={18} color={Colors.Red} />
-            </View>
-            <View style={{flex: 1}}>
-              <Text style={s.switchLabel}>{t.online_status}</Text>
-              <Text style={s.switchSub}>
-                {showOnlineStatus ? t.online_status_desc : (language === 'ar' ? 'حالة الاتصال مخفية' : 'Online status hidden from everyone')}
-              </Text>
-            </View>
-            {onlineLoading ? (
-              <ActivityIndicator size="small" color={Colors.Red} style={{marginRight: 4}} />
-            ) : (
-              <Switch
-                value={showOnlineStatus}
-                onValueChange={val => updatePrivacy('hideOnlineStatus', val)}
-                trackColor={{false: '#DDD', true: Colors.Red}}
-                thumbColor="#fff"
-              />
-            )}
-          </View>
+          <Divider />
+          <SwitchRow
+            icon="time-outline"
+            label={t.show_last_seen}
+            sub={showLastSeen ? t.last_seen_desc : tr('Last seen hidden from everyone', 'آخر ظهور مخفي')}
+            value={showLastSeen}
+            loading={lastSeenLoading}
+            onChange={val => updatePrivacy('hideLastSeen', val)}
+          />
+          <Divider />
+          <SwitchRow
+            icon="radio-button-on-outline"
+            label={t.online_status}
+            sub={showOnlineStatus ? t.online_status_desc : tr('Online status hidden from everyone', 'حالة الاتصال مخفية')}
+            value={showOnlineStatus}
+            loading={onlineLoading}
+            onChange={val => updatePrivacy('hideOnlineStatus', val)}
+          />
         </View>
-
-        {/* wishlist */}
-        <Text style={s.sectionLabel}>
-          {t.Wishlist}
-        </Text>
-<View style={s.card}>
-  
-           <TouchableOpacity style={s.menuRow} activeOpacity={0.6} onPress={() => navigation.navigate('Wishlist')}>
-            <View style={s.iconBubble}>
-              <Ionicons name="heart-outline" size={18} color={Colors.btnRed} />
-            </View>
-            <Text style={s.menuLabel}>{t.Wishlist}</Text>
-            <Ionicons name={language === 'ar' ? 'chevron-back' : 'chevron-forward'} size={15} color={Colors.Red} />
-          </TouchableOpacity>
-        </View>
-     
-
-        
 
         {/* Logout */}
-        <Text style={s.sectionLabel}> </Text>
+        <View style={s.sectionSpacer} />
         <View style={s.card}>
           <TouchableOpacity style={s.logoutRow} onPress={handleLogout} activeOpacity={0.7}>
-            <View style={[s.iconBubble, {backgroundColor: '#191B20'}]}>
-              <Ionicons name="log-out-outline" size={18} color={Colors.Red} />
+            <View style={s.iconBubble}>
+              <Ionicons name="log-out-outline" size={18} color="#EF4444" />
             </View>
             <Text style={s.logoutTxt}>{t.logout}</Text>
-            <Ionicons name={language === 'ar' ? 'chevron-back' : 'chevron-forward'} size={15} color="#C7C7CC" />
           </TouchableOpacity>
         </View>
 
         <Text style={s.version}>Hala B Khaleeji v1.0</Text>
       </ScrollView>
 
-      <Modal visible={messagePickerOpen} transparent animationType="fade" onRequestClose={() => setMessagePickerOpen(false)}>
-        <View style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', justifyContent: 'flex-end'}}>
-          <View style={{backgroundColor: '#191B20', borderTopLeftRadius: 22, borderTopRightRadius: 22, padding: 20, paddingBottom: 36}}>
-            <Text style={{fontSize: 18, fontWeight: '800', color: '#F5F6F8', marginBottom: 6}}>Who can message you?</Text>
-            <Text style={{fontSize: 13, color: '#ABB2BF', marginBottom: 14}}>Messaging requires both people to follow each other. You can also turn messaging off.</Text>
-            {[
-              ['mutual', 'Mutual follows'], ['nobody', 'Nobody'],
-            ].map(([value, label]) => (
-              <TouchableOpacity key={value} onPress={async () => { setMessagePickerOpen(false); await updateAccountPrivacy({messagePermission: value}); }}
-                style={{minHeight: 48, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: '#343841'}}>
-                <Text style={{fontSize: 16, color: '#F5F6F8'}}>{label}</Text>
-                {messagePermission === value && <Ionicons name="checkmark-circle" size={21} color={Colors.btnRed} />}
+      {/* Who can message you — bottom sheet */}
+      <Modal
+        visible={messagePickerOpen}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setMessagePickerOpen(false)}>
+        <Pressable style={s.sheetBackdrop} onPress={() => setMessagePickerOpen(false)}>
+          <Pressable style={s.sheet} onPress={() => {}}>
+            <View style={s.sheetHandle} />
+            <Text style={s.sheetTitle}>{tr('Who can message you?', 'من يمكنه مراسلتك؟')}</Text>
+            <Text style={s.sheetSub}>
+              {tr(
+                'Messaging requires both people to follow each other. You can also turn messaging off.',
+                'تتطلب المراسلة أن يتابع كل منكما الآخر. يمكنك أيضاً إيقاف المراسلة.',
+              )}
+            </Text>
+            {messageOptions.map(([value, label], i) => (
+              <TouchableOpacity
+                key={value}
+                style={[s.sheetOption, i === messageOptions.length - 1 && s.sheetOptionLast]}
+                onPress={async () => {
+                  setMessagePickerOpen(false);
+                  await updateAccountPrivacy({messagePermission: value});
+                }}>
+                <Text style={s.sheetOptionTxt}>{label}</Text>
+                {messagePermission === value && (
+                  <Ionicons name="checkmark-circle" size={22} color={Colors.btnRed} />
+                )}
               </TouchableOpacity>
             ))}
-          </View>
-        </View>
+          </Pressable>
+        </Pressable>
       </Modal>
 
       {/* Full image viewer */}
@@ -397,11 +409,12 @@ const Profile: React.FC = () => {
           )}
           <TouchableOpacity
             style={s.viewerEditBtn}
-            onPress={() => {setShowFullImage(false); navigation.navigate('EditAccount');}}>
+            onPress={() => {
+              setShowFullImage(false);
+              navigation.navigate('EditAccount');
+            }}>
             <Ionicons name="pencil-outline" size={16} color="#fff" />
-            <Text style={s.viewerEditTxt}>
-              {language === 'ar' ? 'تغيير الصورة' : 'Change Photo'}
-            </Text>
+            <Text style={s.viewerEditTxt}>{tr('Change Photo', 'تغيير الصورة')}</Text>
           </TouchableOpacity>
         </View>
       </Modal>
@@ -411,9 +424,7 @@ const Profile: React.FC = () => {
         <View style={s.overlay}>
           <View style={s.overlayBox}>
             <ActivityIndicator size="large" color={Colors.Red} />
-            <Text style={s.overlayText}>
-              {language === 'ar' ? 'جارٍ تسجيل الخروج…' : 'Logging out…'}
-            </Text>
+            <Text style={s.overlayText}>{tr('Logging out…', 'جارٍ تسجيل الخروج…')}</Text>
           </View>
         </View>
       )}
