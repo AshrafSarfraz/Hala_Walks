@@ -1,556 +1,207 @@
-import {Text} from '../../ui/Text';
-import {fetchCollection} from '../api/collection';
-import {ActivityIndicator} from '../../ui/ActivityIndicator';
-import {Alert} from '../../ui/Alert';
-// src/halabsaudi/chat/UserProfileScreen.tsx
-import React, {useEffect, useRef, useState, useCallback} from 'react';
-import {View, StyleSheet, TouchableOpacity, Image, Animated, StatusBar, Dimensions} from 'react-native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import React, {useCallback, useRef, useState} from 'react';
+import {View, FlatList, StyleSheet, TouchableOpacity, Image, useWindowDimensions} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {useSelector} from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import Ionicons from '@react-native-vector-icons/ionicons';
-import {useSelector} from 'react-redux';
+import {Text} from '../../ui/Text';
+import {ActivityIndicator} from '../../ui/ActivityIndicator';
+import {Alert} from '../../ui/Alert';
 import {BASE_URL} from '../../config/api';
-import MuteModal, {MuteDuration} from './components/MuteModal';
 import {Colors} from '../Themes/Colors';
+import {RootState} from '../redux_toolkit/store';
+import {fetchCollection} from '../api/collection';
+import {useStatusBar} from '../Component/UseStatusBar/useStatusBar';
 import ImageViewerModal from './components/ImageViewerModal';
 import BlockUserModal from './components/BlockUserModal';
-import {languageData} from '../redux_toolkit/language/languageSlice';
-import {RootState} from '../redux_toolkit/store';
-import { useStatusBar } from '../Component/UseStatusBar/useStatusBar';
-// ✅ media endpoint ab { media, hasMore } deta hai
-import {unwrapMedia} from '../api/unwrap';
+import MuteModal, {MuteDuration} from './components/MuteModal';
+import {SocialPerson, canShowMessage, openSocialChat} from './socialProfile';
+import {useSocialRefresh} from './useSocialRefresh';
+import {clearPeopleCache} from './startChatScreen';
 
-const {width: W}    = Dimensions.get('window');
-const HEADER_HEIGHT = 240;
-const PREVIEW_COL   = 3;
-const PREVIEW_SIZE  = (W - 57 - (PREVIEW_COL - 1) * 3) / PREVIEW_COL;
+export type MediaItem = {id: string; uri: string; mediaType: 'image' | 'video'; createdAt: string};
+type Post = {_id: string; image: string; caption?: string; createdAt: string; location?: {name?: string}};
+type Profile = SocialPerson & {followersCount: number; followingCount: number; postsCount: number;
+  canViewContent: boolean; isSelf: boolean; blocked: boolean; privacySettings?: {isPrivate?: boolean}};
 
-type UserProfile = {
-  _id: string; name: string; bio?: string;
-  birthday?: string; profilePhoto?: string; avatar?: string;
-  relationship?: {followingStatus?: 'none' | 'pending' | 'accepted'};
-};
-
-export type MediaItem = {
-  id: string; uri: string; mediaType: 'image' | 'video'; createdAt: string;
-};
-
-type Props = {route: any; navigation: any};
-
-function formatBirthday(d?: string) {
-  if (!d) return '';
-  return new Date(d).toLocaleDateString([], {day: 'numeric', month: 'long', year: 'numeric'});
-}
-function getAgeNumber(d?: string): number | null {
-  if (!d) return null;
-  return Math.floor((Date.now() - new Date(d).getTime()) / (1000 * 60 * 60 * 24 * 365.25));
-}
-
-export default function UserProfileScreen({route, navigation}: Props) {
-  // ── Language ──────────────────────────────────────────────────────
+export default function UserProfileScreen({route, navigation}: any) {
+  useStatusBar('light-content', Colors.darkgrey);
+  const {participantId, participantName, chatId} = route.params || {};
   const language = useSelector((state: RootState) => state.language.language);
-  const t        = languageData[language];
-  const isRTL    = language === 'ar';
-  const rowDir   = isRTL ? 'row-reverse' : 'row';
-  useStatusBar('light-content', Colors.Green, true);
-  const {
-    participantId, participantName, chatId,
-    isBlockedInitial = false, isMutedInitial = null,
-  } = route.params || {};
-
-  const insets  = useSafeAreaInsets();
-  const scrollY = useRef(new Animated.Value(0)).current;
-
-  const [profile, setProfile]               = useState<UserProfile | null>(null);
-  const [loading, setLoading]               = useState(true);
-  const [iBlockedThem, setIBlockedThem]     = useState(isBlockedInitial);
-  const [blockLoading, setBlockLoading]     = useState(false);
-  const [blockModalVisible, setBlockModalVisible] = useState(false);
-  const [muteDuration, setMuteDuration]     = useState<MuteDuration>(isMutedInitial);
-  const [muteModalVisible, setMuteModalVisible]   = useState(false);
-  const [imageViewerOpen, setImageViewerOpen]     = useState(false);
-  const [allMedia, setAllMedia]             = useState<MediaItem[]>([]);
-  const [mediaLoading, setMediaLoading]     = useState(false);
-  const [viewerItem, setViewerItem]         = useState<MediaItem | null>(null);
-  const [followLoading, setFollowLoading]   = useState(false);
-
-  const isMuted    = muteDuration !== null;
-  const tokenRef   = useRef('');
-  const avatarUri  = profile?.profilePhoto || profile?.avatar || null;
-  const previewMedia = allMedia.slice(0, 6);
-  const hasMore      = allMedia.length > 6;
-  const imageCount   = allMedia.filter(m => m.mediaType === 'image').length;
-  const videoCount   = allMedia.filter(m => m.mediaType === 'video').length;
-
-  // ── Load ──────────────────────────────────────────────────────────
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const token = await AsyncStorage.getItem('hala_token');
-        if (!token) return;
-        tokenRef.current = token;
-        const muteRaw = await AsyncStorage.getItem(`mute_${chatId}`);
-        if (muteRaw) setMuteDuration(JSON.parse(muteRaw).duration);
-        const [profileRes, blockRes] = await Promise.all([
-          axios.get(`${BASE_URL}/api/users/${participantId}`, {headers: {Authorization: `Bearer ${token}`}}),
-          axios.get(`${BASE_URL}/api/block/status/${participantId}`, {headers: {Authorization: `Bearer ${token}`}}),
-        ]);
-        setProfile(profileRes.data?.user || profileRes.data);
-        setIBlockedThem(blockRes.data?.iBlockedThem || false);
-        loadMedia(token);
-      } catch (err) {
-        console.error('[UserProfile]', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
-  }, [participantId, chatId]);
-
-  // ── Mute / Unmute ─────────────────────────────────────────────────
-  const handleMuteChange = useCallback(async (newDuration: MuteDuration) => {
-    const token      = tokenRef.current;
-    const wasUnmuting = newDuration === null;
-    setMuteDuration(newDuration);
+  const isRTL = language === 'ar';
+  const label = (en: string, ar: string) => isRTL ? ar : en;
+  const {width} = useWindowDimensions();
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [postsError, setPostsError] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [iBlocked, setIBlocked] = useState(false);
+  const [blockModal, setBlockModal] = useState(false);
+  const [muteModal, setMuteModal] = useState(false);
+  const [muteDuration, setMuteDuration] = useState<MuteDuration>(null);
+  const [viewer, setViewer] = useState<{uri: string; createdAt?: string} | null>(null);
+  const version = useRef(0);
+  const clear = useCallback(() => {
+    version.current++; setProfile(null); setPosts([]); setViewer(null); setLoading(true);
+  }, []);
+  const load = useCallback(async (signal?: AbortSignal) => {
+    const request = ++version.current;
+    const active = () => request === version.current && !signal?.aborted;
     try {
-      if (wasUnmuting) {
-        await axios.delete(`${BASE_URL}/api/chat/${chatId}/mute`, {headers: {Authorization: `Bearer ${token}`}});
-        await AsyncStorage.removeItem(`mute_${chatId}`);
-      } else {
-        await axios.post(`${BASE_URL}/api/chat/${chatId}/mute`, {}, {headers: {Authorization: `Bearer ${token}`}});
-        await AsyncStorage.setItem(`mute_${chatId}`, JSON.stringify({duration: newDuration, mutedAt: Date.now()}));
+      const token = await AsyncStorage.getItem('hala_token');
+      const config = {headers: {Authorization: `Bearer ${token}`}, timeout: 15000, signal};
+      const {data} = await axios.get(`${BASE_URL}/api/users/${participantId}`, config);
+      if (!active()) return;
+      setProfile(data); setError(false); setPostsError(false);
+      if (!data.canViewContent) {setPosts([]); setViewer(null);}
+      const block = await axios.get(`${BASE_URL}/api/block/status/${participantId}`, config);
+      if (!active()) return;
+      setIBlocked(!!block.data.iBlockedThem);
+      if (data.canViewContent) {
+        try {
+          const result = await fetchCollection(`${BASE_URL}/api/users/${participantId}/posts`, config, 'posts');
+          if (active()) setPosts(result);
+        } catch (e: any) {
+          if (!active()) return;
+          setPosts([]); setViewer(null); setPostsError(true);
+          if (e.response?.status === 403) setProfile(prev => prev ? {...prev, canViewContent: false} : null);
+        }
+      }
+      if (chatId && active()) {
+        const raw = await AsyncStorage.getItem(`mute_${chatId}`);
+        if (active()) setMuteDuration(raw ? JSON.parse(raw).duration : null);
       }
     } catch {
-      setMuteDuration(prev => prev);
-      Alert.alert('Error', 'Could not save mute setting. Try again.');
-    }
-  }, [chatId]);
+      if (active()) {setProfile(null); setPosts([]); setViewer(null); setError(true);}
+    } finally {if (active()) setLoading(false);}
+  }, [participantId, chatId]);
+  useSocialRefresh(load, clear);
 
-  // ── Media ─────────────────────────────────────────────────────────
-  const loadMedia = useCallback(async (token?: string) => {
-    const tok = token || tokenRef.current;
-    if (!tok || !chatId) return;
-    setMediaLoading(true);
+  const follow = async () => {
+    if (!profile || busy) return;
+    setBusy(true);
     try {
-      const mediaItems = await fetchCollection(`${BASE_URL}/api/chat/${chatId}/media`, {headers: {Authorization: `Bearer ${tok}`}}, 'media');
-      // ✅ FIX: object par .filter nahi chalta — gallery khali rehti thi
-      const items: MediaItem[] = mediaItems
-        .filter((m: any) => (m.mediaType === 'image' || m.mediaType === 'video') && m.mediaUrl && !m.deleted)
-        .map((m: any) => ({id: String(m._id), uri: m.mediaUrl, mediaType: m.mediaType, createdAt: m.createdAt}));
-      setAllMedia(items);
-    } catch (e) { console.error('[Media]', e); }
-    finally { setMediaLoading(false); }
-  }, [chatId]);
-
-  // ── Block ─────────────────────────────────────────────────────────
-  const handleBlockConfirm = useCallback(async () => {
-    setBlockLoading(true);
-    try {
-      if (iBlockedThem) {
-        await axios.delete(`${BASE_URL}/api/block/${participantId}`, {headers: {Authorization: `Bearer ${tokenRef.current}`}});
-        setIBlockedThem(false);
-      } else {
-        await axios.post(`${BASE_URL}/api/block/${participantId}`, {}, {headers: {Authorization: `Bearer ${tokenRef.current}`}});
-        setIBlockedThem(true);
-      }
-      setBlockModalVisible(false);
-    } catch { Alert.alert('Error', 'Could not complete action.'); }
-    finally { setBlockLoading(false); }
-  }, [iBlockedThem, participantId]);
-
-  const handleFollow = useCallback(async () => {
-    if (!profile || followLoading) return;
-    setFollowLoading(true);
-    const status = profile.relationship?.followingStatus || 'none';
-    try {
+      const token = await AsyncStorage.getItem('hala_token');
+      const config = {headers: {Authorization: `Bearer ${token}`}, timeout: 15000};
+      const status = profile.relationship?.followingStatus;
       if (status === 'accepted' || status === 'pending') {
-        await axios.delete(`${BASE_URL}/api/users/follow/${participantId}`, {headers: {Authorization: `Bearer ${tokenRef.current}`}});
-        setProfile(prev => prev ? {...prev, relationship: {...prev.relationship, followingStatus: 'none'}} : prev);
+        // Clear restricted content immediately when giving up access.
+        setProfile(prev => prev ? {...prev, canMessage: false, canViewContent: !prev.privacySettings?.isPrivate} : null);
+        setPosts([]); setViewer(null);
+        await axios.delete(`${BASE_URL}/api/users/follow/${participantId}`, config);
+      } else await axios.post(`${BASE_URL}/api/users/follow/${participantId}`, {}, config);
+      clearPeopleCache(); await load();
+    } catch {Alert.alert('Error', 'Could not update follow status. Please try again.'); await load();}
+    finally {setBusy(false);}
+  };
+  const message = async () => {
+    if (!profile || busy || !canShowMessage(profile)) return;
+    setBusy(true);
+    try {await openSocialChat(navigation, profile);}
+    catch {Alert.alert('Message unavailable', 'Messaging requires mutual following and both accounts to allow messages.'); await load();}
+    finally {setBusy(false);}
+  };
+  const block = async () => {
+    setBusy(true);
+    try {
+      const token = await AsyncStorage.getItem('hala_token');
+      const config = {headers: {Authorization: `Bearer ${token}`}, timeout: 15000};
+      if (iBlocked) await axios.delete(`${BASE_URL}/api/block/${participantId}`, config);
+      else await axios.post(`${BASE_URL}/api/block/${participantId}`, {}, config);
+      setBlockModal(false); setViewer(null); setPosts([]); clearPeopleCache(); await load();
+    } catch {Alert.alert('Error', 'Could not update blocking.');}
+    finally {setBusy(false);}
+  };
+  const changeMute = async (duration: MuteDuration) => {
+    if (!chatId) return;
+    try {
+      const token = await AsyncStorage.getItem('hala_token');
+      const config = {headers: {Authorization: `Bearer ${token}`}, timeout: 15000};
+      if (duration === null) {
+        await axios.delete(`${BASE_URL}/api/chat/${chatId}/mute`, config);
+        await AsyncStorage.removeItem(`mute_${chatId}`);
       } else {
-        const res = await axios.post(`${BASE_URL}/api/users/follow/${participantId}`, {}, {headers: {Authorization: `Bearer ${tokenRef.current}`}});
-        const next = res.data?.status === 'pending' ? 'pending' : 'accepted';
-        setProfile(prev => prev ? {...prev, relationship: {...prev.relationship, followingStatus: next}} : prev);
+        await axios.post(`${BASE_URL}/api/chat/${chatId}/mute`, {}, config);
+        await AsyncStorage.setItem(`mute_${chatId}`, JSON.stringify({duration, mutedAt: Date.now()}));
       }
-    } catch { Alert.alert('Error', 'Could not update follow status.'); }
-    finally { setFollowLoading(false); }
-  }, [profile, followLoading, participantId]);
-
-  // ── Animations ────────────────────────────────────────────────────
-  const navOpacity = scrollY.interpolate({
-    inputRange: [HEADER_HEIGHT - 100, HEADER_HEIGHT - 40], outputRange: [0, 1], extrapolate: 'clamp',
-  });
-  const avatarScale = scrollY.interpolate({
-    inputRange: [-60, 0], outputRange: [1.25, 1], extrapolate: 'clamp',
-  });
-  const avatarTranslate = scrollY.interpolate({
-    inputRange: [0, HEADER_HEIGHT], outputRange: [0, -30], extrapolate: 'clamp',
-  });
-
-  if (loading) return <View style={s.loader}><ActivityIndicator size="large" color={Colors.btnRed} /></View>;
-
-  const displayName  = profile?.name || participantName || 'User';
-  const avatarLetter = displayName.charAt(0).toUpperCase();
-
-  // ── Localised media count subtitle ────────────────────────────────
-  const mediaCountText = [
-    imageCount > 0 && `${imageCount} ${imageCount > 1 ? t.photos_label : t.photo_label}`,
-    videoCount > 0 && `${videoCount} ${videoCount > 1 ? t.videos_label : t.video_label}`,
-  ].filter(Boolean).join('  ·  ');
-
-  // ── Age string ───────────────────────────────────────────────────
-  const ageNum = getAgeNumber(profile?.birthday);
-  const ageStr = ageNum !== null
-    ? (language === 'ar' ? `${ageNum} ${t.years_old}` : `${ageNum} years old`)
-    : '';
-
-  return (
-    <View style={s.root}>
-      <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
-
-      {/* ── Sticky nav ── */}
-      <Animated.View style={[s.stickyNav, {paddingTop: insets.top, opacity: navOpacity, flexDirection: rowDir}]}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={s.navBtn}>
-          <Ionicons name={isRTL ? 'arrow-forward' : 'arrow-back'} size={22} color="#fff" />
-        </TouchableOpacity>
-        <Text style={s.navTitle} numberOfLines={1}>{displayName}</Text>
-        <View style={{width: 40}} />
-      </Animated.View>
-
-      <Animated.ScrollView
-        onScroll={Animated.event([{nativeEvent: {contentOffset: {y: scrollY}}}], {useNativeDriver: true})}
-        scrollEventThrottle={16} showsVerticalScrollIndicator={false} bounces>
-
-        {/* ── Hero ── */}
-        <View style={s.hero}>
-          <View style={[s.backBtnWrap, {top: insets.top + 8}, isRTL ? {right: 16, left: undefined} : {left: 16}]}>
-            <TouchableOpacity onPress={() => navigation.goBack()} style={s.glassBtn}>
-              <Ionicons name={isRTL ? 'arrow-forward' : 'arrow-back'} size={22} color="#fff" />
-            </TouchableOpacity>
-          </View>
-          <Animated.View style={[s.avatarWrap, {transform: [{scale: avatarScale}, {translateY: avatarTranslate}]}]}>
-            <TouchableOpacity activeOpacity={avatarUri ? 0.85 : 1} onPress={() => avatarUri && setImageViewerOpen(true)}>
-              {avatarUri ? (
-                <Image source={{uri: avatarUri}} style={s.avatarImg} />
-              ) : (
-                <View style={s.avatarPlaceholder}>
-                  <Text style={s.avatarLetter}>{avatarLetter}</Text>
-                </View>
-              )}
-              {avatarUri && (
-                <View style={s.avatarHint}>
-                  <Ionicons name="expand-outline" size={13} color="#fff" />
-                </View>
-              )}
-            </TouchableOpacity>
-          </Animated.View>
-          <Text style={s.name}>{displayName}</Text>
-        </View>
-
-        <View style={s.nameSection} />
-
-        {/* ── Info card ── */}
-        {(profile?.bio || profile?.birthday) && (
-          <View style={s.card}>
-            {profile?.bio && (
-              <InfoRow
-                icon="chatbubble-ellipses-outline"
-                label={t.bio}
-                value={profile.bio}
-                multiline isRTL={isRTL}
-              />
-            )}
-            {profile?.bio && profile?.birthday && <Divider />}
-            {profile?.birthday && (
-              <InfoRow
-                icon="gift-outline"
-                label={t.birthday}
-                value={formatBirthday(profile.birthday)}
-                sublabel={ageStr}
-                isRTL={isRTL}
-              />
-            )}
-          </View>
-        )}
-
-        {/* ── Actions card ── */}
-        <View style={s.card}>
-          <SectionTitle label={t.actions} isRTL={isRTL} />
-          <ActionRow
-            icon="person-add-outline" iconColor={Colors.Red} iconBg="#FEE2E2"
-            label={followLoading ? 'Updating…' : profile?.relationship?.followingStatus === 'accepted' ? 'Following' : profile?.relationship?.followingStatus === 'pending' ? 'Requested' : 'Follow'}
-            sublabel={profile?.relationship?.followingStatus === 'pending' ? 'Waiting for approval' : undefined}
-            onPress={handleFollow} isRTL={isRTL}
-          />
-          <Divider />
-          <ActionRow
-            icon="chatbubble-outline" iconColor={Colors.Red} iconBg='#FEE2E2'
-            label={t.send_message}
-            onPress={() => navigation.goBack()}
-            isRTL={isRTL}
-          />
-          <Divider />
-          <ActionRow
-            icon={isMuted ? 'notifications-outline' : 'notifications-off-outline'}
-            iconColor={isMuted ? '#6B7280' : Colors.Red}
-            iconBg={isMuted ? '#F3F4F6' : '#FEE2E2'}
-            label={isMuted ? t.unmute_btn : t.mute_notifications}
-            sublabel={isMuted ? t.tap_to_unmute : t.silence_chat}
-            onPress={() => setMuteModalVisible(true)}
-            isRTL={isRTL}
-          />
-        </View>
-
-        {/* ── Shared media card ── */}
-        <View style={s.card}>
-          <View style={[s.mediaHeader, {flexDirection: rowDir}]}>
-            <Text style={[s.sectionTitleText, {textAlign: isRTL ? 'right' : 'left'}]}>
-              {t.shared_media}
-            </Text>
-            {allMedia.length > 0 && (
-              <View style={[s.mediaHeaderRight, {flexDirection: rowDir}]}>
-                <Text style={s.mediaCount}>{mediaCountText}</Text>
-              </View>
-            )}
-          </View>
-
-          {mediaLoading ? (
-            <View style={s.mediaEmpty}>
-              <ActivityIndicator size="small" color={Colors.btnRed} />
-            </View>
-          ) : previewMedia.length === 0 ? (
-            <View style={s.mediaEmpty}>
-              <Ionicons name="images-outline" size={32} color="#D1D5DB" />
-              <Text style={s.mediaEmptyText}>{t.no_shared_media}</Text>
-            </View>
-          ) : (
-            <>
-              <View style={s.mediaGrid}>
-                {previewMedia.map(item => (
-                  <TouchableOpacity key={item.id} style={s.mediaCell} onPress={() => setViewerItem(item)} activeOpacity={0.8}>
-                    <Image source={{uri: item.uri}} style={s.mediaImg} resizeMode="cover" />
-                    {item.mediaType === 'video' && (
-                      <View style={s.videoOverlay}>
-                        <Ionicons name="play-circle" size={28} color="#fff" />
-                      </View>
-                    )}
-                  </TouchableOpacity>
-                ))}
-              </View>
-
-              {hasMore && (
-                <TouchableOpacity
-                  style={[s.viewAllStrip, {flexDirection: rowDir}]}
-                  onPress={() => navigation.navigate('AllMediaScreen', {chatId, allMedia, participantName: displayName})}
-                  activeOpacity={0.7}>
-                  <Text style={s.viewAllStripText}>
-                    {t.view_all_items} ({allMedia.length})
-                  </Text>
-                  <Ionicons
-                    name={isRTL ? 'arrow-back' : 'arrow-forward'}
-                    size={15} color={Colors.btnRed}
-                  />
-                </TouchableOpacity>
-              )}
-            </>
-          )}
-        </View>
-
-        {/* ── Privacy card ── */}
-        <View style={s.card}>
-          <SectionTitle label={t.privacy} isRTL={isRTL} />
-          <ActionRow
-            icon="ban-outline"
-            iconColor={iBlockedThem ? '#6B7280' : '#EF4444'}
-            iconBg={iBlockedThem ? '#F3F4F6' : '#FEE2E2'}
-            label={iBlockedThem ? t.unblock_title : t.block_user}
-            sublabel={iBlockedThem ? t.unblock_b1 : t.block_user_desc}
-            onPress={() => setBlockModalVisible(true)}
-            danger={!iBlockedThem}
-            isRTL={isRTL}
-          />
-        </View>
-
-        <View style={{height: insets.bottom + 32}} />
-      </Animated.ScrollView>
-
-      {/* ── Modals ── */}
-      <ImageViewerModal
-        visible={imageViewerOpen} uri={avatarUri} senderName={displayName} onClose={() => setImageViewerOpen(false)}
-      />
-      <ImageViewerModal
-        visible={!!viewerItem} uri={viewerItem?.uri || null} senderName={displayName}
-        timestamp={viewerItem?.createdAt ? new Date(viewerItem.createdAt).toLocaleDateString([], {day: 'numeric', month: 'short', year: 'numeric'}) : undefined}
-        onClose={() => setViewerItem(null)}
-      />
-      <BlockUserModal
-        visible={blockModalVisible} onClose={() => setBlockModalVisible(false)}
-        onConfirm={handleBlockConfirm} isBlocked={iBlockedThem}
-        participantName={displayName} loading={blockLoading}
-      />
-      <MuteModal
-        visible={muteModalVisible} onClose={() => setMuteModalVisible(false)}
-        chatId={chatId} isMuted={isMuted} currentMute={muteDuration} onMuteChange={handleMuteChange}
-      />
-    </View>
-  );
-}
-
-// ── Sub-components ─────────────────────────────────────────────────────────
-
-function SectionTitle({label, isRTL}: {label: string; isRTL: boolean}) {
-  return (
-    <Text style={[s.sectionTitleText, {textAlign: isRTL ? 'right' : 'left'}]}>
-      {label}
-    </Text>
-  );
-}
-
-function InfoRow({icon, label, value, sublabel, multiline, isRTL}: {
-  icon: string; label: string; value: string;
-  sublabel?: string; multiline?: boolean; isRTL: boolean;
-}) {
-  const rowDir = isRTL ? 'row-reverse' : 'row';
-  return (
-    <View style={[s.infoRow, {flexDirection: rowDir}]}>
-      <View style={[s.infoIcon, isRTL ? {marginLeft: 14, marginRight: 0} : {}]}>
-        <Ionicons name={icon as any} size={18} color={Colors.Red} />
-      </View>
-      <View style={{flex: 1, alignItems: isRTL ? 'flex-end' : 'flex-start'}}>
-        <Text style={[s.infoLabel, {textAlign: isRTL ? 'right' : 'left'}]}>{label}</Text>
-        <Text style={[s.infoValue, multiline && {lineHeight: 22}, {textAlign: isRTL ? 'right' : 'left'}]} numberOfLines={multiline ? 4 : 1}>
-          {value}
-        </Text>
-        {sublabel ? <Text style={[s.infoSublabel, {textAlign: isRTL ? 'right' : 'left'}]}>{sublabel}</Text> : null}
-      </View>
-    </View>
-  );
-}
-
-function ActionRow({icon, iconColor, iconBg, label, sublabel, onPress, danger, isRTL}: {
-  icon: string; iconColor: string; iconBg: string; label: string;
-  sublabel?: string; onPress: () => void; danger?: boolean; isRTL: boolean;
-}) {
-  const rowDir = isRTL ? 'row-reverse' : 'row';
-  return (
-    <TouchableOpacity style={[s.actionRow, {flexDirection: rowDir}]} onPress={onPress} activeOpacity={0.7}>
-      <View style={[s.actionIcon, {backgroundColor: iconBg}, isRTL ? {marginLeft: 14, marginRight: 0} : {}]}>
-        <Ionicons name={icon as any} size={19} color={iconColor} />
-      </View>
-      <View style={{flex: 1, alignItems: isRTL ? 'flex-end' : 'flex-start'}}>
-        <Text style={[s.actionLabel, danger && {color: '#EF4444'}, {textAlign: isRTL ? 'right' : 'left'}]}>
-          {label}
-        </Text>
-        {sublabel ? <Text style={[s.actionSublabel, {textAlign: isRTL ? 'right' : 'left'}]}>{sublabel}</Text> : null}
-      </View>
-      <Ionicons name={isRTL ? 'chevron-back' : 'chevron-forward'} size={16} color="#D1D5DB" />
+      setMuteDuration(duration);
+    } catch {Alert.alert('Error', 'Could not save mute setting.');}
+  };
+  const sharedMedia = async () => {
+    setBusy(true);
+    try {
+      const token = await AsyncStorage.getItem('hala_token');
+      const rows = await fetchCollection(`${BASE_URL}/api/chat/${chatId}/media`, {headers: {Authorization: `Bearer ${token}`}}, 'media');
+      const allMedia = rows.filter(m => m.mediaUrl && !m.deleted).map(m => ({id: String(m._id), uri: m.mediaUrl, mediaType: m.mediaType, createdAt: m.createdAt}));
+      navigation.navigate('AllMediaScreen', {chatId, participantName: profile?.name, allMedia});
+    } catch {Alert.alert('Error', 'Could not load shared media.');}
+    finally {setBusy(false);}
+  };
+  const name = profile?.name || participantName || 'User';
+  const status = profile?.relationship?.followingStatus;
+  const followLabel = status === 'accepted' ? label('Following', 'تتابعه') : status === 'pending' ? label('Requested', 'تم الطلب')
+    : profile?.relationship?.followedByStatus === 'accepted' ? label('Follow back', 'متابعة بالمثل') : label('Follow', 'متابعة');
+  const header = <View style={s.profile}>
+    <TouchableOpacity disabled={!profile?.avatar} onPress={() => profile?.avatar && setViewer({uri: profile.avatar})}>
+      {profile?.avatar ? <Image source={{uri: profile.avatar}} style={s.avatar} /> : <View style={[s.avatar, s.fallback]}><Text style={s.initial}>{name.charAt(0).toUpperCase()}</Text></View>}
     </TouchableOpacity>
-  );
-}
+    <Text style={s.name}>{name}</Text>
+    <Text style={s.bio}>{profile?.bio?.trim() || 'null'}</Text>
+    <View style={[s.counts, {flexDirection: isRTL ? 'row-reverse' : 'row'}]}>
+      <View style={s.count}><Text style={s.number}>{profile?.postsCount ?? 0}</Text><Text style={s.muted}>{label('Posts', 'منشورات')}</Text></View>
+      {(['followers', 'following'] as const).map(mode => <TouchableOpacity key={mode} style={s.count}
+        disabled={!profile?.canViewContent} accessibilityRole="button" accessibilityState={{disabled: !profile?.canViewContent}}
+        onPress={() => navigation.push('SocialConnections', {mode, userId: participantId, profileName: name, isOwn: profile?.isSelf})}>
+        <Text style={s.number}>{mode === 'followers' ? profile?.followersCount ?? 0 : profile?.followingCount ?? 0}</Text>
+        <Text style={s.muted}>{mode === 'followers' ? label('Followers', 'متابعون') : label('Following', 'يتابع')}</Text>
+      </TouchableOpacity>)}
+    </View>
+    {profile?.isSelf ? <TouchableOpacity style={s.button} onPress={() => navigation.navigate('Settings')}><Text style={s.buttonText}>{label('Privacy settings', 'إعدادات الخصوصية')}</Text></TouchableOpacity> : <>
+      <View style={s.actions}>
+        {!profile?.blocked && <TouchableOpacity style={s.button} disabled={busy} onPress={follow}><Text style={s.buttonText}>{followLabel}</Text></TouchableOpacity>}
+        {profile && canShowMessage(profile) && <TouchableOpacity style={[s.button, s.secondary]} disabled={busy} onPress={message}><Text style={s.buttonText}>{label('Message', 'رسالة')}</Text></TouchableOpacity>}
+      </View>
+      {status === 'pending' && <Text style={s.hint}>{label('Waiting for approval. Messaging also requires a follow back.', 'بانتظار الموافقة. المراسلة تتطلب المتابعة المتبادلة أيضاً.')}</Text>}
+      {status === 'accepted' && profile?.relationship?.followedByStatus !== 'accepted' && <Text style={s.hint}>{label('Messaging becomes available when they follow you back.', 'تتوفر المراسلة عندما يتابعك هذا المستخدم أيضاً.')}</Text>}
+      <TouchableOpacity style={s.textAction} onPress={() => setBlockModal(true)}><Text style={s.muted}>{iBlocked ? label('Unblock', 'إلغاء الحظر') : label('Block user', 'حظر المستخدم')}</Text></TouchableOpacity>
+    </>}
+    {busy && <ActivityIndicator color={Colors.btnRed} />}
+    {!!chatId && <View style={s.actions}>
+      <TouchableOpacity style={s.textAction} disabled={busy} onPress={sharedMedia}><Text style={s.muted}>{label('Chat media', 'وسائط المحادثة')}</Text></TouchableOpacity>
+      <TouchableOpacity style={s.textAction} onPress={() => setMuteModal(true)}><Text style={s.muted}>{label('Chat notifications', 'إشعارات المحادثة')}</Text></TouchableOpacity>
+    </View>}
+    <View style={s.section}><Ionicons name="grid-outline" size={18} color={Colors.White} /><Text style={s.sectionText}>{label('Posts', 'منشورات')}</Text></View>
+  </View>;
 
-function Divider() {
-  return <View style={{height: 0.5, backgroundColor: '#191B20', marginLeft: 66}} />;
+  return <SafeAreaView style={s.safe} edges={['top', 'bottom']}>
+    <View style={[s.nav, {flexDirection: isRTL ? 'row-reverse' : 'row'}]}>
+      <TouchableOpacity accessibilityLabel="Back" style={s.back} onPress={() => navigation.goBack()}><Ionicons name={isRTL ? 'arrow-forward' : 'arrow-back'} size={24} color={Colors.White} /></TouchableOpacity>
+      <Text style={s.title} numberOfLines={1}>{name}</Text><View style={s.back} />
+    </View>
+    {loading ? <View style={s.empty}><ActivityIndicator size="large" /></View> : error || !profile ? <View style={s.empty}><Text style={s.muted}>{label('Could not load profile.', 'تعذر تحميل الملف الشخصي.')}</Text><TouchableOpacity style={s.button} onPress={() => load()}><Text style={s.buttonText}>{label('Retry', 'إعادة المحاولة')}</Text></TouchableOpacity></View> :
+      <FlatList data={profile.canViewContent ? posts : []} numColumns={3} keyExtractor={item => item._id}
+        ListHeaderComponent={header} refreshing={false} onRefresh={() => load()} contentContainerStyle={{flexGrow: 1}}
+        renderItem={({item}) => <TouchableOpacity style={{width: width / 3, height: width / 3, padding: 1}} accessibilityLabel={item.caption || 'View post'} onPress={() => setViewer({uri: item.image, createdAt: item.createdAt})}>
+          <Image source={{uri: item.image}} style={s.post} resizeMode="cover" />
+        </TouchableOpacity>}
+        ListEmptyComponent={<View style={s.empty}>
+          <Ionicons name={profile.canViewContent ? 'images-outline' : 'lock-closed-outline'} size={34} color={Colors.Grey9} />
+          <Text style={s.emptyTitle}>{!profile.canViewContent ? label('This account is private', 'هذا الحساب خاص') : postsError ? label('Could not load posts', 'تعذر تحميل المنشورات') : label('No posts yet', 'لا توجد منشورات بعد')}</Text>
+          {!profile.canViewContent && <Text style={s.hint}>{label('Only approved followers can see posts and follower/following lists.', 'يمكن للمتابعين الموافق عليهم فقط رؤية المنشورات وقوائم المتابعين والمتابَعين.')}</Text>}
+          {postsError && profile.canViewContent && <TouchableOpacity style={s.textAction} onPress={() => load()}><Text style={s.buttonText}>{label('Retry', 'إعادة المحاولة')}</Text></TouchableOpacity>}
+        </View>} />}
+    <ImageViewerModal visible={!!viewer} uri={viewer?.uri || null} senderName={name} timestamp={viewer?.createdAt ? new Date(viewer.createdAt).toLocaleDateString() : undefined} onClose={() => setViewer(null)} />
+    <BlockUserModal visible={blockModal} onClose={() => setBlockModal(false)} onConfirm={block} isBlocked={iBlocked} participantName={name} loading={busy} />
+    {!!chatId && <MuteModal visible={muteModal} onClose={() => setMuteModal(false)} chatId={chatId} isMuted={muteDuration !== null} currentMute={muteDuration} onMuteChange={changeMute} />}
+  </SafeAreaView>;
 }
-
-// ── Styles ─────────────────────────────────────────────────────────────────
 const s = StyleSheet.create({
-  root:   {flex: 1, backgroundColor: Colors.dargBg},
-  loader: {flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#191B20'},
-
-  stickyNav: {
-    position: 'absolute', top: 0, left: 0, right: 0, zIndex: 99,
-    alignItems: 'center', backgroundColor: Colors.darkgrey,
-    paddingHorizontal: 12, paddingBottom: 14,
-  },
-  navBtn:   {width: 40, height: 40, justifyContent: 'center', alignItems: 'center'},
-  navTitle: {flex: 1, textAlign: 'center', fontSize: 17, fontWeight: '700', color: '#fff', marginHorizontal: 8},
-
-  hero: {
-    height: HEADER_HEIGHT, backgroundColor: Colors.darkgrey,
-    justifyContent: 'flex-end', alignItems: 'center', paddingBottom: 24,
-  },
-  backBtnWrap: {position: 'absolute', zIndex: 10},
-  glassBtn: {
-    width: 38, height: 38, borderRadius: 19,
-    backgroundColor: 'rgba(0,0,0,0.25)',
-    justifyContent: 'center', alignItems: 'center',
-  },
-  avatarWrap: {zIndex: 5},
-  avatarImg: {width: 96, height: 96, borderRadius: 48, borderWidth: 3, borderColor: '#343841'},
-  avatarPlaceholder: {
-    width: 96, height: 96, borderRadius: 48,
-    backgroundColor: 'rgba(255,255,255,0.25)',
-    borderWidth: 3, borderColor: '#343841',
-    justifyContent: 'center', alignItems: 'center',
-  },
-  avatarLetter: {fontSize: 38, fontWeight: '700', color: '#fff'},
-  avatarHint: {
-    position: 'absolute', bottom: 3, right: 3,
-    width: 24, height: 24, borderRadius: 12,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    justifyContent: 'center', alignItems: 'center',
-    borderWidth: 1.5, borderColor: '#343841',
-  },
-
-  nameSection: {
-    // ✅ FIX: yahan backgroundColor '#fff' tha aur `name` ka color bhi
-    //    '#fff' — safaid par safaid, naam bilkul nazar nahi aata tha.
-    alignItems: 'center', paddingVertical: 0, backgroundColor: 'transparent',
-    marginBottom: 10, borderBottomWidth: 0.5, borderBottomColor: '#343841', gap: 6,
-  },
-  name: {fontSize: 16, fontWeight: '400', color: '#fff', marginTop: 10},
-
-  card: {
-    backgroundColor: '#191B20', borderRadius: 16,
-    marginHorizontal: 14, marginBottom: 12,
-    overflow: 'hidden', borderWidth: 0.5, borderColor: '#343841',
-  },
-  sectionTitleText: {
-    fontSize: 11, fontWeight: '700', color: '#9CA3AF',
-    textTransform: 'uppercase', letterSpacing: 0.2,
-    paddingHorizontal: 16, paddingTop: 14, paddingBottom: 10,
-  },
-
-  infoRow: {alignItems: 'flex-start', paddingHorizontal: 16, paddingVertical: 13, gap: 14},
-  infoIcon: {
-    width: 36, height: 36, borderRadius: 10, backgroundColor: '#191B20',
-    justifyContent: 'center', alignItems: 'center', marginTop: 1,
-  },
-  infoLabel:    {fontSize: 11, color: '#9CA3AF', marginBottom: 2, fontWeight: '600'},
-  infoValue:    {fontSize: 15, color: '#F5F6F8'},
-  infoSublabel: {fontSize: 12, color: '#ABB2BF', marginTop: 2},
-
-  actionRow: {alignItems: 'center', paddingHorizontal: 16, paddingVertical: 14, gap: 14},
-  actionIcon: {width: 40, height: 40, borderRadius: 12, justifyContent: 'center', alignItems: 'center'},
-  actionLabel:    {fontSize: 15, fontWeight: '500', color: '#F5F6F8'},
-  actionSublabel: {fontSize: 12, color: '#9CA3AF', marginTop: 1},
-
-  mediaHeader:      {alignItems: 'center', justifyContent: 'space-between', paddingRight: 12},
-  mediaHeaderRight: {alignItems: 'center', gap: 10, paddingBottom: 2},
-  mediaCount:       {fontSize: 12, color: '#9CA3AF'},
-
-  mediaGrid: {flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 12, paddingBottom: 4, gap: 3},
-  mediaCell: {width: PREVIEW_SIZE, height: PREVIEW_SIZE, borderRadius: 8, overflow: 'hidden', backgroundColor: '#191B20'},
-  mediaImg:  {width: '100%', height: '100%'},
-  videoOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.3)',
-    justifyContent: 'center', alignItems: 'center',
-  },
-  mediaEmpty:     {alignItems: 'center', paddingVertical: 28, gap: 8},
-  mediaEmptyText: {fontSize: 13, color: '#9CA3AF'},
-
-  viewAllStrip: {
-    alignItems: 'center', justifyContent: 'center', gap: 6,
-    paddingVertical: 13, borderTopWidth: 0.5, borderTopColor: '#343841',
-  },
-  viewAllStripText: {fontSize: 13, color: Colors.btnRed, fontWeight: '600'},
+  safe: {flex: 1, backgroundColor: Colors.dargBg}, nav: {height: 56, alignItems: 'center', backgroundColor: Colors.darkgrey}, back: {width: 50, height: 50, alignItems: 'center', justifyContent: 'center'}, title: {flex: 1, textAlign: 'center', color: Colors.White, fontWeight: '700', fontSize: 17},
+  profile: {alignItems: 'center', paddingTop: 24, paddingHorizontal: 16}, avatar: {width: 96, height: 96, borderRadius: 48}, fallback: {backgroundColor: Colors.darkgrey, alignItems: 'center', justifyContent: 'center'}, initial: {fontSize: 36, color: Colors.White}, name: {fontSize: 22, fontWeight: '800', color: Colors.White, marginTop: 14}, bio: {fontSize: 14, lineHeight: 21, color: Colors.Grey9, textAlign: 'center', marginTop: 7},
+  counts: {width: '100%', marginVertical: 22}, count: {flex: 1, alignItems: 'center', minHeight: 48}, number: {color: Colors.White, fontWeight: '800', fontSize: 20}, muted: {color: Colors.Grey9, fontSize: 13, marginTop: 4},
+  actions: {flexDirection: 'row', gap: 10, justifyContent: 'center'}, button: {backgroundColor: Colors.btnRed, minHeight: 44, minWidth: 120, paddingHorizontal: 20, borderRadius: 10, alignItems: 'center', justifyContent: 'center', marginVertical: 6}, secondary: {backgroundColor: Colors.darkgrey}, buttonText: {color: Colors.White, fontWeight: '700'}, textAction: {minHeight: 44, padding: 10, justifyContent: 'center'}, hint: {color: Colors.Grey9, fontSize: 13, lineHeight: 20, textAlign: 'center', marginTop: 10},
+  section: {flexDirection: 'row', gap: 8, alignItems: 'center', justifyContent: 'center', width: '100%', borderBottomWidth: 1, borderColor: Colors.darkgrey, marginTop: 18, paddingVertical: 15}, sectionText: {color: Colors.White, fontWeight: '700'}, post: {width: '100%', height: '100%'}, empty: {flex: 1, minHeight: 200, padding: 30, justifyContent: 'center', alignItems: 'center'}, emptyTitle: {color: Colors.White, fontWeight: '700', fontSize: 17, marginTop: 14},
 });
-
-
-
-
-
-
-
-

@@ -1,10 +1,11 @@
 import {useStatusBar} from '../Component/UseStatusBar/useStatusBar';
 import {Text} from '../../ui/Text';
 import {fetchCollection} from '../api/collection';
-import {unwrap} from '../api/unwrap';
+import {bioPreview, canShowMessage, openSocialChat, SocialPerson} from './socialProfile';
+import {useSocialRefresh} from './useSocialRefresh';
 import {ActivityIndicator} from '../../ui/ActivityIndicator';
 import {Alert} from '../../ui/Alert';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useRef, useState} from 'react';
 import {FlatList, Image, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -14,35 +15,47 @@ import {BASE_URL} from '../../config/api';
 import {Colors} from '../Themes/Colors';
 import {getAvatarColor} from '../Themes/avatarColor';
 
-type Person = {_id: string; name: string; avatar?: string | null; bio?: string | null};
+type Person = SocialPerson;
 type Request = {_id: string; user: Person};
 type Mode = 'followers' | 'following' | 'requests';
 
 export default function SocialConnectionsScreen({route, navigation}: any) {
   useStatusBar('light-content', Colors.darkgrey);
   const mode: Mode = route.params?.mode || 'followers';
+  const userId = route.params?.userId;
+  const isOwn = !userId || route.params?.isOwn === true;
+  const version = useRef(0);
+  const [error, setError] = useState<string | null>(null);
   const [items, setItems] = useState<(Person | Request)[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionId, setActionId] = useState<string | null>(null);
   const title = mode === 'followers' ? 'Followers' : mode === 'following' ? 'Following' : 'Follow requests';
 
-  const load = useCallback(async () => {
-    setLoading(true);
+  const clear = useCallback(() => {version.current++; setItems([]); setLoading(true);}, []);
+  const load = useCallback(async (signal?: AbortSignal) => {
+    const requestId = ++version.current;
+    const active = () => requestId === version.current && !signal?.aborted;
     try {
       const token = await AsyncStorage.getItem('hala_token');
-      const endpoint = mode === 'followers' ? 'followers' : mode === 'following' ? 'following' : 'follow-requests';
-      const items = await fetchCollection(`${BASE_URL}/api/users/${endpoint}`, {
+      const endpoint = mode === 'requests' ? 'follow-requests' : mode;
+      const rows = await fetchCollection(`${BASE_URL}/api/users/${endpoint}`, {
+        params: userId && mode !== 'requests' ? {userId} : {}, signal,
         headers: {Authorization: `Bearer ${token}`}, timeout: 15000,
       }, mode, 'users', 'requests');
-      setItems(items);
-    } catch {
-      Alert.alert('Error', `Could not load ${title.toLowerCase()}.`);
-    } finally {
-      setLoading(false);
-    }
-  }, [mode, title]);
+      if (active()) {setItems(rows); setError(null);}
+    } catch (e: any) {
+      if (active()) {setItems([]); setError(e.response?.status === 403 ? 'This account is private.' : `Could not load ${title.toLowerCase()}. Tap to retry.`);}
+    } finally {if (active()) setLoading(false);}
+  }, [mode, title, userId]);
+  useSocialRefresh(load, clear);
 
-  useEffect(() => { load(); }, [load]);
+  const message = async (user: Person) => {
+    if (actionId || !canShowMessage(user)) return;
+    setActionId(user._id);
+    try {await openSocialChat(navigation, user);}
+    catch {Alert.alert('Message unavailable', 'Messaging requires mutual following and both accounts to allow messages.'); await load();}
+    finally {setActionId(null);}
+  };
 
   const handleRequest = async (request: Request, approve: boolean) => {
     setActionId(request._id);
@@ -57,7 +70,7 @@ export default function SocialConnectionsScreen({route, navigation}: any) {
           headers: {Authorization: `Bearer ${token}`}, timeout: 10000,
         });
       }
-      setItems(prev => prev.filter(item => (item as Request)._id !== request._id));
+      await load();
     } catch {
       Alert.alert('Error', 'Could not update this request.');
     } finally {
@@ -72,7 +85,7 @@ export default function SocialConnectionsScreen({route, navigation}: any) {
       try {
         const token = await AsyncStorage.getItem('hala_token');
         await axios.delete(`${BASE_URL}/api/users/follow/${user._id}`, {headers: {Authorization: `Bearer ${token}`}, timeout: 10000});
-        setItems(prev => prev.filter(item => item._id !== user._id));
+        await load();
       } catch { Alert.alert('Could not unfollow', 'Please try again.'); }
       finally { setActionId(null); }
     }},
@@ -83,6 +96,8 @@ export default function SocialConnectionsScreen({route, navigation}: any) {
     const user = request ? request.user : item as Person;
     return (
       <View style={s.row}>
+        <TouchableOpacity style={{flex: 1, flexDirection: 'row', alignItems: 'center'}} accessibilityRole="button" accessibilityLabel={`View ${user.name}'s profile`}
+          onPress={() => navigation.push('UserProfile', {participantId: user._id, participantName: user.name})}>
         {user.avatar ? <Image source={{uri: user.avatar}} style={s.avatar} /> : (
           <View style={[s.avatar, s.fallback, {backgroundColor: getAvatarColor(user._id)}]}>
             <Text style={s.initial}>{(user.name || 'U').charAt(0).toUpperCase()}</Text>
@@ -90,9 +105,13 @@ export default function SocialConnectionsScreen({route, navigation}: any) {
         )}
         <View style={s.info}>
           <Text style={s.name}>{user.name}</Text>
-          {!!user.bio && <Text style={s.bio} numberOfLines={1}>{user.bio}</Text>}
+          <Text style={s.bio}>{bioPreview(user.bio)}</Text>
         </View>
-        {mode === 'following' && <TouchableOpacity accessibilityRole="button" accessibilityLabel={`Unfollow ${user.name}`} style={s.reject} disabled={actionId !== null} onPress={() => unfollow(user)}>
+        </TouchableOpacity>
+        {canShowMessage(user) && <TouchableOpacity accessibilityRole="button" accessibilityLabel={`Message ${user.name}`} style={s.confirm} disabled={actionId !== null} onPress={() => message(user)}>
+          {actionId === user._id ? <ActivityIndicator /> : <Text style={s.confirmText}>Message</Text>}
+        </TouchableOpacity>}
+        {mode === 'following' && isOwn && <TouchableOpacity accessibilityRole="button" accessibilityLabel={`Unfollow ${user.name}`} style={s.reject} disabled={actionId !== null} onPress={() => unfollow(user)}>
           {actionId === user._id ? <ActivityIndicator /> : <Text style={s.rejectText}>Unfollow</Text>}
         </TouchableOpacity>}
         {request && (
@@ -113,14 +132,14 @@ export default function SocialConnectionsScreen({route, navigation}: any) {
     <SafeAreaView style={s.safe} edges={['top']}>
       <View style={s.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.back}><Ionicons name="arrow-back" size={22} color={Colors.White} /></TouchableOpacity>
-        <Text style={s.title}>{title}</Text>
+        <Text style={s.title} numberOfLines={1}>{route.params?.profileName ? `${route.params.profileName} · ${title}` : title}</Text>
         <View style={s.back} />
       </View>
       {loading ? <View style={s.center}><ActivityIndicator size="large" color={Colors.btnRed} /></View> : (
         <FlatList
-          data={items} renderItem={renderItem} keyExtractor={(item: any) => String(item._id)}
+          refreshing={false} onRefresh={() => load()} data={items} renderItem={renderItem} keyExtractor={(item: any) => String(item._id)}
           contentContainerStyle={items.length ? s.list : s.empty}
-          ListEmptyComponent={<Text style={s.emptyText}>{mode === 'requests' ? 'No pending follow requests.' : `No ${title.toLowerCase()} yet.`}</Text>}
+          ListEmptyComponent={<TouchableOpacity onPress={() => load()}><Text style={s.emptyText}>{error || (mode === 'requests' ? 'No pending follow requests.' : `No ${title.toLowerCase()} yet.`)}</Text></TouchableOpacity>}
         />
       )}
     </SafeAreaView>

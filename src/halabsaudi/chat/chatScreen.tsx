@@ -1,3 +1,4 @@
+import {useSocialRefresh} from './useSocialRefresh';
 import {Text} from '../../ui/Text';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {mergeMessages, messagePage, dateLabel} from './messageModel';
@@ -294,6 +295,18 @@ function ChatScreenContent({route, navigation}: any) {
     senderName: string;
     timestamp: string;
   } | null>(null);
+
+  const resetPermission = useCallback(() => {setAccess('checking');}, []);
+  const refreshPermission = useCallback(async (signal: AbortSignal) => {
+    try {
+      const token = await AsyncStorage.getItem('hala_token');
+      const {data} = await axios.get(`${BASE_URL}/api/users/${participantId}/message-permission`, {
+        headers: {Authorization: `Bearer ${token}`}, timeout: 15000, signal,
+      });
+      if (!signal.aborted) setAccess(data.allowed === true ? 'allowed' : 'waiting');
+    } catch {if (!signal.aborted) setAccess('error');}
+  }, [participantId]);
+  useSocialRefresh(refreshPermission, resetPermission);
 
   const isBlocked = iBlockedThem || theyBlockedMe;
   const isBlockedRef = useRef(false);
@@ -1298,7 +1311,7 @@ function ChatScreenContent({route, navigation}: any) {
                   setMessages(prev => prev.map(m => m._id === item._id ? {...m, tempId, status: 'sending'} : m));
                   socket.emit('send-message', {chatId, text: item.text, tempId, replyTo: item.replyTo?._id || null});
                   setTimeout(() => setMessages(prev => prev.map(m => m.tempId === tempId && m.status === 'sending' ? {...m, status: 'failed'} : m)), 10000);
-                }}><Text style={styles.retryText}>{isRTL ? 'لم يتم تأكيد الإرسال · إعادة المحاولة' : (access === 'waiting' ? 'Waiting for acceptance or follow back' : 'Not sent · Tap to retry')}</Text></TouchableOpacity>}
+                }}><Text style={styles.retryText}>{isRTL ? 'لم يتم تأكيد الإرسال · إعادة المحاولة' : (access === 'waiting' ? 'Waiting for mutual following' : 'Not sent · Tap to retry')}</Text></TouchableOpacity>}
                 </View>;
               }}
               inverted
@@ -1384,7 +1397,7 @@ function ChatScreenContent({route, navigation}: any) {
           {/* ── Input row ── */}
           {access !== 'allowed' && !isBlocked ? (
             <TouchableOpacity accessibilityRole="button" onPress={() => setReload(v => v + 1)} style={{padding: 20, backgroundColor: Colors.darkgrey}}>
-              <Text style={styles.historyText}>{access === 'waiting' ? (isRTL ? 'يمكنك المراسلة بعد قبول طلب المتابعة أو متابعتك. اضغط للتحقق مجدداً.' : 'You can message after they accept your follow request or follow you back. Tap to check again.') : access === 'checking' ? (isRTL ? 'جارٍ التحقق من إمكانية المراسلة…' : 'Checking messaging permission…') : (isRTL ? 'تعذر التحقق من إمكانية المراسلة. اضغط لإعادة المحاولة.' : 'Could not verify messaging permission. Tap to retry.')}</Text>
+              <Text style={styles.historyText}>{access === 'waiting' ? (isRTL ? 'المراسلة متاحة عند متابعة بعضكما البعض. اضغط للتحقق مجدداً.' : 'Messaging is available when you both follow each other. Tap to check again.') : access === 'checking' ? (isRTL ? 'جارٍ التحقق من إمكانية المراسلة…' : 'Checking messaging permission…') : (isRTL ? 'تعذر التحقق من إمكانية المراسلة. اضغط لإعادة المحاولة.' : 'Could not verify messaging permission. Tap to retry.')}</Text>
             </TouchableOpacity>
           ) : !isBlocked ? (
             <View style={[styles.inputRow, {flexDirection: rowDir, paddingBottom: 8}]}>

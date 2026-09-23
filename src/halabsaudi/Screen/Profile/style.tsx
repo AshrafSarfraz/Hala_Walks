@@ -4,30 +4,9 @@ import { Colors } from "../../Themes/Colors";
 
 export const getStyles = (language: string) =>
     StyleSheet.create({
-      safe: {flex: 1, backgroundColor: Colors.dargBg, paddingBottom:20},
-      profileCard: {alignItems: 'center', paddingTop: 32},
-      avatarWrap: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
-        overflow: 'hidden',
-        marginBottom: 10,
-      },
-      avatarImg: {width: '100%', height: '100%'},
-      avatarFallback: {
-        flex: 1,
-        backgroundColor: Colors.lightRed,
-        justifyContent: 'center',
-        alignItems: 'center',
-      },
-      avatarInitials: {fontSize: 36, fontWeight: '700', color: '#fff'},
-      profileName: {
-        fontSize: 20,
-        fontWeight: '700',
-        color: Colors.White,
-        marginBottom: 6,
-        textAlign: language === 'ar' ? 'right' : 'left',
-      },
+      safe: {flex: 1, backgroundColor: Colors.darkgrey, paddingBottom:20},
+      
+
       phonePill: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -60,7 +39,7 @@ export const getStyles = (language: string) =>
         flexDirection: language === 'ar' ? 'row-reverse' : 'row', // ✅
         alignItems: 'center',
         paddingHorizontal: 16,
-        paddingVertical: 14,
+        paddingVertical: 3,
         gap: 14,
       },
       iconBubble: {
@@ -74,8 +53,7 @@ export const getStyles = (language: string) =>
       menuLabel: {
         flex: 1,
         fontSize: 15,
-        // ⚠️ Ye label WHITE CARD par baithta hai (card.backgroundColor =
-        //    Colors.White). Is liye yahan text DARK hona chahiye.
+       
         color: '#F5F6F8',
         textAlign: language === 'ar' ? 'right' : 'left', // ✅
       },
@@ -84,7 +62,7 @@ export const getStyles = (language: string) =>
         flexDirection: language === 'ar' ? 'row-reverse' : 'row', // ✅
         alignItems: 'center',
         paddingHorizontal: 16,
-        paddingVertical: 14,
+        paddingVertical: 8,
         gap: 14,
       },
       switchLabel: {
