@@ -292,7 +292,7 @@ export default function StartChatScreen({navigation}: Props) {
             <Text style={[styles.rowName, {textAlign: isRTL ? 'right' : 'left'}]}>{item.name}</Text>
             {item.privacySettings?.isPrivate && <Ionicons name="lock-closed" size={12} color={Colors.Grey9} />}
           </View>
-          <Text style={{color: Colors.Grey9, fontSize: 13, marginTop: 4, lineHeight: 18, textAlign: isRTL ? 'right' : 'left'}}>{bioPreview(item.bio)}</Text>
+          {/* <Text style={{color: Colors.Grey9, fontSize: 13, marginTop: 4, lineHeight: 18, textAlign: isRTL ? 'right' : 'left'}}>{bioPreview(item.bio)}</Text> */}
         </View>
 
       </TouchableOpacity>
