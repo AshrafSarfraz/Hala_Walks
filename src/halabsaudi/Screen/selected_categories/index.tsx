@@ -1,11 +1,9 @@
 import {fetchBrandCatalog} from '../../api/brandCatalog';
 import {Text} from '../../../ui/Text';
-import {TextInput} from '../../../ui/TextInput';
-import React, { useEffect, useState } from 'react';
-import {View, FlatList, Image, TouchableOpacity, PermissionsAndroid, Platform} from 'react-native';
+import React, { useEffect, useState,  } from 'react';
+import {View, FlatList, Image, TouchableOpacity, PermissionsAndroid, TextInput, Platform} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import CustomHeader from '../../Component/CustomHeader/CustomHeader';
 import { Location, Search } from '../../Themes/Images';
 import { Colors } from '../../Themes/Colors';
 import { useSelector } from 'react-redux';
@@ -231,29 +229,32 @@ const SelectedCategories: React.FC<{ route: any }> = ({ route }) => {
   /* ================= UI ================= */
   return (
     <View style={styles.container}>
-      <SafeAreaView edges={['top']} style={{ backgroundColor: Colors.darkgrey }}>
-        <View style={{ paddingHorizontal: '4%', paddingBottom: 8, backgroundColor: Colors.darkgrey }}>
-          <CustomHeader
-            title={language === 'en' ? item.text : item.categoryArabic}
-            onBackPress={() => navigation.goBack()}
-          />
-        </View>
-      </SafeAreaView>
+    <SafeAreaView
+  edges={['top']}
+  style={{ backgroundColor: Colors.darkgrey }}>
+  <View style={styles.header}>
+    <TouchableOpacity
+      style={styles.backButton}
+      onPress={() => navigation.goBack()}
+      accessibilityRole="button"
+      accessibilityLabel={language === 'ar' ? 'رجوع' : 'Go back'}>
+      <View style={styles.backChevron} />
+    </TouchableOpacity> 
+
+    <View style={styles.searchContainer}>
+      <Image source={Search} style={styles.searchIcon} />
+      <TextInput
+        style={styles.searchInput}
+        placeholder={languageData[language].Search_for_anything}
+        placeholderTextColor="#fff"
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+      />
+    </View>
+  </View>
+</SafeAreaView>
 
       <View style={{ flex: 1, paddingHorizontal: '4%', backgroundColor: Colors.dargBg }}>
-        <View style={{ marginTop: '4%' }} />
-
-        <View style={styles.searchContainer}>
-          <Image source={Search} style={styles.searchIcon} />
-          <TextInput
-            style={styles.searchInput}
-            placeholder={languageData[language].Search_for_anything}
-            placeholderTextColor='#ccc'
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-          />
-        </View>
-
         <View style={styles.FlatlistContainer}>
           {filteredData.length > 0 && !loading && (
             <Text style={styles.FoundItem_Txt}>{languageData[language].Found_Items}</Text>

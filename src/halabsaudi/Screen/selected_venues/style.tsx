@@ -83,8 +83,8 @@ export const getStyles=(language:String) => StyleSheet.create({
     shadowRadius: 4,
   },
   itemImage: {
-    width: 80,
-    height: 80,
+    width: 120,
+    height: 120,
     borderRadius: 8,
     marginRight: language==='en'?10:10,
     marginLeft: language==='ar'?10:0,

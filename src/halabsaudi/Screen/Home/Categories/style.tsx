@@ -14,8 +14,8 @@ export  const getStyles=(language:string) => StyleSheet.create({
       marginBottom:20
     },
     image:{
-       width:95,
-       height:120,
+       width:110,
+       height:130,
 
        
     },
@@ -32,7 +32,7 @@ export  const getStyles=(language:string) => StyleSheet.create({
       fontWeight:"bold",
       textAlign:"center",
       lineHeight:language==='en'?14:14,
-      marginTop:language==='en'?86:84,
+      marginTop:language==='en'?96:94,
       width:language==='en'?'80%':'70%',
       alignSelf:"center"
     }

@@ -1,8 +1,7 @@
 import {fetchBrandCatalog} from '../../api/brandCatalog';
 import {Text} from '../../../ui/Text';
-import {TextInput} from '../../../ui/TextInput';
 import React, {useEffect, useState} from 'react';
-import {View, FlatList, Image, TouchableOpacity, Platform, PermissionsAndroid} from 'react-native';
+import {View, FlatList, Image, TouchableOpacity, Platform, TextInput, PermissionsAndroid, } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
@@ -241,28 +240,33 @@ const SearchScreen: React.FC = () => {
   /* ================= UI ================= */
   return (
     <View style={styles.container}>
-      <SafeAreaView edges={['top']} style={{backgroundColor: Colors.darkgrey}}>
-        <View style={{paddingHorizontal: '4%', paddingBottom: 5}}>
-          <CustomHeader
-            title={language === 'en' ? 'Search Screen' : 'شاشة البحث'}
-            onBackPress={() => navigation.goBack()}
-          />
-        </View>
-      </SafeAreaView>
-
-      <View style={{flex: 1, paddingHorizontal: '4%', backgroundColor: Colors.dargBg}}>
-        <View style={{marginTop: '4%'}} />
-
+     <SafeAreaView
+      edges={['top']}
+      style={{ backgroundColor: Colors.darkgrey }}>
+      <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+          accessibilityRole="button"
+          accessibilityLabel={language === 'ar' ? 'رجوع' : 'Go back'}>
+          <View style={styles.backChevron} />
+        </TouchableOpacity> 
+    
         <View style={styles.searchContainer}>
           <Image source={Search} style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
             placeholder={languageData[language].Search_for_anything}
-            placeholderTextColor='#ccc'
+            placeholderTextColor="#fff"
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
         </View>
+      </View>
+    </SafeAreaView>
+    
+      <View style={{flex: 1, paddingHorizontal: '4%', backgroundColor: Colors.dargBg}}>
+  
 
         <View style={styles.FlatlistContainer}>
           {filteredData.length > 0 && !loading && (
@@ -321,8 +325,8 @@ const SearchScreen: React.FC = () => {
 
                     <Text style={styles.itemLocation}>
                       {language === 'en'
-                        ? item.descriptionEng?.length > 70 ? item.descriptionEng.substring(0, 70) + '...' : item.descriptionEng
-                        : item.descriptionArabic?.length > 70 ? item.descriptionArabic.substring(0, 70) + '...' : item.descriptionArabic}
+                        ? item.descriptionEng?.length > 70 ? item.descriptionEng.substring(0, 60) + '...' : item.descriptionEng
+                        : item.descriptionArabic?.length > 70 ? item.descriptionArabic.substring(0, 60) + '...' : item.descriptionArabic}
                     </Text>
 
                     <View style={styles.Loc_Status_Cont}>
