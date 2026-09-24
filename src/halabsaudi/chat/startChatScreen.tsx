@@ -1,3 +1,4 @@
+import UserAvatar from '../Component/UserAvatar';
 import type {HalaStackParamList} from '../Navigation/types';
 import {Text} from '../../ui/Text';
 import {ActivityIndicator} from '../../ui/ActivityIndicator';
@@ -10,7 +11,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import {useSelector} from 'react-redux';
-import {getAvatarColor} from '../Themes/avatarColor';
 import {BASE_URL} from '../../config/api';
 import {Colors} from '../Themes/Colors';
 import {languageData} from '../redux_toolkit/language/languageSlice';
@@ -270,7 +270,6 @@ export default function StartChatScreen({navigation}: Props) {
         </View>
       );
     }
-    const avatarBg        = getAvatarColor(item._id);
     return (
       <TouchableOpacity
         style={[styles.row, {flexDirection: rowDir}]}
@@ -279,11 +278,7 @@ export default function StartChatScreen({navigation}: Props) {
         accessibilityRole="button" accessibilityLabel={item.name}>
 
         <View style={[styles.avatarWrap, isRTL ? {marginLeft: 14, marginRight: 0} : {marginRight: 14}]}>
-          {item.avatar
-            ? <Image source={{uri: item.avatar}} style={styles.avatarImg} />
-            : <View style={[styles.avatarCircle, {backgroundColor: avatarBg}]}>
-                <Text style={styles.avatarLetter}>{(item.name || 'U').charAt(0).toUpperCase()}</Text>
-              </View>}
+          <UserAvatar uri={item.avatar} style={styles.avatarImg} />
           {item.isOnline && <View style={styles.onlineDot} />}
         </View>
 
@@ -400,7 +395,7 @@ const styles = StyleSheet.create({
   sectionLabel:  {fontSize: 11, fontWeight: '700', color: Colors.btnRed, letterSpacing: 0.2, textTransform: 'uppercase'},
   row:           {alignItems: 'center', backgroundColor: '#191B20', borderRadius: 16, paddingVertical: 12, paddingHorizontal: 14, shadowColor: '#1A202C', shadowOffset: {width: 0, height: 2}, shadowOpacity: 0.05, shadowRadius: 8},
   avatarWrap:    {position: 'relative', flexShrink: 0},
-  avatarImg:     {width: 50, height: 50, borderRadius: 25, tintColor: Colors.btnRed},
+  avatarImg:     {width: 50, height: 50, borderRadius: 25},
   avatarCircle:  {width: 50, height: 50, borderRadius: 25, justifyContent: 'center', alignItems: 'center'},
   avatarLetter:  {color: Colors.White, fontSize: 19, fontWeight: '800'},
   onlineDot:     {width: 12, height: 12, borderRadius: 6, backgroundColor: Colors.btnRed, position: 'absolute', bottom: 0, right: 0, borderWidth: 2, borderColor: Colors.White},

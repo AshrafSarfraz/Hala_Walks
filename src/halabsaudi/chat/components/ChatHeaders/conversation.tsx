@@ -1,3 +1,4 @@
+import UserAvatar from '../../../Component/UserAvatar';
 import {Text} from '../../../../ui/Text';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {TextInput} from '../../../../ui/TextInput';
@@ -14,6 +15,7 @@ import {RootState} from '../../../redux_toolkit/store';
 type Props = {
   profileName?: string;
   profileId?: string;
+  profileAvatar?: string | null;
   onProfilePress?: () => void;
   onSearch?: (text: string) => void;
 };
@@ -21,6 +23,7 @@ type Props = {
 export default function ConversationHeader({
   profileName = '',
   profileId = '',
+  profileAvatar,
   onProfilePress,
   onSearch,
 }: Props) {
@@ -34,7 +37,6 @@ export default function ConversationHeader({
   const [searchText, setSearchText]     = useState('');
   const searchAnim = useRef(new Animated.Value(0)).current;
 
-  const avatarLetter = profileName.charAt(0).toUpperCase();
   const avatarBg     = getAvatarColor(profileId);
 
   const openSearch = () => {
@@ -86,7 +88,7 @@ export default function ConversationHeader({
           <TouchableOpacity
             style={[styles.avatar, {backgroundColor: avatarBg}]}
             onPress={onProfilePress}>
-            <Text style={styles.avatarText}>{avatarLetter}</Text>
+            <UserAvatar uri={profileAvatar} style={{width: 34, height: 34, borderRadius: 17}} />
             
           </TouchableOpacity>
         </View>

@@ -1,9 +1,9 @@
+import UserAvatar from '../UserAvatar';
 import {Text} from '../../../ui/Text';
 import {TextInput} from '../../../ui/TextInput';
 import React, { useState } from "react";
 import {View, Modal, FlatList, TouchableOpacity, StyleSheet} from "react-native";
 import { Colors } from "../../Themes/Colors";
-import { getAvatarColor } from "../../Themes/avatarColor";
 
 type Props = {
   visible: boolean;
@@ -22,8 +22,6 @@ export default function ChatSearchModal({ visible, onClose, data = [], onSelect 
 
   const renderItem = ({ item }: any) => {
     const name = item.participant?.name || "User";
-    const avatarLetter = name.charAt(0).toUpperCase();
-    const avatarColor = getAvatarColor(item.participant?._id || name);
 
     return (
       <TouchableOpacity
@@ -34,9 +32,7 @@ export default function ChatSearchModal({ visible, onClose, data = [], onSelect 
           onClose();
         }}
       >
-        <View style={[styles.avatar, { backgroundColor: avatarColor }]}>
-          <Text style={styles.avatarText}>{avatarLetter}</Text>
-        </View>
+        <UserAvatar uri={item.participant?.avatar} style={styles.avatar} />
         <Text style={styles.name}>{name}</Text>
       </TouchableOpacity>
     );

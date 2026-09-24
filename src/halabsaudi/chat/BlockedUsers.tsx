@@ -1,3 +1,4 @@
+import UserAvatar from '../Component/UserAvatar';
 import {Text} from '../../ui/Text';
 import {ActivityIndicator} from '../../ui/ActivityIndicator';
 import {Alert} from '../../ui/Alert';
@@ -11,13 +12,12 @@ import Ionicons from '@react-native-vector-icons/ionicons';
 import {useSelector} from 'react-redux';
 import {BASE_URL} from '../../config/api';
 import {Colors} from '../Themes/Colors';
-import {getAvatarColor} from '../Themes/avatarColor';
 import {languageData} from '../redux_toolkit/language/languageSlice';
 import {RootState} from '../redux_toolkit/store';
 
 type BlockedUser = {
   _id: string;
-  blocked: {_id: string; name: string; email?: string};
+  blocked: {_id: string; name: string; avatar?: string; email?: string};
 };
 
 export default function BlockedUsers({navigation}: any) {
@@ -78,19 +78,12 @@ export default function BlockedUsers({navigation}: any) {
   const renderItem = ({item}: {item: BlockedUser}) => {
     const name         = item.blocked?.name || 'User';
     const uid          = item.blocked?._id || '';
-    const avatarColor  = getAvatarColor(uid);
     const isUnblocking = unblockingId === uid;
 
     return (
       <View style={[styles.row, {flexDirection: rowDir}]}>
         {/* Avatar */}
-        <View style={[
-          styles.avatarCircle,
-          {backgroundColor: avatarColor},
-          isRTL ? {marginLeft: 14, marginRight: 0} : {marginRight: 14},
-        ]}>
-          <Text style={styles.avatarLetter}>{name.charAt(0).toUpperCase()}</Text>
-        </View>
+        <UserAvatar uri={item.blocked?.avatar} style={[styles.avatarCircle, isRTL ? {marginLeft: 14} : {marginRight: 14}]} />
 
         {/* Name + badge */}
         <View style={[styles.info, {alignItems: isRTL ? 'flex-end' : 'flex-start'}]}>

@@ -1,3 +1,5 @@
+import FollowRequestsButton from './components/FollowRequestsButton';
+import UserAvatar from '../Component/UserAvatar';
 import {Text} from '../../ui/Text';
 import {fetchCollection} from '../api/collection';
 import {ActivityIndicator} from '../../ui/ActivityIndicator';
@@ -12,7 +14,6 @@ import {jwtDecode} from 'jwt-decode';
 import {useSelector} from 'react-redux';
 import {Colors} from '../Themes/Colors';
 import {chatMessage} from '../Themes/Images';
-import {getAvatarColor} from '../Themes/avatarColor';
 import {BASE_URL} from '../../config/api';
 import {getSocket} from './socket';
 import ConversationHeader from './components/ChatHeaders/conversation';
@@ -85,6 +86,7 @@ export default function ConversationsScreen({navigation}: any) {
   const [loadError, setLoadError] = useState(false);
   const [searchQuery,   setSearchQuery]   = useState('');
   const [currentUserId, setCurrentUserId] = useState('');
+  const [myAvatar, setMyAvatar] = useState<string | null>(null);
   const [myname,        setMyname]        = useState('');
   const [deletingChat,  setDeletingChat]  = useState<Conversation | null>(null);
 
@@ -94,6 +96,14 @@ export default function ConversationsScreen({navigation}: any) {
   const insets           = useSafeAreaInsets();
 
   useEffect(() => { currentUserIdRef.current = currentUserId; }, [currentUserId]);
+
+  useFocusEffect(useCallback(() => {
+    let active = true;
+    AsyncStorage.getItem('hala_user_backend').then(raw => {
+      if (active && raw) {const user = JSON.parse(raw); setMyAvatar(user.avatar || null); setMyname(user.name || '');}
+    }).catch(() => {});
+    return () => {active = false;};
+  }, []));
 
   // Init
   useEffect(() => {
@@ -295,13 +305,7 @@ export default function ConversationsScreen({navigation}: any) {
         onLongPress={() => setDeletingChat(item)}
         delayLongPress={300}
         activeOpacity={0.72}>
-        {avatarUri ? (
-          <Image source={{uri: avatarUri}} style={[styles.avatarImg, isRTL ? {marginLeft: 14} : {marginRight: 14}]} />
-        ) : (
-          <View style={[styles.avatarWrap, {backgroundColor: getAvatarColor(item.participant?._id)}, isRTL ? {marginLeft: 14} : {marginRight: 14}]}>
-            <Text style={styles.avatarText}>{name.charAt(0).toUpperCase()}</Text>
-          </View>
-        )}
+        <UserAvatar uri={avatarUri} style={[styles.avatarImg, isRTL ? {marginLeft: 14} : {marginRight: 14}]} />
         <View style={styles.rowContent}>
           <View style={[styles.rowTop, {flexDirection: rowDir}]}>
             <Text style={[styles.name, hasUnread && styles.nameUnread, {textAlign: isRTL ? 'right' : 'left'}, isRTL ? {marginLeft: 8} : {marginRight: 8}]} numberOfLines={1}>
@@ -334,10 +338,11 @@ export default function ConversationsScreen({navigation}: any) {
   return (
     <View style={styles.container}>
       <ConversationHeader
-        profileName={myname} profileId={currentUserId}
+        profileName={myname} profileId={currentUserId} profileAvatar={myAvatar}
         onProfilePress={() => navigation.navigate('Profile')}
         onSearch={(text: string) => setSearchQuery(text)}
       />
+      <FollowRequestsButton navigation={navigation} />
       <FlatList
         data={filtered} keyExtractor={keyExtractor} renderItem={renderItem}
         keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}

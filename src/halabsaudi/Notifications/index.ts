@@ -10,6 +10,7 @@ import BackgroundGeolocation, {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import notifee, { AndroidImportance, EventType } from '@notifee/react-native';
 import { navigate } from './RootNavigation';
+import {isSocialNotification, saveSocialNavigation} from './social';
 
 // ─── CONFIG ───────────────────────────────────────────────────────────────────
 const VENUES_API     = 'https://hala-b-saudi.onrender.com/api/hbs/venues';
@@ -240,6 +241,10 @@ export function setupNotificationHandlers() {
   });
   notifee.onBackgroundEvent(async ({ type, detail }) => {
     if (type === EventType.PRESS) {
+      if (isSocialNotification(detail.notification?.data)) {
+        await saveSocialNavigation(detail.notification?.data);
+        return;
+      }
       const id = detail.notification?.data?.venueId as string;
       if (id) await AsyncStorage.setItem(PENDING_NAV, id);
     }

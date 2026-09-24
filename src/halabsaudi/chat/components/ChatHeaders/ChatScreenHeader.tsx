@@ -1,3 +1,4 @@
+import UserAvatar from '../../../Component/UserAvatar';
 import {Text} from '../../../../ui/Text';
 // src/halabsaudi/Component/ChatHeaders/ChatScreenHeader.tsx
 import React from 'react';
@@ -5,7 +6,6 @@ import {View, TouchableOpacity, Image, StyleSheet, Platform} from 'react-native'
 import Ionicons from '@react-native-vector-icons/ionicons';
 import {useSelector} from 'react-redux';
 import {Colors} from '../../../Themes/Colors';
-import {getAvatarColor} from '../../../Themes/avatarColor';
 import {languageData} from '../../../redux_toolkit/language/languageSlice';
 import {RootState} from '../../../redux_toolkit/store';
 
@@ -41,7 +41,6 @@ export default function ChatScreenHeader({
   const isRTL    = language === 'ar';
   const rowDir   = isRTL ? 'row-reverse' : 'row';
 
-  const fallbackColor = getAvatarColor(userId);
 
   const getStatusText = () => {
     if (isBlocked) return t.status_blocked;
@@ -77,15 +76,7 @@ export default function ChatScreenHeader({
           styles.avatarWrap,
           isRTL ? {marginLeft: 10, marginRight: 0} : {marginRight: 10},
         ]}>
-          {avatarUri ? (
-            <Image source={{uri: avatarUri}} style={styles.avatarImage} />
-          ) : (
-            <View style={[styles.avatarCircle, {backgroundColor: fallbackColor}]}>
-              <Text style={styles.avatarLetter}>
-                {name?.charAt(0)?.toUpperCase() || 'U'}
-              </Text>
-            </View>
-          )}
+          <UserAvatar uri={avatarUri} style={styles.avatarImage} />
           {isOnline && !isBlocked && !hidesOnline && <View style={styles.onlineDot} />}
         </View>
 

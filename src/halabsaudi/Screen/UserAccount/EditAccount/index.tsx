@@ -1,3 +1,4 @@
+import UserAvatar from '../../../Component/UserAvatar';
 import {Text} from '../../../../ui/Text';
 import {TextInput} from '../../../../ui/TextInput';
 import {ActivityIndicator} from '../../../../ui/ActivityIndicator';
@@ -38,14 +39,7 @@ const EditAccountScreen: React.FC = ({navigation}: any) => {
   const [removing, setRemoving] = useState(false); // ✅
   const [showPicker, setShowPicker] = useState(false);
 
-  const initials = name
-    ? name
-        .trim()
-        .split(/\s+/)
-        .slice(0, 2)
-        .map(p => p[0]?.toUpperCase() ?? '')
-        .join('')
-    : 'U';
+
 
   useEffect(() => {
     const load = async () => {
@@ -262,24 +256,9 @@ const EditAccountScreen: React.FC = ({navigation}: any) => {
                 <View style={s.avatarCircle}>
                   <ActivityIndicator color="#fff" />
                 </View>
-              ) : avatar ? (
-                <View>
-                  <FastImage
-                    source={{
-                      uri: avatar,
-                      priority: FastImage.priority.high,
-                      cache: FastImage.cacheControl.immutable,
-                    }}
-                    style={s.avatarImg}
-                    onError={() => setAvatar(null)}
-                  />
-                  <View style={s.avatarEditBadge}>
-                    <Ionicons name="camera-outline" size={14} color="#fff" />
-                  </View>
-                </View>
               ) : (
-                <View style={s.avatarCircle}>
-                  <Text style={s.avatarInitials}>{initials}</Text>
+                <View>
+                  <UserAvatar uri={avatar} style={s.avatarImg} />
                   <View style={s.avatarEditBadge}>
                     <Ionicons name="camera-outline" size={14} color="#fff" />
                   </View>

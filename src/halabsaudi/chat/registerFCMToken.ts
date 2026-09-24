@@ -7,6 +7,8 @@ import { BASE_URL } from '../../config/api';
 
 // ✅ Same token register baar baar mat karo
 let _lastRegisteredToken: string | null = null;
+let _lastRegisteredAccount: string | null = null;
+let unsubscribeTokenRefresh: (() => void) | undefined;
 
 export async function registerFCMToken(): Promise<void> {
   try {
@@ -32,7 +34,7 @@ export async function registerFCMToken(): Promise<void> {
     }
 
     // ✅ Already registered — skip
-    if (_lastRegisteredToken === fcmToken) {
+    if (_lastRegisteredToken === fcmToken && _lastRegisteredAccount === authToken) {
       console.log('[FCM] Token unchanged — skipping');
       return;
     }
@@ -46,10 +48,12 @@ export async function registerFCMToken(): Promise<void> {
     );
 
     _lastRegisteredToken = fcmToken;
+    _lastRegisteredAccount = authToken;
     console.log('[FCM] ✅ Token registered | platform:', platform);
 
     // ✅ Token refresh
-    messaging().onTokenRefresh(async (newToken: string) => {
+    unsubscribeTokenRefresh?.();
+    unsubscribeTokenRefresh = messaging().onTokenRefresh(async (newToken: string) => {
       try {
         _lastRegisteredToken = null;
         const t = await AsyncStorage.getItem('hala_token');
@@ -60,6 +64,7 @@ export async function registerFCMToken(): Promise<void> {
           { headers: { Authorization: `Bearer ${t}` } }
         );
         _lastRegisteredToken = newToken;
+        _lastRegisteredAccount = t;
         console.log('[FCM] Token refreshed');
       } catch (e) {
         console.log('[FCM] Refresh error:', e);
@@ -72,6 +77,10 @@ export async function registerFCMToken(): Promise<void> {
 }
 
 export async function unregisterFCMToken(): Promise<void> {
+  unsubscribeTokenRefresh?.();
+  unsubscribeTokenRefresh = undefined;
+  _lastRegisteredToken = null;
+  _lastRegisteredAccount = null;
   try {
     const authToken = await AsyncStorage.getItem('hala_token');
     if (!authToken) return;

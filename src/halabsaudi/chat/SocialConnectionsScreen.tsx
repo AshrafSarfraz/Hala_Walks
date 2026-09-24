@@ -1,3 +1,4 @@
+import UserAvatar from '../Component/UserAvatar';
 import {useStatusBar} from '../Component/UseStatusBar/useStatusBar';
 import {Text} from '../../ui/Text';
 import {fetchCollection} from '../api/collection';
@@ -13,7 +14,6 @@ import axios from 'axios';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import {BASE_URL} from '../../config/api';
 import {Colors} from '../Themes/Colors';
-import {getAvatarColor} from '../Themes/avatarColor';
 
 type Person = SocialPerson;
 type Request = {_id: string; user: Person};
@@ -58,6 +58,7 @@ export default function SocialConnectionsScreen({route, navigation}: any) {
   };
 
   const handleRequest = async (request: Request, approve: boolean) => {
+    if (actionId) return;
     setActionId(request._id);
     try {
       const token = await AsyncStorage.getItem('hala_token');
@@ -76,6 +77,17 @@ export default function SocialConnectionsScreen({route, navigation}: any) {
     } finally {
       setActionId(null);
     }
+  };
+
+  const followBack = async (user: Person) => {
+    if (actionId) return;
+    setActionId(user._id);
+    try {
+      const token = await AsyncStorage.getItem('hala_token');
+      await axios.post(`${BASE_URL}/api/users/follow/${user._id}`, {}, {headers: {Authorization: `Bearer ${token}`}, timeout: 10000});
+      await load();
+    } catch {Alert.alert('Error', 'Could not follow this user. Please try again.');}
+    finally {setActionId(null);}
   };
 
   const unfollow = (user: Person) => Alert.alert('Unfollow?', `Stop following ${user.name}?`, [
@@ -98,16 +110,17 @@ export default function SocialConnectionsScreen({route, navigation}: any) {
       <View style={s.row}>
         <TouchableOpacity style={{flex: 1, flexDirection: 'row', alignItems: 'center'}} accessibilityRole="button" accessibilityLabel={`View ${user.name}'s profile`}
           onPress={() => navigation.push('UserProfile', {participantId: user._id, participantName: user.name})}>
-        {user.avatar ? <Image source={{uri: user.avatar}} style={s.avatar} /> : (
-          <View style={[s.avatar, s.fallback, {backgroundColor: getAvatarColor(user._id)}]}>
-            <Text style={s.initial}>{(user.name || 'U').charAt(0).toUpperCase()}</Text>
-          </View>
-        )}
+        <UserAvatar uri={user.avatar} style={s.avatar} />
         <View style={s.info}>
           <Text style={s.name}>{user.name}</Text>
           <Text style={s.bio}>{bioPreview(user.bio)}</Text>
         </View>
         </TouchableOpacity>
+        {mode === 'followers' && isOwn && user.relationship?.followingStatus === 'none' &&
+          <TouchableOpacity accessibilityRole="button" style={s.confirm} disabled={actionId !== null} onPress={() => followBack(user)}>
+            <Text style={s.confirmText}>Follow back</Text>
+          </TouchableOpacity>}
+        {mode === 'followers' && isOwn && user.relationship?.followingStatus === 'pending' && <Text style={s.bio}>Requested</Text>}
         {canShowMessage(user) && <TouchableOpacity accessibilityRole="button" accessibilityLabel={`Message ${user.name}`} style={s.confirm} disabled={actionId !== null} onPress={() => message(user)}>
           {actionId === user._id ? <ActivityIndicator /> : <Text style={s.confirmText}>Message</Text>}
         </TouchableOpacity>}
@@ -116,11 +129,11 @@ export default function SocialConnectionsScreen({route, navigation}: any) {
         </TouchableOpacity>}
         {request && (
           <View style={s.actions}>
-            <TouchableOpacity style={s.reject} onPress={() => handleRequest(request, false)} disabled={actionId === request._id}>
-              <Text style={s.rejectText}>Delete</Text>
+            <TouchableOpacity accessibilityRole="button" accessibilityLabel={`Decline ${user.name}'s request`} style={s.reject} onPress={() => handleRequest(request, false)} disabled={actionId !== null}>
+              <Text style={s.rejectText}>Decline</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={s.confirm} onPress={() => handleRequest(request, true)} disabled={actionId === request._id}>
-              {actionId === request._id ? <ActivityIndicator size="small" color="#fff" /> : <Text style={s.confirmText}>Confirm</Text>}
+            <TouchableOpacity accessibilityRole="button" accessibilityLabel={`Accept ${user.name}'s request`} style={s.confirm} onPress={() => handleRequest(request, true)} disabled={actionId !== null}>
+              {actionId === request._id ? <ActivityIndicator size="small" color="#fff" /> : <Text style={s.confirmText}>Accept</Text>}
             </TouchableOpacity>
           </View>
         )}

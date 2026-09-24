@@ -1,3 +1,4 @@
+import UserAvatar from '../Component/UserAvatar';
 import React, {useCallback, useRef, useState} from 'react';
 import {View, FlatList, StyleSheet, TouchableOpacity, Image, useWindowDimensions} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -80,6 +81,21 @@ export default function UserProfileScreen({route, navigation}: any) {
   }, [participantId, chatId]);
   useSocialRefresh(load, clear);
 
+  const respondToRequest = async (accept: boolean) => {
+    if (busy) return;
+    setBusy(true);
+    try {
+      const token = await AsyncStorage.getItem('hala_token');
+      const config = {headers: {Authorization: `Bearer ${token}`}, timeout: 15000};
+      const url = `${BASE_URL}/api/users/follow-requests/${participantId}`;
+      if (accept) await axios.post(`${url}/approve`, {}, config);
+      else await axios.delete(url, config);
+      clearPeopleCache();
+      await load();
+    } catch {Alert.alert('Error', 'Could not update this request. Please try again.');}
+    finally {setBusy(false);}
+  };
+
   const follow = async () => {
     if (!profile || busy) return;
     setBusy(true);
@@ -146,7 +162,7 @@ export default function UserProfileScreen({route, navigation}: any) {
     : profile?.relationship?.followedByStatus === 'accepted' ? label('Follow back', 'متابعة بالمثل') : label('Follow', 'متابعة');
   const header = <View style={s.profile}>
     <TouchableOpacity disabled={!profile?.avatar} onPress={() => profile?.avatar && setViewer({uri: profile.avatar})}>
-      {profile?.avatar ? <Image source={{uri: profile.avatar}} style={s.avatar} /> : <View style={[s.avatar, s.fallback]}><Text style={s.initial}>{name.charAt(0).toUpperCase()}</Text></View>}
+      <UserAvatar uri={profile?.avatar} style={s.avatar} />
     </TouchableOpacity>
     <Text style={s.name}>{name}</Text>
     <Text style={s.bio}>{profile?.bio?.trim() || 'null'}</Text>
@@ -164,6 +180,13 @@ export default function UserProfileScreen({route, navigation}: any) {
         {!profile?.blocked && <TouchableOpacity style={s.button} disabled={busy} onPress={follow}><Text style={s.buttonText}>{followLabel}</Text></TouchableOpacity>}
         {profile && canShowMessage(profile) && <TouchableOpacity style={[s.button, s.secondary]} disabled={busy} onPress={message}><Text style={s.buttonText}>{label('Message', 'رسالة')}</Text></TouchableOpacity>}
       </View>
+      {profile?.relationship?.followedByStatus === 'pending' && !profile.blocked && <View style={{alignItems: 'center', gap: 10, marginTop: 12}}>
+        <Text style={s.hint}>{label('Wants to follow you', 'يرغب بمتابعتك')}</Text>
+        <View style={{flexDirection: 'row', gap: 12}}>
+          <TouchableOpacity accessibilityRole="button" style={s.button} disabled={busy} onPress={() => respondToRequest(true)}><Text style={s.buttonText}>{label('Accept', 'قبول')}</Text></TouchableOpacity>
+          <TouchableOpacity accessibilityRole="button" style={s.button} disabled={busy} onPress={() => respondToRequest(false)}><Text style={s.buttonText}>{label('Decline', 'رفض')}</Text></TouchableOpacity>
+        </View>
+      </View>}
       {status === 'pending' && <Text style={s.hint}>{label('Waiting for approval. Messaging also requires a follow back.', 'بانتظار الموافقة. المراسلة تتطلب المتابعة المتبادلة أيضاً.')}</Text>}
       {status === 'accepted' && profile?.relationship?.followedByStatus !== 'accepted' && <Text style={s.hint}>{label('Messaging becomes available when they follow you back.', 'تتوفر المراسلة عندما يتابعك هذا المستخدم أيضاً.')}</Text>}
       <TouchableOpacity style={s.textAction} onPress={() => setBlockModal(true)}><Text style={s.muted}>{iBlocked ? label('Unblock', 'إلغاء الحظر') : label('Block user', 'حظر المستخدم')}</Text></TouchableOpacity>
