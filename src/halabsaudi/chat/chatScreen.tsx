@@ -24,6 +24,7 @@ import AttachmentSheet from './components/AttachmentSheet';
 import ChatScreenHeader from './components/ChatHeaders/ChatScreenHeader';
 import DeleteMessageModal from './components/DeleteMessageModal';
 import ImageViewerModal from './components/ImageViewerModal';
+import {setPendingImageSend} from './components/imagePreviewBridge';
 import WhatsAppMessageModal, {
   MessageAction,
 } from './components/WhatsAppMessageModal';
@@ -65,11 +66,27 @@ type Message = {
   edited?: boolean;
   replyTo?: {_id: string; text: string; sender?: {name: string}} | null;
   mediaUrl?: string | null;
-  mediaType?: 'image' | 'video' | 'document' | null;
+  thumbnailUrl?: string | null;
+  mediaType?: 'image' | 'video' | 'document' | 'audio' | null;
   mediaName?: string | null;
+  mediaSize?: number | null;
+  mediaWidth?: number | null;
+  mediaHeight?: number | null;
   reactions?: Record<string, string>;
 };
-type QueuedMessage = {tempId: string; text: string; replyToId: string | null};
+
+type QueuedMessage = {
+  tempId: string;
+  text: string;
+  replyToId: string | null;
+  mediaUrl?: string | null;
+  thumbnailUrl?: string | null;
+  mediaType?: 'image' | 'video' | 'document' | 'audio' | null;
+  mediaName?: string | null;
+  mediaSize?: number | null;
+  mediaWidth?: number | null;
+  mediaHeight?: number | null;
+};
 
 function rankOf(s?: TickStatus): number {
   if (s === 'seen') return 3;
@@ -281,7 +298,7 @@ function ChatScreenContent({route, navigation}: any) {
   const [muteDuration, setMuteDuration] = useState<any>(null);
   const isMuted = muteDuration !== null;
   const [emojiKeyboardOpen, setEmojiKeyboardOpen] = useState(false);
-  const [keyboardOpen, setKeyboardOpen] = useState(false);
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [attachSheetOpen, setAttachSheetOpen] = useState(false);
 
   const [msgModalVisible, setMsgModalVisible] = useState(false);
@@ -399,8 +416,12 @@ function ChatScreenContent({route, navigation}: any) {
           edited: !!m.edited,
           replyTo: m.replyTo || null,
           mediaUrl: m.mediaUrl || null,
+          thumbnailUrl: m.thumbnailUrl || null,
           mediaType: m.mediaType || null,
           mediaName: m.mediaName || null,
+          mediaSize: m.mediaSize ?? null,
+          mediaWidth: m.mediaWidth ?? null,
+          mediaHeight: m.mediaHeight ?? null,
           reactions: m.reactions
             ? Object.fromEntries(Object.entries(m.reactions))
             : {},
@@ -436,9 +457,19 @@ function ChatScreenContent({route, navigation}: any) {
   }, [chatId, participantId, reload]);
 
   useEffect(() => {
-    const show = Keyboard.addListener('keyboardDidShow', () => setKeyboardOpen(true));
-    const hide = Keyboard.addListener('keyboardDidHide', () => setKeyboardOpen(false));
-    return () => { show.remove(); hide.remove(); };
+    const show = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
+      () => setKeyboardVisible(true),
+    );
+    const hide = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
+      () => setKeyboardVisible(false),
+    );
+
+    return () => {
+      show.remove();
+      hide.remove();
+    };
   }, []);
 
   // ─── Offline queue flush ──────────────────────────────────────────────────
@@ -460,6 +491,13 @@ function ChatScreenContent({route, navigation}: any) {
         text: item.text,
         tempId: item.tempId,
         replyTo: item.replyToId,
+        mediaUrl: item.mediaUrl || null,
+        thumbnailUrl: item.thumbnailUrl || null,
+        mediaType: item.mediaType || null,
+        mediaName: item.mediaName || null,
+        mediaSize: item.mediaSize ?? null,
+        mediaWidth: item.mediaWidth ?? null,
+        mediaHeight: item.mediaHeight ?? null,
       });
       // A timeout is not proof of delivery. Show a retry state.
       const tid = item.tempId;
@@ -600,8 +638,12 @@ function ChatScreenContent({route, navigation}: any) {
             deleted: !!msg.deleted,
             replyTo: msg.replyTo || null,
             mediaUrl: msg.mediaUrl || null,
+            thumbnailUrl: msg.thumbnailUrl || null,
             mediaType: msg.mediaType || null,
             mediaName: msg.mediaName || null,
+            mediaSize: msg.mediaSize ?? null,
+            mediaWidth: msg.mediaWidth ?? null,
+            mediaHeight: msg.mediaHeight ?? null,
             reactions: {},
             tempId: msg.tempId,
           } as Message,
@@ -801,73 +843,185 @@ function ChatScreenContent({route, navigation}: any) {
   }, [chatId, inputText, isBlocked, editingMessage, replyTo, sending]);
 
   // ─── Media upload ─────────────────────────────────────────────────────────
-  // ✅ caption param add kiya — ImagePreviewScreen se caption aata hai
-  const uploadMedia = useCallback(async (asset: any, caption = '') => {
-    if (!asset?.uri || !canSendRef.current) return;
-    setMediaUploading(true);
-    try {
-      const formData = new FormData();
-      formData.append('file', {
-        uri: asset.uri,
-        type: asset.type || 'image/jpeg',
-        name: asset.fileName || 'upload.jpg',
-      } as any);
-      const res = await axios.post(
-        `${BASE_URL}/api/messages/upload`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${tokenRef.current}`,
-            'Content-Type': 'multipart/form-data',
-          },
-          timeout: 30000,
-        },
-      );
-      const {mediaUrl, mediaType, mediaName} = res.data;
-      const socket = getSocket();
-      const tempId =
-        Date.now().toString() + Math.random().toString(36).slice(2, 8);
+  // Image/video upload REST se hota hai, actual chat message socket se.
+  // Agar socket temporary disconnect ho to media queue me preserve hoti hai
+  // aur reconnect par automatically send ho jati hai.
+  const uploadMedia = useCallback(
+    async (asset: any, caption = '') => {
+      if (!asset?.uri || !canSendRef.current) {
+        throw new Error('Messaging is not available');
+      }
 
-      setMessages(prev => [
-        {
+      setMediaUploading(true);
+
+      try {
+        const token =
+          tokenRef.current || (await AsyncStorage.getItem('hala_token'));
+
+        if (!token) {
+          throw new Error('Missing session');
+        }
+
+        const mimeType = asset.type || 'image/jpeg';
+        const extension =
+          mimeType === 'image/png'
+            ? 'png'
+            : mimeType === 'image/heic'
+              ? 'heic'
+              : mimeType === 'image/heif'
+                ? 'heif'
+                : mimeType === 'video/quicktime'
+                  ? 'mov'
+                  : mimeType === 'video/mp4'
+                    ? 'mp4'
+                    : 'jpg';
+
+        const formData = new FormData();
+
+        formData.append(
+          'file',
+          {
+            uri: asset.uri,
+            type: mimeType,
+            name: asset.fileName || `media-${Date.now()}.${extension}`,
+          } as any,
+        );
+
+        // Backend is chat ki membership / messaging permission verify kar sakta hai.
+        formData.append('chatId', String(chatId));
+
+        const res = await axios.post(
+          `${BASE_URL}/api/messages/upload`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              // IMPORTANT:
+              // Content-Type manually set NAHI karna.
+              // React Native / Axios multipart boundary khud add karega.
+            },
+            timeout: 45000,
+          },
+        );
+
+        const {
+          mediaUrl,
+          thumbnailUrl,
+          mediaType,
+          mediaName,
+          mediaSize,
+          mediaWidth,
+          mediaHeight,
+        } = res.data || {};
+
+        if (!mediaUrl) {
+          throw new Error('Upload returned no media URL');
+        }
+
+        const tempId =
+          Date.now().toString() + Math.random().toString(36).slice(2, 8);
+
+        const socket = getSocket();
+        const canSendNow = socket?.connected === true;
+
+        const localMessage: Message = {
           _id: tempId,
-          text: caption,          // ✅ caption use karo
+          text: caption.trim(),
           createdAt: new Date(),
           senderId: currentUserIdRef.current,
           senderName: 'Me',
           tempId,
-          status: 'sending',
+          status: canSendNow ? 'sending' : 'pending',
           msgStatus: 'sent',
           mediaUrl,
-          mediaType,
-          mediaName,
+          thumbnailUrl: thumbnailUrl || null,
+          mediaType: mediaType || null,
+          mediaName: mediaName || asset.fileName || null,
+          mediaSize: mediaSize ?? null,
+          mediaWidth: mediaWidth ?? null,
+          mediaHeight: mediaHeight ?? null,
           reactions: {},
-        } as Message,
-        ...prev,
-      ]);
+        };
 
-      if (socket?.connected) {
-        socket.emit('send-message', {
-          chatId,
-          text: caption,          // ✅ caption use karo
+        setMessages(prev => [localMessage, ...prev]);
+        jumpToLatest();
+
+        const payload: QueuedMessage = {
           tempId,
+          text: caption.trim(),
+          replyToId: null,
           mediaUrl,
-          mediaType,
-          mediaName,
-        });
-      }
-    } catch {
-      Alert.alert('Upload Failed', 'Please try again.');
-      throw new Error('upload');
-    } finally {
-      setMediaUploading(false);
-    }
-  }, [chatId]);
+          thumbnailUrl: thumbnailUrl || null,
+          mediaType: mediaType || null,
+          mediaName: mediaName || asset.fileName || null,
+          mediaSize: mediaSize ?? null,
+          mediaWidth: mediaWidth ?? null,
+          mediaHeight: mediaHeight ?? null,
+        };
 
-  // ✅ Image preview screen pe navigate karo — seedha upload nahi
+        if (!canSendNow) {
+          // Text ki tarah media ko bhi offline/reconnect queue me rakho.
+          pushToQueue(chatId, payload);
+
+          // Socket object disconnected ho sakta hai; token ke saath reconnect trigger karo.
+          connectSocket(token);
+          return;
+        }
+
+        socket!.emit('send-message', {
+          chatId,
+          text: payload.text,
+          tempId: payload.tempId,
+          replyTo: payload.replyToId,
+          mediaUrl: payload.mediaUrl,
+          thumbnailUrl: payload.thumbnailUrl,
+          mediaType: payload.mediaType,
+          mediaName: payload.mediaName,
+          mediaSize: payload.mediaSize,
+          mediaWidth: payload.mediaWidth,
+          mediaHeight: payload.mediaHeight,
+        });
+
+        // Server acknowledgement na aaye to retry state show karo.
+        setTimeout(() => {
+          setMessages(prev =>
+            prev.map(m =>
+              m.tempId === tempId && m.status === 'sending'
+                ? {...m, status: 'failed'}
+                : m,
+            ),
+          );
+        }, 12000);
+      } catch (error: any) {
+        console.log(
+          '[CHAT MEDIA UPLOAD ERROR]',
+          error?.response?.status,
+          error?.response?.data,
+          error?.message,
+        );
+
+        Alert.alert(
+          'Upload Failed',
+          error?.response?.data?.error ||
+            error?.response?.data?.message ||
+            error?.message ||
+            'Please try again.',
+        );
+
+        throw error;
+      } finally {
+        setMediaUploading(false);
+      }
+    },
+    [chatId, jumpToLatest],
+  );
+
+  // Image preview ko function navigation params me pass nahi karte.
+  // Callback bridge me temporary store hota hai; route params serializable rehte hain.
   const openImagePreview = useCallback(
     (asset: any) => {
-      navigation.navigate('ImagePreview', {asset, onSend: uploadMedia});
+      setPendingImageSend(uploadMedia);
+      navigation.navigate('ImagePreview', {asset});
     },
     [navigation, uploadMedia],
   );
@@ -1263,7 +1417,7 @@ function ChatScreenContent({route, navigation}: any) {
     );
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
       <View style={styles.container}>
         <View style={{backgroundColor: Colors.darkgrey}}>
         <ChatScreenHeader
@@ -1283,10 +1437,8 @@ function ChatScreenContent({route, navigation}: any) {
 <View style={{ flex:1,backgroundColor: Colors.dargBg}}>
         <KeyboardAvoidingView
           style={{flex: 1}}
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          keyboardVerticalOffset={
-            Platform.OS === 'ios' ? insets.top : keyboardOpen ? 25 : 0
-          }>
+          behavior="padding"
+          keyboardVerticalOffset={0}>
           <View style={{flex: 1}}>
             <FlatList
               ref={listRef}
@@ -1309,7 +1461,19 @@ function ChatScreenContent({route, navigation}: any) {
                   if (!socket?.connected) {Alert.alert(isRTL ? 'غير متصل' : 'Offline', isRTL ? 'تحقق من اتصال الإنترنت وحاول مجدداً.' : 'Reconnect to the internet and try again.'); return;}
                   const tempId = item.tempId || item._id;
                   setMessages(prev => prev.map(m => m._id === item._id ? {...m, tempId, status: 'sending'} : m));
-                  socket.emit('send-message', {chatId, text: item.text, tempId, replyTo: item.replyTo?._id || null});
+                  socket.emit('send-message', {
+                    chatId,
+                    text: item.text,
+                    tempId,
+                    replyTo: item.replyTo?._id || null,
+                    mediaUrl: item.mediaUrl || null,
+                    thumbnailUrl: item.thumbnailUrl || null,
+                    mediaType: item.mediaType || null,
+                    mediaName: item.mediaName || null,
+                    mediaSize: item.mediaSize ?? null,
+                    mediaWidth: item.mediaWidth ?? null,
+                    mediaHeight: item.mediaHeight ?? null,
+                  });
                   setTimeout(() => setMessages(prev => prev.map(m => m.tempId === tempId && m.status === 'sending' ? {...m, status: 'failed'} : m)), 10000);
                 }}><Text style={styles.retryText}>{isRTL ? 'لم يتم تأكيد الإرسال · إعادة المحاولة' : (access === 'waiting' ? 'Waiting for friend request acceptance' : 'Not sent · Tap to retry')}</Text></TouchableOpacity>}
                 </View>;
@@ -1400,7 +1564,14 @@ function ChatScreenContent({route, navigation}: any) {
               <Text style={styles.historyText}>{access === 'waiting' ? (isRTL ? 'الدردشة غير متاحة. افتح الملف الشخصي للتحقق من الصداقة أو إرسال طلب جديد. اضغط هنا للتحديث.' : 'Chat is unavailable. Open their profile to check your friendship or send a new request. Tap here to refresh.') : access === 'checking' ? (isRTL ? 'جارٍ التحقق من إمكانية المراسلة…' : 'Checking messaging permission…') : (isRTL ? 'تعذر التحقق من إمكانية المراسلة. اضغط لإعادة المحاولة.' : 'Could not verify messaging permission. Tap to retry.')}</Text>
             </TouchableOpacity>
           ) : !isBlocked ? (
-            <View style={[styles.inputRow, {flexDirection: rowDir, paddingBottom: 8}]}>
+            <View
+              style={[
+                styles.inputRow,
+                {
+                  flexDirection: rowDir,
+                  paddingBottom: keyboardVisible ? 6 : Math.max(insets.bottom, 6),
+                },
+              ]}>
               <TouchableOpacity
                 style={[styles.attachBtn, isRTL ? {marginRight: 4} : {marginLeft: 4}]}
                 onPress={handleAttach}
@@ -1620,7 +1791,13 @@ const styles = StyleSheet.create({
   replyBarInner: {alignItems: 'center', backgroundColor: Colors.darkgrey, borderRadius: 12, padding: 8},
   replyBarLabel: {fontSize: 12, fontWeight: '700', color: Colors.White},
   replyBarText: {fontSize: 13, color: Colors.whiteGrey, marginTop: 1},
-  inputRow: {alignItems: 'center', paddingHorizontal: 8, marginTop: 6, marginBottom: 10},
+  inputRow: {
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingTop: 6,
+    marginBottom: 0,
+    backgroundColor: Colors.dargBg,
+  },
   attachBtn: {width: 32, height: 36, justifyContent: 'center', alignItems: 'center'},
   // ✅ FIX: inputBox SAFAID tha aur textInput ka color bhi SAFAID —
   //    type karte waqt kuch nazar hi nahi aata tha. Ab input dark hai
