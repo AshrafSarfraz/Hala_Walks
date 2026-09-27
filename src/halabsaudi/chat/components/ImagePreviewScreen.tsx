@@ -4,15 +4,15 @@ import {Text} from '../../../ui/Text';
 import {TextInput} from '../../../ui/TextInput';
 import {ActivityIndicator} from '../../../ui/ActivityIndicator';
 
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Image,
   TouchableOpacity,
   StyleSheet,
   KeyboardAvoidingView,
-  Keyboard,
   Platform,
+  Keyboard,
 } from 'react-native';
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import Ionicons from '@react-native-vector-icons/ionicons';
@@ -21,81 +21,43 @@ import {useSelector} from 'react-redux';
 import {Colors} from '../../Themes/Colors';
 import {RootState} from '../../redux_toolkit/store';
 import {useStatusBar} from '../../Component/UseStatusBar/useStatusBar';
-import {
-  clearPendingImageSend,
-  getPendingImageSend,
-} from './imagePreviewBridge';
+import {enqueueMediaJob} from '../mediaOutbox';
 
 type Props = NativeStackScreenProps<HalaStackParamList, 'ImagePreview'>;
 
 export default function ImagePreviewScreen({route, navigation}: Props) {
-  const {asset} = route.params;
+  const {asset, chatId} = route.params;
   const insets = useSafeAreaInsets();
-
   const language = useSelector((state: RootState) => state.language.language);
   const isRTL = language === 'ar';
 
   useStatusBar('light-content', Colors.Black, true);
 
   const [caption, setCaption] = useState('');
-  const [sending, setSending] = useState(false);
-  const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const [queuing, setQueuing] = useState(false);
 
-  const inputRef = useRef<TextInput>(null);
-
-  useEffect(() => {
-    const show = Keyboard.addListener(
-      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
-      () => setKeyboardVisible(true),
-    );
-    const hide = Keyboard.addListener(
-      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
-      () => setKeyboardVisible(false),
-    );
-
-    return () => {
-      show.remove();
-      hide.remove();
-    };
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      // Screen close hone par stale callback ko clear kar do.
-      clearPendingImageSend();
-    };
-  }, []);
-
-  const closePreview = () => {
-    if (sending) return;
-    clearPendingImageSend();
-    navigation.goBack();
+  const close = () => {
+    if (!queuing) navigation.goBack();
   };
 
   const handleSend = async () => {
-    if (sending) return;
+    if (queuing || !asset?.uri || !chatId) return;
 
-    const send = getPendingImageSend();
-
-    if (!send) {
-      // Is case me silent failure nahi honi chahiye.
-      console.warn('[ImagePreview] send handler missing');
-      return;
-    }
-
-    setSending(true);
+    setQueuing(true);
 
     try {
-      // Keyboard close karne se send button/footer jump nahi karega.
       Keyboard.dismiss();
 
-      await send(asset, caption.trim());
+      // Only make a persistent LOCAL copy and queue it.
+      // No network upload happens on this preview screen.
+      await enqueueMediaJob(String(chatId), asset, caption);
 
-      clearPendingImageSend();
+      // Return to chat immediately. Chat screen displays local image at once,
+      // while upload continues there in the background.
       navigation.goBack();
-    } catch (error) {
-      console.log('[ImagePreview] send failed:', error);
-      setSending(false);
+    } catch (error: any) {
+      console.log('[IMAGE PREVIEW] queue failed:', error);
+      setQueuing(false);
     }
   };
 
@@ -103,54 +65,48 @@ export default function ImagePreviewScreen({route, navigation}: Props) {
     <SafeAreaView style={s.root} edges={['top']}>
       <KeyboardAvoidingView
         style={s.keyboardRoot}
-        behavior="padding"
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         keyboardVerticalOffset={0}>
 
-        {/* TOP BAR — always fixed inside layout */}
         <View style={s.topBar}>
           <TouchableOpacity
-            onPress={closePreview}
+            onPress={close}
             style={s.topButton}
+            disabled={queuing}
             activeOpacity={0.75}
-            disabled={sending}
             hitSlop={{top: 8, bottom: 8, left: 8, right: 8}}>
-            <Ionicons name="close" size={28} color="#fff" />
+            <Ionicons name="close" size={27} color="#fff" />
           </TouchableOpacity>
 
           <Text style={s.topTitle}>Preview</Text>
-
           <View style={s.topButton} />
         </View>
 
-        {/* IMAGE — uses remaining available space, no fixed screen height */}
         <View style={s.imageWrap}>
           <Image
-            source={{uri: asset?.uri}}
+            source={{uri: asset.uri}}
             style={s.image}
             resizeMode="contain"
           />
         </View>
 
-        {/* FOOTER — stays immediately above keyboard */}
         <View
           style={[
             s.bottomBar,
             {
-              paddingBottom: keyboardVisible
-                ? 10
-                : Math.max(insets.bottom, 10),
+              paddingBottom:
+                Platform.OS === 'ios' ? Math.max(insets.bottom, 8) : 8,
             },
           ]}>
           <View style={s.captionBox}>
             <Ionicons
               name="happy-outline"
-              size={22}
+              size={21}
               color="#9CA3AF"
               style={isRTL ? {marginLeft: 8} : {marginRight: 8}}
             />
 
             <TextInput
-              ref={inputRef}
               style={[
                 s.captionInput,
                 {
@@ -164,21 +120,18 @@ export default function ImagePreviewScreen({route, navigation}: Props) {
               onChangeText={setCaption}
               multiline
               maxLength={500}
-              returnKeyType="default"
-              blurOnSubmit={false}
             />
           </View>
 
           <TouchableOpacity
-            style={[s.sendBtn, sending && s.sendBtnDisabled]}
+            style={[s.sendBtn, queuing && {opacity: 0.7}]}
             onPress={handleSend}
-            disabled={sending}
-            activeOpacity={0.8}
-            hitSlop={{top: 6, bottom: 6, left: 6, right: 6}}>
-            {sending ? (
+            disabled={queuing}
+            activeOpacity={0.8}>
+            {queuing ? (
               <ActivityIndicator size="small" color="#fff" />
             ) : (
-              <Ionicons name="send" size={22} color="#fff" />
+              <Ionicons name="send" size={21} color="#fff" />
             )}
           </TouchableOpacity>
         </View>
@@ -198,18 +151,19 @@ const s = StyleSheet.create({
     backgroundColor: '#000',
   },
 
+  // Slightly lower/shorter than before so the X is not too high.
   topBar: {
-    height: 56,
+    height: 52,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#000',
     paddingHorizontal: 4,
-    zIndex: 10,
+    marginTop: Platform.OS === 'ios' ? 4 : 0,
+    backgroundColor: '#000',
   },
 
   topButton: {
-    width: 48,
-    height: 48,
+    width: 46,
+    height: 46,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -225,9 +179,9 @@ const s = StyleSheet.create({
   imageWrap: {
     flex: 1,
     minHeight: 0,
+    backgroundColor: '#000',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#000',
     overflow: 'hidden',
   },
 
@@ -239,8 +193,8 @@ const s = StyleSheet.create({
   bottomBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
-    paddingTop: 8,
+    gap: 8,
+    paddingTop: 7,
     paddingHorizontal: 10,
     backgroundColor: '#111318',
     borderTopWidth: StyleSheet.hairlineWidth,
@@ -249,36 +203,33 @@ const s = StyleSheet.create({
 
   captionBox: {
     flex: 1,
-    minHeight: 48,
-    maxHeight: 112,
+    minHeight: 44,
+    maxHeight: 96,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#23262D',
-    borderRadius: 24,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
+    borderRadius: 22,
+    paddingHorizontal: 13,
+    paddingVertical: 7,
   },
 
   captionInput: {
     flex: 1,
-    maxHeight: 92,
+    maxHeight: 78,
     paddingVertical: 0,
     color: '#fff',
     fontSize: 15,
-    lineHeight: 20,
+    lineHeight: 19,
+    minHeight: 30,
   },
 
   sendBtn: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: Colors.Green,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.Green,
     flexShrink: 0,
-  },
-
-  sendBtnDisabled: {
-    opacity: 0.65,
   },
 });

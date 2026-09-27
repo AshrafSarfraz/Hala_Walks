@@ -20,11 +20,19 @@ import {useSelector} from 'react-redux';
 import {BASE_URL} from '../../config/api';
 import {Colors} from '../Themes/Colors';
 import {getSocket, connectSocket} from './socket';
+import {
+  getMediaOutbox,
+  subscribeMediaOutbox,
+  uploadMediaJob,
+  patchMediaJob,
+  removeMediaJob,
+  retryMediaJob,
+  MediaOutboxJob,
+} from './mediaOutbox';
 import AttachmentSheet from './components/AttachmentSheet';
 import ChatScreenHeader from './components/ChatHeaders/ChatScreenHeader';
 import DeleteMessageModal from './components/DeleteMessageModal';
 import ImageViewerModal from './components/ImageViewerModal';
-import {setPendingImageSend} from './components/imagePreviewBridge';
 import WhatsAppMessageModal, {
   MessageAction,
 } from './components/WhatsAppMessageModal';
@@ -37,6 +45,39 @@ import {clearChatNotifications} from '../Notifications/badge';
 // ─── Module-level stores ──────────────────────────────────────────────────────
 const messageCache = new Map<string, Message[]>();
 const offlineQueues = new Map<string, QueuedMessage[]>();
+
+const CHAT_CACHE_PREFIX = 'hbs_chat_cache_v2_';
+
+async function readPersistentChat(chatId: string): Promise<Message[]> {
+  try {
+    const raw = await AsyncStorage.getItem(`${CHAT_CACHE_PREFIX}${chatId}`);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.map((m: any) => ({
+      ...m,
+      createdAt: new Date(m.createdAt),
+    }));
+  } catch {
+    return [];
+  }
+}
+
+async function writePersistentChat(chatId: string, items: Message[]) {
+  try {
+    await AsyncStorage.setItem(
+      `${CHAT_CACHE_PREFIX}${chatId}`,
+      JSON.stringify(
+        items.map(m => ({
+          ...m,
+          createdAt: new Date(m.createdAt).toISOString(),
+        })),
+      ),
+    );
+  } catch (error) {
+    console.log('[CHAT CACHE] save failed:', error);
+  }
+}
 export function clearChatSession() {messageCache.clear(); offlineQueues.clear();}
 
 function getQueue(chatId: string): QueuedMessage[] {
@@ -72,6 +113,9 @@ type Message = {
   mediaSize?: number | null;
   mediaWidth?: number | null;
   mediaHeight?: number | null;
+  localMediaUri?: string | null;
+  uploadProgress?: number;
+  uploadStage?: 'queued' | 'uploading' | 'uploaded' | 'sending' | 'failed';
   reactions?: Record<string, string>;
 };
 
@@ -298,7 +342,8 @@ function ChatScreenContent({route, navigation}: any) {
   const [muteDuration, setMuteDuration] = useState<any>(null);
   const isMuted = muteDuration !== null;
   const [emojiKeyboardOpen, setEmojiKeyboardOpen] = useState(false);
-  const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const [composerHeight, setComposerHeight] = useState(68);
   const [attachSheetOpen, setAttachSheetOpen] = useState(false);
 
   const [msgModalVisible, setMsgModalVisible] = useState(false);
@@ -347,7 +392,10 @@ function ChatScreenContent({route, navigation}: any) {
     if (chatId) clearChatNotifications(String(chatId));
   }, [chatId]);
   useEffect(() => {
-    if (messages.length > 0) messageCache.set(chatId, messages);
+    if (messages.length > 0) {
+      messageCache.set(chatId, messages);
+      writePersistentChat(chatId, messages);
+    }
   }, [messages, chatId]);
 
   const isUserOnline = useMemo(
@@ -376,6 +424,13 @@ function ChatScreenContent({route, navigation}: any) {
         currentUserIdRef.current = myId;
         const muteRaw = await AsyncStorage.getItem(`mute_${chatId}`);
         if (muteRaw) setMuteDuration(JSON.parse(muteRaw).duration);
+
+        // Show locally cached chat immediately. Server response will merge into it.
+        const persisted = await readPersistentChat(String(chatId));
+        if (active && persisted.length) {
+          setMessages(current => mergeMessages([...persisted, ...current]));
+          setLoading(false);
+        }
         if (!/^[a-f0-9]{24}$/i.test(String(chatId))) {
           const real = await axios.post(`${BASE_URL}/api/chat/with/${participantId}`, {}, {headers: {Authorization: `Bearer ${token}`}, timeout: 15000, signal: controller.signal});
           if (active) navigation.replace('ChatScreen', {...route.params, chatId: real.data._id, isPendingChat: false});
@@ -457,20 +512,34 @@ function ChatScreenContent({route, navigation}: any) {
   }, [chatId, participantId, reload]);
 
   useEffect(() => {
-    const show = Keyboard.addListener(
-      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
-      () => setKeyboardVisible(true),
-    );
-    const hide = Keyboard.addListener(
-      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
-      () => setKeyboardVisible(false),
-    );
+    const showEvent =
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvent =
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+
+    const show = Keyboard.addListener(showEvent, event => {
+      if (Platform.OS === 'ios') {
+        setKeyboardHeight(event.endCoordinates?.height || 0);
+      } else {
+        // AndroidManifest uses adjustResize, so don't double-shift.
+        setKeyboardHeight(0);
+      }
+    });
+
+    const hide = Keyboard.addListener(hideEvent, () => {
+      setKeyboardHeight(0);
+    });
 
     return () => {
       show.remove();
       hide.remove();
     };
   }, []);
+
+  const composerBottom =
+    Platform.OS === 'ios'
+      ? Math.max(0, keyboardHeight - insets.bottom)
+      : 0;
 
   // ─── Offline queue flush ──────────────────────────────────────────────────
   const flushOfflineQueue = useCallback(() => {
@@ -552,8 +621,12 @@ function ChatScreenContent({route, navigation}: any) {
         edited: !!m.edited,
         replyTo: m.replyTo || null,
         mediaUrl: m.mediaUrl || null,
+        thumbnailUrl: m.thumbnailUrl || null,
         mediaType: m.mediaType || null,
         mediaName: m.mediaName || null,
+        mediaSize: m.mediaSize ?? null,
+        mediaWidth: m.mediaWidth ?? null,
+        mediaHeight: m.mediaHeight ?? null,
         reactions: m.reactions
           ? Object.fromEntries(Object.entries(m.reactions))
           : {},
@@ -623,7 +696,16 @@ function ChatScreenContent({route, navigation}: any) {
         if (exists)
           return prev.map(m =>
             m.tempId === msg.tempId
-              ? {...m, _id: String(msg._id), status: 'sent', msgStatus: 'delivered'}
+              ? {
+                  ...m,
+                  _id: String(msg._id),
+                  status: 'sent',
+                  msgStatus: 'delivered',
+                  mediaUrl: msg.mediaUrl || m.mediaUrl,
+                  thumbnailUrl: msg.thumbnailUrl || m.thumbnailUrl,
+                  uploadStage: undefined,
+                  uploadProgress: 100,
+                }
               : m,
           );
         return mergeMessages([
@@ -654,6 +736,10 @@ function ChatScreenContent({route, navigation}: any) {
     };
     const onStatus = (data: any) => {
       setSending(false);
+
+      if (data?.tempId && data.status === 'sent') {
+        removeMediaJob(data.tempId).catch(() => {});
+      }
       if (data.status === 'failed' && data.reason === 'message_not_allowed') {
         setAccess('waiting');
         Alert.alert('Message unavailable', 'You no longer have permission to message this account.');
@@ -673,6 +759,12 @@ function ChatScreenContent({route, navigation}: any) {
             createdAt: data.message?.createdAt ? new Date(data.message.createdAt) : m.createdAt,
             status: data.status,
             msgStatus: data.msgStatus || 'sent',
+            mediaUrl: data.message?.mediaUrl || m.mediaUrl,
+            thumbnailUrl: data.message?.thumbnailUrl || m.thumbnailUrl,
+            mediaType: data.message?.mediaType || m.mediaType,
+            mediaName: data.message?.mediaName || m.mediaName,
+            uploadStage: data.status === 'sent' ? undefined : m.uploadStage,
+            uploadProgress: data.status === 'sent' ? 100 : m.uploadProgress,
           };
         }),
       );
@@ -842,217 +934,225 @@ function ChatScreenContent({route, navigation}: any) {
     }, 5000);
   }, [chatId, inputText, isBlocked, editingMessage, replyTo, sending]);
 
-  // ─── Media upload ─────────────────────────────────────────────────────────
-  // Image/video upload REST se hota hai, actual chat message socket se.
-  // Agar socket temporary disconnect ho to media queue me preserve hoti hai
-  // aur reconnect par automatically send ho jati hai.
-  const uploadMedia = useCallback(
-    async (asset: any, caption = '') => {
-      if (!asset?.uri || !canSendRef.current) {
-        throw new Error('Messaging is not available');
+  // ─── Persistent media outbox ──────────────────────────────────────────────
+  // Preview screen only queues a local image and closes immediately.
+  // This screen shows that local image at once, uploads it once, then sends
+  // the already-uploaded URL through socket. If the app restarts, remote URL
+  // is reused and the image is NOT uploaded again.
+  const processingMediaRef = useRef<Set<string>>(new Set());
+
+  const mediaJobToMessage = useCallback(
+    (job: MediaOutboxJob): Message => ({
+      _id: job.tempId,
+      text: job.caption || '',
+      createdAt: new Date(job.createdAt),
+      senderId: currentUserIdRef.current,
+      senderName: 'Me',
+      tempId: job.tempId,
+      status: job.stage === 'failed' ? 'failed' : 'sending',
+      msgStatus: 'sent',
+      mediaUrl: job.mediaUrl || job.localUri,
+      localMediaUri: job.localUri,
+      thumbnailUrl: job.thumbnailUrl || null,
+      mediaType: job.mediaType,
+      mediaName: job.mediaName || job.fileName,
+      mediaSize: job.mediaSize ?? job.fileSize ?? null,
+      mediaWidth: job.mediaWidth ?? job.width ?? null,
+      mediaHeight: job.mediaHeight ?? job.height ?? null,
+      uploadProgress: job.progress || 0,
+      uploadStage: job.stage,
+      reactions: {},
+    }),
+    [],
+  );
+
+  const mirrorOutboxIntoChat = useCallback(
+    (jobs: MediaOutboxJob[]) => {
+      const mine = jobs.filter(job => String(job.chatId) === String(chatId));
+      if (!mine.length) return;
+
+      setMessages(prev => {
+        const next = [...prev];
+        for (const job of mine) {
+          const index = next.findIndex(m => m.tempId === job.tempId);
+          if (index >= 0) {
+            const current = next[index];
+            next[index] = {
+              ...current,
+              text: job.caption,
+              mediaUrl: job.mediaUrl || job.localUri,
+              localMediaUri: job.localUri,
+              thumbnailUrl: job.thumbnailUrl || current.thumbnailUrl || null,
+              mediaType: job.mediaType,
+              mediaName: job.mediaName || job.fileName,
+              mediaSize: job.mediaSize ?? job.fileSize ?? null,
+              mediaWidth: job.mediaWidth ?? job.width ?? null,
+              mediaHeight: job.mediaHeight ?? job.height ?? null,
+              uploadProgress: job.progress,
+              uploadStage: job.stage,
+              status: job.stage === 'failed' ? 'failed' : current.status === 'sent' ? 'sent' : 'sending',
+            };
+          } else {
+            next.push(mediaJobToMessage(job));
+          }
+        }
+        return mergeMessages(next);
+      });
+
+      setTimeout(() => jumpToLatest(), 50);
+    },
+    [chatId, jumpToLatest, mediaJobToMessage],
+  );
+
+  const waitForSocket = useCallback(async (token: string) => {
+    let socket = getSocket() || connectSocket(token);
+    if (socket.connected) return socket;
+
+    socket.connect();
+
+    await new Promise<void>((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        socket.off('connect', onConnect);
+        reject(new Error('Chat connection timed out'));
+      }, 12000);
+
+      const onConnect = () => {
+        clearTimeout(timeout);
+        socket.off('connect', onConnect);
+        resolve();
+      };
+
+      socket.once('connect', onConnect);
+    });
+
+    return socket;
+  }, []);
+
+  const processMediaJob = useCallback(
+    async (originalJob: MediaOutboxJob) => {
+      if (
+        String(originalJob.chatId) !== String(chatId) ||
+        processingMediaRef.current.has(originalJob.tempId)
+      ) {
+        return;
       }
 
-      setMediaUploading(true);
+      processingMediaRef.current.add(originalJob.tempId);
 
       try {
         const token =
           tokenRef.current || (await AsyncStorage.getItem('hala_token'));
+        if (!token) throw new Error('Missing session');
 
-        if (!token) {
-          throw new Error('Missing session');
+        // Re-read the job so we always use a previously uploaded URL when present.
+        const allJobs = await getMediaOutbox();
+        let job =
+          allJobs.find(j => j.tempId === originalJob.tempId) || originalJob;
+
+        if (!job.mediaUrl) {
+          job = await uploadMediaJob(job, token);
         }
 
-        const mimeType = asset.type || 'image/jpeg';
-        const extension =
-          mimeType === 'image/png'
-            ? 'png'
-            : mimeType === 'image/heic'
-              ? 'heic'
-              : mimeType === 'image/heif'
-                ? 'heif'
-                : mimeType === 'video/quicktime'
-                  ? 'mov'
-                  : mimeType === 'video/mp4'
-                    ? 'mp4'
-                    : 'jpg';
-
-        const formData = new FormData();
-
-        formData.append(
-          'file',
-          {
-            uri: asset.uri,
-            type: mimeType,
-            name: asset.fileName || `media-${Date.now()}.${extension}`,
-          } as any,
-        );
-
-        // Backend is chat ki membership / messaging permission verify kar sakta hai.
-        formData.append('chatId', String(chatId));
-
-        const res = await axios.post(
-          `${BASE_URL}/api/messages/upload`,
-          formData,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              // IMPORTANT:
-              // Content-Type manually set NAHI karna.
-              // React Native / Axios multipart boundary khud add karega.
-            },
-            timeout: 45000,
-          },
-        );
-
-        const {
-          mediaUrl,
-          thumbnailUrl,
-          mediaType,
-          mediaName,
-          mediaSize,
-          mediaWidth,
-          mediaHeight,
-        } = res.data || {};
-
-        if (!mediaUrl) {
-          throw new Error('Upload returned no media URL');
-        }
-
-        const tempId =
-          Date.now().toString() + Math.random().toString(36).slice(2, 8);
-
-        const socket = getSocket();
-        const canSendNow = socket?.connected === true;
-
-        const localMessage: Message = {
-          _id: tempId,
-          text: caption.trim(),
-          createdAt: new Date(),
-          senderId: currentUserIdRef.current,
-          senderName: 'Me',
-          tempId,
-          status: canSendNow ? 'sending' : 'pending',
-          msgStatus: 'sent',
-          mediaUrl,
-          thumbnailUrl: thumbnailUrl || null,
-          mediaType: mediaType || null,
-          mediaName: mediaName || asset.fileName || null,
-          mediaSize: mediaSize ?? null,
-          mediaWidth: mediaWidth ?? null,
-          mediaHeight: mediaHeight ?? null,
-          reactions: {},
-        };
-
-        setMessages(prev => [localMessage, ...prev]);
-        jumpToLatest();
-
-        const payload: QueuedMessage = {
-          tempId,
-          text: caption.trim(),
-          replyToId: null,
-          mediaUrl,
-          thumbnailUrl: thumbnailUrl || null,
-          mediaType: mediaType || null,
-          mediaName: mediaName || asset.fileName || null,
-          mediaSize: mediaSize ?? null,
-          mediaWidth: mediaWidth ?? null,
-          mediaHeight: mediaHeight ?? null,
-        };
-
-        if (!canSendNow) {
-          // Text ki tarah media ko bhi offline/reconnect queue me rakho.
-          pushToQueue(chatId, payload);
-
-          // Socket object disconnected ho sakta hai; token ke saath reconnect trigger karo.
-          connectSocket(token);
-          return;
-        }
-
-        socket!.emit('send-message', {
-          chatId,
-          text: payload.text,
-          tempId: payload.tempId,
-          replyTo: payload.replyToId,
-          mediaUrl: payload.mediaUrl,
-          thumbnailUrl: payload.thumbnailUrl,
-          mediaType: payload.mediaType,
-          mediaName: payload.mediaName,
-          mediaSize: payload.mediaSize,
-          mediaWidth: payload.mediaWidth,
-          mediaHeight: payload.mediaHeight,
+        // From here onwards upload is complete. Even after restart we only resend URL.
+        await patchMediaJob(job.tempId, {
+          stage: 'sending',
+          progress: 100,
+          error: null,
         });
 
-        // Server acknowledgement na aaye to retry state show karo.
-        setTimeout(() => {
-          setMessages(prev =>
-            prev.map(m =>
-              m.tempId === tempId && m.status === 'sending'
-                ? {...m, status: 'failed'}
-                : m,
-            ),
-          );
-        }, 12000);
+        const socket = await waitForSocket(token);
+
+        socket.emit('send-message', {
+          chatId: job.chatId,
+          text: job.caption,
+          tempId: job.tempId,
+          replyTo: null,
+          mediaUrl: job.mediaUrl,
+          thumbnailUrl: job.thumbnailUrl || null,
+          mediaType: job.mediaType,
+          mediaName: job.mediaName || job.fileName,
+          mediaSize: job.mediaSize ?? null,
+          mediaWidth: job.mediaWidth ?? null,
+          mediaHeight: job.mediaHeight ?? null,
+        });
       } catch (error: any) {
-        console.log(
-          '[CHAT MEDIA UPLOAD ERROR]',
-          error?.response?.status,
-          error?.response?.data,
-          error?.message,
-        );
-
-        Alert.alert(
-          'Upload Failed',
-          error?.response?.data?.error ||
-            error?.response?.data?.message ||
-            error?.message ||
-            'Please try again.',
-        );
-
-        throw error;
+        console.log('[MEDIA OUTBOX] send failed:', error?.message || error);
+        await patchMediaJob(originalJob.tempId, {
+          stage: 'failed',
+          error: error?.message || 'Could not send image',
+        });
       } finally {
-        setMediaUploading(false);
+        processingMediaRef.current.delete(originalJob.tempId);
       }
     },
-    [chatId, jumpToLatest],
+    [chatId, waitForSocket],
   );
 
-  // Image preview ko function navigation params me pass nahi karte.
-  // Callback bridge me temporary store hota hai; route params serializable rehte hain.
+  useEffect(() => {
+    let mounted = true;
+
+    const handleJobs = (jobs: MediaOutboxJob[]) => {
+      if (!mounted) return;
+      mirrorOutboxIntoChat(jobs);
+
+      jobs
+        .filter(
+          job =>
+            String(job.chatId) === String(chatId) &&
+            ['queued', 'uploaded', 'sending'].includes(job.stage),
+        )
+        .forEach(job => {
+          processMediaJob(job);
+        });
+    };
+
+    getMediaOutbox().then(handleJobs);
+    const unsubscribe = subscribeMediaOutbox(handleJobs);
+
+    return () => {
+      mounted = false;
+      unsubscribe();
+    };
+  }, [chatId, mirrorOutboxIntoChat, processMediaJob]);
+
+  // Preview gets serializable params only. It queues locally and returns at once.
   const openImagePreview = useCallback(
     (asset: any) => {
-      setPendingImageSend(uploadMedia);
-      navigation.navigate('ImagePreview', {asset});
+      navigation.navigate('ImagePreview', {
+        chatId: String(chatId),
+        asset,
+      });
     },
-    [navigation, uploadMedia],
+    [navigation, chatId],
   );
 
   const handleAttach = useCallback(() => {
-    if (isBlocked || mediaUploading || !canSendRef.current) return;
+    if (isBlocked || !canSendRef.current) return;
     setEmojiKeyboardOpen(false);
     Keyboard.dismiss();
     setAttachSheetOpen(true);
-  }, [isBlocked, mediaUploading]);
+  }, [isBlocked]);
 
-  // ✅ Camera → preview screen
   const handleCamera = useCallback(() => {
     launchCamera({mediaType: 'photo', quality: 0.9}, r => {
       if (!r.didCancel && r.assets?.[0]) openImagePreview(r.assets[0]);
     });
   }, [openImagePreview]);
 
-  // ✅ Gallery → image = preview, video/doc = seedha upload
   const handleGallery = useCallback(() => {
     launchImageLibrary({mediaType: 'mixed', quality: 0.9}, r => {
-      if (!r.didCancel && r.assets?.[0]) {
-        const asset = r.assets[0];
-        if (asset.type?.startsWith('image')) {
-          openImagePreview(asset);
-        } else {
-          uploadMedia(asset, '').catch(() => {});
-        }
+      if (r.didCancel || !r.assets?.[0]) return;
+      const asset = r.assets[0];
+
+      if (asset.type?.startsWith('image')) {
+        openImagePreview(asset);
+        return;
       }
+
+      // Non-image media can be added to the same outbox later.
+      Alert.alert('Coming soon', 'Video/document sending will use the same outbox.');
     });
-  }, [openImagePreview, uploadMedia]);
+  }, [openImagePreview]);
 
   // ─── Reactions ────────────────────────────────────────────────────────────
   const handleReact = useCallback(
@@ -1262,10 +1362,34 @@ function ChatScreenContent({route, navigation}: any) {
                 isMe ? styles.imageBubbleRight : styles.imageBubbleLeft,
               ]}>
               <Image
-                source={{uri: msg.mediaUrl!}}
+                source={{uri: msg.localMediaUri || msg.mediaUrl!}}
                 style={styles.mediaImageFull}
                 resizeMode="cover"
               />
+
+              {!!msg.uploadStage && msg.uploadStage !== 'failed' && (
+                <View style={styles.uploadOverlay}>
+                  <ActivityIndicator size="small" color="#fff" />
+                  <Text style={styles.uploadOverlayText}>
+                    {msg.uploadStage === 'uploading'
+                      ? `${Math.max(1, msg.uploadProgress || 1)}%`
+                      : msg.uploadStage === 'sending'
+                        ? 'Sending…'
+                        : 'Preparing…'}
+                  </Text>
+                </View>
+              )}
+
+              {msg.uploadStage === 'failed' && (
+                <TouchableOpacity
+                  style={styles.uploadOverlay}
+                  onPress={() => {
+                    if (msg.tempId) retryMediaJob(msg.tempId);
+                  }}>
+                  <Ionicons name="refresh" size={24} color="#fff" />
+                  <Text style={styles.uploadOverlayText}>Tap to retry</Text>
+                </TouchableOpacity>
+              )}
               <View style={styles.imageTimeOverlay}>
                 <Text style={styles.imageTime}>{formatTime(msg.createdAt)}</Text>
                 {isMe && (
@@ -1314,7 +1438,7 @@ function ChatScreenContent({route, navigation}: any) {
                 }
                 activeOpacity={0.9}>
                 <Image
-                  source={{uri: msg.mediaUrl}}
+                  source={{uri: msg.localMediaUri || msg.mediaUrl!}}
                   style={styles.mediaImagePadded}
                   resizeMode="cover"
                 />
@@ -1417,7 +1541,7 @@ function ChatScreenContent({route, navigation}: any) {
     );
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
       <View style={styles.container}>
         <View style={{backgroundColor: Colors.darkgrey}}>
         <ChatScreenHeader
@@ -1435,11 +1559,13 @@ function ChatScreenContent({route, navigation}: any) {
         />
         </View>
 <View style={{ flex:1,backgroundColor: Colors.dargBg}}>
-        <KeyboardAvoidingView
-          style={{flex: 1}}
-          behavior="padding"
-          keyboardVerticalOffset={0}>
-          <View style={{flex: 1}}>
+
+
+          <View
+            style={{
+              flex: 1,
+              paddingBottom: composerHeight + composerBottom,
+            }}>
             <FlatList
               ref={listRef}
               data={messages}
@@ -1455,7 +1581,7 @@ function ChatScreenContent({route, navigation}: any) {
                 const older = messages[index + 1];
                 const showDate = !older || new Date(item.createdAt).toDateString() !== new Date(older.createdAt).toDateString();
                 return <View>{showDate && <View style={styles.datePill}><Text style={styles.historyText}>{dateLabel(item.createdAt, language)}</Text></View>}{renderMessage({item})}
-                {item.status === 'failed' && <TouchableOpacity onPress={() => {
+                {item.status === 'failed' && !item.localMediaUri && <TouchableOpacity onPress={() => {
                   if (!canSendRef.current) {setReload(v => v + 1); return;}
                   const socket = getSocket();
                   if (!socket?.connected) {Alert.alert(isRTL ? 'غير متصل' : 'Offline', isRTL ? 'تحقق من اتصال الإنترنت وحاول مجدداً.' : 'Reconnect to the internet and try again.'); return;}
@@ -1516,6 +1642,14 @@ function ChatScreenContent({route, navigation}: any) {
             {awayFromLatest && <TouchableOpacity accessibilityRole="button" accessibilityLabel="Jump to latest messages" onPress={jumpToLatest} style={styles.latestButton}><Ionicons name="chevron-down" size={20} color={Colors.White} /><Text style={{color: Colors.White, fontSize: 12}}>{newCount ? `${newCount} ${isRTL ? 'جديد' : 'new'}` : isRTL ? 'الأحدث' : 'Latest'}</Text></TouchableOpacity>}
           </View>
 
+          <View
+            onLayout={event =>
+              setComposerHeight(event.nativeEvent.layout.height)
+            }
+            style={[
+              styles.composerDock,
+              {bottom: composerBottom},
+            ]}>
           {/* ── Reply / Edit bar ── */}
           {(replyTo || editingMessage) && (
             <View style={styles.replyBarOuter}>
@@ -1569,7 +1703,8 @@ function ChatScreenContent({route, navigation}: any) {
                 styles.inputRow,
                 {
                   flexDirection: rowDir,
-                  paddingBottom: keyboardVisible ? 6 : Math.max(insets.bottom, 6),
+                  paddingBottom:
+                    keyboardHeight > 0 ? 6 : Math.max(insets.bottom, 6),
                 },
               ]}>
               <TouchableOpacity
@@ -1633,7 +1768,8 @@ function ChatScreenContent({route, navigation}: any) {
               </Text>
             </View>
           )}
-        </KeyboardAvoidingView>
+          </View>
+
       </View>
 
       <EmojiKeyboard
@@ -1728,6 +1864,18 @@ const styles = StyleSheet.create({
   imageBubbleRight: {borderBottomRightRadius: 3},
   imageBubbleLeft: {borderBottomLeftRadius: 3},
   mediaImageFull: {width: 260, height: 200},
+  uploadOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.42)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 7,
+  },
+  uploadOverlayText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: '600',
+  },
   imageTimeOverlay: {
     position: 'absolute', bottom: 6, right: 8,
     flexDirection: 'row', alignItems: 'center',
@@ -1784,6 +1932,15 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.12)',
     justifyContent: 'center', alignItems: 'center', zIndex: -1,
   },
+  composerDock: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    zIndex: 50,
+    elevation: 20,
+    backgroundColor: Colors.dargBg,
+  },
+
   replyBarOuter: {
     backgroundColor: '#191B20', borderTopWidth: 0.5,
     borderTopColor: '#343841', paddingHorizontal: 12, paddingVertical: 8,
