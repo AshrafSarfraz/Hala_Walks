@@ -23,7 +23,7 @@ import {clearPeopleCache} from './startChatScreen';
 
 export type MediaItem = {id: string; uri: string; mediaType: 'image' | 'video'; createdAt: string};
 type Post = {_id: string; image: string; caption?: string; createdAt: string; location?: {name?: string}};
-type Profile = SocialPerson & {followersCount: number; followingCount: number; postsCount: number;
+type Profile = SocialPerson & {friendsCount: number; postsCount: number;
   canViewContent: boolean; isSelf: boolean; blocked: boolean; privacySettings?: {isPrivate?: boolean}};
 
 export default function UserProfileScreen({route, navigation}: any) {
@@ -87,7 +87,7 @@ export default function UserProfileScreen({route, navigation}: any) {
     try {
       const token = await AsyncStorage.getItem('hala_token');
       const config = {headers: {Authorization: `Bearer ${token}`}, timeout: 15000};
-      const url = `${BASE_URL}/api/users/follow-requests/${participantId}`;
+      const url = `${BASE_URL}/api/users/friend-requests/${participantId}`;
       if (accept) await axios.post(`${url}/approve`, {}, config);
       else await axios.delete(url, config);
       clearPeopleCache();
@@ -96,28 +96,36 @@ export default function UserProfileScreen({route, navigation}: any) {
     finally {setBusy(false);}
   };
 
-  const follow = async () => {
+  const updateFriend = async () => {
     if (!profile || busy) return;
     setBusy(true);
     try {
       const token = await AsyncStorage.getItem('hala_token');
       const config = {headers: {Authorization: `Bearer ${token}`}, timeout: 15000};
-      const status = profile.relationship?.followingStatus;
-      if (status === 'accepted' || status === 'pending') {
-        // Clear restricted content immediately when giving up access.
-        setProfile(prev => prev ? {...prev, canMessage: false, canViewContent: !prev.privacySettings?.isPrivate} : null);
+      const status = profile.friendshipStatus;
+      if (status === 'accepted' || status === 'outgoing') {
+        const endpoint = status === 'accepted' ? 'friends' : 'friend-requests';
+        await axios.delete(`${BASE_URL}/api/users/${endpoint}/${participantId}`, config);
+        setProfile(prev => prev ? {...prev, canMessage: false, friendshipStatus: 'none'} : null);
         setPosts([]); setViewer(null);
-        await axios.delete(`${BASE_URL}/api/users/follow/${participantId}`, config);
-      } else await axios.post(`${BASE_URL}/api/users/follow/${participantId}`, {}, config);
+      } else await axios.post(`${BASE_URL}/api/users/friend-requests/${participantId}`, {}, config);
       clearPeopleCache(); await load();
-    } catch {Alert.alert('Error', 'Could not update follow status. Please try again.'); await load();}
+    } catch {Alert.alert('Error', 'Could not update friendship. Please try again.'); await load();}
     finally {setBusy(false);}
+  };
+  const friendAction = () => {
+    if (profile?.friendshipStatus !== 'accepted') {void updateFriend(); return;}
+    Alert.alert(label('Remove friend?', 'إزالة الصديق؟'),
+      label('New messages will stop for both of you. Your existing chat will remain.', 'ستتوقف الرسائل الجديدة بينكما مع الاحتفاظ بالمحادثة السابقة.'), [
+        {text: label('Cancel', 'إلغاء'), style: 'cancel'},
+        {text: label('Remove friend', 'إزالة الصديق'), style: 'destructive', onPress: updateFriend},
+      ]);
   };
   const message = async () => {
     if (!profile || busy || !canShowMessage(profile)) return;
     setBusy(true);
     try {await openSocialChat(navigation, profile);}
-    catch {Alert.alert('Message unavailable', 'Messaging requires mutual following and both accounts to allow messages.'); await load();}
+    catch {Alert.alert('Message unavailable', 'Messaging requires an accepted friendship and both accounts to allow messages.'); await load();}
     finally {setBusy(false);}
   };
   const block = async () => {
@@ -157,38 +165,36 @@ export default function UserProfileScreen({route, navigation}: any) {
     finally {setBusy(false);}
   };
   const name = profile?.name || participantName || 'User';
-  const status = profile?.relationship?.followingStatus;
-  const followLabel = status === 'accepted' ? label('Following', 'تتابعه') : status === 'pending' ? label('Requested', 'تم الطلب')
-    : profile?.relationship?.followedByStatus === 'accepted' ? label('Follow back', 'متابعة بالمثل') : label('Follow', 'متابعة');
+  const status = profile?.friendshipStatus;
+  const friendLabel = status === 'accepted' ? label('Friends', 'أصدقاء') : status === 'outgoing'
+    ? label('Cancel request', 'إلغاء الطلب') : label('Add Friend', 'إضافة صديق');
   const header = <View style={s.profile}>
     <TouchableOpacity disabled={!profile?.avatar} onPress={() => profile?.avatar && setViewer({uri: profile.avatar})}>
       <UserAvatar uri={profile?.avatar} style={s.avatar} />
     </TouchableOpacity>
     <Text style={s.name}>{name}</Text>
-    <Text style={s.bio}>{profile?.bio?.trim() || 'null'}</Text>
+    <Text style={s.bio}>{profile?.bio?.trim() || ''}</Text>
     <View style={[s.counts, {flexDirection: isRTL ? 'row-reverse' : 'row'}]}>
-      <View style={s.count}><Text style={s.number}>{profile?.postsCount ?? 0}</Text><Text style={s.muted}>{label('Posts', 'منشورات')}</Text></View>
-      {(['followers', 'following'] as const).map(mode => <TouchableOpacity key={mode} style={s.count}
-        disabled={!profile?.canViewContent} accessibilityRole="button" accessibilityState={{disabled: !profile?.canViewContent}}
-        onPress={() => navigation.push('SocialConnections', {mode, userId: participantId, profileName: name, isOwn: profile?.isSelf})}>
-        <Text style={s.number}>{mode === 'followers' ? profile?.followersCount ?? 0 : profile?.followingCount ?? 0}</Text>
-        <Text style={s.muted}>{mode === 'followers' ? label('Followers', 'متابعون') : label('Following', 'يتابع')}</Text>
-      </TouchableOpacity>)}
+      <View style={s.count}><Text style={s.number}>{profile?.postsCount ?? 0}</Text><Text style={s.muted}>{label('Check-ins', 'الزيارات')}</Text></View>
+      <TouchableOpacity style={s.count} disabled={!profile?.canViewContent} accessibilityRole="button"
+        onPress={() => navigation.push('SocialConnections', {mode: 'friends', userId: participantId, profileName: name, isOwn: profile?.isSelf})}>
+        <Text style={s.number}>{profile?.friendsCount ?? 0}</Text>
+        <Text style={s.muted}>{label('Friends', 'الأصدقاء')}</Text>
+      </TouchableOpacity>
     </View>
     {profile?.isSelf ? <TouchableOpacity style={s.button} onPress={() => navigation.navigate('Settings')}><Text style={s.buttonText}>{label('Privacy settings', 'إعدادات الخصوصية')}</Text></TouchableOpacity> : <>
       <View style={s.actions}>
-        {!profile?.blocked && <TouchableOpacity style={s.button} disabled={busy} onPress={follow}><Text style={s.buttonText}>{followLabel}</Text></TouchableOpacity>}
+        {!profile?.blocked && status !== 'incoming' && <TouchableOpacity style={s.button} disabled={busy} onPress={friendAction}><Text style={s.buttonText}>{friendLabel}</Text></TouchableOpacity>}
         {profile && canShowMessage(profile) && <TouchableOpacity style={[s.button, s.secondary]} disabled={busy} onPress={message}><Text style={s.buttonText}>{label('Message', 'رسالة')}</Text></TouchableOpacity>}
       </View>
-      {profile?.relationship?.followedByStatus === 'pending' && !profile.blocked && <View style={{alignItems: 'center', gap: 10, marginTop: 12}}>
-        <Text style={s.hint}>{label('Wants to follow you', 'يرغب بمتابعتك')}</Text>
+      {status === 'incoming' && profile && !profile.blocked && <View style={{alignItems: 'center', gap: 10, marginTop: 12}}>
+        <Text style={s.hint}>{label('Sent you a friend request', 'أرسل لك طلب صداقة')}</Text>
         <View style={{flexDirection: 'row', gap: 12}}>
           <TouchableOpacity accessibilityRole="button" style={s.button} disabled={busy} onPress={() => respondToRequest(true)}><Text style={s.buttonText}>{label('Accept', 'قبول')}</Text></TouchableOpacity>
           <TouchableOpacity accessibilityRole="button" style={s.button} disabled={busy} onPress={() => respondToRequest(false)}><Text style={s.buttonText}>{label('Decline', 'رفض')}</Text></TouchableOpacity>
         </View>
       </View>}
-      {status === 'pending' && <Text style={s.hint}>{label('Waiting for approval. Messaging also requires a follow back.', 'بانتظار الموافقة. المراسلة تتطلب المتابعة المتبادلة أيضاً.')}</Text>}
-      {status === 'accepted' && profile?.relationship?.followedByStatus !== 'accepted' && <Text style={s.hint}>{label('Messaging becomes available when they follow you back.', 'تتوفر المراسلة عندما يتابعك هذا المستخدم أيضاً.')}</Text>}
+      {status === 'outgoing' && <Text style={s.hint}>{label('Request sent. You can chat once it is accepted.', 'تم إرسال الطلب. يمكنكما الدردشة بعد قبوله.')}</Text>}
       <TouchableOpacity style={s.textAction} onPress={() => setBlockModal(true)}><Text style={s.muted}>{iBlocked ? label('Unblock', 'إلغاء الحظر') : label('Block user', 'حظر المستخدم')}</Text></TouchableOpacity>
     </>}
     {busy && <ActivityIndicator color={Colors.btnRed} />}
@@ -196,7 +202,7 @@ export default function UserProfileScreen({route, navigation}: any) {
       <TouchableOpacity style={s.textAction} disabled={busy} onPress={sharedMedia}><Text style={s.muted}>{label('Chat media', 'وسائط المحادثة')}</Text></TouchableOpacity>
       <TouchableOpacity style={s.textAction} onPress={() => setMuteModal(true)}><Text style={s.muted}>{label('Chat notifications', 'إشعارات المحادثة')}</Text></TouchableOpacity>
     </View>}
-    <View style={s.section}><Ionicons name="grid-outline" size={18} color={Colors.White} /><Text style={s.sectionText}>{label('Posts', 'منشورات')}</Text></View>
+    <View style={s.section}><Ionicons name="grid-outline" size={18} color={Colors.White} /><Text style={s.sectionText}>{label('Check-ins', 'الزيارات')}</Text></View>
   </View>;
 
   return <SafeAreaView style={s.safe} edges={['top', 'bottom']}>
@@ -212,8 +218,8 @@ export default function UserProfileScreen({route, navigation}: any) {
         </TouchableOpacity>}
         ListEmptyComponent={<View style={s.empty}>
           <Ionicons name={profile.canViewContent ? 'images-outline' : 'lock-closed-outline'} size={34} color={Colors.Grey9} />
-          <Text style={s.emptyTitle}>{!profile.canViewContent ? label('This account is private', 'هذا الحساب خاص') : postsError ? label('Could not load posts', 'تعذر تحميل المنشورات') : label('No posts yet', 'لا توجد منشورات بعد')}</Text>
-          {!profile.canViewContent && <Text style={s.hint}>{label('Only approved followers can see posts and follower/following lists.', 'يمكن للمتابعين الموافق عليهم فقط رؤية المنشورات وقوائم المتابعين والمتابَعين.')}</Text>}
+          <Text style={s.emptyTitle}>{!profile.canViewContent ? label('This account is private', 'هذا الحساب خاص') : postsError ? label('Could not load check-ins', 'تعذر تحميل المنشورات') : label('No check-ins yet', 'لا توجد منشورات بعد')}</Text>
+          {!profile.canViewContent && <Text style={s.hint}>{label('Only friends can see private check-ins and the friends list.', 'يمكن للأصدقاء فقط رؤية الزيارات الخاصة وقائمة الأصدقاء.')}</Text>}
           {postsError && profile.canViewContent && <TouchableOpacity style={s.textAction} onPress={() => load()}><Text style={s.buttonText}>{label('Retry', 'إعادة المحاولة')}</Text></TouchableOpacity>}
         </View>} />}
     <ImageViewerModal visible={!!viewer} uri={viewer?.uri || null} senderName={name} timestamp={viewer?.createdAt ? new Date(viewer.createdAt).toLocaleDateString() : undefined} onClose={() => setViewer(null)} />

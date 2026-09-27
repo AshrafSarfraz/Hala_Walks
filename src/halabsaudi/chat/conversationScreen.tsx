@@ -1,4 +1,5 @@
-import FollowRequestsButton from './components/FollowRequestsButton';
+import {useSocialRefresh} from './useSocialRefresh';
+import FriendRequestsButton from './components/FriendRequestsButton';
 import UserAvatar from '../Component/UserAvatar';
 import {Text} from '../../ui/Text';
 import {fetchCollection} from '../api/collection';
@@ -147,6 +148,7 @@ export default function ConversationsScreen({navigation}: any) {
   }, []);
 
   // fetchChats — force=true bypasses cache
+  const fetchVersion = useRef(0);
   const fetchChats = useCallback(async (showLoader: boolean, force = false) => {
     const tok = tokenRef.current;
     if (!tok) { setLoading(false); setRefreshing(false); return; }
@@ -157,12 +159,14 @@ export default function ConversationsScreen({navigation}: any) {
     }
 
     if (showLoader) setLoading(true);
+    const version = ++fetchVersion.current;
 
     try {
       const chatItems = await fetchCollection(`${BASE_URL}/api/chat`, {
         headers: {Authorization: `Bearer ${tok}`},
         timeout: 15000,
       }, 'chats');
+      if (version !== fetchVersion.current) return;
       // ✅ FIX: pehle `(res.data || []).map(...)` tha. Naya backend object
       //    bhejta hai ({chats: [...]}) — object par .map crash karta tha
       //    aur list khali reh jati thi.
@@ -176,16 +180,21 @@ export default function ConversationsScreen({navigation}: any) {
       // ✅ badge hamesha asli unread counts se — atak nahi sakta
       setBadgeFromChats(sorted);
     } catch (err: any) {
-      setLoadError(true);
+      if (version === fetchVersion.current) setLoadError(true);
     } finally {
-      setLoading(false);
-      setRefreshing(false);
+      if (version === fetchVersion.current) {setLoading(false); setRefreshing(false);}
     }
   }, []);
 
   useFocusEffect(useCallback(() => {
     if (tokenRef.current) fetchChats(false);
   }, [fetchChats]));
+
+  const refreshFriends = useCallback(async (_signal: AbortSignal) => {
+    if (tokenRef.current) await fetchChats(false, true);
+  }, [fetchChats]);
+  const keepChats = useCallback(() => {}, []);
+  useSocialRefresh(refreshFriends, keepChats);
 
   // Socket
   const handleChatUpdatedRef = useRef<(data: any) => void>(() => {});
@@ -228,7 +237,6 @@ export default function ConversationsScreen({navigation}: any) {
 
   const filtered = useMemo(() =>
     conversations
-      .filter(c => c.lastMessage !== null && c.lastMessage !== undefined)
       .filter(c =>
         !searchQuery.trim() ? true
           : c.participant?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -291,7 +299,7 @@ export default function ConversationsScreen({navigation}: any) {
       ? t.deleted_message_text
       : (lm?.text && lm.text.trim())
         ? lm.text
-        : mediaLabel;
+        : mediaLabel || (isRTL ? 'يمكنكما الآن الدردشة · قل مرحباً' : 'You are now connected · Say hello');
     const time        = item.lastMessageAt ? timeAgo(item.lastMessageAt) : '';
     const hasUnread   = (item.unreadCount ?? 0) > 0;
     const isMine      = item.lastMessage?.sender &&
@@ -342,7 +350,7 @@ export default function ConversationsScreen({navigation}: any) {
         onProfilePress={() => navigation.navigate('Profile')}
         onSearch={(text: string) => setSearchQuery(text)}
       />
-      <FollowRequestsButton navigation={navigation} />
+      <FriendRequestsButton navigation={navigation} />
       <FlatList
         data={filtered} keyExtractor={keyExtractor} renderItem={renderItem}
         keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}

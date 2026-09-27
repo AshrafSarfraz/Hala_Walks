@@ -1311,7 +1311,7 @@ function ChatScreenContent({route, navigation}: any) {
                   setMessages(prev => prev.map(m => m._id === item._id ? {...m, tempId, status: 'sending'} : m));
                   socket.emit('send-message', {chatId, text: item.text, tempId, replyTo: item.replyTo?._id || null});
                   setTimeout(() => setMessages(prev => prev.map(m => m.tempId === tempId && m.status === 'sending' ? {...m, status: 'failed'} : m)), 10000);
-                }}><Text style={styles.retryText}>{isRTL ? 'لم يتم تأكيد الإرسال · إعادة المحاولة' : (access === 'waiting' ? 'Waiting for mutual following' : 'Not sent · Tap to retry')}</Text></TouchableOpacity>}
+                }}><Text style={styles.retryText}>{isRTL ? 'لم يتم تأكيد الإرسال · إعادة المحاولة' : (access === 'waiting' ? 'Waiting for friend request acceptance' : 'Not sent · Tap to retry')}</Text></TouchableOpacity>}
                 </View>;
               }}
               inverted
@@ -1397,7 +1397,7 @@ function ChatScreenContent({route, navigation}: any) {
           {/* ── Input row ── */}
           {access !== 'allowed' && !isBlocked ? (
             <TouchableOpacity accessibilityRole="button" onPress={() => setReload(v => v + 1)} style={{padding: 20, backgroundColor: Colors.darkgrey}}>
-              <Text style={styles.historyText}>{access === 'waiting' ? (isRTL ? 'المراسلة متاحة عند متابعة بعضكما البعض. اضغط للتحقق مجدداً.' : 'Messaging is available when you both follow each other. Tap to check again.') : access === 'checking' ? (isRTL ? 'جارٍ التحقق من إمكانية المراسلة…' : 'Checking messaging permission…') : (isRTL ? 'تعذر التحقق من إمكانية المراسلة. اضغط لإعادة المحاولة.' : 'Could not verify messaging permission. Tap to retry.')}</Text>
+              <Text style={styles.historyText}>{access === 'waiting' ? (isRTL ? 'الدردشة غير متاحة. افتح الملف الشخصي للتحقق من الصداقة أو إرسال طلب جديد. اضغط هنا للتحديث.' : 'Chat is unavailable. Open their profile to check your friendship or send a new request. Tap here to refresh.') : access === 'checking' ? (isRTL ? 'جارٍ التحقق من إمكانية المراسلة…' : 'Checking messaging permission…') : (isRTL ? 'تعذر التحقق من إمكانية المراسلة. اضغط لإعادة المحاولة.' : 'Could not verify messaging permission. Tap to retry.')}</Text>
             </TouchableOpacity>
           ) : !isBlocked ? (
             <View style={[styles.inputRow, {flexDirection: rowDir, paddingBottom: 8}]}>

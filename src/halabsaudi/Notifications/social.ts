@@ -5,7 +5,7 @@ import {navigationRef} from './RootNavigation';
 const PENDING_SOCIAL_KEY = 'hbs_pending_social_notification';
 type SocialData = Record<string, any>;
 export function isSocialNotification(data?: SocialData): boolean {
-  return ['follow_request', 'follow_accepted', 'new_follower'].includes(data?.type);
+  return ['friend_request', 'friend_accepted', 'follow_request', 'follow_accepted', 'new_follower'].includes(data?.type);
 }
 
 export async function saveSocialNavigation(data?: SocialData) {
@@ -30,10 +30,10 @@ export async function openPendingSocialNotification() {
     const hala = root.routes.find((route: any) => route.name === 'HalabStack') as any;
     if (!hala?.state?.routeNames?.includes('SocialConnections')) return;
     await AsyncStorage.removeItem(PENDING_SOCIAL_KEY);
-    const destination = data.type === 'follow_request'
+    const destination = ['friend_request', 'follow_request'].includes(data.type)
       ? {screen: 'SocialConnections', params: {mode: 'requests'}}
-      : data.type === 'new_follower' ? {screen: 'SocialConnections', params: {mode: 'followers'}}
-        : {screen: 'UserProfile', params: {participantId: data.senderId}};
+      : data.type === 'new_follower' ? {screen: 'SocialConnections', params: {mode: 'friends'}}
+        : {screen: 'BottomTab', params: {screen: 'Chat'}};
     (navigationRef as any).navigate('HalabStack', destination);
   } finally {navigating = false;}
 }
@@ -49,7 +49,7 @@ export async function displaySocialNotification(message: any) {
   await notifee.displayNotification({
     id: `social-${data.type}-${data.senderId}`,
     title: message.notification?.title || 'Hala community',
-    body: message.notification?.body || 'You have a new follow update', data,
+    body: message.notification?.body || 'You have a new friendship update', data,
     android: {channelId: 'chat_messages', pressAction: {id: 'default'}, sound: 'default', autoCancel: true},
     ios: {sound: 'default', foregroundPresentationOptions: {alert: true, badge: true, sound: true, banner: true}},
   });

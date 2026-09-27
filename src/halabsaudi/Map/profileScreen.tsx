@@ -1,5 +1,5 @@
 import UserAvatar from '../Component/UserAvatar';
-import FollowRequestsButton from '../chat/components/FollowRequestsButton';
+import FriendRequestsButton from '../chat/components/FriendRequestsButton';
 import {groupPlaceAlbums, placeKey} from './placeAlbums';
 import FastImage from 'react-native-fast-image';
 import {Text} from '../../ui/Text';
@@ -41,8 +41,7 @@ export default function MapProfile({navigation, route}: any) {
   const label = (en: string, arabic: string) => ar ? arabic : en;
   const [user, setUser] = useState<any>(null);
   const [posts, setPosts] = useState<any[]>([]);
-  const [followers, setFollowers] = useState<Count>(null);
-  const [following, setFollowing] = useState<Count>(null);
+  const [friends, setFriends] = useState<Count>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
@@ -89,8 +88,7 @@ export default function MapProfile({navigation, route}: any) {
         const config = {headers: {Authorization: `Bearer ${token}`}, timeout: 15000, signal: controller.signal};
         const results = await Promise.allSettled([
           axios.get(`${BASE_URL}/api/hbs/map/my-checkins`, config),
-          axios.get(`${BASE_URL}/api/users/followers?pagination=true&limit=1`, config),
-          axios.get(`${BASE_URL}/api/users/following?pagination=true&limit=1`, config),
+          axios.get(`${BASE_URL}/api/users/friends?pagination=true&limit=1`, config),
         ]);
         if (!active || version !== loadVersion.current) return;
         const checks = results[0];
@@ -99,12 +97,12 @@ export default function MapProfile({navigation, route}: any) {
           setPosts(items); setError('');
           if (cacheKey) AsyncStorage.setItem(cacheKey, JSON.stringify(items)).catch(() => {});
         } else setError(ar ? 'تعذر تحديث الزيارات. اضغط لإعادة المحاولة.' : 'Could not refresh check-ins. Tap to retry.');
-        [setFollowers, setFollowing].forEach((set, i) => {
+        [setFriends].forEach((set, i) => {
           const result = results[i + 1];
           if (result.status === 'fulfilled') {
             const data = result.value.data;
             const meta = unwrapMeta(data);
-            set({value: meta.total ?? unwrap(data, i === 0 ? 'followers' : 'following', 'users').length, more: meta.total === null && meta.hasMore});
+            set({value: meta.total ?? unwrap(data, 'friends', 'users').length, more: meta.total === null && meta.hasMore});
           } else set(null);
         });
       } catch {if (active) setError(ar ? 'تعذر تحميل الملف الشخصي. حاول مجدداً.' : 'Could not load your profile. Tap to retry.');}
@@ -137,12 +135,11 @@ export default function MapProfile({navigation, route}: any) {
     {!!user?.bio && <Text style={s.bio}>{user.bio}</Text>}
     <View style={[s.stats, row]}>
       {[
-        {value: String(posts.length), title: label('Posts', 'المنشورات'), action: () => setTab('checkins')},
-        {value: formatCount(following), title: label('Following', 'أتابع'), action: () => navigation.navigate('SocialConnections', {mode: 'following'})},
-        {value: formatCount(followers), title: label('Followers', 'المتابعون'), action: () => navigation.navigate('SocialConnections', {mode: 'followers'})},
+        {value: String(posts.length), title: label('Photos', 'الصور'), action: () => setTab('checkins')},
+        {value: formatCount(friends), title: label('Friends', 'الأصدقاء'), action: () => navigation.navigate('SocialConnections', {mode: 'friends'})},
       ].map(stat => <Pressable key={stat.title} accessibilityRole="button" style={s.stat} onPress={stat.action}><Text style={s.number}>{stat.value}</Text><Text style={s.statLabel}>{stat.title}</Text></Pressable>)}
     </View>
-    <FollowRequestsButton navigation={navigation} />
+    <FriendRequestsButton navigation={navigation} />
     <View style={[s.tabs, row]}>{(['checkins', 'places'] as const).map(key => <Pressable key={key} accessibilityRole="tab" accessibilityState={{selected: tab === key}} style={[s.tab, tab === key && s.activeTab]} onPress={() => {setTab(key); setAlbumKey(null);}}><Ionicons name={key === 'checkins' ? 'grid-outline' : 'location-outline'} size={18} color={tab === key ? c.text : c.muted} /><Text style={[s.tabText, tab === key && {color: c.text}]}>{key === 'checkins' ? label('Check-ins', 'الزيارات') : label('Places', 'الأماكن')}</Text></Pressable>)}<Pressable accessibilityRole="button" accessibilityLabel={label('Add friends', 'إضافة أصدقاء')} style={s.addButton} onPress={() => navigation.navigate('StartChatScreen')}><Ionicons name="person-add-outline" size={17} color={c.text} /><Text style={s.buttonText}>{label('Add+', 'إضافة +')}</Text></Pressable></View>
     {tab === 'places' && album && <Pressable accessibilityRole="button" accessibilityLabel="Back to places" onPress={() => setAlbumKey(null)} style={{padding: 16, flexDirection: 'row', alignItems: 'center', gap: 8}}>
       <Ionicons name="arrow-back" size={20} color={c.text} /><Text style={s.buttonText}>{album.name} · {album.posts.length} {label('photos', 'صور')}</Text>

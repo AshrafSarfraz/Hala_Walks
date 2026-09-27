@@ -5,19 +5,18 @@ import {BASE_URL} from '../../config/api';
 export type SocialPerson = {
   _id: string; name: string; avatar?: string | null; bio?: string | null;
   canMessage?: boolean;
-  relationship?: {followingStatus?: string; followedByStatus?: string};
+  friendshipStatus?: 'none' | 'incoming' | 'outgoing' | 'accepted';
 };
 export function bioPreview(bio?: string | null): string {
   const words = (bio || '').trim().split(/\s+/).filter(Boolean);
-  return words.length ? words.slice(0, 40).join(' ') + (words.length > 40 ? '…' : '') : 'null';
+  return words.length ? words.slice(0, 40).join(' ') + (words.length > 40 ? '…' : '') : '';
 }
 export function canShowMessage(user: SocialPerson): boolean {
-  return user.canMessage === true && user.relationship?.followingStatus === 'accepted'
-    && user.relationship?.followedByStatus === 'accepted';
+  return user.canMessage === true && user.friendshipStatus === 'accepted';
 }
 export async function openSocialChat(navigation: any, user: SocialPerson) {
   const token = await AsyncStorage.getItem('hala_token');
-  // No offline fallback: the backend must confirm current mutual following.
+  // No offline fallback: the backend must confirm an accepted friendship.
   const {data: chat} = await axios.post(`${BASE_URL}/api/chat/with/${user._id}`, {}, {
     headers: {Authorization: `Bearer ${token}`}, timeout: 15000,
   });

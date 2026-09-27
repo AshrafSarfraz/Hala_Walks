@@ -17,11 +17,11 @@ import {Colors} from '../Themes/Colors';
 
 type Person = SocialPerson;
 type Request = {_id: string; user: Person};
-type Mode = 'followers' | 'following' | 'requests';
+type Mode = 'friends' | 'requests';
 
 export default function SocialConnectionsScreen({route, navigation}: any) {
   useStatusBar('light-content', Colors.darkgrey);
-  const mode: Mode = route.params?.mode || 'followers';
+  const mode: Mode = route.params?.mode === 'requests' ? 'requests' : 'friends';
   const userId = route.params?.userId;
   const isOwn = !userId || route.params?.isOwn === true;
   const version = useRef(0);
@@ -29,7 +29,7 @@ export default function SocialConnectionsScreen({route, navigation}: any) {
   const [items, setItems] = useState<(Person | Request)[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionId, setActionId] = useState<string | null>(null);
-  const title = mode === 'followers' ? 'Followers' : mode === 'following' ? 'Following' : 'Follow requests';
+  const title = mode === 'friends' ? 'Friends' : 'Friend requests';
 
   const clear = useCallback(() => {version.current++; setItems([]); setLoading(true);}, []);
   const load = useCallback(async (signal?: AbortSignal) => {
@@ -37,7 +37,7 @@ export default function SocialConnectionsScreen({route, navigation}: any) {
     const active = () => requestId === version.current && !signal?.aborted;
     try {
       const token = await AsyncStorage.getItem('hala_token');
-      const endpoint = mode === 'requests' ? 'follow-requests' : mode;
+      const endpoint = mode === 'requests' ? 'friend-requests' : mode;
       const rows = await fetchCollection(`${BASE_URL}/api/users/${endpoint}`, {
         params: userId && mode !== 'requests' ? {userId} : {}, signal,
         headers: {Authorization: `Bearer ${token}`}, timeout: 15000,
@@ -53,7 +53,7 @@ export default function SocialConnectionsScreen({route, navigation}: any) {
     if (actionId || !canShowMessage(user)) return;
     setActionId(user._id);
     try {await openSocialChat(navigation, user);}
-    catch {Alert.alert('Message unavailable', 'Messaging requires mutual following and both accounts to allow messages.'); await load();}
+    catch {Alert.alert('Message unavailable', 'Messaging requires an accepted friendship and both accounts to allow messages.'); await load();}
     finally {setActionId(null);}
   };
 
@@ -63,11 +63,11 @@ export default function SocialConnectionsScreen({route, navigation}: any) {
     try {
       const token = await AsyncStorage.getItem('hala_token');
       if (approve) {
-        await axios.post(`${BASE_URL}/api/users/follow-requests/${request.user._id}/approve`, {}, {
+        await axios.post(`${BASE_URL}/api/users/friend-requests/${request.user._id}/approve`, {}, {
           headers: {Authorization: `Bearer ${token}`}, timeout: 10000,
         });
       } else {
-        await axios.delete(`${BASE_URL}/api/users/follow-requests/${request.user._id}`, {
+        await axios.delete(`${BASE_URL}/api/users/friend-requests/${request.user._id}`, {
           headers: {Authorization: `Bearer ${token}`}, timeout: 10000,
         });
       }
@@ -79,26 +79,15 @@ export default function SocialConnectionsScreen({route, navigation}: any) {
     }
   };
 
-  const followBack = async (user: Person) => {
-    if (actionId) return;
-    setActionId(user._id);
-    try {
-      const token = await AsyncStorage.getItem('hala_token');
-      await axios.post(`${BASE_URL}/api/users/follow/${user._id}`, {}, {headers: {Authorization: `Bearer ${token}`}, timeout: 10000});
-      await load();
-    } catch {Alert.alert('Error', 'Could not follow this user. Please try again.');}
-    finally {setActionId(null);}
-  };
-
-  const unfollow = (user: Person) => Alert.alert('Unfollow?', `Stop following ${user.name}?`, [
+  const removeFriend = (user: Person) => Alert.alert('Remove friend?', `Remove ${user.name}? New messages will stop for both of you.`, [
     {text: 'Cancel', style: 'cancel'},
-    {text: 'Unfollow', style: 'destructive', onPress: async () => {
+    {text: 'Remove friend', style: 'destructive', onPress: async () => {
       setActionId(user._id);
       try {
         const token = await AsyncStorage.getItem('hala_token');
-        await axios.delete(`${BASE_URL}/api/users/follow/${user._id}`, {headers: {Authorization: `Bearer ${token}`}, timeout: 10000});
+        await axios.delete(`${BASE_URL}/api/users/friends/${user._id}`, {headers: {Authorization: `Bearer ${token}`}, timeout: 10000});
         await load();
-      } catch { Alert.alert('Could not unfollow', 'Please try again.'); }
+      } catch { Alert.alert('Could not remove friend', 'Please try again.'); }
       finally { setActionId(null); }
     }},
   ]);
@@ -116,16 +105,11 @@ export default function SocialConnectionsScreen({route, navigation}: any) {
           <Text style={s.bio}>{bioPreview(user.bio)}</Text>
         </View>
         </TouchableOpacity>
-        {mode === 'followers' && isOwn && user.relationship?.followingStatus === 'none' &&
-          <TouchableOpacity accessibilityRole="button" style={s.confirm} disabled={actionId !== null} onPress={() => followBack(user)}>
-            <Text style={s.confirmText}>Follow back</Text>
-          </TouchableOpacity>}
-        {mode === 'followers' && isOwn && user.relationship?.followingStatus === 'pending' && <Text style={s.bio}>Requested</Text>}
         {canShowMessage(user) && <TouchableOpacity accessibilityRole="button" accessibilityLabel={`Message ${user.name}`} style={s.confirm} disabled={actionId !== null} onPress={() => message(user)}>
           {actionId === user._id ? <ActivityIndicator /> : <Text style={s.confirmText}>Message</Text>}
         </TouchableOpacity>}
-        {mode === 'following' && isOwn && <TouchableOpacity accessibilityRole="button" accessibilityLabel={`Unfollow ${user.name}`} style={s.reject} disabled={actionId !== null} onPress={() => unfollow(user)}>
-          {actionId === user._id ? <ActivityIndicator /> : <Text style={s.rejectText}>Unfollow</Text>}
+        {mode === 'friends' && isOwn && <TouchableOpacity accessibilityRole="button" accessibilityLabel={`Remove friend ${user.name}`} style={s.reject} disabled={actionId !== null} onPress={() => removeFriend(user)}>
+          {actionId === user._id ? <ActivityIndicator /> : <Text style={s.rejectText}>Remove</Text>}
         </TouchableOpacity>}
         {request && (
           <View style={s.actions}>
@@ -152,7 +136,7 @@ export default function SocialConnectionsScreen({route, navigation}: any) {
         <FlatList
           refreshing={false} onRefresh={() => load()} data={items} renderItem={renderItem} keyExtractor={(item: any) => String(item._id)}
           contentContainerStyle={items.length ? s.list : s.empty}
-          ListEmptyComponent={<TouchableOpacity onPress={() => load()}><Text style={s.emptyText}>{error || (mode === 'requests' ? 'No pending follow requests.' : `No ${title.toLowerCase()} yet.`)}</Text></TouchableOpacity>}
+          ListEmptyComponent={<TouchableOpacity onPress={() => load()}><Text style={s.emptyText}>{error || (mode === 'requests' ? 'No pending friend requests.' : `No ${title.toLowerCase()} yet.`)}</Text></TouchableOpacity>}
         />
       )}
     </SafeAreaView>

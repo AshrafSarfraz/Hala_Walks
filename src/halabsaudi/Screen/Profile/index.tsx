@@ -35,7 +35,7 @@ const Profile: React.FC = () => {
   const [lastSeenLoading, setLastSeenLoading] = useState(false);
   const [onlineLoading, setOnlineLoading] = useState(false);
   const [isPrivate, setIsPrivate] = useState(false);
-  const [messagePermission, setMessagePermission] = useState('mutual');
+  const [messagePermission, setMessagePermission] = useState('friends');
   const [privacySaving, setPrivacySaving] = useState(false);
   const [messagePickerOpen, setMessagePickerOpen] = useState(false);
   const [userName, setUserName] = useState('');
@@ -74,7 +74,7 @@ const Profile: React.FC = () => {
             setShowLastSeen(!data.hideLastSeen);
             setShowOnlineStatus(!data.hideOnlineStatus);
             setIsPrivate(!!data.isPrivate);
-            setMessagePermission(data.messagePermission === 'nobody' ? 'nobody' : 'mutual');
+            setMessagePermission(data.messagePermission === 'nobody' ? 'nobody' : 'friends');
           }
         } catch {
           const ls = await AsyncStorage.getItem('hala_show_last_seen');
@@ -132,7 +132,7 @@ const Profile: React.FC = () => {
       }
       const data = await res.json();
       setIsPrivate(!!data.isPrivate);
-      setMessagePermission(data.messagePermission === 'nobody' ? 'nobody' : 'mutual');
+      setMessagePermission(data.messagePermission === 'nobody' ? 'nobody' : 'friends');
     } catch (error: any) {
       const message =
         error?.message === 'Network request failed'
@@ -242,7 +242,7 @@ const Profile: React.FC = () => {
   const Divider = () => <View style={s.divider} />;
 
   const messageOptions: [string, string][] = [
-    ['mutual', tr('Mutual follows', 'المتابَعون المتبادلون')],
+    ['friends', tr('Friends', 'الأصدقاء')],
     ['nobody', tr('Nobody', 'لا أحد')],
   ];
 
@@ -268,19 +268,13 @@ const Profile: React.FC = () => {
         <View style={s.card}>
           <NavRow
             icon="people-outline"
-            label={tr('Followers', 'المتابِعون')}
-            onPress={() => navigation.navigate('SocialConnections', {mode: 'followers'})}
-          />
-          <Divider />
-          <NavRow
-            icon="person-circle-outline"
-            label={tr('Following', 'تتابعهم')}
-            onPress={() => navigation.navigate('SocialConnections', {mode: 'following'})}
+            label={tr('Friends', 'الأصدقاء')}
+            onPress={() => navigation.navigate('SocialConnections', {mode: 'friends'})}
           />
           <Divider />
           <NavRow
             icon="person-add-outline"
-            label={tr('Follow requests', 'طلبات المتابعة')}
+            label={tr('Friend requests', 'طلبات الصداقة')}
             onPress={() => navigation.navigate('SocialConnections', {mode: 'requests'})}
           />
           <Divider />
@@ -299,8 +293,8 @@ const Profile: React.FC = () => {
             icon="lock-closed-outline"
             label={tr('Private account', 'حساب خاص')}
             sub={tr(
-              'Only approved followers can see your posts and follower/following lists. Counts stay visible.',
-              'فقط المتابعون المعتمدون يمكنهم رؤية منشوراتك وقوائم المتابعة. تبقى الأعداد ظاهرة.',
+              'Only friends can see your check-ins and friends list. Counts stay visible.',
+              'يمكن للأصدقاء فقط رؤية زياراتك وقائمة أصدقائك. تبقى الأعداد ظاهرة.',
             )}
             value={isPrivate}
             loading={privacySaving}
@@ -363,8 +357,8 @@ const Profile: React.FC = () => {
             <Text style={s.sheetTitle}>{tr('Who can message you?', 'من يمكنه مراسلتك؟')}</Text>
             <Text style={s.sheetSub}>
               {tr(
-                'Messaging requires both people to follow each other. You can also turn messaging off.',
-                'تتطلب المراسلة أن يتابع كل منكما الآخر. يمكنك أيضاً إيقاف المراسلة.',
+                'Only accepted friends can message you. You can also turn messaging off.',
+                'يمكن للأصدقاء المقبولين فقط مراسلتك. يمكنك أيضاً إيقاف المراسلة.',
               )}
             </Text>
             {messageOptions.map(([value, label], i) => (

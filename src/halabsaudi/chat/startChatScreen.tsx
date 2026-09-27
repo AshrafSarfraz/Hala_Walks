@@ -17,12 +17,11 @@ import {languageData} from '../redux_toolkit/language/languageSlice';
 import {RootState} from '../redux_toolkit/store';
 import {useStatusBar} from '../Component/UseStatusBar/useStatusBar';
 
-type FollowStatus = 'none' | 'pending' | 'accepted';
 type User = {
   _id: string; name: string; bio?: string | null; avatar?: string | null; isOnline?: boolean;
   privacySettings?: {isPrivate?: boolean};
   canMessage?: boolean; // backend bheje to wahi final
-  relationship?: {followingStatus: FollowStatus; followedByStatus: FollowStatus};
+  friendshipStatus?: 'none' | 'incoming' | 'outgoing' | 'accepted';
 };
 type PeopleCache = {ownerId: string; fetchedAt: number; users: User[]; blocked: string[]};
 type FetchResult = {cache: PeopleCache; usersFailed: boolean};
@@ -402,9 +401,6 @@ const styles = StyleSheet.create({
   rowInfo:       {flex: 1},
   nameLine:      {alignItems: 'center', gap: 5},
   rowName:       {fontSize: 15, fontWeight: '700', color: Colors.White},
-  followChip:    {minWidth: 72, alignItems: 'center', backgroundColor: Colors.btnRed, borderRadius: 18, paddingHorizontal: 9, paddingVertical: 7, marginRight: 8},
-  followingChip: {backgroundColor: '#191B20', borderWidth: 1, borderColor: '#343841'},
-  followChipText:{color: Colors.White, fontSize: 11, fontWeight: '700'},
   msgChip:       {alignItems: 'center', backgroundColor: '#191B20', borderRadius: 20, paddingHorizontal: 12, paddingVertical: 7, borderWidth: 1, borderColor: Colors.btnRed},
   msgChipText:   {color: Colors.btnRed, fontSize: 12, fontWeight: '700'},
   msgChipLocked: {borderColor: '#343841'},
