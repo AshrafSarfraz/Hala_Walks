@@ -27,8 +27,8 @@ type RedeemItem = {
 const BASE_URL = 'https://hala-b-saudi.onrender.com/api/hbs/redeem';
 
 const BRAND_COLORS = [
-  '#005029', '#3B9E6D', '#7C5CFC', '#E8734A',
-  '#D44A7A', '#1A7DBF', '#C8891A', '#2E9B8F',
+  Colors.brandGreen, Colors.success, Colors.purple, Colors.accent,
+  Colors.accent, Colors.info, Colors.warning, Colors.info,
 ];
 function getBrandColor(str: string): string {
   let hash = 0;
@@ -56,7 +56,7 @@ function formatTime(createdAt: any): string {
 
 const Redeem_His: React.FC = () => {
   const navigation = useNavigation<any>();
-   useStatusBar('light-content', Colors.Red, true);
+   useStatusBar('light-content', Colors.surface, true);
   // ── Language / RTL ─────────────────────────────────────────────────
   const language = useSelector((state: RootState) => state.language.language);
   const t        = languageData[language];
@@ -134,7 +134,7 @@ const Redeem_His: React.FC = () => {
             {label}
           </Text>
           <View style={[styles.cardMeta, {flexDirection: rowDir}]}>
-            <Ionicons name="calendar-outline" size={11} color={Colors.Grey9} />
+            <Ionicons name="calendar-outline" size={11} color={Colors.textMuted} />
             <Text style={styles.cardDate}>{date}</Text>
             {time ? (
               <>
@@ -154,7 +154,7 @@ const Redeem_His: React.FC = () => {
           )}
           <Ionicons
             name={isRTL ? 'chevron-back' : 'chevron-forward'}
-            size={14} color={Colors.Grey4} style={{marginTop: 4}}
+            size={14} color={Colors.textSecondary} style={{marginTop: 4}}
           />
         </View>
       </TouchableOpacity>
@@ -173,7 +173,7 @@ const Redeem_His: React.FC = () => {
             activeOpacity={0.7}>
             <Ionicons
               name={isRTL ? 'arrow-forward' : 'arrow-back'}
-              size={20} color={Colors.White}
+              size={20} color={Colors.white}
             />
           </TouchableOpacity>
 
@@ -194,12 +194,12 @@ const Redeem_His: React.FC = () => {
         </View>
       </View>
 
-      {/* ── Body — always Colors.Bg ── */}
+      {/* ── Body — always Colors.background ── */}
       <View style={styles.body}>
         {loading ? (
           /* Loading state */
           <View style={styles.loaderWrap}>
-            <ActivityIndicator size="large" color={Colors.Red} />
+            <ActivityIndicator size="large" color={Colors.accent} />
             <Text style={styles.loaderText}>{t.loading_history}</Text>
           </View>
 
@@ -207,7 +207,7 @@ const Redeem_His: React.FC = () => {
           /* Empty state */
           <View style={styles.emptyWrap}>
             <View style={styles.emptyRing}>
-              <Ionicons name="receipt-outline" size={42} color={Colors.Red} />
+              <Ionicons name="receipt-outline" size={42} color={Colors.accent} />
             </View>
             <Text style={styles.emptyTitle}>{t.no_redeem_history}</Text>
             <Text style={[styles.emptySub, {textAlign: 'center'}]}>{t.no_redeem_desc}</Text>
@@ -246,14 +246,14 @@ export default Redeem_His;
 
 const styles = StyleSheet.create({
   // ── Root — green for safe-area top edge to match header ──
-  safe: {flex: 1, backgroundColor: Colors.darkgrey},
+  safe: {flex: 1, backgroundColor: Colors.surface},
 
-  // ── Body — always Colors.Bg regardless of content state ──
-  body: {flex: 1, backgroundColor: '#191B20'},
+  // ── Body — always Colors.background regardless of content state ──
+  body: {flex: 1, backgroundColor: Colors.surface},
 
   // ── Header ──
   header: {
-    backgroundColor: Colors.darkgrey,
+    backgroundColor: Colors.surface,
     paddingTop: Platform.OS === 'ios' ? 4 : 10,
     paddingBottom: 20,
     paddingHorizontal: 18,
@@ -262,40 +262,40 @@ const styles = StyleSheet.create({
   headerRow: {alignItems: 'center', gap: 12},
   backBtn: {
     width: 38, height: 38, borderRadius: 19,
-    backgroundColor: 'rgba(255,255,255,0.13)',
+    backgroundColor: Colors.lightOverlaySubtle,
     justifyContent: 'center', alignItems: 'center',
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)', flexShrink: 0,
+    borderWidth: 1, borderColor: Colors.lightOverlaySubtle, flexShrink: 0,
   },
   headerText: {flex: 1},
   eyebrow: {
-    fontSize: 10, color: Colors.White,   fontFamily: Fonts.SF_Bold,
+    fontSize: 10, color: Colors.white,   fontFamily: Fonts.SF_Bold,
     letterSpacing: 0.2, textTransform: 'uppercase', marginBottom: 3,
   },
   headerTitle: {fontSize: 18,
         fontFamily: Fonts.SF_Bold,
-    fontWeight: '800', color: Colors.White, letterSpacing: -0.3},
+    fontWeight: '800', color: Colors.white, letterSpacing: -0.3},
   countBadge: {
-    backgroundColor: 'rgba(255,255,255,0.18)', borderRadius: 20,
+    backgroundColor: Colors.lightOverlaySubtle, borderRadius: 20,
     paddingHorizontal: 12, paddingVertical: 5,
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)',
+    borderWidth: 1, borderColor: Colors.lightOverlaySubtle,
   },
-  countBadgeText: {color: Colors.White, fontSize: 13, fontWeight: '700'},
+  countBadgeText: {color: Colors.white, fontSize: 13, fontWeight: '700'},
 
   // ── List ──
   listContent: {paddingHorizontal: 14, paddingTop: 12, paddingBottom: 36},
   listHeader:  {paddingHorizontal: 4, paddingBottom: 8},
   listHeaderText: {
-    fontSize: 11, fontWeight: '700', color: Colors.White,
+    fontSize: 11, fontWeight: '700', color: Colors.white,
     letterSpacing: 0.2, textTransform: 'uppercase',
   },
 
   // ── Card ──
   card: {
     alignItems: 'center',
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     borderRadius: 16,
     paddingVertical: 13, paddingHorizontal: 14,
-    shadowColor: '#1A202C',
+    shadowColor: Colors.black,
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.05, shadowRadius: 8,
     gap: 12,
@@ -304,13 +304,13 @@ const styles = StyleSheet.create({
     width: 50, height: 50, borderRadius: 25,
     justifyContent: 'center', alignItems: 'center', flexShrink: 0,
   },
-  brandLetter: {color: Colors.White, fontSize: 20, fontWeight: '800'},
+  brandLetter: {color: Colors.white, fontSize: 20, fontWeight: '800'},
 
   cardInfo: {flex: 1, minWidth: 0},
-  cardBrand: {fontSize: 13, fontWeight: '700', color: Colors.White, marginBottom: 5},
+  cardBrand: {fontSize: 13, fontWeight: '700', color: Colors.white, marginBottom: 5},
   cardMeta:  {alignItems: 'center', gap: 3},
-  cardDate:  {fontSize: 10, color: Colors.Grey9, fontWeight: '500'},
-  metaDot:   {width: 3, height: 3, borderRadius: 2, backgroundColor: Colors.Grey4},
+  cardDate:  {fontSize: 10, color: Colors.textMuted, fontWeight: '500'},
+  metaDot:   {width: 3, height: 3, borderRadius: 2, backgroundColor: Colors.textSecondary},
 
   cardRight: {gap: 4, flexShrink: 0},
   discountBadge: {borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4},
@@ -322,16 +322,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40, gap: 10,
   },
   emptyRing: {
-    width: 88, height: 88, borderRadius: 44, backgroundColor: '#191B20',
+    width: 88, height: 88, borderRadius: 44, backgroundColor: Colors.surface,
     justifyContent: 'center', alignItems: 'center',
-    marginBottom: 8, borderWidth: 3, borderColor: Colors.White,
+    marginBottom: 8, borderWidth: 3, borderColor: Colors.white,
   },
-  emptyTitle: {fontSize: 18, fontWeight: '700', color: Colors.White},
-  emptySub:   {fontSize: 13, color: Colors.Grey9, lineHeight: 20},
+  emptyTitle: {fontSize: 18, fontWeight: '700', color: Colors.white},
+  emptySub:   {fontSize: 13, color: Colors.textMuted, lineHeight: 20},
 
   // ── Loader ──
   loaderWrap: {flex: 1, justifyContent: 'center', alignItems: 'center', gap: 12},
-  loaderText: {fontSize: 14, color: Colors.Grey9, marginTop: 4},
+  loaderText: {fontSize: 14, color: Colors.textMuted, marginTop: 4},
 });
 
 

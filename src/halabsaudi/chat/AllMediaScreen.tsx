@@ -27,7 +27,7 @@ export default function AllMediaScreen({route, navigation}: Props) {
   const t        = languageData[language];
   const isRTL    = language === 'ar';
   const rowDir   = isRTL ? 'row-reverse' : 'row';
-  useStatusBar('dark-content', Colors.White4, true);
+  useStatusBar('light-content', Colors.surface, true);
   const {
     allMedia: initialMedia = [],
     participantName = 'Media',
@@ -78,7 +78,7 @@ export default function AllMediaScreen({route, navigation}: Props) {
       <Image source={{uri: item.uri}} style={s.cellImg} resizeMode="cover" />
       {item.mediaType === 'video' && (
         <View style={s.videoOverlay}>
-          <Ionicons name="play-circle" size={32} color="#fff" />
+          <Ionicons name="play-circle" size={32} color={Colors.white} />
         </View>
       )}
     </TouchableOpacity>
@@ -93,7 +93,7 @@ export default function AllMediaScreen({route, navigation}: Props) {
           <Ionicons
             name={isRTL ? 'arrow-forward' : 'arrow-back'}
             size={24}
-            color='#F5F6F8'
+            color={Colors.textPrimary}
           />
         </TouchableOpacity>
 
@@ -108,7 +108,7 @@ export default function AllMediaScreen({route, navigation}: Props) {
       {/* ── Grid ── */}
       {media.length === 0 ? (
         <View style={s.empty}>
-          <Ionicons name="images-outline" size={48} color="#D1D5DB" />
+          <Ionicons name="images-outline" size={48} color={Colors.textSecondary} />
           <Text style={s.emptyText}>{t.no_shared_media}</Text>
         </View>
       ) : (
@@ -162,31 +162,31 @@ export default function AllMediaScreen({route, navigation}: Props) {
 }
 
 const s = StyleSheet.create({
-  root:   {flex: 1, backgroundColor:Colors.dargBg},
+  root:   {flex: 1, backgroundColor:Colors.background},
   header: {
     alignItems: 'center',
     paddingHorizontal: 8, paddingVertical: 10,
-    borderBottomWidth: 0.5, borderBottomColor: '#343841',
-    backgroundColor: '#191B20',
+    borderBottomWidth: 0.5, borderBottomColor: Colors.border,
+    backgroundColor: Colors.surface,
   },
   backBtn:      {width: 40, height: 40, justifyContent: 'center', alignItems: 'center', borderRadius: 20},
   headerCenter: {flex: 1, alignItems: 'center'},
-  headerTitle:  {fontSize: 16, fontWeight: '700', color: Colors.White},
-  headerSub:    {fontSize: 12, color: '#ABB2BF', marginTop: 1},
+  headerTitle:  {fontSize: 16, fontWeight: '700', color: Colors.white},
+  headerSub:    {fontSize: 12, color: Colors.textSecondary, marginTop: 1},
   grid: {padding: 2},
   row:  {gap: 2},
   cell: {
     width: ITEM_SIZE, height: ITEM_SIZE, margin: 1,
-    backgroundColor: Colors.darkgrey, borderRadius: 4, overflow: 'hidden',
+    backgroundColor: Colors.surface, borderRadius: 4, overflow: 'hidden',
   },
   cellImg:      {width: '100%', height: '100%'},
   videoOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.28)',
+    backgroundColor: Colors.overlaySoft,
     justifyContent: 'center', alignItems: 'center',
   },
   empty:     {flex: 1, justifyContent: 'center', alignItems: 'center', gap: 12},
-  emptyText: {fontSize: 14, color: '#9CA3AF'},
+  emptyText: {fontSize: 14, color: Colors.textMuted},
 });
 
 

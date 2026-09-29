@@ -54,7 +54,7 @@ export default Splash_Screen;
 const styles = StyleSheet.create({
   Main_Container: {
     flex: 1,
-    backgroundColor: Colors.dargBg,
+    backgroundColor: Colors.background,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
 
   },
   Txt:{
-    color:Colors.White,
+    color:Colors.white,
     fontSize:14,
     fontWeight:"600",
     marginBottom:"2%",

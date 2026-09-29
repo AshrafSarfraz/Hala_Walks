@@ -18,7 +18,7 @@ type SplashBlankProps = {
 };
 
 const WelcomeScreen: React.FC<SplashBlankProps> = ({navigation}) => {
-  useStatusBar('light-content', Colors.Green);
+  useStatusBar('light-content', Colors.brandGreen);
   const [selected, setSelected] = useState<'customer' | 'community' | null>( null,);
   const [alertVisible, setAlertVisible] = useState<boolean>(false);
   const [code, setCode] = useState('');
@@ -79,7 +79,7 @@ const WelcomeScreen: React.FC<SplashBlankProps> = ({navigation}) => {
                     styles.buttonImage,
                     {
                       tintColor:
-                        selected === 'customer' ? Colors.darkgrey : 'white',
+                        selected === 'customer' ? Colors.surface : Colors.white,
                     },
                   ]}
                   resizeMode="contain"
@@ -111,7 +111,7 @@ const WelcomeScreen: React.FC<SplashBlankProps> = ({navigation}) => {
                     styles.buttonImage2,
                     {
                       tintColor:
-                        selected === 'community' ? Colors.darkgrey : 'white',
+                        selected === 'community' ? Colors.surface : Colors.white,
                     },
                   ]}
                   resizeMode="contain"
@@ -132,7 +132,7 @@ const WelcomeScreen: React.FC<SplashBlankProps> = ({navigation}) => {
                 {selected === 'community' && (
                   <TextInput
                     placeholder="Community code e.g. 12345"
-                    placeholderTextColor="#ccc"
+                    placeholderTextColor={Colors.textSecondary}
                     style={styles.input}
                     value={code}
                     onChangeText={setCode}
@@ -157,14 +157,14 @@ export default WelcomeScreen;
 const getStyles=(langauge:string) => StyleSheet.create({
   flex: {
     flex: 1,
-    backgroundColor: Colors.dargBg,
+    backgroundColor: Colors.background,
   },
   scrollContent: {
     flexGrow: 1,
   },
   Main_Container: {
     flex: 1,
-    backgroundColor: Colors.dargBg ,
+    backgroundColor: Colors.background ,
     paddingHorizontal: 20,
     paddingVertical:60,
     justifyContent: 'flex-start',
@@ -183,15 +183,15 @@ const getStyles=(langauge:string) => StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 8,
-    backgroundColor: '#191B20', // soft white (glass look)
+    backgroundColor: Colors.surface, // soft white (glass look)
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: 'rgba(0,0,0,0.06)',
+    borderColor: Colors.overlaySubtle,
 
     ...Platform.select({
       ios: {
-        shadowColor: '#000',
+        shadowColor: Colors.black,
         shadowOpacity: 0.12,
         shadowRadius: 8,
         shadowOffset: { width: 0, height: 4 },
@@ -207,7 +207,7 @@ const getStyles=(langauge:string) => StyleSheet.create({
     width: 22,
     height: 22,
     resizeMode: 'contain',
-    tintColor: '#F5F6F8', // ya Colors.Black/Theme primary
+    tintColor: Colors.textPrimary, // ya Colors.black/Theme primary
   },
 
 
@@ -226,7 +226,7 @@ const getStyles=(langauge:string) => StyleSheet.create({
     padding: 10,
   },
   Passport_Txt:{
-    color:'#D0A700',
+    color:Colors.warning,
     fontSize:16,
     fontFamily:Fonts.SF_Bold,
     textAlign:"center",
@@ -236,12 +236,12 @@ const getStyles=(langauge:string) => StyleSheet.create({
     lineHeight:22
   },
   defaultButton: {
-    borderColor: '#343841',
-    backgroundColor: 'transparent',
+    borderColor: Colors.border,
+    backgroundColor: Colors.transparent,
   },
   selectedButton: {
-    borderColor: Colors.darkgrey,
-    backgroundColor: '#191B20',
+    borderColor: Colors.surface,
+    backgroundColor: Colors.surface,
   },
   buttonImage: {
     width: 50,
@@ -253,13 +253,13 @@ const getStyles=(langauge:string) => StyleSheet.create({
     height: 80,
   },
   buttonText: {
-    color: 'white',
+    color: Colors.white,
     fontSize: 16,
     textAlign: 'center',
     fontFamily: Fonts.SF_Bold,
   },
   selectedText: {
-    color: Colors.White,
+    color: Colors.white,
   },
   inputContainer: {
     marginTop: 30,
@@ -268,17 +268,17 @@ const getStyles=(langauge:string) => StyleSheet.create({
   input: {
     width: '100%',
     height: 55,
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     borderRadius: 10,
     paddingHorizontal: 15,
     fontSize: 14,
     marginBottom: 20,
-    color: Colors.White,
+    color: Colors.white,
     fontFamily: Fonts.SF_Bold,
   },
   continueButton: {
     width: '100%',
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     height: 55,
     borderRadius: 8,
     alignItems: 'center',
@@ -286,7 +286,7 @@ const getStyles=(langauge:string) => StyleSheet.create({
     marginTop: 10,
   },
   continueText: {
-    color: Colors.btnRed,
+    color: Colors.accent,
     fontSize: 16,
     fontFamily: Fonts.SF_Bold,
     lineHeight: 20,

@@ -80,7 +80,7 @@ const MapCaptureScreen = () => {
   );
 
 };
-  // 📸 Open Camera
+  // Take photo
   const openCamera = async () => {
   launchCamera(
     {
@@ -98,7 +98,7 @@ const MapCaptureScreen = () => {
 
       if (response.errorCode) {
         alert(
-          'Camera Error',
+          'Photo Error',
           `${response.errorCode} - ${response.errorMessage}`,
         );
         return;
@@ -154,7 +154,7 @@ const MapCaptureScreen = () => {
 
   return (
     <View style={{flex: 1, padding: 20, alignItems: 'center', justifyContent: 'center'}}>
-      <Button title="📸 Open Camera" onPress={openCamera} />
+      <Button title="Take Photo" onPress={openCamera} />
       <Button title="🖼️ Open Image Library" onPress={pickImage} />
       <View style={{height: 10}} />
 

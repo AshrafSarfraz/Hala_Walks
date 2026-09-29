@@ -82,7 +82,7 @@ export default function ConversationHeader({
 
         <View style={[styles.actions, {flexDirection: rowDir}]}>
           <TouchableOpacity style={styles.iconBtn} onPress={openSearch}>
-            <Ionicons name="search-outline" size={20} color="#fff" />
+            <Ionicons name="search-outline" size={20} color={Colors.white} />
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -109,13 +109,13 @@ export default function ConversationHeader({
             <Ionicons
               name="search"
               size={15}
-              color="rgba(255,255,255,0.55)"
+              color={Colors.lightOverlay}
               style={isRTL ? {marginLeft: 7} : {marginRight: 7}}
             />
             <TextInput
   autoFocus
   placeholder={t.search_messages}
-  underlineColorAndroid="transparent"
+  underlineColorAndroid={Colors.transparent}
   style={[
     styles.searchInput,
     {
@@ -129,7 +129,7 @@ export default function ConversationHeader({
 />
             {searchText.length > 0 && (
               <TouchableOpacity onPress={() => handleChange('')}>
-                <Ionicons name="close-circle" size={16} color="rgba(255,255,255,0.6)" />
+                <Ionicons name="close-circle" size={16} color={Colors.lightOverlay} />
               </TouchableOpacity>
             )}
           </View>
@@ -152,7 +152,7 @@ export default function ConversationHeader({
 
 const styles = StyleSheet.create({
   wrapper: {
-    backgroundColor: Colors.darkgrey,
+    backgroundColor: Colors.surface,
     paddingHorizontal: 20,
     paddingTop: Platform.OS === 'ios' ? 56 : 44,
     paddingBottom: 16,
@@ -161,43 +161,43 @@ const styles = StyleSheet.create({
 
   topRow: {justifyContent: 'space-between', alignItems: 'flex-start'},
   eyebrow: {
-    fontSize: 11, color: Colors.White,
+    fontSize: 11, color: Colors.white,
     letterSpacing: 0.2, textTransform: 'uppercase', marginBottom: 3,
   },
-  title: {color: Colors.White, fontSize: 26, fontWeight: '800', letterSpacing: -0.4},
+  title: {color: Colors.white, fontSize: 26, fontWeight: '800', letterSpacing: -0.4},
   actions: {alignItems: 'center', gap: 10, marginTop: 4},
   iconBtn: {
     width: 38, height: 38, borderRadius: 19,
-    backgroundColor: 'rgba(255,255,255,0.14)',
+    backgroundColor: Colors.lightOverlaySubtle,
     justifyContent: 'center', alignItems: 'center',
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.12)',
+    borderWidth: 1, borderColor: Colors.lightOverlaySubtle,
   },
   avatar: {
     width: 38, height: 38, borderRadius: 19,
     justifyContent: 'center', alignItems: 'center',
-    borderWidth: 2, borderColor: Colors.LightGreen,
+    borderWidth: 2, borderColor: Colors.success,
     position: 'relative',
   },
-  avatarText: {color: Colors.White, fontWeight: '800', fontSize: 15},
+  avatarText: {color: Colors.white, fontWeight: '800', fontSize: 15},
   onlineDot: {
     width: 10, height: 10, borderRadius: 5,
-    backgroundColor: Colors.LightGreen,
+    backgroundColor: Colors.success,
     position: 'absolute', bottom: -1, right: -1,
-    borderWidth: 2, borderColor: Colors.Green,
+    borderWidth: 2, borderColor: Colors.brandGreen,
   },
   searchRow: {alignItems: 'center', marginTop: 14, gap: 10},
   searchBox: {
     flex: 1, alignItems: 'center',
     borderRadius: 24, paddingHorizontal: 14, height: 46,
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.12)',
+    borderWidth: 1, borderColor: Colors.lightOverlaySubtle,
     overflow: 'hidden',
   },
   searchInput: {
     flex: 1,
-    color: Colors.White,
+    color: Colors.white,
     fontSize: 14,
     // wrapper / Android ki default styling reset
-    backgroundColor: 'transparent',
+    backgroundColor: Colors.transparent,
     borderWidth: 0,
     margin: 0,
     paddingVertical: 0,
@@ -206,12 +206,12 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center',
   },
   cancelBtn: {paddingVertical: 4},
-  cancelText: {color: Colors.LightGreen, fontSize: 14, fontWeight: '600'},
+  cancelText: {color: Colors.success, fontSize: 14, fontWeight: '600'},
   statsStrip: {alignItems: 'center', marginTop: 14, gap: 10},
   statItem: {alignItems: 'center', gap: 5},
-  statDot: {width: 7, height: 7, borderRadius: 4, backgroundColor: Colors.btnRed},
-  statText: {fontSize: 11, color: 'rgba(255,255,255,0.55)', fontWeight: '500'},
-  statDivider: {width: 1, height: 10, backgroundColor: 'rgba(255,255,255,0.2)'},
+  statDot: {width: 7, height: 7, borderRadius: 4, backgroundColor: Colors.accent},
+  statText: {fontSize: 11, color: Colors.lightOverlay, fontWeight: '500'},
+  statDivider: {width: 1, height: 10, backgroundColor: Colors.lightOverlaySubtle},
 });
 
 

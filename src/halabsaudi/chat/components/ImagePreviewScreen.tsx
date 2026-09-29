@@ -1,7 +1,6 @@
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import type {HalaStackParamList} from '../../Navigation/types';
 import {Text} from '../../../ui/Text';
-import {TextInput} from '../../../ui/TextInput';
 import {ActivityIndicator} from '../../../ui/ActivityIndicator';
 
 import React, {useState} from 'react';
@@ -13,6 +12,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Keyboard,
+  TextInput,
 } from 'react-native';
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import Ionicons from '@react-native-vector-icons/ionicons';
@@ -31,7 +31,7 @@ export default function ImagePreviewScreen({route, navigation}: Props) {
   const language = useSelector((state: RootState) => state.language.language);
   const isRTL = language === 'ar';
 
-  useStatusBar('light-content', Colors.Black, true);
+  useStatusBar('light-content', Colors.black, true);
 
   const [caption, setCaption] = useState('');
   const [queuing, setQueuing] = useState(false);
@@ -67,7 +67,6 @@ export default function ImagePreviewScreen({route, navigation}: Props) {
         style={s.keyboardRoot}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         keyboardVerticalOffset={0}>
-
         <View style={s.topBar}>
           <TouchableOpacity
             onPress={close}
@@ -75,7 +74,7 @@ export default function ImagePreviewScreen({route, navigation}: Props) {
             disabled={queuing}
             activeOpacity={0.75}
             hitSlop={{top: 8, bottom: 8, left: 8, right: 8}}>
-            <Ionicons name="close" size={27} color="#fff" />
+            <Ionicons name="close" size={27} color={Colors.white} />
           </TouchableOpacity>
 
           <Text style={s.topTitle}>Preview</Text>
@@ -102,10 +101,9 @@ export default function ImagePreviewScreen({route, navigation}: Props) {
             <Ionicons
               name="happy-outline"
               size={21}
-              color="#9CA3AF"
+              color={Colors.textMuted}
               style={isRTL ? {marginLeft: 8} : {marginRight: 8}}
             />
-
             <TextInput
               style={[
                 s.captionInput,
@@ -115,10 +113,11 @@ export default function ImagePreviewScreen({route, navigation}: Props) {
                 },
               ]}
               placeholder="Add a caption..."
-              placeholderTextColor="rgba(255,255,255,0.48)"
+              placeholderTextColor={Colors.lightOverlay}
               value={caption}
               onChangeText={setCaption}
               multiline
+              scrollEnabled
               maxLength={500}
             />
           </View>
@@ -129,9 +128,9 @@ export default function ImagePreviewScreen({route, navigation}: Props) {
             disabled={queuing}
             activeOpacity={0.8}>
             {queuing ? (
-              <ActivityIndicator size="small" color="#fff" />
+              <ActivityIndicator size="small" color={Colors.white} />
             ) : (
-              <Ionicons name="send" size={21} color="#fff" />
+              <Ionicons name="send" size={21} color={Colors.white} />
             )}
           </TouchableOpacity>
         </View>
@@ -143,12 +142,12 @@ export default function ImagePreviewScreen({route, navigation}: Props) {
 const s = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: Colors.black,
   },
 
   keyboardRoot: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: Colors.black,
   },
 
   // Slightly lower/shorter than before so the X is not too high.
@@ -158,7 +157,7 @@ const s = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 4,
     marginTop: Platform.OS === 'ios' ? 4 : 0,
-    backgroundColor: '#000',
+    backgroundColor: Colors.black,
   },
 
   topButton: {
@@ -170,7 +169,7 @@ const s = StyleSheet.create({
 
   topTitle: {
     flex: 1,
-    color: '#fff',
+    color: Colors.white,
     fontSize: 17,
     fontWeight: '600',
     textAlign: 'center',
@@ -179,7 +178,7 @@ const s = StyleSheet.create({
   imageWrap: {
     flex: 1,
     minHeight: 0,
-    backgroundColor: '#000',
+    backgroundColor: Colors.black,
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
@@ -196,40 +195,44 @@ const s = StyleSheet.create({
     gap: 8,
     paddingTop: 7,
     paddingHorizontal: 10,
-    backgroundColor: '#111318',
+    backgroundColor: Colors.surfaceRaised,
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: 'rgba(255,255,255,0.10)',
-  },
-
-  captionBox: {
-    flex: 1,
-    minHeight: 44,
-    maxHeight: 96,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#23262D',
-    borderRadius: 22,
-    paddingHorizontal: 13,
-    paddingVertical: 7,
-  },
-
-  captionInput: {
-    flex: 1,
-    maxHeight: 78,
-    paddingVertical: 0,
-    color: '#fff',
-    fontSize: 15,
-    lineHeight: 19,
-    minHeight: 30,
+    borderTopColor: Colors.lightOverlaySubtle,
   },
 
   sendBtn: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: Colors.Green,
+    backgroundColor: Colors.brandGreen,
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
+  },
+  captionBox: {
+    flex: 1,
+    minHeight: 44,
+    maxHeight: 96,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.surfaceRaised,
+    borderRadius: 22,
+    paddingHorizontal: 13,
+  },
+
+  captionInput: {
+    flex: 1,
+    minHeight: 44,
+    maxHeight: 88,
+    color: Colors.white,
+    fontSize: 15,
+    lineHeight: 20,
+    paddingTop: Platform.OS === 'ios' ? 11 : 8,
+    paddingBottom: Platform.OS === 'ios' ? 11 : 8,
+    paddingHorizontal: 0,
+    textAlignVertical: 'center',
+    borderWidth:1,
+    borderColor:Colors.border,
+    borderRadius:10
   },
 });

@@ -44,6 +44,8 @@ import BrandDetailScreen from '../../Map/BrandDetailScreen';
 
 
 
+import {Colors} from '../../Themes/Colors';
+
 const Stack = createNativeStackNavigator<HalaStackParamList>();
 const HalaStack: React.FC = () => {
   const [initialRoute, setInitialRoute] = useState<string | null>(null);
@@ -70,7 +72,7 @@ const HalaStack: React.FC = () => {
   }, []);
 
   if (!initialRoute) {
-    return <View style={{flex: 1, backgroundColor: '#101114', alignItems: 'center', justifyContent: 'center'}}><ActivityIndicator size="large" /></View>;
+    return <View style={{flex: 1, backgroundColor: Colors.background, alignItems: 'center', justifyContent: 'center'}}><ActivityIndicator size="large" /></View>;
   }
 
 
@@ -78,7 +80,7 @@ const HalaStack: React.FC = () => {
   return (
     <Stack.Navigator
       initialRouteName={initialRoute}
-      screenOptions={{headerShown: false, contentStyle: {backgroundColor: '#101114'}}}>
+      screenOptions={{headerShown: false, contentStyle: {backgroundColor: Colors.background}}}>
       {/* ── Auth & Onboarding ── */}
       <Stack.Screen name="Splash" component={Splash_Screen} />
       <Stack.Screen name="LocationDisclosure" component={LocationDisclosure} />
@@ -94,14 +96,15 @@ const HalaStack: React.FC = () => {
 
 
       <Stack.Screen
-        name="Timeline"
-        component={TimelineScreen}
-        options={{
-          presentation: 'modal',
-          gestureEnabled: true,
-          headerShown: false,
-        }}
-      />
+  name="Timeline"
+  component={TimelineScreen}
+  options={{
+    presentation: 'formSheet',
+    headerShown: false,
+    gestureEnabled: true,
+    sheetAllowedDetents: [0.9],
+  }}
+/>
 
       {/* ── App screens ── */}
       <Stack.Screen name="Home" component={Home} />

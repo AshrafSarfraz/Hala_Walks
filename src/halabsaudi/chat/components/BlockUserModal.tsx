@@ -8,6 +8,8 @@ import {useSelector} from 'react-redux';
 import {languageData} from '../../redux_toolkit/language/languageSlice';
 import {RootState} from '../../redux_toolkit/store';
 
+import {Colors} from '../../Themes/Colors';
+
 type Props = {
   visible: boolean;
   onClose: () => void;
@@ -52,7 +54,7 @@ export default function BlockUserModal({
     : [t.block_b1,   t.block_b2,   t.block_b3];
 
   const bulletIcon = isBlocked ? 'checkmark' : 'remove';
-  const bulletColor = isBlocked ? '#16A34A' : '#DC2626';
+  const bulletColor = isBlocked ? Colors.success : Colors.accent;
 
   return (
     <Modal
@@ -66,11 +68,11 @@ export default function BlockUserModal({
         <Animated.View style={[styles.card, {opacity: opacityAnim, transform: [{scale: scaleAnim}]}]}>
 
           {/* Icon */}
-          <View style={[styles.iconCircle, {backgroundColor: isBlocked ? '#191B20' : '#191B20'}]}>
+          <View style={[styles.iconCircle, {backgroundColor: isBlocked ? Colors.surface : Colors.surface}]}>
             <Ionicons
               name={isBlocked ? 'checkmark-circle-outline' : 'ban-outline'}
               size={34}
-              color={isBlocked ? '#16A34A' : '#DC2626'}
+              color={isBlocked ? Colors.success : Colors.accent}
             />
           </View>
 
@@ -94,12 +96,12 @@ export default function BlockUserModal({
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.confirmBtn, {backgroundColor: isBlocked ? '#16A34A' : '#DC2626'}]}
+              style={[styles.confirmBtn, {backgroundColor: isBlocked ? Colors.success : Colors.accent}]}
               onPress={onConfirm}
               disabled={loading}
               activeOpacity={0.8}>
               {loading ? (
-                <ActivityIndicator size="small" color="#fff" />
+                <ActivityIndicator size="small" color={Colors.white} />
               ) : (
                 <Text style={styles.confirmText}>
                   {isBlocked ? t.unblock_btn : t.block_btn}
@@ -115,33 +117,33 @@ export default function BlockUserModal({
 }
 
 const styles = StyleSheet.create({
-  backdrop: {...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.5)'},
+  backdrop: {...StyleSheet.absoluteFillObject, backgroundColor: Colors.overlaySoft},
   center: {flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 32},
   card: {
-    width: '100%', backgroundColor: '#191B20', borderRadius: 24,
+    width: '100%', backgroundColor: Colors.surface, borderRadius: 24,
     padding: 24, alignItems: 'center',
-    shadowColor: '#000', shadowOffset: {width: 0, height: 8},
+    shadowColor: Colors.black, shadowOffset: {width: 0, height: 8},
     shadowOpacity: 0.12, shadowRadius: 24, elevation: 16,
   },
   iconCircle: {
     width: 72, height: 72, borderRadius: 36,
     justifyContent: 'center', alignItems: 'center', marginBottom: 16,
   },
-  title: {fontSize: 20, fontWeight: '700', color: '#F5F6F8', marginBottom: 8},
-  desc:  {fontSize: 14, color: '#ABB2BF', lineHeight: 20, marginBottom: 16},
+  title: {fontSize: 20, fontWeight: '700', color: Colors.textPrimary, marginBottom: 8},
+  desc:  {fontSize: 14, color: Colors.textSecondary, lineHeight: 20, marginBottom: 16},
   bulletList: {
-    width: '100%', backgroundColor: '#191B20',
+    width: '100%', backgroundColor: Colors.surface,
     borderRadius: 14, padding: 14, gap: 8, marginBottom: 20,
   },
   bulletRow: {alignItems: 'flex-start', gap: 8},
-  bulletText: {fontSize: 13, color: '#F5F6F8', flex: 1, lineHeight: 18},
+  bulletText: {fontSize: 13, color: Colors.textPrimary, flex: 1, lineHeight: 18},
   btnRow: {gap: 10, width: '100%'},
   cancelBtn: {
     flex: 1, height: 48, borderRadius: 14,
-    justifyContent: 'center', alignItems: 'center', backgroundColor: '#191B20',
+    justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.surface,
   },
-  cancelText:  {fontSize: 15, fontWeight: '600', color: '#F5F6F8'},
+  cancelText:  {fontSize: 15, fontWeight: '600', color: Colors.textPrimary},
   confirmBtn:  {flex: 1, height: 48, borderRadius: 14, justifyContent: 'center', alignItems: 'center'},
-  confirmText: {fontSize: 15, fontWeight: '700', color: '#fff'},
+  confirmText: {fontSize: 15, fontWeight: '700', color: Colors.white},
 });
 

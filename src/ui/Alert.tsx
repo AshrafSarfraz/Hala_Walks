@@ -1,6 +1,8 @@
 import React, {useSyncExternalStore} from 'react';
 import {AlertButton, AlertOptions, Modal, Pressable, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {theme} from './theme';
+import {Colors} from '../halabsaudi/Themes/Colors';
+
 type Dialog = {title: string; message?: string; buttons: AlertButton[]; options?: AlertOptions};
 let queue: Dialog[] = [];
 const listeners = new Set<() => void>();
@@ -41,5 +43,5 @@ const s = StyleSheet.create({
   title: {fontSize: 21, fontWeight: '700', color: theme.text, marginBottom: 12},
   body: {fontSize: 15, lineHeight: 23, color: theme.muted}, actions: {gap: 10, marginTop: 24},
   button: {minHeight: 48, backgroundColor: theme.raised, borderRadius: 14, alignItems: 'center', justifyContent: 'center', padding: 12},
-  cancel: {backgroundColor: 'transparent'}, label: {fontSize: 15, fontWeight: '600', color: theme.text},
+  cancel: {backgroundColor: Colors.transparent}, label: {fontSize: 15, fontWeight: '600', color: theme.text},
 });

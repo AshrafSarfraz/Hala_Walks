@@ -17,6 +17,8 @@ import React, {useState, useCallback} from 'react';
 import {View, TouchableOpacity, StyleSheet} from 'react-native';
 import Modal from 'react-native-modal';
 
+import {Colors} from '../../Themes/Colors';
+
 export type AlertButton = {
   text: string;
   onPress?: () => void;
@@ -123,7 +125,7 @@ const styles = StyleSheet.create({
   card: {
     width: '100%',
     maxWidth: 320,
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     borderRadius: 16,
     paddingTop: 20,
     paddingHorizontal: 20,
@@ -133,13 +135,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 17,
     fontWeight: '700',
-    color: '#F5F6F8',
+    color: Colors.textPrimary,
     textAlign: 'center',
     marginBottom: 6,
   },
   message: {
     fontSize: 14,
-    color: '#ABB2BF',
+    color: Colors.textSecondary,
     textAlign: 'center',
     lineHeight: 20,
     marginBottom: 16,
@@ -147,7 +149,7 @@ const styles = StyleSheet.create({
   btnRow: {
     flexDirection: 'row',
     borderTopWidth: 1,
-    borderColor: '#343841',
+    borderColor: Colors.border,
     marginTop: 8,
   },
   btnCol: {flexDirection: 'column'},
@@ -159,18 +161,18 @@ const styles = StyleSheet.create({
   },
   btnDivider: {
     borderLeftWidth: 1,
-    borderColor: '#343841',
+    borderColor: Colors.border,
   },
   btnText: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#F5F6F8',
+    color: Colors.textPrimary,
   },
   btnTextCancel: {
-    color: '#ABB2BF',
+    color: Colors.textSecondary,
     fontWeight: '500',
   },
   btnTextDestructive: {
-    color: '#ef4444',
+    color: Colors.accent,
   },
 });

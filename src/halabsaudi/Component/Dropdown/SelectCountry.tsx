@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
   dropdown_Icon: {
     width: 12,
     height: 12,
-    tintColor: Colors.White,
+    tintColor: Colors.white,
   },
   flag: {
     width: 16,
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
   selectedText: {
     fontSize: 10,
     fontWeight: '500',
-    color: '#F5F6F8',
+    color: Colors.textPrimary,
     flex: 1, // Push the icon to the right
   },
   dropdown_Container: {
@@ -109,11 +109,11 @@ const styles = StyleSheet.create({
     top: 54, // Positioning dropdown slightly lower for better spacing
     left: 0,
     right: 0,
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     borderRadius: 4,
     zIndex: 10,
     borderWidth: 1,
-    borderColor: Colors.grey1,
+    borderColor: Colors.textSecondary,
     elevation: 4, // Adding shadow for Android
   },
   Dropdown_ContItem: {
@@ -122,11 +122,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     height:40,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.grey1,
+    borderBottomColor: Colors.textSecondary,
   },
   dropdownText: {
     fontSize: 12,
-    color: '#F5F6F8',
+    color: Colors.textPrimary,
     fontWeight:'bold'
   },
 });

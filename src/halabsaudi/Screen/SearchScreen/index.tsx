@@ -19,11 +19,13 @@ import {getStyles} from './style';
 import {languageData} from '../../redux_toolkit/language/languageSlice';
 import {useStatusBar} from '../../Component/UseStatusBar/useStatusBar';
 
+import {hbsText} from '../../i18n/translations';
+
 const BRANDS_API = 'https://hala-b-saudi.onrender.com/api/hbs/brands';
 
 const SearchScreen: React.FC = () => {
   const navigation = useNavigation<any>();
-  useStatusBar('light-content', Colors.dargBg);
+  useStatusBar('light-content', Colors.background);
   const [searchQuery, setSearchQuery] = useState('');
   const [brands, setBrands] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -242,13 +244,13 @@ const SearchScreen: React.FC = () => {
     <View style={styles.container}>
      <SafeAreaView
       edges={['top']}
-      style={{ backgroundColor: Colors.darkgrey }}>
+      style={{ backgroundColor: Colors.surface }}>
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}
           accessibilityRole="button"
-          accessibilityLabel={language === 'ar' ? 'رجوع' : 'Go back'}>
+          accessibilityLabel={hbsText(language === 'ar', 'ui_go_back')}>
           <View style={styles.backChevron} />
         </TouchableOpacity> 
     
@@ -257,7 +259,7 @@ const SearchScreen: React.FC = () => {
           <TextInput
             style={styles.searchInput}
             placeholder={languageData[language].Search_for_anything}
-            placeholderTextColor="#fff"
+            placeholderTextColor={Colors.white}
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
@@ -265,7 +267,7 @@ const SearchScreen: React.FC = () => {
       </View>
     </SafeAreaView>
     
-      <View style={{flex: 1, paddingHorizontal: '4%', backgroundColor: Colors.dargBg}}>
+      <View style={{flex: 1, paddingHorizontal: '4%', backgroundColor: Colors.background}}>
   
 
         <View style={styles.FlatlistContainer}>

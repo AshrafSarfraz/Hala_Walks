@@ -1,9 +1,10 @@
+import {Colors} from '../halabsaudi/Themes/Colors';
 export const darkMapStyle = [
-  {elementType: 'geometry', stylers: [{color: '#191B20'}]},
-  {elementType: 'labels.text.stroke', stylers: [{color: '#101114'}]},
-  {elementType: 'labels.text.fill', stylers: [{color: '#ABB2BF'}]},
-  {featureType: 'road', elementType: 'geometry', stylers: [{color: '#343841'}]},
-  {featureType: 'road.highway', elementType: 'geometry', stylers: [{color: '#504349'}]},
-  {featureType: 'water', elementType: 'geometry', stylers: [{color: '#10232D'}]},
-  {featureType: 'poi.park', elementType: 'geometry', stylers: [{color: '#1B2C27'}]},
+  {elementType: 'geometry', stylers: [{color: Colors.surface}]},
+  {elementType: 'labels.text.stroke', stylers: [{color: Colors.background}]},
+  {elementType: 'labels.text.fill', stylers: [{color: Colors.textSecondary}]},
+  {featureType: 'road', elementType: 'geometry', stylers: [{color: Colors.border}]},
+  {featureType: 'road.highway', elementType: 'geometry', stylers: [{color: Colors.accentSoft}]},
+  {featureType: 'water', elementType: 'geometry', stylers: [{color: Colors.surfaceRaised}]},
+  {featureType: 'poi.park', elementType: 'geometry', stylers: [{color: Colors.brandGreen}]},
 ];

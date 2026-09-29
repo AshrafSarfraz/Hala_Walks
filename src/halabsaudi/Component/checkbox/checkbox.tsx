@@ -55,7 +55,7 @@ const getStyles=(language:string) => StyleSheet.create({
     width: 20,
     height: 20,
     borderWidth: 2,
-    borderColor: Colors.grey1, // ✅ Default grey border
+    borderColor: Colors.textSecondary, // ✅ Default grey border
     borderRadius: 6,
     alignItems: 'center',
     justifyContent: 'center',
@@ -63,20 +63,20 @@ const getStyles=(language:string) => StyleSheet.create({
     marginLeft:language==='ar'?10:0,
   },
   checked: {
-    borderColor: Colors.Red,
-    backgroundColor:Colors.Red // ✅ Red when checked
+    borderColor: Colors.accent,
+    backgroundColor:Colors.accent // ✅ Red when checked
   },
   tickIcon: {
     width: 10,
     height: 10,
-    tintColor: Colors.White, // ✅ Ensuring green tick
+    tintColor: Colors.white, // ✅ Ensuring green tick
   },
   label: {
     fontSize: 14,
-    color: Colors.White,
+    color: Colors.white,
   },
   linkText: {
-    color: Colors.White, // ✅ Blue for privacy policy link
+    color: Colors.white, // ✅ Blue for privacy policy link
 
   },
 });

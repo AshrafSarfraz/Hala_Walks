@@ -15,6 +15,8 @@ import ConversationsScreen from '../../chat/conversationScreen';
 import MapScreen from '../../Map/mapScreen';
 import Ionicons from '@react-native-vector-icons/ionicons';
 
+import {hbsText} from '../../i18n/translations';
+
 const Tab = createBottomTabNavigator();
 
 // ─── Centre tab icon ──────────────────────────────────────────────────────────
@@ -23,7 +25,7 @@ const PlusTabIcon = ({focused}: {focused: boolean}) => (
     <Ionicons
       name="time"
       size={25}
-      color={focused ? '#E75049' : Colors.White}
+      color={focused ? Colors.accent : Colors.white}
     />
   </View>
 );
@@ -49,7 +51,7 @@ const MyTabs: React.FC = () => {
           }
 
           let iconSource: ImageSourcePropType | undefined;
-          const tintColor = focused ? Colors.btnRed : Colors.White;
+          const tintColor = focused ? Colors.accent : Colors.white;
 
           switch (route.name) {
             case 'Home':
@@ -76,8 +78,8 @@ const MyTabs: React.FC = () => {
           );
         },
         tabBarLabelStyle: {paddingBottom: 4, fontSize: 10, fontWeight: '500'},
-        tabBarActiveTintColor: Colors.btnRed,
-        tabBarInactiveTintColor: Colors.White,
+        tabBarActiveTintColor: Colors.accent,
+        tabBarInactiveTintColor: Colors.white,
         tabBarStyle: {
           height: 40 + insets.bottom,
           width:'85%',
@@ -86,9 +88,9 @@ const MyTabs: React.FC = () => {
           borderRadius:100,
           paddingHorizontal:14,
           paddingTop:8,
-          backgroundColor: 'rgba(255, 255, 255, 0.08)',
+          backgroundColor: Colors.lightOverlaySubtle,
           borderWidth: 1,
-          borderColor: 'rgba(255, 255, 255, 0.15)',
+          borderColor: Colors.lightOverlaySubtle,
           overflow: 'hidden',
           position: 'absolute',
           marginRight:'7.5%',
@@ -136,7 +138,7 @@ const MyTabs: React.FC = () => {
       <Tab.Screen
         name="Explore"
         component={MapScreen}
-        options={{tabBarLabel: language === 'ar' ? 'استكشف' : 'Explore'}}
+        options={{tabBarLabel: hbsText(language === 'ar', 'ui_explore')}}
       />
 
       <Tab.Screen

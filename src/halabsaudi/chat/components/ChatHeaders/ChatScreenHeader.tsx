@@ -61,7 +61,7 @@ export default function ChatScreenHeader({
         hitSlop={{top: 8, bottom: 8, left: 8, right: 8}}>
         <Ionicons
           name={isRTL ? 'arrow-forward' : 'arrow-back'}
-          color={Colors.White}
+          color={Colors.white}
           size={22}
         />
       </TouchableOpacity>
@@ -93,7 +93,7 @@ export default function ChatScreenHeader({
               <Ionicons
                 name="notifications-off-outline"
                 size={13}
-                color="rgba(255,255,255,0.6)"
+                color={Colors.lightOverlay}
                 style={isRTL ? {marginRight: 4} : {marginLeft: 4}}
               />
             )}
@@ -103,8 +103,8 @@ export default function ChatScreenHeader({
               style={[
                 styles.statusText,
                 {textAlign: isRTL ? 'right' : 'left'},
-                isOnline && !isBlocked && {color: '#A8F0CF'},
-                isBlocked && {color: '#ffb3b3'},
+                isOnline && !isBlocked && {color: Colors.textSecondary},
+                isBlocked && {color: Colors.textSecondary},
               ]}>
               {getStatusText()}
             </Text>
@@ -117,7 +117,7 @@ export default function ChatScreenHeader({
         style={styles.profileBtn}
         onPress={onProfilePress}
         hitSlop={{top: 8, bottom: 8, left: 8, right: 8}}>
-        <Ionicons name="information-circle-outline" size={24} color={Colors.White} />
+        <Ionicons name="information-circle-outline" size={24} color={Colors.white} />
       </TouchableOpacity>
     </View>
   );
@@ -125,7 +125,7 @@ export default function ChatScreenHeader({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.darkgrey,
+    backgroundColor: Colors.surface,
     alignItems: 'center',
     paddingHorizontal: 10,
     paddingTop: Platform.OS === 'ios' ? 12 : 14,
@@ -137,24 +137,24 @@ const styles = StyleSheet.create({
   avatarWrap: {position: 'relative'},
   avatarImage: {
     width: 42, height: 42, borderRadius: 21,
-    borderWidth: 2, borderColor: 'rgba(255,255,255,0.3)',
+    borderWidth: 2, borderColor: Colors.lightOverlay,
   },
   avatarCircle: {
     width: 42, height: 42, borderRadius: 21,
     justifyContent: 'center', alignItems: 'center',
-    borderWidth: 2, borderColor: 'rgba(255,255,255,0.25)',
+    borderWidth: 2, borderColor: Colors.lightOverlaySubtle,
   },
-  avatarLetter: {color: '#fff', fontWeight: '700', fontSize: 17},
+  avatarLetter: {color: Colors.white, fontWeight: '700', fontSize: 17},
   onlineDot: {
     position: 'absolute', bottom: 1, right: 1,
     width: 11, height: 11, borderRadius: 6,
-    backgroundColor: '#22C55E',
-    borderWidth: 2, borderColor: Colors.Green,
+    backgroundColor: Colors.success,
+    borderWidth: 2, borderColor: Colors.brandGreen,
   },
   textBlock: {flex: 1},
   nameRow: {alignItems: 'center', gap: 4},
-  nameText: {color: '#fff', fontWeight: '700', fontSize: 16, flexShrink: 1},
-  statusText: {color: 'rgba(255,255,255,0.65)', fontSize: 12, marginTop: 2},
+  nameText: {color: Colors.white, fontWeight: '700', fontSize: 16, flexShrink: 1},
+  statusText: {color: Colors.lightOverlay, fontSize: 12, marginTop: 2},
   profileBtn: {padding: 8, marginLeft: 4},
 });
 

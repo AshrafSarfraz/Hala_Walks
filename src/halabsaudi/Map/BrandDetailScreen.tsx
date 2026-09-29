@@ -79,7 +79,7 @@ const ImageSlider = ({images}: {images: string[]}) => {
   if (images.length === 0) {
     return (
       <View style={[styles.slide, styles.sliderEmpty]}>
-        <Ionicons name="image-outline" size={40} color="#ccc" />
+        <Ionicons name="image-outline" size={40} color={Colors.textSecondary} />
         <Text style={styles.sliderEmptyText}>No photos yet</Text>
       </View>
     );
@@ -136,7 +136,7 @@ const PhotoViewerModal = ({
       <View style={styles.viewerBackdrop}>
         <StatusBar barStyle="light-content" />
         <TouchableOpacity style={styles.viewerCloseBtn} onPress={onClose}>
-          <Ionicons name="close" size={26} color="#fff" />
+          <Ionicons name="close" size={26} color={Colors.white} />
         </TouchableOpacity>
         <Text style={styles.viewerCounter}>
           {index + 1} / {images.length}
@@ -295,7 +295,7 @@ const BrandDetailScreen = () => {
 
         {!!detail?.address && (
           <View style={styles.addressRow}>
-            <Ionicons name="location-outline" size={15} color='#ABB2BF' />
+            <Ionicons name="location-outline" size={15} color={Colors.textSecondary} />
             <Text style={styles.detailAddress} numberOfLines={2}>
               {detail.address}
             </Text>
@@ -314,10 +314,10 @@ const BrandDetailScreen = () => {
           disabled={uploading}
           onPress={() => addPhoto(false)}>
           {uploading ? (
-            <ActivityIndicator size="small" color={Colors.btnRed} />
+            <ActivityIndicator size="small" color={Colors.accent} />
           ) : (
             <>
-              <Ionicons name="add-circle-outline" size={16} color={Colors.btnRed} />
+              <Ionicons name="add-circle-outline" size={16} color={Colors.accent} />
               <Text style={styles.addPhotoBtnText}>Add Photo</Text>
             </>
           )}
@@ -329,7 +329,7 @@ const BrandDetailScreen = () => {
   const renderEmptyGrid = () =>
     loading ? null : (
       <View style={styles.emptyGrid}>
-        <Ionicons name="camera-outline" size={30} color="#ccc" />
+        <Ionicons name="images-outline" size={30} color={Colors.textSecondary} />
         <Text style={styles.emptyGridText}>No photos uploaded yet.</Text>
         <Text style={styles.emptyGridSubtext}>Be the first to add one!</Text>
       </View>
@@ -338,22 +338,22 @@ const BrandDetailScreen = () => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={Colors.btnRed} />
+        <ActivityIndicator size="large" color={Colors.accent} />
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
+      <StatusBar barStyle="light-content" translucent backgroundColor={Colors.transparent} />
 
       {/* Fixed overlay header (stays on top while the list scrolls) */}
       <View style={styles.overlayHeader}>
         <TouchableOpacity style={styles.overlayBtn} onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={20} color="#fff" />
+          <Ionicons name="arrow-back" size={20} color={Colors.white} />
         </TouchableOpacity>
         {/* <TouchableOpacity style={styles.overlayBtn} onPress={() => addPhoto(true)}>
-          <Ionicons name="camera" size={19} color="#fff" />
+          <Ionicons name="image-outline" size={19} color={Colors.white} />
         </TouchableOpacity> */}
       </View>
 
@@ -390,13 +390,13 @@ export default BrandDetailScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
   },
   loadingContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.dargBg,
+    backgroundColor: Colors.background,
   },
 
   // Overlay header
@@ -413,7 +413,7 @@ const styles = StyleSheet.create({
     width: 38,
     height: 38,
     borderRadius: 19,
-    backgroundColor: 'rgba(0,0,0,0.45)',
+    backgroundColor: Colors.overlaySoft,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -422,7 +422,7 @@ const styles = StyleSheet.create({
   slide: {
     width: SCREEN_WIDTH,
     height: SLIDER_HEIGHT,
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
   },
   sliderEmpty: {
     alignItems: 'center',
@@ -431,7 +431,7 @@ const styles = StyleSheet.create({
   },
   sliderEmptyText: {
     fontSize: 13,
-    color: '#aaa',
+    color: Colors.textSecondary,
   },
   dotsRow: {
     position: 'absolute',
@@ -446,10 +446,10 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: 'rgba(255,255,255,0.5)',
+    backgroundColor: Colors.lightOverlay,
   },
   dotActive: {
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     width: 8,
     height: 8,
     borderRadius: 4,
@@ -471,10 +471,10 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 21,
     fontWeight: '700',
-    color: Colors.White,
+    color: Colors.white,
   },
   typeBadge: {
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     borderRadius: 8,
     paddingHorizontal: 10,
     paddingVertical: 4,
@@ -482,7 +482,7 @@ const styles = StyleSheet.create({
   typeBadgeText: {
     fontSize: 11,
     fontWeight: '700',
-    color: Colors.btnRed,
+    color: Colors.accent,
     textTransform: 'uppercase',
   },
   addressRow: {
@@ -494,13 +494,13 @@ const styles = StyleSheet.create({
   detailAddress: {
     flex: 1,
     fontSize: 13,
-    color: '#ABB2BF',
+    color: Colors.textSecondary,
   },
   detailDescription: {
     marginTop: 12,
     fontSize: 14,
     lineHeight: 20,
-    color: Colors.White,
+    color: Colors.white,
   },
 
   // Photos section header
@@ -512,13 +512,13 @@ const styles = StyleSheet.create({
     paddingTop: 14,
     paddingBottom: 10,
     borderTopWidth: 1,
-    borderColor: '#343841',
+    borderColor: Colors.border,
     marginTop: 8,
   },
   photosHeaderTitle: {
     fontSize: 15,
     fontWeight: '700',
-    color: Colors.White,
+    color: Colors.white,
   },
   addPhotoBtn: {
     flexDirection: 'row',
@@ -528,7 +528,7 @@ const styles = StyleSheet.create({
   addPhotoBtnText: {
     fontSize: 13,
     fontWeight: '700',
-    color: Colors.btnRed,
+    color: Colors.accent,
   },
 
   // Grid
@@ -541,7 +541,7 @@ const styles = StyleSheet.create({
   gridImage: {
     width: GRID_ITEM_SIZE,
     height: GRID_ITEM_SIZE,
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     marginBottom: GRID_GAP,
   },
   emptyGrid: {
@@ -553,17 +553,17 @@ const styles = StyleSheet.create({
   emptyGridText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#ABB2BF',
+    color: Colors.textSecondary,
   },
   emptyGridSubtext: {
     fontSize: 12,
-    color: '#bbb',
+    color: Colors.textSecondary,
   },
 
   // Full-screen viewer
   viewerBackdrop: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: Colors.black,
   },
   viewerCloseBtn: {
     position: 'absolute',
@@ -573,7 +573,7 @@ const styles = StyleSheet.create({
     width: 38,
     height: 38,
     borderRadius: 19,
-    backgroundColor: 'rgba(255,255,255,0.15)',
+    backgroundColor: Colors.lightOverlaySubtle,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -582,7 +582,7 @@ const styles = StyleSheet.create({
     top: Platform.OS === 'ios' ? 58 : (StatusBar.currentHeight ?? 24) + 18,
     alignSelf: 'center',
     zIndex: 10,
-    color: '#fff',
+    color: Colors.white,
     fontSize: 13,
     fontWeight: '600',
   },

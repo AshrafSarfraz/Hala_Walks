@@ -231,10 +231,10 @@ const pickVisibleMarkers = (
 // ─── Pin components ───────────────────────────────────────────────────────────
 
 const PIN = {
-  venue: Colors.btnRed,
-  brand: Colors.btnRed,
-  brandFill: Colors.btnRed,
-  white: '#FFFFFF',
+  venue: Colors.accent,
+  brand: Colors.accent,
+  brandFill: Colors.accent,
+  white: Colors.white,
 };
 
 const MapPin = memo(function MapPin({
@@ -494,7 +494,7 @@ const LocationSearchBar = ({
             <Ionicons
               name={isRemote ? 'search' : 'location'}
               size={16}
-              color={Colors.btnRed}
+              color={Colors.accent}
             />
             <Text style={searchBarStyles.bannerText} numberOfLines={1}>
               {displayLabel || 'Current Location'}
@@ -510,31 +510,31 @@ const LocationSearchBar = ({
               <TouchableOpacity
                 onPress={clearSelection}
                 hitSlop={{top: 8, bottom: 8, left: 8, right: 8}}>
-                <Ionicons name="close-circle" size={18} color="#aaa" />
+                <Ionicons name="close-circle" size={18} color={Colors.textSecondary} />
               </TouchableOpacity>
             ) : (
-              <Ionicons name="chevron-down" size={16} color="#aaa" />
+              <Ionicons name="chevron-down" size={16} color={Colors.textSecondary} />
             )}
           </View>
         </TouchableOpacity>
       ) : (
         <View style={searchBarStyles.searchBox}>
-          <Ionicons name="search" size={16} color={Colors.btnRed} />
+          <Ionicons name="search" size={16} color={Colors.accent} />
           <TextInput
             ref={inputRef}
             style={searchBarStyles.searchInput}
             placeholder="Search any place…"
-            placeholderTextColor="#bbb"
+            placeholderTextColor={Colors.textSecondary}
             value={query}
             onChangeText={onChangeText}
             returnKeyType="search"
             autoCorrect={false}
           />
           {searching ? (
-            <ActivityIndicator size="small" color={Colors.btnRed} />
+            <ActivityIndicator size="small" color={Colors.accent} />
           ) : (
             <TouchableOpacity onPress={closeSearch}>
-              <Ionicons name="close" size={18} color="#aaa" />
+              <Ionicons name="close" size={18} color={Colors.textSecondary} />
             </TouchableOpacity>
           )}
         </View>
@@ -555,7 +555,7 @@ const LocationSearchBar = ({
                   <Ionicons
                     name="location-outline"
                     size={14}
-                    color={Colors.btnRed}
+                    color={Colors.accent}
                   />
                 </View>
                 <View style={searchBarStyles.predictionText}>
@@ -587,7 +587,7 @@ const LocationSearchBar = ({
       {showError && (
         <View
           style={[searchBarStyles.dropdown, searchBarStyles.errorDropdown]}>
-          <Ionicons name="warning-outline" size={14} color="#C0392B" />
+          <Ionicons name="warning-outline" size={14} color={Colors.accent} />
           <Text style={searchBarStyles.errorText}>{fetchError}</Text>
         </View>
       )}
@@ -604,14 +604,14 @@ const searchBarStyles = StyleSheet.create({
     zIndex: 20,
   },
   banner: {
-    backgroundColor: Colors.darkgrey,
+    backgroundColor: Colors.surface,
     borderRadius: 14,
     paddingHorizontal: 14,
     paddingVertical: 11,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    shadowColor: '#000',
+    shadowColor: Colors.black,
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -628,13 +628,13 @@ const searchBarStyles = StyleSheet.create({
     flex: 1,
     fontSize: 14,
     fontWeight: '600',
-    color: Colors.White,
+    color: Colors.white,
   },
   bannerRight: {
     paddingLeft: 4,
   },
   remotePill: {
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     borderRadius: 6,
     paddingHorizontal: 6,
     paddingVertical: 2,
@@ -642,37 +642,37 @@ const searchBarStyles = StyleSheet.create({
   remotePillText: {
     fontSize: 10,
     fontWeight: '700',
-    color: Colors.btnRed,
+    color: Colors.accent,
   },
   searchBox: {
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     borderRadius: 14,
     paddingHorizontal: 14,
     paddingVertical: 11,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-    shadowColor: '#000',
+    shadowColor: Colors.black,
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.12,
     shadowRadius: 8,
     elevation: 5,
     borderWidth: 1.5,
-    borderColor: Colors.btnRed,
+    borderColor: Colors.accent,
   },
   searchInput: {
     flex: 1,
     fontSize: 14,
     fontWeight: '500',
-    color: '#F5F6F8',
+    color: Colors.textPrimary,
     padding: 0,
   },
   dropdown: {
     marginTop: 6,
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     borderRadius: 14,
     overflow: 'hidden',
-    shadowColor: '#000',
+    shadowColor: Colors.black,
     shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.1,
     shadowRadius: 10,
@@ -685,14 +685,14 @@ const searchBarStyles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 14,
     borderBottomWidth: 1,
-    borderColor: '#343841',
+    borderColor: Colors.border,
     gap: 10,
   },
   predictionIcon: {
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -700,16 +700,16 @@ const searchBarStyles = StyleSheet.create({
   predictionMain: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#F5F6F8',
+    color: Colors.textPrimary,
   },
   predictionSub: {
     fontSize: 12,
-    color: '#ABB2BF',
+    color: Colors.textSecondary,
     marginTop: 2,
   },
   emptyText: {
     fontSize: 13,
-    color: '#aaa',
+    color: Colors.textSecondary,
     textAlign: 'center',
     paddingVertical: 16,
   },
@@ -719,12 +719,12 @@ const searchBarStyles = StyleSheet.create({
     gap: 8,
     paddingHorizontal: 14,
     paddingVertical: 14,
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
   },
   errorText: {
     flex: 1,
     fontSize: 12,
-    color: '#C0392B',
+    color: Colors.accent,
   },
 });
 
@@ -1139,8 +1139,8 @@ const MapScreen = () => {
       <MapView
         userInterfaceStyle="dark"
         customMapStyle={darkMapStyle}
-        loadingBackgroundColor="#101114"
-        loadingIndicatorColor="#E75049"
+        loadingBackgroundColor={Colors.background}
+        loadingIndicatorColor={Colors.accent}
         ref={mapRef}
         provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
         style={styles.map}
@@ -1202,7 +1202,7 @@ const MapScreen = () => {
         <TouchableOpacity
           style={styles.fab}
           onPress={() => navigation.navigate('BottomTab', {screen: 'Profile'})}>
-          <Ionicons name="person" size={22} color="#fff" />
+          <Ionicons name="person" size={22} color={Colors.white} />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -1211,7 +1211,7 @@ const MapScreen = () => {
             if (location) animateToLocation(location);
             else getCurrentLocation();
           }}>
-          <Ionicons name="locate" size={22} color="#fff" />
+          <Ionicons name="locate" size={22} color={Colors.white} />
         </TouchableOpacity>
       </View>
 
@@ -1228,7 +1228,7 @@ const MapScreen = () => {
               e.stopPropagation();
               setSelectedMarker(null);
             }}>
-            <Ionicons name="close" size={16} color='#ABB2BF' />
+            <Ionicons name="close" size={16} color={Colors.textSecondary} />
           </TouchableOpacity>
 
           <View style={styles.markerCardRow}>
@@ -1246,7 +1246,7 @@ const MapScreen = () => {
                 <Ionicons
                   name={selectedMarker.type === 'venue' ? 'business' : 'pricetag'}
                   size={22}
-                  color={Colors.btnRed}
+                  color={Colors.accent}
                 />
               </View>
             )}
@@ -1263,7 +1263,7 @@ const MapScreen = () => {
               <Text style={styles.markerViewMore}>View details</Text>
             </View>
 
-            <Ionicons name="chevron-forward" size={20} color="#ccc" />
+            <Ionicons name="chevron-forward" size={20} color={Colors.textSecondary} />
           </View>
         </TouchableOpacity>
       )}
@@ -1288,77 +1288,77 @@ export default MapScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
   },
   map: {
     ...StyleSheet.absoluteFillObject,
   },
   loadingOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(255,255,255,0.7)',
+    backgroundColor: Colors.lightOverlay,
     alignItems: 'center',
     justifyContent: 'center',
   },
   loadingText: {
     marginTop: 12,
     fontSize: 14,
-    color: '#F5F6F8',
+    color: Colors.textPrimary,
   },
   errorBanner: {
     position: 'absolute',
     top: 50,
     left: 16,
     right: 16,
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     borderRadius: 10,
     padding: 12,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     borderWidth: 1,
-    borderColor: '#343841',
+    borderColor: Colors.border,
     zIndex: 20,
   },
   errorText: {
     flex: 1,
     fontSize: 13,
-    color: '#C0392B',
+    color: Colors.accent,
     marginRight: 8,
   },
   retryText: {
     fontSize: 13,
     fontWeight: '700',
-    color: Colors.btnRed,
+    color: Colors.accent,
   },
   fabRow: {
     position: 'absolute',
-    bottom: 100,
+    bottom: 130,
     right: 16,
     alignItems: 'center',
-    gap: 12,
+    gap: 6,
+    
+
   },
   fab: {
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: '#333',
+    backgroundColor: Colors.background,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5,
+    shadowColor: Colors.black,
+  
+
   },
   markerCard: {
     position: 'absolute',
     bottom: 160,
     left: 16,
     right: 16,
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     borderRadius: 16,
     padding: 14,
-    shadowColor: '#000',
+    shadowColor: Colors.black,
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.12,
     shadowRadius: 8,
@@ -1372,7 +1372,7 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -1386,12 +1386,12 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 12,
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
   },
   markerCardImageFallback: {
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
   },
   markerCardInfo: {
     flex: 1,
@@ -1399,28 +1399,28 @@ const styles = StyleSheet.create({
   markerName: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#F5F6F8',
+    color: Colors.textPrimary,
   },
   markerAddress: {
     marginTop: 3,
     fontSize: 13,
-    color: '#ABB2BF',
+    color: Colors.textSecondary,
   },
   markerViewMore: {
     marginTop: 6,
     fontSize: 12,
     fontWeight: '700',
-    color: Colors.btnRed,
+    color: Colors.accent,
   },
   imagePin: {
     borderWidth: 2,
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
     ...Platform.select({
       ios: {
-        shadowColor: '#000',
+        shadowColor: Colors.black,
         shadowOffset: {width: 0, height: 1},
         shadowOpacity: 0.2,
         shadowRadius: 3,
@@ -1457,7 +1457,7 @@ const styles = StyleSheet.create({
     transform: [{scale: 1.25}],
     ...Platform.select({
       ios: {
-        shadowColor: '#000',
+        shadowColor: Colors.black,
         shadowOffset: {width: 0, height: 2},
         shadowOpacity: 0.3,
         shadowRadius: 4,
@@ -1468,7 +1468,7 @@ const styles = StyleSheet.create({
     width: 22,
     height: 22,
     borderRadius: 11,
-    backgroundColor: 'rgba(66, 133, 244, 0.25)',
+    backgroundColor: Colors.overlaySoft,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -1476,8 +1476,8 @@ const styles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: Colors.btnRed,
+    backgroundColor: Colors.accent,
     borderWidth: 2,
-    borderColor: '#343841',
+    borderColor: Colors.border,
   },
 });

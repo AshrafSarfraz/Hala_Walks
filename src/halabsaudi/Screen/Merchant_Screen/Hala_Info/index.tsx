@@ -15,13 +15,13 @@ import { useStatusBar } from '../../../Component/UseStatusBar/useStatusBar';
 
 const HalaInfoScreen = () => {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
-  useStatusBar('light-content', Colors.dargBg);
+  useStatusBar('light-content', Colors.background);
   const language = useSelector((state: RootState) => state.language.language);
   const styles = getStyles(language);
 
   return (
     <SafeAreaView style={styles.container}>
-      <CustomHeader title='' onBackPress={()=>{navigation.goBack()}} backgroundColor={Colors.dargBg} />
+      <CustomHeader title='' onBackPress={()=>{navigation.goBack()}} backgroundColor={Colors.background} />
       <View style={styles.Body} >
        <Image source={require('../../../assets/Images/partner.png')} style={styles.Img} />
       <Text style={styles.heading}>{languageData[language].heading}</Text>

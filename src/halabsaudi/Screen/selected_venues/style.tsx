@@ -6,7 +6,7 @@ import { Fonts } from '../../Themes/Fonts';
 export const getStyles=(language:String) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.dargBg,
+    backgroundColor: Colors.background,
     // paddingHorizontal: "4%",
     // ✅ marginTop '10%' HATAYA — DOUBLE padding tha.
     // index.tsx me <SafeAreaView edges={['top']}> pehle se hai.
@@ -21,18 +21,18 @@ export const getStyles=(language:String) => StyleSheet.create({
     width: 25,
     height: 25,
     marginRight: 12,
-    tintColor: Colors.White,
+    tintColor: Colors.white,
   },
   headerText: {
     fontSize: 18,
     fontFamily: Fonts.SF_Bold,
     lineHeight: 24,
-    color: Colors.White,
+    color: Colors.white,
   },
   searchContainer: {
     flexDirection:language==='en'?'row':'row-reverse' ,
     alignItems: 'center',
-    backgroundColor: Colors.darkgrey,
+    backgroundColor: Colors.surface,
     height: 45,
     paddingHorizontal: 12,
     borderRadius: 8,
@@ -43,7 +43,7 @@ export const getStyles=(language:String) => StyleSheet.create({
     marginRight: 8,
     marginLeft:language==='ar'?8:0,
     resizeMode: "contain",
-    tintColor: Colors.White,
+    tintColor: Colors.white,
   },
   searchInput: {
     flex: 1,
@@ -51,7 +51,7 @@ export const getStyles=(language:String) => StyleSheet.create({
     height:45,
     lineHeight:language==='en'?18:20,
     fontFamily: language==='en'?Fonts.SF_Medium:'',
-    color: Colors.White,
+    color: Colors.white,
     textAlign:language==='en'?'left':'right',
     letterSpacing:0.3
   },
@@ -60,7 +60,7 @@ export const getStyles=(language:String) => StyleSheet.create({
     marginVertical: 10,
   },
   FoundItem_Txt: {
-    color: Colors.White,
+    color: Colors.white,
     fontSize: language==='en'?16:16,
     fontFamily: language==='en'?Fonts.SF_Medium:"",
     lineHeight: language==='en'?22:30,
@@ -71,13 +71,13 @@ export const getStyles=(language:String) => StyleSheet.create({
   itemContainer: {
     flexDirection: language==='en'?'row':"row-reverse",
     alignItems: 'center',
-    backgroundColor: Colors.cardBg,
+    backgroundColor: Colors.surface,
     padding: 12,
     marginBottom: 10,
     borderRadius: 8,
     borderWidth:1,
-    borderColor: '#000',
-    shadowColor: '#000', // iOS shadow
+    borderColor: Colors.black,
+    shadowColor: Colors.black, // iOS shadow
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -98,7 +98,7 @@ export const getStyles=(language:String) => StyleSheet.create({
     fontFamily: language==='en'?Fonts.SF_Bold:"",
     lineHeight: language==='en'?22:30,
     fontWeight:'500',
-    color: Colors.White,
+    color: Colors.white,
     marginLeft:language==='ar'?"2%":0,
     textAlign:language==='en'?'left':'right'
   },
@@ -107,7 +107,7 @@ export const getStyles=(language:String) => StyleSheet.create({
     fontFamily: language==='en'?Fonts.SF_Medium:"",
     lineHeight: language==='en'?14:24,
     fontWeight:'300',
-    color: Colors.White,
+    color: Colors.white,
     marginLeft:language==='ar'?"2%":0,
      textAlign:language==='en'?'left':'right'
   
@@ -117,7 +117,7 @@ export const getStyles=(language:String) => StyleSheet.create({
     fontFamily: language==='en'?Fonts.SF_Bold:"",
     lineHeight: language==='en'?14:24,
     fontWeight:'500',
-    color: Colors.White,
+    color: Colors.white,
     marginLeft:language==='ar'?"2%":0,
      textAlign:language==='en'?'left':'right'
   },
@@ -134,7 +134,7 @@ export const getStyles=(language:String) => StyleSheet.create({
    fontSize:16,
    marginTop:12,
    fontWeight:'bold',
-   color:Colors.White
+   color:Colors.white
   },
 
   Loc_Status_Cont: {
@@ -155,11 +155,11 @@ export const getStyles=(language:String) => StyleSheet.create({
     width: 12,
     height: 12,
     resizeMode: 'contain',
-    tintColor: Colors.White,
+    tintColor: Colors.white,
   },
   location_txt: {
     fontSize: 10,
-    color: Colors.White,
+    color: Colors.white,
     fontFamily: Fonts.SF_Medium,
     lineHeight: 14,
     marginLeft: 2,

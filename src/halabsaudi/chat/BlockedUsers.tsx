@@ -89,7 +89,7 @@ export default function BlockedUsers({navigation}: any) {
         <View style={[styles.info, {alignItems: isRTL ? 'flex-end' : 'flex-start'}]}>
           <Text style={[styles.name, {textAlign: isRTL ? 'right' : 'left'}]}>{name}</Text>
           <View style={[styles.blockedPill, {flexDirection: rowDir}]}>
-            <Ionicons name="ban" size={10} color={Colors.Red} />
+            <Ionicons name="ban" size={10} color={Colors.accent} />
             <Text style={styles.blockedPillText}>{t.blocked_label}</Text>
           </View>
         </View>
@@ -101,10 +101,10 @@ export default function BlockedUsers({navigation}: any) {
           disabled={isUnblocking}
           activeOpacity={0.75}>
           {isUnblocking ? (
-            <ActivityIndicator size="small" color={Colors.Red} />
+            <ActivityIndicator size="small" color={Colors.accent} />
           ) : (
             <>
-              <Ionicons name="lock-open-outline" size={14} color={Colors.Red} />
+              <Ionicons name="lock-open-outline" size={14} color={Colors.accent} />
               <Text style={styles.unblockChipText}>{t.unblock}</Text>
             </>
           )}
@@ -116,7 +116,7 @@ export default function BlockedUsers({navigation}: any) {
   const renderEmpty = () => (
     <View style={styles.emptyWrap}>
       <View style={styles.emptyRing}>
-        <Ionicons name="shield-checkmark-outline" size={42} color={Colors.btnRed} />
+        <Ionicons name="shield-checkmark-outline" size={42} color={Colors.accent} />
       </View>
       <Text style={styles.emptyTitle}>{t.no_blocked_users}</Text>
       <Text style={[styles.emptySub, {textAlign: 'center'}]}>{t.no_blocked_desc}</Text>
@@ -125,7 +125,7 @@ export default function BlockedUsers({navigation}: any) {
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
-      <StatusBar barStyle="light-content" backgroundColor={Colors.Green} />
+      <StatusBar barStyle="light-content" backgroundColor={Colors.surface} />
 
       {/* ── Header ── */}
       <View style={styles.header}>
@@ -137,7 +137,7 @@ export default function BlockedUsers({navigation}: any) {
             <Ionicons
               name={isRTL ? 'arrow-forward' : 'arrow-back'}
               size={20}
-              color={Colors.White}
+              color={Colors.white}
             />
           </TouchableOpacity>
 
@@ -162,7 +162,7 @@ export default function BlockedUsers({navigation}: any) {
       <View style={styles.body}>
         {loading ? (
           <View style={styles.loaderWrap}>
-            <ActivityIndicator size="large" color={Colors.btnRed} />
+            <ActivityIndicator size="large" color={Colors.accent} />
             <Text style={styles.loaderText}>{t.loading_text}</Text>
           </View>
         ) : (
@@ -196,71 +196,71 @@ export default function BlockedUsers({navigation}: any) {
 }
 
 const styles = StyleSheet.create({
-  safe: {flex: 1, backgroundColor: Colors.dargBg},
-  body: {flex: 1, backgroundColor: Colors.dargBg},
+  safe: {flex: 1, backgroundColor: Colors.background},
+  body: {flex: 1, backgroundColor: Colors.background},
   header: {
-    backgroundColor: Colors.dargBg,
+    backgroundColor: Colors.background,
     paddingTop: Platform.OS === 'ios' ? 4 : 10,
     paddingBottom: 20, paddingHorizontal: 18, overflow: 'hidden',
   },
   headerRow: {alignItems: 'center', gap: 12},
   backBtn: {
     width: 30, height: 30, borderRadius: 19,
-    backgroundColor: 'rgba(255,255,255,0.13)',
+    backgroundColor: Colors.lightOverlaySubtle,
     justifyContent: 'center', alignItems: 'center',
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)', flexShrink: 0,
+    borderWidth: 1, borderColor: Colors.lightOverlaySubtle, flexShrink: 0,
   },
   headerText: {flex: 1},
-  eyebrow: {fontSize: 10, color: Colors.White, letterSpacing: 0.2, textTransform: 'uppercase', marginBottom: 3},
-  headerTitle: {fontSize: 18, fontWeight: '700', color: Colors.White, letterSpacing: -0.3},
+  eyebrow: {fontSize: 10, color: Colors.white, letterSpacing: 0.2, textTransform: 'uppercase', marginBottom: 3},
+  headerTitle: {fontSize: 18, fontWeight: '700', color: Colors.white, letterSpacing: -0.3},
   countBadge: {
-    backgroundColor: 'rgba(255,255,255,0.18)', borderRadius: 20,
+    backgroundColor: Colors.lightOverlaySubtle, borderRadius: 20,
     paddingHorizontal: 12, paddingVertical: 5,
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)',
+    borderWidth: 1, borderColor: Colors.lightOverlaySubtle,
   },
-  countBadgeText: {color: Colors.White, fontSize: 13, fontWeight: '700'},
+  countBadgeText: {color: Colors.white, fontSize: 13, fontWeight: '700'},
   listContent: {paddingHorizontal: 14, paddingTop: 12, paddingBottom: 36},
   listHeader: {paddingHorizontal: 4, paddingBottom: 8},
-  listHeaderText: {fontSize: 11, fontWeight: '700', color: Colors.White, letterSpacing: 0.2, textTransform: 'uppercase'},
+  listHeaderText: {fontSize: 11, fontWeight: '700', color: Colors.white, letterSpacing: 0.2, textTransform: 'uppercase'},
   row: {
-    alignItems: 'center', backgroundColor: Colors.darkgrey,
+    alignItems: 'center', backgroundColor: Colors.surface,
     borderRadius: 16, paddingVertical: 12, paddingHorizontal: 14,
-    shadowColor: '#1A202C', shadowOffset: {width: 0, height: 2},
+    shadowColor: Colors.black, shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.05, shadowRadius: 8,
   },
   avatarCircle: {
     width: 50, height: 50, borderRadius: 25,
     justifyContent: 'center', alignItems: 'center', flexShrink: 0,
   },
-  avatarLetter: {color: Colors.White, fontWeight: '800', fontSize: 19},
+  avatarLetter: {color: Colors.white, fontWeight: '800', fontSize: 19},
   info: {flex: 1},
-  name: {fontSize: 15, fontWeight: '700', color: Colors.White, marginBottom: 5},
+  name: {fontSize: 15, fontWeight: '700', color: Colors.white, marginBottom: 5},
   blockedPill: {
     alignItems: 'center', gap: 4, alignSelf: 'flex-start',
-    backgroundColor: '#191B20', paddingHorizontal: 8, paddingVertical: 3,
-    borderRadius: 20, borderWidth: 1, borderColor: '#343841',
+    backgroundColor: Colors.surface, paddingHorizontal: 8, paddingVertical: 3,
+    borderRadius: 20, borderWidth: 1, borderColor: Colors.border,
   },
-  blockedPillText: {fontSize: 10, color: Colors.Red, fontWeight: '700'},
+  blockedPillText: {fontSize: 10, color: Colors.accent, fontWeight: '700'},
   unblockChip: {
     alignItems: 'center', gap: 5,
-    borderWidth: 1, borderColor: '#343841', borderRadius: 20,
-    paddingHorizontal: 13, paddingVertical: 8, backgroundColor: '#191B20',
+    borderWidth: 1, borderColor: Colors.border, borderRadius: 20,
+    paddingHorizontal: 13, paddingVertical: 8, backgroundColor: Colors.surface,
     minWidth: 88, justifyContent: 'center',
   },
-  unblockChipText: {fontSize: 12, color: Colors.Red, fontWeight: '700'},
+  unblockChipText: {fontSize: 12, color: Colors.accent, fontWeight: '700'},
   emptyWrap: {
     flex: 1, alignItems: 'center', justifyContent: 'center',
     paddingBottom: 60, paddingHorizontal: 40, gap: 10,
   },
   emptyRing: {
-    width: 88, height: 88, borderRadius: 44, backgroundColor: '#191B20',
+    width: 88, height: 88, borderRadius: 44, backgroundColor: Colors.surface,
     justifyContent: 'center', alignItems: 'center', marginBottom: 8,
-    borderWidth: 3, borderColor: Colors.LightGreen,
+    borderWidth: 3, borderColor: Colors.success,
   },
-  emptyTitle: {fontSize: 18, fontWeight: '700', color: Colors.White},
-  emptySub: {fontSize: 13, color: Colors.Grey9, lineHeight: 20},
+  emptyTitle: {fontSize: 18, fontWeight: '700', color: Colors.white},
+  emptySub: {fontSize: 13, color: Colors.textMuted, lineHeight: 20},
   loaderWrap: {flex: 1, justifyContent: 'center', alignItems: 'center', gap: 12},
-  loaderText: {fontSize: 14, color: Colors.Grey9, marginTop: 4},
+  loaderText: {fontSize: 14, color: Colors.textMuted, marginTop: 4},
 });
 
 

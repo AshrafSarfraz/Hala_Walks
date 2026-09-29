@@ -17,7 +17,7 @@ const PDFViewerScreen:React.FC = ({ route }: any) => {
   const source = { uri: pdfUrl, cache: true };
 
   return (
-   <SafeAreaView style={{flex:1,backgroundColor:'#191B20'}} edges={['top']}>
+   <SafeAreaView style={{flex:1,backgroundColor:Colors.surface}} edges={['top']}>
    <View style={styles.container}>
       <Pdf
        trustAllCerts={false}
@@ -47,7 +47,7 @@ const PDFViewerScreen:React.FC = ({ route }: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor:'#191B20',
+    backgroundColor:Colors.surface,
     // ✅ marginTop '8%' hack hataya — ab SafeAreaView asli inset deta hai
   },
   pdf: {
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
   },
   CloseBtn:{
     position:'absolute',
-    backgroundColor:Colors.btnRed,
+    backgroundColor:Colors.accent,
     height:50,
     width:50,
     borderRadius:30,
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     top:15
   },
   CloseTxt:{
-    color:Colors.White,
+    color:Colors.white,
     fontSize:22,
     fontFamily:Fonts.SF_Medium
   }

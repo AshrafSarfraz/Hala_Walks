@@ -7,7 +7,7 @@ export const getStyles = (language: string) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: Colors.dargBg,
+      backgroundColor: Colors.background,
     },
     prevButton: {
       position: 'absolute',
@@ -21,27 +21,27 @@ export const getStyles = (language: string) =>
       width: 20,
       height: 20,
       resizeMode: 'contain',
-      tintColor: Colors.White,
+      tintColor: Colors.white,
       transform:language === 'en' ?  [{scaleX:1}] :  [{scaleX:-1}] 
      
     },
     slide: {
       flex: 1,
       alignItems: 'center',
-      backgroundColor: Colors.dargBg,
+      backgroundColor: Colors.background,
     },
     image: {
       width: '70%',
       height: '45%',
       borderRadius: 20,
       marginTop: '5%',
-      color:Colors.White,
+      color:Colors.white,
     },
     title: {
       fontSize: 22,
       textAlign: 'center',
       fontFamily: language === 'en' ? Fonts.SF_Bold : undefined,
-      color: Colors.White,
+      color: Colors.white,
       lineHeight: language==='en'?28:40,
       marginTop: '3%',
       marginBottom: '2%',
@@ -50,7 +50,7 @@ export const getStyles = (language: string) =>
       fontSize: 14,
       textAlign: 'center',
       fontFamily: language === 'en' ? Fonts.SF_Medium : undefined,
-      color: Colors.whiteGrey,
+      color: Colors.textSecondary,
       lineHeight: 20,
       letterSpacing: 0.2,
       marginTop: '3%',
@@ -63,7 +63,7 @@ export const getStyles = (language: string) =>
     },
   
     prevButtonText: {
-      color: Colors.White,
+      color: Colors.white,
       fontSize: 16,
     },
     paginationContainer: {
@@ -76,17 +76,17 @@ export const getStyles = (language: string) =>
       width: 8,
       height: 8,
       borderRadius: 4,
-      backgroundColor: Colors.cardBg,
+      backgroundColor: Colors.surface,
       marginHorizontal: 2,
     },
     activePaginationDot: {
-      backgroundColor: '#191B20',
+      backgroundColor: Colors.surface,
       width: 30,
       height: 8,
       borderRadius: 6,
     },
     buttonText: {
-      color: Colors.White,
+      color: Colors.white,
       fontSize: 16,
       fontWeight: 'bold',
       textAlign: 'center',

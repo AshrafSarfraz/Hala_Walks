@@ -233,7 +233,7 @@ const RecentlyAdded: React.FC<{onDataLoaded?: (hasData: boolean) => void; onLoad
                 mText="m"
               />
             ) : (
-              <Text style={{fontSize: 10, color: Colors.btnRed}}>--</Text>
+              <Text style={{fontSize: 10, color: Colors.accent}}>--</Text>
             )}
           </View>
         </View>

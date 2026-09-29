@@ -25,6 +25,8 @@ import CustomHeader from '../../../Component/CustomHeader/CustomHeader';
 import {apiPost} from '../../../firebase/api/client';
 import {useStatusBar} from '../../../Component/UseStatusBar/useStatusBar';
 
+import {hbsText} from '../../../i18n/translations';
+
 // ─────────────────────────────────────────────
 // Apple Review dummy credentials
 const APPLE_REVIEW_PHONE = '1234567890';
@@ -42,7 +44,7 @@ const isDummyLogin = (code: string, phone: string) =>
   code === APPLE_REVIEW_CODE && phone.replace(/\s|-/g, '') === APPLE_REVIEW_PHONE;
 
 const Login: React.FC<NativeStackScreenProps<any>> = ({navigation}) => {
-  useStatusBar('light-content', Colors.dargBg);
+  useStatusBar('light-content', Colors.background);
   const insets = useSafeAreaInsets();
 
   const [countryCode, setCountryCode] = useState('+966');
@@ -106,7 +108,7 @@ const Login: React.FC<NativeStackScreenProps<any>> = ({navigation}) => {
       <CustomHeader
         title=""
         onBackPress={() => navigation.goBack()}
-        backgroundColor={Colors.dargBg}
+        backgroundColor={Colors.background}
       />
 
       <KeyboardAvoidingView
@@ -139,7 +141,7 @@ const Login: React.FC<NativeStackScreenProps<any>> = ({navigation}) => {
               <TextInput
                 placeholder={languageData[language].phone_number}
                 value={phoneNumber}
-                placeholderTextColor={Colors.Grey9}
+                placeholderTextColor={Colors.textMuted}
                 onChangeText={t => {
                   setPhoneNumber(t);
                   clearError();
@@ -175,7 +177,7 @@ const Login: React.FC<NativeStackScreenProps<any>> = ({navigation}) => {
             <View style={styles.DividerRow}>
               <View style={styles.DividerLine} />
               <Text style={styles.DividerTxt}>
-                {language === 'en' ? 'or' : 'أو'}
+                {hbsText(language === 'ar', 'ui_or')}
               </Text>
               <View style={styles.DividerLine} />
             </View>

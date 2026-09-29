@@ -7,7 +7,7 @@ export const getStyles = (language: String) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: Colors.darkgrey,
+      backgroundColor: Colors.surface,
 
     },
     header: {
@@ -16,7 +16,7 @@ export const getStyles = (language: String) =>
       paddingHorizontal: '4%',
       paddingTop: 8,
       paddingBottom: 12,
-      backgroundColor: Colors.darkgrey,
+      backgroundColor: Colors.surface,
     },
     backButton: {
       width: 44,
@@ -31,7 +31,7 @@ export const getStyles = (language: String) =>
       height: 12,
       borderLeftWidth: 2,
       borderBottomWidth: 2,
-      borderColor: Colors.White,
+      borderColor: Colors.white,
       transform: [
       { rotate: language === 'ar' ? '225deg' : '45deg' },
       ],
@@ -44,7 +44,7 @@ export const getStyles = (language: String) =>
       height: 45,
       paddingHorizontal: 12,
       borderRadius: 9,
-      borderColor: Colors.White,
+      borderColor: Colors.white,
       borderWidth: 1,
     },
     searchIcon: {
@@ -52,7 +52,7 @@ export const getStyles = (language: String) =>
       height: 18,
       marginRight: 8,
       marginLeft: language === 'ar' ? 8 : 0,
-      tintColor: Colors.White,
+      tintColor: Colors.white,
     },
     searchInput: {
       flex: 1,
@@ -60,7 +60,7 @@ export const getStyles = (language: String) =>
       height: 40,
       lineHeight: language === 'en' ? 18 : 20,
       fontFamily: language === 'en' ? Fonts.SF_Medium : '',
-      color: Colors.White,
+      color: Colors.white,
       textAlign: language === 'en' ? 'left' : 'right',
       letterSpacing: 0.3,
     },
@@ -69,7 +69,7 @@ export const getStyles = (language: String) =>
       marginVertical: 8,
     },
     FoundItem_Txt: {
-      color: Colors.White,
+      color: Colors.white,
       fontSize: 14,
       fontFamily: language === 'en' ? Fonts.SF_Medium : '',
       lineHeight: language === 'en' ? 22 : 30,
@@ -100,7 +100,7 @@ export const getStyles = (language: String) =>
       fontFamily: language === 'en' ? Fonts.SF_Bold : '',
       lineHeight: language === 'en' ? 22 : 24,
       fontWeight: '500',
-      color: Colors.White,
+      color: Colors.white,
       marginBottom: 5,
       textAlign: language === 'en' ? 'left' : 'right',
     },
@@ -109,7 +109,7 @@ export const getStyles = (language: String) =>
       fontFamily: language === 'en' ? Fonts.SF_Medium : '',
       lineHeight: language === 'en' ? 19 : 21,
       fontWeight: '300',
-      color: Colors.White,
+      color: Colors.white,
       marginHorizontal: language === 'ar' ? '2%' : 0,
       textAlign: language === 'en' ? 'left' : 'right',
     },
@@ -119,7 +119,7 @@ export const getStyles = (language: String) =>
       fontFamily: language === 'en' ? Fonts.SF_Bold : '',
       lineHeight: language === 'en' ? 10 : 14,
       fontWeight: '500',
-      color: Colors.btnRed,
+      color: Colors.accent,
       marginLeft: language === 'ar' ? '2%' : 0,
       textAlign: language === 'en' ? 'left' : 'right',
     },
@@ -136,7 +136,7 @@ export const getStyles = (language: String) =>
       fontSize: 16,
       marginTop: 12,
       fontWeight: 'bold',
-      color: Colors.White,
+      color: Colors.white,
     },
     Loc_Status_Cont: {
       flexDirection: language === 'en' ? 'row' : 'row-reverse',
@@ -153,11 +153,11 @@ export const getStyles = (language: String) =>
       width: 12,
       height: 12,
       resizeMode: 'contain',
-      tintColor: Colors.btnRed,
+      tintColor: Colors.accent,
     },
     location_txt: {
       fontSize: 10,
-      color: Colors.btnRed,
+      color: Colors.accent,
       fontFamily: Fonts.SF_Medium,
       lineHeight: 14,
       marginLeft: 2,

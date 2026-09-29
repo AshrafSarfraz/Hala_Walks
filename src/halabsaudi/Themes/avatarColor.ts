@@ -1,14 +1,16 @@
+import {Colors} from './Colors';
+
 // /src/Themes/avatarColor.ts
 
 export const COLORS = [
-  "#4e73df",
-  "#1cc88a",
-  "#36b9cc",
-  "#f6c23e",
-  "#e74a3b",
-  "#858796",
-  "#fd7e14",
-  "#6f42c1",
+  Colors.purple,
+  Colors.success,
+  Colors.info,
+  Colors.warning,
+  Colors.accent,
+  Colors.textMuted,
+  Colors.accent,
+  Colors.purple,
 ];
 
 export function getAvatarColor(userId: string) {

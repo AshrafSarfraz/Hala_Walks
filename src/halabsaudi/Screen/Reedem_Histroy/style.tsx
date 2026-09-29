@@ -7,7 +7,7 @@ export const getStyles = (language: 'en' | 'ar') =>
   StyleSheet.create({
     Container: {
       flex: 1,
-      backgroundColor: Colors.dargBg,
+      backgroundColor: Colors.background,
       marginVertical: Platform.OS === 'ios' ? '2%' : '10%',
       marginHorizontal: '4%',
     },
@@ -27,14 +27,14 @@ export const getStyles = (language: 'en' | 'ar') =>
     },
     noDataText: {
       fontSize: 18,
-      color: Colors.White,
+      color: Colors.white,
       alignSelf: 'center',
       marginTop: 30,
     },
 
     itemContainer: {
       marginTop: '1%',
-      backgroundColor: '#191B20',
+      backgroundColor: Colors.surface,
       padding: 15,
       borderRadius: 10,
       marginBottom: 10,
@@ -43,11 +43,11 @@ export const getStyles = (language: 'en' | 'ar') =>
     codeText: {
       fontSize: 16,
       fontWeight: 'bold',
-      color: Colors.White,
+      color: Colors.white,
     },
     percentageText: {
       fontSize: 14,
-      color: Colors.White,
+      color: Colors.white,
       marginTop: 5,
     },
     dateText: {
@@ -70,6 +70,6 @@ export const getStyles = (language: 'en' | 'ar') =>
       fontSize: 16,
       marginTop: 12,
       fontWeight: 'bold',
-      color: Colors.White,
+      color: Colors.white,
     },
   });

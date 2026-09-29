@@ -5,6 +5,8 @@ import {Modal, View, Image, TouchableOpacity, StyleSheet, StatusBar, Animated, P
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Ionicons from '@react-native-vector-icons/ionicons';
 
+import {Colors} from '../../Themes/Colors';
+
 const {width: W, height: H} = Dimensions.get('window');
 
 type Props = {
@@ -179,7 +181,7 @@ export default function ImageViewerModal({
         {showControls && (
           <View style={[styles.topBar, {paddingTop: insets.top + 8}]}>
             <TouchableOpacity style={styles.iconBtn} onPress={onClose}>
-              <Ionicons name="arrow-back" size={24} color="#fff" />
+              <Ionicons name="arrow-back" size={24} color={Colors.white} />
             </TouchableOpacity>
             <View style={{flex: 1, marginLeft: 12}}>
               {senderName ? (
@@ -192,7 +194,7 @@ export default function ImageViewerModal({
               ) : null}
             </View>
             {/* <TouchableOpacity style={styles.iconBtn} onPress={handleShare}>
-              <Ionicons name="share-outline" size={22} color="#fff" />
+              <Ionicons name="share-outline" size={22} color={Colors.white} />
             </TouchableOpacity> */}
           </View>
         )}
@@ -211,7 +213,7 @@ export default function ImageViewerModal({
 const styles = StyleSheet.create({
   bg: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: Colors.black,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -228,7 +230,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 12,
     paddingBottom: 16,
-    backgroundColor: 'rgba(0,0,0,0.55)',
+    backgroundColor: Colors.overlaySoft,
   },
   iconBtn: {
     width: 40,
@@ -236,15 +238,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 20,
-    backgroundColor: 'rgba(255,255,255,0.1)',
+    backgroundColor: Colors.lightOverlaySubtle,
   },
   senderName: {
-    color: '#fff',
+    color: Colors.white,
     fontSize: 15,
     fontWeight: '600',
   },
   timestamp: {
-    color: 'rgba(255,255,255,0.65)',
+    color: Colors.lightOverlay,
     fontSize: 12,
     marginTop: 1,
   },
@@ -255,10 +257,10 @@ const styles = StyleSheet.create({
     right: 0,
     alignItems: 'center',
     paddingTop: 16,
-    backgroundColor: 'rgba(0,0,0,0.45)',
+    backgroundColor: Colors.overlaySoft,
   },
   hint: {
-    color: 'rgba(255,255,255,0.5)',
+    color: Colors.lightOverlay,
     fontSize: 12,
   },
 });

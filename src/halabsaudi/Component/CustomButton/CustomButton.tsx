@@ -26,7 +26,7 @@ const CustomButton:React.FC<buttonProps>= ({ title, onPress, disabled = false })
 
 const getStyles=(language:string) => StyleSheet.create({
   button: {
-    backgroundColor: Colors.btnRed, // Example color
+    backgroundColor: Colors.accent, // Example color
     width:'100%',
     alignSelf:"center",
     height:55,
@@ -34,7 +34,7 @@ const getStyles=(language:string) => StyleSheet.create({
     borderRadius: 14,
   },
   buttonText: {
-    color: 'white',
+    color: Colors.white,
     fontSize: language==='en'?16:14,
      fontFamily:Fonts.SF_Bold,
     textAlign: 'center',

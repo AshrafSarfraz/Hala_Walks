@@ -9,6 +9,8 @@ import {Colors} from '../../Themes/Colors';
 import {languageData} from '../../redux_toolkit/language/languageSlice';
 import {RootState} from '../../redux_toolkit/store';
 
+import {hbsText} from '../../i18n/translations';
+
 type Props = {
   visible: boolean;
   onClose: () => void;
@@ -44,19 +46,19 @@ export default function AttachmentSheet({
 
   const options = [
     {
-      icon: 'camera-outline',
+      icon: 'image-outline',
       label: t.camera,
       sublabel: t.camera_sub,
-      color: '#F5F6F8',
-      bg: '#E6F4EC',
+      color: Colors.textPrimary,
+      bg: Colors.successSoft,
       onPress: () => { onClose(); setTimeout(onCamera, 250); },
     },
     {
-      icon: 'images-outline',
+      icon: 'videocam-outline',
       label: t.gallery,
       sublabel: t.gallery_sub,
-      color: '#7C3AED',
-      bg: '#EDE9FE',
+      color: Colors.purple,
+      bg: Colors.purpleSoft,
       onPress: () => { onClose(); setTimeout(onGallery, 250); },
     },
     ...(onDocument
@@ -64,8 +66,8 @@ export default function AttachmentSheet({
           icon: 'document-outline',
           label: t.document,
           sublabel: t.document_sub,
-          color: '#D97706',
-          bg: '#FEF3C7',
+          color: Colors.warning,
+          bg: Colors.warningSoft,
           onPress: () => { onClose(); setTimeout(onDocument!, 250); },
         }]
       : []),
@@ -76,12 +78,12 @@ export default function AttachmentSheet({
     onClose();
     setTimeout(() => {
       Alert.alert(
-        isRTL ? 'حذف الصورة' : 'Remove Photo',
-        isRTL ? 'هل أنت متأكد؟' : 'Are you sure you want to remove your photo?',
+        hbsText(isRTL, 'ui_remove_photo'),
+        hbsText(isRTL, 'ui_are_you_sure_you_want_to_remove_your_photo'),
         [
-          {text: isRTL ? 'إلغاء' : 'Cancel', style: 'cancel'},
+          {text: hbsText(isRTL, 'ui_cancel'), style: 'cancel'},
           {
-            text: isRTL ? 'حذف' : 'Remove',
+            text: hbsText(isRTL, 'ui_remove'),
             style: 'destructive',
             onPress: onRemoveAvatar,
           },
@@ -135,9 +137,9 @@ export default function AttachmentSheet({
               style={s.deleteBtn}
               onPress={handleRemove}
               activeOpacity={0.7}>
-              <Ionicons name="trash-outline" size={18} color="#DC2626" />
+              <Ionicons name="trash-outline" size={18} color={Colors.accent} />
               <Text style={s.deleteText}>
-                {isRTL ? 'حذف الصورة' : 'Delete Photo'}
+                {hbsText(isRTL, 'ui_delete_photo')}
               </Text>
             </TouchableOpacity>
           )}
@@ -151,21 +153,21 @@ export default function AttachmentSheet({
 const s = StyleSheet.create({
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.45)',
+    backgroundColor: Colors.overlaySoft,
   },
   sheet: {
     position: 'absolute', bottom: 0, left: 0, right: 0,
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     borderTopLeftRadius: 24, borderTopRightRadius: 24,
     paddingHorizontal: 20, paddingBottom: 36, paddingTop: 14,
   },
   handle: {
     width: 40, height: 4, borderRadius: 2,
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     alignSelf: 'center', marginBottom: 18,
   },
-  title:    {fontSize: 17, fontWeight: '700', color: '#F5F6F8', textAlign: 'center'},
-  subtitle: {fontSize: 13, color: '#9CA3AF', textAlign: 'center', marginTop: 4, marginBottom: 24},
+  title:    {fontSize: 17, fontWeight: '700', color: Colors.textPrimary, textAlign: 'center'},
+  subtitle: {fontSize: 13, color: Colors.textMuted, textAlign: 'center', marginTop: 4, marginBottom: 24},
 
   optionsRow: {flexDirection: 'row', justifyContent: 'center', gap: 16, marginBottom: 24},
   optionBtn:  {alignItems: 'center', flex: 1, maxWidth: 100},
@@ -173,8 +175,8 @@ const s = StyleSheet.create({
     width: 64, height: 64, borderRadius: 18,
     justifyContent: 'center', alignItems: 'center', marginBottom: 8,
   },
-  optionLabel: {fontSize: 14, fontWeight: '700', color: '#F5F6F8', marginBottom: 3},
-  optionSub:   {fontSize: 11, color: '#9CA3AF', textAlign: 'center', lineHeight: 15},
+  optionLabel: {fontSize: 14, fontWeight: '700', color: Colors.textPrimary, marginBottom: 3},
+  optionSub:   {fontSize: 11, color: Colors.textMuted, textAlign: 'center', lineHeight: 15},
 
   // ✅ Bottom row
   bottomRow: {
@@ -182,12 +184,12 @@ const s = StyleSheet.create({
   },
   cancelBtn: {
     flex: 1,
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     borderRadius: 14,
     paddingVertical: 14,
     alignItems: 'center',
   },
-  cancelText: {fontSize: 15, fontWeight: '600', color: '#F5F6F8'},
+  cancelText: {fontSize: 15, fontWeight: '600', color: Colors.textPrimary},
 
   // ✅ Delete button
   deleteBtn: {
@@ -196,9 +198,9 @@ const s = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     borderRadius: 14,
     paddingVertical: 14,
   },
-  deleteText: {fontSize: 15, fontWeight: '600', color: '#DC2626'},
+  deleteText: {fontSize: 15, fontWeight: '600', color: Colors.accent},
 });

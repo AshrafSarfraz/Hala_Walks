@@ -37,7 +37,7 @@ const buildFullPhoneNumber = (countryCode: string, input: string) => {
 };
 
 const SignUp: React.FC<NativeStackScreenProps<any>> = ({navigation}) => {
-  useStatusBar('light-content', Colors.dargBg);
+  useStatusBar('light-content', Colors.background);
   const insets = useSafeAreaInsets();
 
   const [countryCode, setCountryCode] = useState('+966'); // Default (KSA)
@@ -102,7 +102,7 @@ const SignUp: React.FC<NativeStackScreenProps<any>> = ({navigation}) => {
       <CustomHeader
         title=""
         onBackPress={() => navigation.goBack()}
-        backgroundColor={Colors.dargBg}
+        backgroundColor={Colors.background}
       />
 
       <KeyboardAvoidingView
@@ -132,13 +132,13 @@ const SignUp: React.FC<NativeStackScreenProps<any>> = ({navigation}) => {
                 source={Profile_Img}
                 style={[
                   styles.Field_Icon,
-                  {tintColor: name === '' ? Colors.Grey9 : Colors.White},
+                  {tintColor: name === '' ? Colors.textMuted : Colors.white},
                 ]}
               />
               <TextInput
                 placeholder={languageData[language].full_name}
                 value={name}
-                placeholderTextColor={Colors.Grey9}
+                placeholderTextColor={Colors.textMuted}
                 onChangeText={t => {
                   setName(t);
                   clearError();
@@ -156,13 +156,13 @@ const SignUp: React.FC<NativeStackScreenProps<any>> = ({navigation}) => {
                 source={Message}
                 style={[
                   styles.Field_Icon,
-                  {tintColor: email === '' ? Colors.Grey9 : Colors.White},
+                  {tintColor: email === '' ? Colors.textMuted : Colors.white},
                 ]}
               />
               <TextInput
                 placeholder={languageData[language].Enter_Email}
                 value={email}
-                placeholderTextColor={Colors.Grey9}
+                placeholderTextColor={Colors.textMuted}
                 onChangeText={t => {
                   setEmail(t);
                   clearError();
@@ -185,7 +185,7 @@ const SignUp: React.FC<NativeStackScreenProps<any>> = ({navigation}) => {
               <TextInput
                 placeholder={languageData[language].phone_number}
                 value={phoneNumber}
-                placeholderTextColor={Colors.Grey9}
+                placeholderTextColor={Colors.textMuted}
                 onChangeText={t => {
                   setPhoneNumber(t);
                   clearError();
@@ -227,9 +227,7 @@ const SignUp: React.FC<NativeStackScreenProps<any>> = ({navigation}) => {
               onPress={() => navigation.navigate('Login')}
               style={styles.Link_Btn}>
               <Text style={styles.Link_Txt}>
-                {language === 'en'
-                  ? 'Already have an account? Log in'
-                  : 'لديك حساب بالفعل؟ تسجيل الدخول'}
+                {hbsText(language === 'ar', 'ui_already_have_account_log_in')}
               </Text>
             </TouchableOpacity>
           </View>

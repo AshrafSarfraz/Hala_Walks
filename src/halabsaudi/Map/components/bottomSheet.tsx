@@ -163,20 +163,20 @@ const cardStyles = StyleSheet.create({
   image: {width: '100%', height: '100%'},
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.50)',
+    backgroundColor: Colors.overlaySoft,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 8,
   },
-  pct: {color: '#fff', fontSize: 13, fontWeight: '700', marginBottom: 6},
+  pct: {color: Colors.white, fontSize: 13, fontWeight: '700', marginBottom: 6},
   trackBg: {
     width: '100%',
     height: 4,
-    backgroundColor: 'rgba(255,255,255,0.3)',
+    backgroundColor: Colors.lightOverlay,
     borderRadius: 2,
     overflow: 'hidden',
   },
-  trackFill: {height: '100%', backgroundColor: '#6C4EFF', borderRadius: 2},
+  trackFill: {height: '100%', backgroundColor: Colors.purple, borderRadius: 2},
   doneBadge: {
     position: 'absolute',
     bottom: 6,
@@ -184,12 +184,12 @@ const cardStyles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: '#22c55e',
+    backgroundColor: Colors.success,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  errorBadge: {backgroundColor: '#ef4444'},
-  badgeText: {color: '#fff', fontSize: 11, fontWeight: '800'},
+  errorBadge: {backgroundColor: Colors.accent},
+  badgeText: {color: Colors.white, fontSize: 11, fontWeight: '800'},
   remove: {
     position: 'absolute',
     top: 5,
@@ -197,11 +197,11 @@ const cardStyles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: 'rgba(0,0,0,0.55)',
+    backgroundColor: Colors.overlaySoft,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  removeText: {color: '#fff', fontSize: 10, fontWeight: '700'},
+  removeText: {color: Colors.white, fontSize: 10, fontWeight: '700'},
 });
 
 // ─── LocationToggle ───────────────────────────────────────────────────────────
@@ -231,7 +231,7 @@ const LocationToggle = ({
         <Ionicons
           name="location"
           size={12}
-          color={mode === 'current' ? '#fff' : '#6C4EFF'}
+          color={mode === 'current' ? Colors.white : Colors.purple}
         />
         <Text
           style={[
@@ -252,7 +252,7 @@ const LocationToggle = ({
         <Ionicons
           name="search"
           size={12}
-          color={mode === 'searched' ? '#fff' : '#6C4EFF'}
+          color={mode === 'searched' ? Colors.white : Colors.purple}
         />
         <Text
           style={[
@@ -274,7 +274,7 @@ const toggleStyles = StyleSheet.create({
   label: {
     fontSize: 11,
     fontWeight: '600',
-    color: '#aaa',
+    color: Colors.textSecondary,
     textTransform: 'uppercase',
     letterSpacing: 0.2,
     marginBottom: 8,
@@ -293,21 +293,21 @@ const toggleStyles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 20,
     borderWidth: 1.5,
-    borderColor: '#343841',
-    backgroundColor: '#191B20',
+    borderColor: Colors.border,
+    backgroundColor: Colors.surface,
   },
   pillActive: {
-    backgroundColor: '#6C4EFF',
-    borderColor: '#6C4EFF',
+    backgroundColor: Colors.purple,
+    borderColor: Colors.purple,
   },
   pillText: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#6C4EFF',
+    color: Colors.purple,
     flexShrink: 1,
   },
   pillTextActive: {
-    color: '#fff',
+    color: Colors.white,
   },
 });
 
@@ -580,7 +580,7 @@ const BottomSheet = ({
           {/* ── Place name row ── */}
           <View style={styles.locationRow}>
             {renamingLocation ? (
-              // <ActivityIndicator size="small" color="#6C4EFF" />
+              // <ActivityIndicator size="small" color={Colors.purple} />
               <ActivityIndicatorModal visible={renamingLocation} />
             ) : (
               <Text style={styles.title} numberOfLines={1}>
@@ -602,7 +602,7 @@ const BottomSheet = ({
               <Ionicons
                 name={showSuggestions ? 'chevron-up' : 'swap-horizontal'}
                 size={13}
-                color="#6C4EFF"
+                color={Colors.purple}
               />
               <Text style={styles.changeLocation}>
                 {showSuggestions ? 'Hide suggestions' : 'Change location'}
@@ -641,7 +641,7 @@ const BottomSheet = ({
           {/* ── Remote info callout ── */}
           {locationMode === 'searched' && (
             <View style={styles.remoteInfo}>
-              <Ionicons name="globe-outline" size={14} color="#6C4EFF" />
+              <Ionicons name="globe-outline" size={14} color={Colors.purple} />
               <Text style={styles.remoteInfoText}>
                 Your photo will be posted at{' '}
                 <Text style={styles.remoteInfoBold}>
@@ -655,7 +655,7 @@ const BottomSheet = ({
           {/* ── Description ── */}
           <TextInput
             placeholder="What're you up to?"
-            placeholderTextColor="#bbb"
+            placeholderTextColor={Colors.textSecondary}
             value={description}
             onChangeText={setDescription}
             style={styles.input}
@@ -672,8 +672,8 @@ const BottomSheet = ({
               ]}
               onPress={handleCamera}
               disabled={photos.length >= MAX_PHOTOS}>
-              <Ionicons name="camera-outline" size={18} color='#F5F6F8' />
-              <Text style={styles.addPhotoText}>Camera</Text>
+              <Ionicons name="image-outline" size={18} color={Colors.textPrimary} />
+              <Text style={styles.addPhotoText}>Photo</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -683,8 +683,8 @@ const BottomSheet = ({
               ]}
               onPress={handleGallery}
               disabled={photos.length >= MAX_PHOTOS}>
-              <Ionicons name="image-outline" size={18} color='#F5F6F8' />
-              <Text style={styles.addPhotoText}>Gallery</Text>
+              <Ionicons name="image-outline" size={18} color={Colors.textPrimary} />
+              <Text style={styles.addPhotoText}>Photo / Video</Text>
             </TouchableOpacity>
           </View>
 
@@ -714,7 +714,7 @@ const BottomSheet = ({
             onPress={handleCheckIn}
             disabled={isCheckInDisabled}>
             {uploading ? (
-              // <ActivityIndicator color="#fff" />
+              // <ActivityIndicator color={Colors.white} />
               <ActivityIndicatorModal visible={uploading} />
             ) : (
               <Text style={styles.checkInText}>Check in</Text>
@@ -735,7 +735,7 @@ const BottomSheet = ({
 const styles = StyleSheet.create({
   modal: {justifyContent: 'flex-end', margin: 0},
   container: {
-    backgroundColor: Colors.dargBg,
+    backgroundColor: Colors.background,
     paddingHorizontal: 20,
     paddingTop: 12,
     paddingBottom: 32,
@@ -748,7 +748,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 4,
     borderRadius: 2,
-    backgroundColor: '#191B20' ,
+    backgroundColor: Colors.surface ,
     alignSelf: 'center',
     marginBottom: 16,
   },
@@ -767,7 +767,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     textAlign: 'center',
     flexShrink: 1,
-    color: Colors.White,
+    color: Colors.white,
   },
   changeRow: {
     flexDirection: 'row',
@@ -779,13 +779,13 @@ const styles = StyleSheet.create({
   },
   changeLocation: {
     fontSize: 13,
-    color: '#6C4EFF',
+    color: Colors.purple,
     fontWeight: '600',
   },
 
   // Remote badge
   remoteBadge: {
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     borderRadius: 8,
     paddingHorizontal: 7,
     paddingVertical: 3,
@@ -793,7 +793,7 @@ const styles = StyleSheet.create({
   remoteBadgeText: {
     fontSize: 11,
     fontWeight: '700',
-    color: '#6C4EFF',
+    color: Colors.purple,
   },
 
   // Remote info callout
@@ -801,7 +801,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: 7,
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     borderRadius: 10,
     padding: 10,
     marginTop: 10,
@@ -810,7 +810,7 @@ const styles = StyleSheet.create({
   remoteInfoText: {
     flex: 1,
     fontSize: 12,
-    color: '#5B4DB3',
+    color: Colors.purple,
     lineHeight: 18,
   },
   remoteInfoBold: {
@@ -820,7 +820,7 @@ const styles = StyleSheet.create({
   // Suggestion list
   suggestionList: {
     borderWidth: 1,
-    borderColor: '#343841',
+    borderColor: Colors.border,
     borderRadius: 12,
     marginBottom: 10,
     overflow: 'hidden',
@@ -829,29 +829,29 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 14,
     borderBottomWidth: 1,
-    borderColor: '#343841',
+    borderColor: Colors.border,
   },
-  suggestionName: {fontSize: 14, fontWeight: '600', color: Colors.White},
-  suggestionVicinity: {fontSize: 12, color: '#ABB2BF', marginTop: 2},
-  emptyText: {color: '#ABB2BF', textAlign: 'center', paddingVertical: 10},
+  suggestionName: {fontSize: 14, fontWeight: '600', color: Colors.white},
+  suggestionVicinity: {fontSize: 12, color: Colors.textSecondary, marginTop: 2},
+  emptyText: {color: Colors.textSecondary, textAlign: 'center', paddingVertical: 10},
 
   // Description input
   input: {
     borderWidth: 1,
-    borderColor: '#343841',
+    borderColor: Colors.border,
     borderRadius: 12,
     padding: 12,
     height: 88,
     marginTop: 12,
     textAlignVertical: 'top',
     fontSize: 14,
-    color: Colors.White,
+    color: Colors.white,
   },
 
   // Photo buttons
   photoActions: {flexDirection: 'row', gap: 10, marginTop: 12},
   addPhotoBtn: {
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     paddingVertical: 12,
     paddingHorizontal: 10,
     borderRadius: 12,
@@ -862,10 +862,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   addPhotoBtnDisabled: {opacity: 0.4},
-  addPhotoText: {fontSize: 14, fontWeight: '600', color: Colors.White},
+  addPhotoText: {fontSize: 14, fontWeight: '600', color: Colors.white},
   slotCounter: {
     fontSize: 12,
-    color: '#bbb',
+    color: Colors.textSecondary,
     textAlign: 'right',
     marginTop: 6,
     marginBottom: 2,
@@ -874,13 +874,13 @@ const styles = StyleSheet.create({
   // Check-in
   checkInBtn: {
     marginTop: 16,
-    backgroundColor: '#6C4EFF',
+    backgroundColor: Colors.purple,
     paddingVertical: 15,
     borderRadius: 25,
     alignItems: 'center',
   },
   checkInBtnDisabled: {opacity: 0.5},
-  checkInText: {color: '#fff', fontSize: 16, fontWeight: '700'},
+  checkInText: {color: Colors.white, fontSize: 16, fontWeight: '700'},
 });
 
 export default BottomSheet;

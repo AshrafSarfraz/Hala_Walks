@@ -6,11 +6,11 @@ import { Fonts } from "../../../Themes/Fonts";
 export const getStyles = (language: string) => StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: Colors.dargBg,
+    backgroundColor: Colors.background,
     paddingTop:20
   },
   MainCont: {
-    backgroundColor: Colors.dargBg,
+    backgroundColor: Colors.background,
     flexGrow: 1,
     paddingHorizontal: '6%',
     paddingBottom: '10%',
@@ -25,7 +25,7 @@ export const getStyles = (language: string) => StyleSheet.create({
   BackIcon: {
     width: 28,
     height: 28,
-    tintColor: Colors.White,
+    tintColor: Colors.white,
     transform: language === 'en' ? [{ scaleX: 1 }] : [{ scaleX: -1 }],
   },
   Logo: {
@@ -37,7 +37,7 @@ export const getStyles = (language: string) => StyleSheet.create({
   digit_Txt: {
     fontFamily: Fonts.SF_Medium,
     fontSize: 16,
-    color: Colors.whiteGrey,
+    color: Colors.textSecondary,
     alignSelf: 'center',
     lineHeight: 20,
     marginTop: '8%',
@@ -45,7 +45,7 @@ export const getStyles = (language: string) => StyleSheet.create({
   PhoneNumber: {
     fontFamily: Fonts.SF_Bold,
     fontSize: 20,
-    color: Colors.White,
+    color: Colors.white,
     alignSelf: 'center',
     lineHeight: 26,
     marginTop: '2%',
@@ -58,30 +58,30 @@ export const getStyles = (language: string) => StyleSheet.create({
   otpInput: {
     width: '100%',
     height: 60,
-    backgroundColor: '#191B20',
-    borderColor: '#343841',
+    backgroundColor: Colors.surface,
+    borderColor: Colors.border,
     borderWidth: 1.5,
     borderRadius: 14,
     paddingHorizontal: 16,
     fontSize: 16,
     letterSpacing: 0.2,
     textAlign: 'center',
-    color: Colors.White,
+    color: Colors.white,
     fontFamily: Fonts.SF_Bold,
   },
   otpInputFocused: {
-    borderColor: Colors.Green,
-    backgroundColor: '#191B20',
+    borderColor: Colors.brandGreen,
+    backgroundColor: Colors.surface,
   },
   otpInputFilled: {
-    borderColor: Colors.Green,
+    borderColor: Colors.brandGreen,
     borderWidth: 2,
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
   },
   Error: {
     fontFamily: Fonts.SF_Medium,
     fontSize: 13,
-    color: Colors.Red,
+    color: Colors.accent,
     lineHeight: 18,
     marginTop: '3%',
     marginLeft: '1%',
@@ -96,18 +96,18 @@ export const getStyles = (language: string) => StyleSheet.create({
   resendHint: {
     fontFamily: Fonts.SF_Regular,
     fontSize: 13,
-    color: Colors.whiteGrey,
+    color: Colors.textSecondary,
     lineHeight: 18,
   },
   resendLink: {
     fontFamily: Fonts.SF_Bold,
     fontSize: 13,
-    color: Colors.White,
+    color: Colors.white,
     textDecorationLine: 'underline',
     lineHeight: 18,
   },
   resendLinkDisabled: {
-    color: Colors.Grey9,
+    color: Colors.textMuted,
     textDecorationLine: 'none',
   },
 });11

@@ -19,12 +19,14 @@ import CountryDropdown2 from '../../Component/Dropdown/Data_for_Country';
 import { RootState } from '../../redux_toolkit/store';
 import { useStatusBar } from '../../Component/UseStatusBar/useStatusBar';
 
+import {hbsText} from '../../i18n/translations';
+
 type HomeProps = {
   navigation: any;
 };
 
 const Home: React.FC<HomeProps> = ({ navigation }) => {
-  useStatusBar('light-content', Colors.darkgrey);
+  useStatusBar('light-content', Colors.surface);
   const language = useSelector((state: RootState) => state.language.language);
   const styles = getStyles(language);
 
@@ -36,7 +38,7 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
   const [hasRecentlyAdded, setHasRecentlyAdded] = useState(false); // ✅
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.darkgrey }} edges={['top']}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.surface }} edges={['top']}>
       <View style={styles.Container}>
         <View style={styles.header}>
           <Image source={Hala_logo_white} style={styles.logo} />
@@ -49,8 +51,8 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
         </View>
 
         <ScrollView key={revision} showsVerticalScrollIndicator={false}>
-          {catalogError && <TouchableOpacity accessibilityRole="button" onPress={retryCatalog} style={{margin: 16, padding: 14, borderRadius: 12, backgroundColor: Colors.cardBg}}>
-            <Text style={{color: Colors.White, lineHeight: 21}}>{language === 'ar' ? 'تعذر تحديث بعض العناصر. اضغط لإعادة المحاولة.' : 'Some items could not refresh. Tap to retry.'}</Text>
+          {catalogError && <TouchableOpacity accessibilityRole="button" onPress={retryCatalog} style={{margin: 16, padding: 14, borderRadius: 12, backgroundColor: Colors.surface}}>
+            <Text style={{color: Colors.white, lineHeight: 21}}>{hbsText(language === 'ar', 'ui_some_items_could_not_refresh_tap_to_retry')}</Text>
           </TouchableOpacity>}
           <ImageSlider onLoadError={() => setCatalogError(true)} />
 

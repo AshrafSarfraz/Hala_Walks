@@ -14,7 +14,7 @@ export const getStyles=(language:String) => StyleSheet.create({
     Flatlist_Cont:{
       width:280,
       height:language==='en'?100:110,
-      backgroundColor:'#191B20',
+      backgroundColor:Colors.surface,
       marginRight:10,
       paddingLeft:10,
       borderRadius:10,
@@ -42,7 +42,7 @@ export const getStyles=(language:String) => StyleSheet.create({
       fontSize:language==='en'?14:12,
       fontFamily:language==='en'?Fonts.SF_Bold:'',
       fontWeight :language==='en'?'400':'bold',
-      color:'#F5F6F8',
+      color:Colors.textPrimary,
       lineHeight:language==='en'?20:20,
       letterSpacing:language==='en'?0.2:0,
       textAlign:language==='en'?'left':'right',
@@ -54,7 +54,7 @@ export const getStyles=(language:String) => StyleSheet.create({
       lineHeight:language==='en'?13:13,
       letterSpacing:0.2,
       marginTop:2,
-      color:'#F5F6F8',
+      color:Colors.textPrimary,
       textAlign:language==='en'?'left':'right',
     }
   });

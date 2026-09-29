@@ -17,6 +17,10 @@ import {ActivityIndicator} from '../../ui/ActivityIndicator';
 import {unwrap, unwrapMeta} from '../api/unwrap';
 import {useStatusBar} from '../Component/UseStatusBar/useStatusBar';
 
+import {Colors} from '../Themes/Colors';
+
+import {hbsText} from '../i18n/translations';
+
 function ProfilePhoto({uri, contain = false}: {uri: string; contain?: boolean}) {
   const [state, setState] = useState<'loading' | 'ready' | 'error'>('loading');
   const [attempt, setAttempt] = useState(0);
@@ -38,8 +42,7 @@ export default function MapProfile({navigation, route}: any) {
   const [viewerIndex, setViewerIndex] = useState(0);
   const [viewerHeight, setViewerHeight] = useState(300);
   const ar = useSelector((state: any) => state.language.language === 'ar');
-  const label = (en: string, arabic: string) => ar ? arabic : en;
-  const [user, setUser] = useState<any>(null);
+const [user, setUser] = useState<any>(null);
   const [posts, setPosts] = useState<any[]>([]);
   const [friends, setFriends] = useState<Count>(null);
   const [loading, setLoading] = useState(true);
@@ -63,7 +66,7 @@ export default function MapProfile({navigation, route}: any) {
       setPosts(remaining); closeViewer();
       const key = user?._id || user?.id;
       if (key) await AsyncStorage.setItem(`profile_checkins_v5_${key}`, JSON.stringify(remaining)).catch(() => {});
-    } catch {setDeleteError(label('Could not delete this post. Please try again.', 'تعذر حذف المنشور. حاول مجدداً.'));}
+    } catch {setDeleteError(hbsText(ar, 'ui_could_not_delete_this_post_please_try_again'));}
     finally {setDeleting(false);}
   };
   const [revision, setRevision] = useState(0);
@@ -96,7 +99,7 @@ export default function MapProfile({navigation, route}: any) {
           const items = unwrap(checks.value.data, 'checkins', 'posts');
           setPosts(items); setError('');
           if (cacheKey) AsyncStorage.setItem(cacheKey, JSON.stringify(items)).catch(() => {});
-        } else setError(ar ? 'تعذر تحديث الزيارات. اضغط لإعادة المحاولة.' : 'Could not refresh check-ins. Tap to retry.');
+        } else setError(hbsText(ar, 'ui_could_not_refresh_check_ins_tap_to_retry'));
         [setFriends].forEach((set, i) => {
           const result = results[i + 1];
           if (result.status === 'fulfilled') {
@@ -105,7 +108,7 @@ export default function MapProfile({navigation, route}: any) {
             set({value: meta.total ?? unwrap(data, 'friends', 'users').length, more: meta.total === null && meta.hasMore});
           } else set(null);
         });
-      } catch {if (active) setError(ar ? 'تعذر تحميل الملف الشخصي. حاول مجدداً.' : 'Could not load your profile. Tap to retry.');}
+      } catch {if (active) setError(hbsText(ar, 'ui_could_not_load_your_profile_tap_to_retry'));}
       finally {if (active) {setLoading(false); setRefreshing(false);}}
     }
     load();
@@ -125,24 +128,24 @@ export default function MapProfile({navigation, route}: any) {
   const row = {flexDirection: ar ? 'row-reverse' as const : 'row' as const};
   const Header = <View style={s.header}>
     <View style={[s.identity, row]}>
-      <Pressable accessibilityRole="button" accessibilityLabel={label('Edit profile', 'تعديل الملف الشخصي')} onPress={() => navigation.navigate('EditAccount')}>
+      <Pressable accessibilityRole="button" accessibilityLabel={hbsText(ar, 'ui_edit_profile')} onPress={() => navigation.navigate('EditAccount')}>
         <UserAvatar uri={user?.avatar || user?.profilePhoto} style={s.avatar} />
       </Pressable>
-      <View style={{flex: 1}}><Text style={[s.name, {textAlign: ar ? 'right' : 'left'}]}>{user?.name || label('Your profile', 'ملفك الشخصي')}</Text>
-        <Text style={s.subtitle}>{label('Your places. Your moments.', 'أماكنك. لحظاتك.')}</Text></View>
-      <Pressable accessibilityRole="button" accessibilityLabel={label('Settings', 'الإعدادات')} style={s.iconButton} onPress={() => navigation.navigate('Settings')}><Ionicons name="menu-outline" size={26} color={c.text} /></Pressable>
+      <View style={{flex: 1}}><Text style={[s.name, {textAlign: ar ? 'right' : 'left'}]}>{user?.name || hbsText(ar, 'ui_your_profile')}</Text>
+        <Text style={s.subtitle}>{hbsText(ar, 'ui_your_places_your_moments')}</Text></View>
+      <Pressable accessibilityRole="button" accessibilityLabel={hbsText(ar, 'ui_settings')} style={s.iconButton} onPress={() => navigation.navigate('Settings')}><Ionicons name="menu-outline" size={26} color={c.text} /></Pressable>
     </View>
     {!!user?.bio && <Text style={s.bio}>{user.bio}</Text>}
     <View style={[s.stats, row]}>
       {[
-        {value: String(posts.length), title: label('Photos', 'الصور'), action: () => setTab('checkins')},
-        {value: formatCount(friends), title: label('Friends', 'الأصدقاء'), action: () => navigation.navigate('SocialConnections', {mode: 'friends'})},
+        {value: String(posts.length), title: hbsText(ar, 'ui_photos'), action: () => setTab('checkins')},
+        {value: formatCount(friends), title: hbsText(ar, 'ui_friends_2'), action: () => navigation.navigate('SocialConnections', {mode: 'friends'})},
       ].map(stat => <Pressable key={stat.title} accessibilityRole="button" style={s.stat} onPress={stat.action}><Text style={s.number}>{stat.value}</Text><Text style={s.statLabel}>{stat.title}</Text></Pressable>)}
     </View>
     <FriendRequestsButton navigation={navigation} />
-    <View style={[s.tabs, row]}>{(['checkins', 'places'] as const).map(key => <Pressable key={key} accessibilityRole="tab" accessibilityState={{selected: tab === key}} style={[s.tab, tab === key && s.activeTab]} onPress={() => {setTab(key); setAlbumKey(null);}}><Ionicons name={key === 'checkins' ? 'grid-outline' : 'location-outline'} size={18} color={tab === key ? c.text : c.muted} /><Text style={[s.tabText, tab === key && {color: c.text}]}>{key === 'checkins' ? label('Check-ins', 'الزيارات') : label('Places', 'الأماكن')}</Text></Pressable>)}<Pressable accessibilityRole="button" accessibilityLabel={label('Add friends', 'إضافة أصدقاء')} style={s.addButton} onPress={() => navigation.navigate('StartChatScreen')}><Ionicons name="person-add-outline" size={17} color={c.text} /><Text style={s.buttonText}>{label('Add+', 'إضافة +')}</Text></Pressable></View>
+    <View style={[s.tabs, row]}>{(['checkins', 'places'] as const).map(key => <Pressable key={key} accessibilityRole="tab" accessibilityState={{selected: tab === key}} style={[s.tab, tab === key && s.activeTab]} onPress={() => {setTab(key); setAlbumKey(null);}}><Ionicons name={key === 'checkins' ? 'grid-outline' : 'location-outline'} size={18} color={tab === key ? c.text : c.muted} /><Text style={[s.tabText, tab === key && {color: c.text}]}>{key === 'checkins' ? hbsText(ar, 'ui_check_ins') : hbsText(ar, 'ui_places')}</Text></Pressable>)}<Pressable accessibilityRole="button" accessibilityLabel={hbsText(ar, 'ui_add_friends')} style={s.addButton} onPress={() => navigation.navigate('StartChatScreen')}><Ionicons name="person-add-outline" size={17} color={c.text} /><Text style={s.buttonText}>{hbsText(ar, 'ui_add')}</Text></Pressable></View>
     {tab === 'places' && album && <Pressable accessibilityRole="button" accessibilityLabel="Back to places" onPress={() => setAlbumKey(null)} style={{padding: 16, flexDirection: 'row', alignItems: 'center', gap: 8}}>
-      <Ionicons name="arrow-back" size={20} color={c.text} /><Text style={s.buttonText}>{album.name} · {album.posts.length} {label('photos', 'صور')}</Text>
+      <Ionicons name="arrow-back" size={20} color={c.text} /><Text style={s.buttonText}>{album.name} · {album.posts.length} {hbsText(ar, 'ui_photos_2')}</Text>
     </Pressable>}
     {!!error && <Pressable onPress={refresh} style={s.error}><Text style={s.muted}>{error}</Text></Pressable>}
   </View>;
@@ -151,17 +154,17 @@ export default function MapProfile({navigation, route}: any) {
       keyExtractor={(item, i) => String(item._id || i)} ListHeaderComponent={Header}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} tintColor={c.accent} colors={[c.accent]} />}
       contentContainerStyle={{paddingBottom: 24, flexGrow: 1}} showsVerticalScrollIndicator={false}
-      renderItem={({item}) => <Pressable accessibilityRole="button" accessibilityLabel={item.location?.name || label('Open check-in', 'عرض الزيارة')} onPress={() => {if (tab === 'places' && !album) setAlbumKey(placeKey(item)); else openPost(item);}} style={[s.tile, {width: width / 3 - 2, height: width / 3 - 2}]}>
+      renderItem={({item}) => <Pressable accessibilityRole="button" accessibilityLabel={item.location?.name || hbsText(ar, 'ui_open_check_in')} onPress={() => {if (tab === 'places' && !album) setAlbumKey(placeKey(item)); else openPost(item);}} style={[s.tile, {width: width / 3 - 2, height: width / 3 - 2}]}>
         {!!item.image && <ProfilePhoto key={item.image} uri={item.image} />}
-        {tab === 'places' && !album && <View style={s.tileCaption}><Text numberOfLines={2} style={s.placeName}>{item.location?.name || label('Place', 'مكان')}</Text><Text style={s.placeName}>{albums.find(a => a.key === placeKey(item))?.posts.length} {label('photos', 'صور')}</Text></View>}
+        {tab === 'places' && !album && <View style={s.tileCaption}><Text numberOfLines={2} style={s.placeName}>{item.location?.name || hbsText(ar, 'ui_place')}</Text><Text style={s.placeName}>{albums.find(a => a.key === placeKey(item))?.posts.length} {hbsText(ar, 'ui_photos_2')}</Text></View>}
       </Pressable>}
-      ListEmptyComponent={<View style={s.empty}>{loading ? <ActivityIndicator size="large" /> : <><Ionicons name="camera-outline" size={38} color={c.muted} /><Text style={s.emptyTitle}>{label('Your story starts here', 'قصتك تبدأ هنا')}</Text><Text style={s.muted}>{label('Check in to a place to add your first moment.', 'سجّل زيارتك لمكان لإضافة أول لحظة.')}</Text><Pressable accessibilityRole="button" style={[s.secondary, {marginTop: 20}]} onPress={() => navigation.navigate('Timeline')}><Text style={s.buttonText}>{label('Create a check-in', 'إضافة زيارة')}</Text></Pressable></>}</View>}
+      ListEmptyComponent={<View style={s.empty}>{loading ? <ActivityIndicator size="large" /> : <><Ionicons name="images-outline" size={38} color={c.muted} /><Text style={s.emptyTitle}>{hbsText(ar, 'ui_your_story_starts_here')}</Text><Text style={s.muted}>{hbsText(ar, 'ui_check_in_to_a_place_to_add_your_first_moment')}</Text><Pressable accessibilityRole="button" style={[s.secondary, {marginTop: 20}]} onPress={() => navigation.navigate('Timeline')}><Text style={s.buttonText}>{hbsText(ar, 'ui_create_a_check_in')}</Text></Pressable></>}</View>}
     />
     {!!selected && <Modal visible animationType="fade" presentationStyle="fullScreen" onRequestClose={() => {if (!deleting) closeViewer();}}>
       <SafeAreaProvider><SafeAreaView style={s.safe}>
         <View style={[s.viewerHeader, {zIndex: 2, flexShrink: 0}]}>
-          <Text style={[s.name, {flex: 1}]} numberOfLines={1}>{selected.location?.name || label('Check-in', 'زيارة')}</Text>
-          <Pressable accessibilityRole="button" accessibilityLabel={label('Close', 'إغلاق')} hitSlop={12} style={s.iconButton} disabled={deleting} onPress={closeViewer}><Ionicons name="close" size={28} color={c.text} /></Pressable>
+          <Text style={[s.name, {flex: 1}]} numberOfLines={1}>{selected.location?.name || hbsText(ar, 'ui_check_in')}</Text>
+          <Pressable accessibilityRole="button" accessibilityLabel={hbsText(ar, 'ui_close')} hitSlop={12} style={s.iconButton} disabled={deleting} onPress={closeViewer}><Ionicons name="close" size={28} color={c.text} /></Pressable>
         </View>
         <View style={{flex: 1}} onLayout={event => setViewerHeight(event.nativeEvent.layout.height)}>
           <FlatList ref={viewerRef} key={width} horizontal pagingEnabled scrollEnabled={!deleting} data={viewerPosts}
@@ -182,10 +185,10 @@ export default function MapProfile({navigation, route}: any) {
           <Text style={{color: c.text}}>{selected.caption}</Text>
           {!!selected.createdAt && <Text style={s.muted}>{new Date(selected.createdAt).toLocaleDateString(ar ? 'ar' : 'en')}</Text>}
           {!!deleteError && <Text style={s.muted}>{deleteError}</Text>}
-          {confirmDelete ? <View style={{gap: 12}}><Text style={s.muted}>{label('Delete this post? This cannot be undone.', 'حذف هذا المنشور؟ لا يمكن التراجع.')}</Text><View style={{flexDirection: 'row', gap: 12}}>
-            <Pressable style={s.secondary} disabled={deleting} onPress={() => setConfirmDelete(false)}><Text style={s.buttonText}>{label('Cancel', 'إلغاء')}</Text></Pressable>
-            <Pressable accessibilityRole="button" accessibilityLabel="Confirm delete post" style={[s.secondary, s.primary]} disabled={deleting} onPress={deletePost}>{deleting ? <ActivityIndicator /> : <Text style={s.buttonText}>{label('Delete', 'حذف')}</Text>}</Pressable>
-          </View></View> : <Pressable accessibilityRole="button" accessibilityLabel="Delete post" onPress={() => setConfirmDelete(true)} style={{minHeight: 44, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8}}><Ionicons name="trash-outline" size={20} color={c.accent} /><Text style={{color: c.accent}}>{label('Delete post', 'حذف المنشور')}</Text></Pressable>}
+          {confirmDelete ? <View style={{gap: 12}}><Text style={s.muted}>{hbsText(ar, 'ui_delete_this_post_this_cannot_be_undone')}</Text><View style={{flexDirection: 'row', gap: 12}}>
+            <Pressable style={s.secondary} disabled={deleting} onPress={() => setConfirmDelete(false)}><Text style={s.buttonText}>{hbsText(ar, 'ui_cancel')}</Text></Pressable>
+            <Pressable accessibilityRole="button" accessibilityLabel="Confirm delete post" style={[s.secondary, s.primary]} disabled={deleting} onPress={deletePost}>{deleting ? <ActivityIndicator /> : <Text style={s.buttonText}>{hbsText(ar, 'ui_delete')}</Text>}</Pressable>
+          </View></View> : <Pressable accessibilityRole="button" accessibilityLabel="Delete post" onPress={() => setConfirmDelete(true)} style={{minHeight: 44, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8}}><Ionicons name="trash-outline" size={20} color={c.accent} /><Text style={{color: c.accent}}>{hbsText(ar, 'ui_delete_post')}</Text></Pressable>}
         </View>
       </SafeAreaView></SafeAreaProvider>
     </Modal>}
@@ -199,7 +202,7 @@ const s = StyleSheet.create({
   bio: {fontSize: 15, lineHeight: 22, color: c.text, marginHorizontal: 20, marginTop: 14}, stats: {marginHorizontal: 20, marginVertical: 24}, stat: {flex: 1, alignItems: 'center', minHeight: 48}, number: {fontSize: 23, fontWeight: '700', color: c.text}, statLabel: {fontSize: 13, color: c.muted, marginTop: 5},
   actions: {gap: 10, marginHorizontal: 20, marginBottom: 24}, secondary: {flexDirection: 'row', gap: 8, flex: 1, minHeight: 44, borderRadius: 12, backgroundColor: c.raised, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 14}, primary: {backgroundColor: c.accent}, buttonText: {color: c.text, fontSize: 14, fontWeight: '600'},
   addButton: {flexDirection: 'row', gap: 5, alignItems: 'center', justifyContent: 'center', backgroundColor: c.accent, borderRadius: 10, minHeight: 44, paddingHorizontal: 14, marginHorizontal: 8},
-  tabs: {alignItems: 'center', borderBottomColor: c.border, borderBottomWidth: 1, marginBottom: 2}, tab: {flex: 1, flexDirection: 'row', gap: 8, justifyContent: 'center', alignItems: 'center', minHeight: 52, borderBottomWidth: 2, borderBottomColor: 'transparent'}, activeTab: {borderBottomColor: c.accent}, tabText: {fontSize: 14, color: c.muted, fontWeight: '600'},
+  tabs: {alignItems: 'center', borderBottomColor: c.border, borderBottomWidth: 1, marginBottom: 2}, tab: {flex: 1, flexDirection: 'row', gap: 8, justifyContent: 'center', alignItems: 'center', minHeight: 52, borderBottomWidth: 2, borderBottomColor: Colors.transparent}, activeTab: {borderBottomColor: c.accent}, tabText: {fontSize: 14, color: c.muted, fontWeight: '600'},
   tile: {margin: 1, backgroundColor: c.surface}, tileCaption: {position: 'absolute', bottom: 0, left: 0, right: 0, padding: 8, backgroundColor: c.overlay}, placeName: {color: c.text, fontSize: 12, fontWeight: '600'},
   empty: {alignItems: 'center', padding: 32, gap: 12}, emptyTitle: {fontSize: 20, color: c.text, fontWeight: '600'}, muted: {fontSize: 14, lineHeight: 21, color: c.muted, textAlign: 'center'}, error: {padding: 14, backgroundColor: c.accentSoft}, viewerHeader: {flexDirection: 'row', alignItems: 'center', padding: 16},
 });

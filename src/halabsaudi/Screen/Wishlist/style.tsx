@@ -8,7 +8,7 @@ const {width} = Dimensions.get('screen');
 export default StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.dargBg,
+    backgroundColor: Colors.background,
     // ✅ marginTop '10%' HATAYA — ye DOUBLE padding de raha tha.
     // index.tsx me pehle se <SafeAreaView edges={['top']}> maujood hai,
     // to inset do baar lag raha tha.
@@ -19,7 +19,7 @@ export default StyleSheet.create({
     marginBottom: 20,
     fontSize: 18,
     fontFamily: Fonts.SF_Bold,
-    color: Colors.White,
+    color: Colors.white,
     textAlign: 'center',
   },
   row: {
@@ -31,12 +31,12 @@ export default StyleSheet.create({
     width: width * 0.45, // Reduced width for better spacing
     margin: 8,
     borderRadius: 10,
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     height: Platform.OS === 'ios' ? 210 : 210,
     alignItems:'flex-start',
-    borderColor: '#343841',
+    borderColor: Colors.border,
     overflow: 'hidden',
-    shadowColor: '#000', // Adding shadow effect for iOS
+    shadowColor: Colors.black, // Adding shadow effect for iOS
     shadowOpacity: 0.1,
     shadowRadius: 10,
     elevation: 5, // For Android shadow
@@ -51,11 +51,11 @@ export default StyleSheet.create({
     fontSize: 13,
     marginVertical: Platform.OS==='ios'?7:2,
     fontFamily: Fonts.SF_Bold,
-    color: Colors.White,
+    color: Colors.white,
     marginHorizontal:"4%",
   },
   Type_Cont: {
-    backgroundColor: '#D0A700',
+    backgroundColor: Colors.warning,
     paddingHorizontal: '4%',
     paddingVertical: 4,
     borderRadius: 3,
@@ -64,7 +64,7 @@ export default StyleSheet.create({
   Type_Text: {
     fontSize: 10,
     lineHeight: 13,
-    color: Colors.White,
+    color: Colors.white,
     fontFamily: Fonts.SF_Medium,
   },
   Loc_Status_Cont: {
@@ -86,7 +86,7 @@ export default StyleSheet.create({
     width: 12,
     height: 12,
     resizeMode: 'contain',
-    tintColor: Colors.Green,
+    tintColor: Colors.brandGreen,
   },
   location_txt: {
     fontSize: 10,
@@ -111,7 +111,7 @@ export default StyleSheet.create({
     width: 40,
     height: 40,
     resizeMode: 'contain',
-    tintColor: 'red',
+    tintColor: Colors.accent,
   },
   emptyStateContainer:{
     marginTop:90,
@@ -126,6 +126,6 @@ export default StyleSheet.create({
    fontSize:16,
    marginTop:12,
    fontWeight:'bold',
-   color:Colors.White
+   color:Colors.white
   }
 });

@@ -70,10 +70,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.85)',
+    backgroundColor: Colors.overlay,
   },
   container: {
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     width: '85%',
     paddingVertical: 25,
     paddingHorizontal: 22,
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
   brandHeader: {
     fontSize: 20,
     fontFamily: Fonts.SF_Bold,
-    color: '#F5F6F8',
+    color: Colors.textPrimary,
     marginBottom: 5,
     textAlign: 'center',
   },
@@ -96,38 +96,38 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 15,
     fontFamily: Fonts.SF_Regular,
-    color: '#F5F6F8',
+    color: Colors.textPrimary,
     marginTop: 10,
   },
   codeText: {
     fontSize: 26,
     fontFamily: Fonts.SF_Bold,
-    color: '#F5F6F8',
+    color: Colors.textPrimary,
     letterSpacing: 0.2,
 
   },
   percentageText: {
     fontSize: 22,
     fontFamily: Fonts.SF_Bold,
-    color: '#F5F6F8',
+    color: Colors.textPrimary,
 
   },
   dateText: {
     fontSize: 13,
     fontFamily: Fonts.SF_Regular,
-    color: '#ABB2BF',
+    color: Colors.textSecondary,
 
   },
   expiryText: {
     fontSize: 14,
     fontFamily: Fonts.SF_Bold,
-    color: '#D32F2F',
+    color: Colors.accent,
 
   },
   noteText: {
     fontSize: 11,
     fontFamily: Fonts.SF_Regular,
-    color: '#ABB2BF',
+    color: Colors.textSecondary,
     marginVertical: 10,
     textAlign: 'center',
   },

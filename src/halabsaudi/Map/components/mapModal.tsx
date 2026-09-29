@@ -19,6 +19,8 @@ import {Animated, Dimensions, FlatList, Keyboard, KeyboardAvoidingView, Modal, P
 import Ionicons from '@react-native-vector-icons/ionicons';
 import type {PlaceSuggestion} from '../mapScreen';
 
+import {Colors} from '../../Themes/Colors';
+
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const {height: SCREEN_H} = Dimensions.get('window');
@@ -35,18 +37,18 @@ const ANIM_CONFIG = {
 } as const;
 
 const COLORS = {
-  purple: '#E75049',
-  purpleLight: '#3B2427',
-  purpleMid: '#FF827C',
-  white: '#F5F6F8',
-  bg: '#191B20',
-  border: '#343841',
-  text: '#F5F6F8',
-  sub: '#ABB2BF',
-  placeholder: '#B0ABCC',
-  overlay: 'rgba(10,8,30,0.45)',
-  divider: '#343841',
-  red: '#FF4D6D',
+  purple: Colors.accent,
+  purpleLight: Colors.accentSoft,
+  purpleMid: Colors.accent,
+  white: Colors.textPrimary,
+  bg: Colors.surface,
+  border: Colors.border,
+  text: Colors.textPrimary,
+  sub: Colors.textSecondary,
+  placeholder: Colors.textSecondary,
+  overlay: Colors.overlaySoft,
+  divider: Colors.border,
+  red: Colors.accent,
 };
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -322,19 +324,19 @@ const BottomModal: React.FC<BottomModalProps> = ({
               activeOpacity={0.8}
               onPress={handleCameraPress}>
               <View style={[styles.mediaIconWrap, {backgroundColor: COLORS.purpleLight}]}>
-                <Ionicons name="camera" size={22} color={COLORS.purple} />
+                <Ionicons name="image-outline" size={22} color={COLORS.purple} />
               </View>
-              <Text style={styles.mediaBtnLabel}>Camera</Text>
+              <Text style={styles.mediaBtnLabel}>Photo</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={styles.mediaBtn}
               activeOpacity={0.8}
               onPress={handleGalleryPress}>
-              <View style={[styles.mediaIconWrap, {backgroundColor: '#191B20'}]}>
+              <View style={[styles.mediaIconWrap, {backgroundColor: Colors.surface}]}>
                 <Ionicons name="images" size={22} color={COLORS.red} />
               </View>
-              <Text style={styles.mediaBtnLabel}>Gallery</Text>
+              <Text style={styles.mediaBtnLabel}>Photo / Video</Text>
             </TouchableOpacity>
           </View>
 
@@ -394,7 +396,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.bg,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    shadowColor: '#000',
+    shadowColor: Colors.black,
     shadowOffset: {width: 0, height: -4},
     shadowOpacity: 0.12,
     shadowRadius: 16,

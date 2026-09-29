@@ -7,6 +7,7 @@ import {ActivityIndicator} from '../../ui/ActivityIndicator';
 // src/halabsaudi/chat/conversationScreen.tsx
 import React, {useEffect, useRef, useState, useCallback, useMemo} from 'react';
 import {View, FlatList, TouchableOpacity, StyleSheet, Image, StatusBar, RefreshControl, Platform} from 'react-native';
+import Ionicons from '@react-native-vector-icons/ionicons';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useFocusEffect} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -26,6 +27,8 @@ import { useStatusBar } from '../Component/UseStatusBar/useStatusBar';
 import {unwrapChats} from '../api/unwrap';
 // ✅ app icon ka badge
 import {setBadgeFromChats, clearChatNotifications} from '../Notifications/badge';
+
+import {hbsText} from '../i18n/translations';
 
 type Conversation = {
   _id: string;
@@ -75,7 +78,7 @@ function debouncedSave(data: Conversation[]) {
 }
 
 export default function ConversationsScreen({navigation}: any) {
-  useStatusBar('light-content', Colors.Green, true);
+  useStatusBar('light-content', Colors.surface, true);
   const language = useSelector((state: RootState) => state.language.language);
   const t        = languageData[language];
   const isRTL    = language === 'ar';
@@ -290,16 +293,16 @@ export default function ConversationsScreen({navigation}: any) {
     // Ab media ka type dekh kar saaf label dikhta hai.
     const lm = item.lastMessage;
     const mediaLabel =
-      lm?.mediaType === 'image'    ? '📷 Photo'
-      : lm?.mediaType === 'video'  ? '🎥 Video'
-      : lm?.mediaType === 'audio'  ? '🎤 Voice message'
+      lm?.mediaType === 'image'    ? 'Photo'
+      : lm?.mediaType === 'video'  ? 'Video'
+      : lm?.mediaType === 'audio'  ? 'Voice message'
       : lm?.mediaType === 'document' ? '📎 Document'
       : '';
     const last = isDeleted
       ? t.deleted_message_text
       : (lm?.text && lm.text.trim())
         ? lm.text
-        : mediaLabel || (isRTL ? 'يمكنكما الآن الدردشة · قل مرحباً' : 'You are now connected · Say hello');
+        : mediaLabel || (hbsText(isRTL, 'ui_you_are_now_connected_say_hello'));
     const time        = item.lastMessageAt ? timeAgo(item.lastMessageAt) : '';
     const hasUnread   = (item.unreadCount ?? 0) > 0;
     const isMine      = item.lastMessage?.sender &&
@@ -340,7 +343,7 @@ export default function ConversationsScreen({navigation}: any) {
   const keyExtractor = useCallback((item: Conversation) => item._id, []);
 
   if (loading) {
-    return <View style={styles.loader}><ActivityIndicator size="large" color={Colors.btnRed} /></View>;
+    return <View style={styles.loader}><ActivityIndicator size="large" color={Colors.accent} /></View>;
   }
 
   return (
@@ -350,12 +353,11 @@ export default function ConversationsScreen({navigation}: any) {
         onProfilePress={() => navigation.navigate('Profile')}
         onSearch={(text: string) => setSearchQuery(text)}
       />
-      <FriendRequestsButton navigation={navigation} />
       <FlatList
         data={filtered} keyExtractor={keyExtractor} renderItem={renderItem}
         keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}
         contentContainerStyle={{paddingTop: 8, paddingBottom: 100}}
-        ListHeaderComponent={loadError ? <TouchableOpacity onPress={() => fetchChats(false, true)} style={{padding: 16}}><Text style={{color: '#FF827C', textAlign: 'center'}}>{isRTL ? 'تعذر تحديث المحادثات · إعادة المحاولة' : 'Could not refresh conversations · Tap to retry'}</Text></TouchableOpacity> : null}
+        ListHeaderComponent={loadError ? <TouchableOpacity onPress={() => fetchChats(false, true)} style={{padding: 16}}><Text style={{color: Colors.accent, textAlign: 'center'}}>{hbsText(isRTL, 'ui_could_not_refresh_conversations_tap_to_retry')}</Text></TouchableOpacity> : null}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         windowSize={11} maxToRenderPerBatch={10}
         removeClippedSubviews={Platform.OS === 'android'}
@@ -363,12 +365,12 @@ export default function ConversationsScreen({navigation}: any) {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={() => { setRefreshing(true); lastLoadedRef.current = 0; fetchChats(false, true); }}
-            colors={[Colors.White]} tintColor={Colors.White}
+            colors={[Colors.white]} tintColor={Colors.white}
           />
         }
         ListEmptyComponent={
           <View style={styles.emptyState}>
-            <View style={styles.emptyIcon}><Text style={styles.emptyEmoji}>💬</Text></View>
+            <View style={styles.emptyIcon}><Ionicons name="chatbubbles-outline" size={34} color={Colors.textMuted} /></View>
             <Text style={styles.emptyTitle}>{t.no_conversations}</Text>
             <Text style={[styles.emptySub, {textAlign: 'center'}]}>{t.start_chatting}</Text>
             <TouchableOpacity style={styles.emptyBtn} onPress={() => navigation.navigate('StartChatScreen')}>
@@ -394,37 +396,36 @@ export default function ConversationsScreen({navigation}: any) {
 }
 
 const styles = StyleSheet.create({
-  container:   {flex: 1, backgroundColor: Colors.dargBg},
-  loader:      {flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#191B20'},
+  container:   {flex: 1, backgroundColor: Colors.background},
+  loader:      {flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.surface},
 
-  row:         {alignItems: 'center', paddingHorizontal: 18, paddingVertical: 13, backgroundColor: 'transparent', marginHorizontal: 0, borderRadius: 0},
-  separator:   {height: 1, backgroundColor: '#23262D', marginLeft: 82, marginRight: 20},
+  row:         {alignItems: 'center', paddingHorizontal: 18, paddingVertical: 13, backgroundColor: Colors.transparent, marginHorizontal: 0, borderRadius: 0},
+  separator:   {height: 1, backgroundColor: Colors.surfaceRaised, marginLeft: 82, marginRight: 20},
   avatarImg:   {width: 50, height: 50, borderRadius: 25, flexShrink: 0},
   avatarWrap:  {width: 50, height: 50, borderRadius: 25, justifyContent: 'center', alignItems: 'center', flexShrink: 0},
-  avatarText:  {color: Colors.White, fontWeight: '800', fontSize: 19},
+  avatarText:  {color: Colors.white, fontWeight: '800', fontSize: 19},
   rowContent:  {flex: 1},
   rowTop:      {alignItems: 'center', marginBottom: 3, justifyContent: 'space-between'},
-  name:        {fontSize: 15, fontWeight: '600', color: Colors.White, flex: 1},
-  nameUnread:  {fontWeight: '800', color: Colors.White},
-  time:        {fontSize: 11, color: Colors.White, fontWeight: '500', flexShrink: 0},
-  timeUnread:  {color: Colors.btnRed, fontWeight: '700'},
+  name:        {fontSize: 15, fontWeight: '600', color: Colors.white, flex: 1},
+  nameUnread:  {fontWeight: '800', color: Colors.white},
+  time:        {fontSize: 11, color: Colors.white, fontWeight: '500', flexShrink: 0},
+  timeUnread:  {color: Colors.accent, fontWeight: '700'},
   rowBottom:   {alignItems: 'center', justifyContent: 'space-between'},
-  preview:     {flex: 1, fontSize: 13, color: '#ABB2BF', fontWeight: '400'},
-  previewUnread:  {color: Colors.White, fontWeight: '600'},
-  previewDeleted: {fontStyle: 'italic', color: Colors.Grey9},
+  preview:     {flex: 1, fontSize: 13, color: Colors.textSecondary, fontWeight: '400'},
+  previewUnread:  {color: Colors.white, fontWeight: '600'},
+  previewDeleted: {fontStyle: 'italic', color: Colors.textMuted},
   mutedIcon:   {fontSize: 13, marginRight: 4},
-  badge:       {backgroundColor: Colors.btnRed, borderRadius: 12, minWidth: 20, height: 20, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 5, flexShrink: 0},
-  badgeMuted:  {backgroundColor: Colors.Grey9},
-  badgeText:   {color: Colors.White, fontSize: 11, fontWeight: '700'},
+  badge:       {backgroundColor: Colors.accent, borderRadius: 12, minWidth: 20, height: 20, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 5, flexShrink: 0},
+  badgeMuted:  {backgroundColor: Colors.textMuted},
+  badgeText:   {color: Colors.white, fontSize: 11, fontWeight: '700'},
   emptyState:  {alignItems: 'center', marginTop: 160, paddingHorizontal: 40, gap: 10},
-  emptyIcon:   {width: 80, height: 80, borderRadius: 40, backgroundColor: '#191B20', justifyContent: 'center', alignItems: 'center', marginBottom: 8},
-  emptyEmoji:  {fontSize: 36},
-  emptyTitle:  {fontSize: 18, fontWeight: '700', color: Colors.White},
-  emptySub:    {fontSize: 13, color: Colors.Grey9, lineHeight: 18},
-  emptyBtn:    {marginTop: 8, backgroundColor: Colors.btnRed, borderRadius: 24, paddingHorizontal: 28, paddingVertical: 12},
-  emptyBtnText:{color: Colors.White, fontWeight: '700', fontSize: 14},
-  fab:         {flexDirection: 'row', position: 'absolute', backgroundColor: Colors.btnRed, paddingHorizontal: 22, paddingVertical: 14, borderRadius: 32, alignItems: 'center', justifyContent: 'center', gap: 8},
-  fabIcon:     {width: 20, height: 20, tintColor: Colors.White},
-  fabText:     {color: Colors.White, fontSize: 15, fontWeight: '700'},
+  emptyIcon:   {width: 80, height: 80, borderRadius: 40, backgroundColor: Colors.surface, justifyContent: 'center', alignItems: 'center', marginBottom: 8},
+  emptyTitle:  {fontSize: 18, fontWeight: '700', color: Colors.white},
+  emptySub:    {fontSize: 13, color: Colors.textMuted, lineHeight: 18},
+  emptyBtn:    {marginTop: 8, backgroundColor: Colors.accent, borderRadius: 24, paddingHorizontal: 28, paddingVertical: 12},
+  emptyBtnText:{color: Colors.white, fontWeight: '700', fontSize: 14},
+  fab:         {flexDirection: 'row', position: 'absolute', backgroundColor: Colors.accent, paddingHorizontal: 22, paddingVertical: 14, borderRadius: 32, alignItems: 'center', justifyContent: 'center', gap: 8},
+  fabIcon:     {width: 20, height: 20, tintColor: Colors.white},
+  fabText:     {color: Colors.white, fontSize: 15, fontWeight: '700'},
 });
 

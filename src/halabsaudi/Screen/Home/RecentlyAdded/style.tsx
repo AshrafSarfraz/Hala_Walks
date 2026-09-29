@@ -23,12 +23,12 @@ Flatlist_Cont: {
     width: width * 0.70, // Reduced width for better spacing
     margin:6,
     borderRadius: 10,
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     height: Platform.OS === 'ios' ? 250 : 250,
     alignItems:'flex-start',
-    borderColor: '#343841',
+    borderColor: Colors.border,
     overflow: 'hidden',
-    shadowColor: '#000', // Adding shadow effect for iOS
+    shadowColor: Colors.black, // Adding shadow effect for iOS
     shadowOpacity: 0.1,
     shadowRadius: 10,
     elevation: 5,},
@@ -44,12 +44,12 @@ Flatlist_Cont: {
       fontSize: 12,
       marginVertical: Platform.OS==='ios'?3:2,
       fontFamily: Fonts.SF_Bold,
-      color: '#F5F6F8',
+      color: Colors.textPrimary,
       marginHorizontal:"4%",
       textAlign:language==='en'?'left':"right",
     },
     Type_Cont: {
-      backgroundColor: Colors.darkgrey,
+      backgroundColor: Colors.surface,
       paddingHorizontal: '2%',
       paddingVertical: 3,
       borderRadius: 3,
@@ -59,7 +59,7 @@ Flatlist_Cont: {
     Type_Text: {
       fontSize: 9,
       lineHeight: 12,
-      color: Colors.White,
+      color: Colors.white,
       fontFamily: Fonts.SF_Medium,
     },
     Loc_Status_Cont: {
@@ -81,18 +81,18 @@ Flatlist_Cont: {
       width: 12,
       height: 12,
       resizeMode: 'contain',
-      tintColor: Colors.btnRed,
+      tintColor: Colors.accent,
     },
     location_txt: {
       fontSize: 10,
-      color: Colors.btnRed,
+      color: Colors.accent,
       fontFamily: Fonts.SF_Medium,
       lineHeight: 14,
       marginLeft: 2,
     },
     Status_Txt: {
       fontSize: 11,
-      color: Colors.btnRed,
+      color: Colors.accent,
       fontFamily: Fonts.SF_Medium,
       lineHeight: 16,
       marginLeft: 5,

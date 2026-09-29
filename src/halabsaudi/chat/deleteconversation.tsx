@@ -29,7 +29,7 @@ export default function DeleteConversation({
         <Pressable style={s.box} onPress={() => {}}>
           {/* Icon */}
           <View style={s.iconWrap}>
-            <Ionicons name="trash-outline" size={28} color="#EF4444" />
+            <Ionicons name="trash-outline" size={28} color={Colors.accent} />
           </View>
 
           {/* Title */}
@@ -67,14 +67,14 @@ export default function DeleteConversation({
 const s = StyleSheet.create({
   backdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: Colors.overlaySoft,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 32,
   },
   box: {
     width: '100%',
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     borderRadius: 20,
     paddingHorizontal: 24,
     paddingTop: 28,
@@ -85,7 +85,7 @@ const s = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 16,
@@ -93,19 +93,19 @@ const s = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#F5F6F8',
+    color: Colors.textPrimary,
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 14,
-    color: '#ABB2BF',
+    color: Colors.textSecondary,
     textAlign: 'center',
     lineHeight: 20,
     marginBottom: 24,
   },
   name: {
     fontWeight: '700',
-    color: '#F5F6F8',
+    color: Colors.textPrimary,
   },
   btnRow: {
     flexDirection: 'row',
@@ -114,7 +114,7 @@ const s = StyleSheet.create({
   },
   cancelBtn: {
     flex: 1,
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     borderRadius: 12,
     paddingVertical: 13,
     alignItems: 'center',
@@ -122,11 +122,11 @@ const s = StyleSheet.create({
   cancelText: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#F5F6F8',
+    color: Colors.textPrimary,
   },
   deleteBtn: {
     flex: 1,
-    backgroundColor: '#EF4444',
+    backgroundColor: Colors.accent,
     borderRadius: 12,
     paddingVertical: 13,
     alignItems: 'center',
@@ -134,6 +134,6 @@ const s = StyleSheet.create({
   deleteText: {
     fontSize: 15,
     fontWeight: '700',
-    color: '#fff',
+    color: Colors.white,
   },
 });

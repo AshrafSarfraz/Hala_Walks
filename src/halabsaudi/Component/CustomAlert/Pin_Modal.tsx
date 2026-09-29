@@ -210,7 +210,7 @@ const Pin_Modal: React.FC<Props> = ({
               style={[styles.languageButton, {opacity: loading ? 0.7 : 1}]}
               disabled={loading}>
               {loading ? (
-                <ActivityIndicator color="#fff" />
+                <ActivityIndicator color={Colors.white} />
               ) : (
                 <Text style={styles.languageText}>
                   {languageData[language].Submit}
@@ -254,11 +254,11 @@ const getStyles = (language: string) =>
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: 'rgba(0,0,0,0.8)',
+      backgroundColor: Colors.overlay,
     },
     container: {
       width: '90%',
-      backgroundColor: '#191B20',
+      backgroundColor: Colors.surface,
       borderRadius: 12,
       padding: 25,
       alignItems: 'center',
@@ -287,7 +287,7 @@ const getStyles = (language: string) =>
       marginBottom: 10,
     },
     languageButton: {
-      backgroundColor: Colors.btnRed,
+      backgroundColor: Colors.accent,
       width: '100%',
       height: 50,
       justifyContent: 'center',
@@ -295,13 +295,13 @@ const getStyles = (language: string) =>
       borderRadius: 8,
     },
     languageText: {
-      color: '#fff',
+      color: Colors.white,
       fontFamily: Fonts.SF_Bold,
     },
     closeButtonText: {
       marginTop: 10,
       fontSize: 16,
-      color: '#F5F6F8',
+      color: Colors.textPrimary,
     },
   });
 

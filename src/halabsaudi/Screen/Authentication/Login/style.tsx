@@ -6,7 +6,7 @@ export const getStyles = (language: string) =>
   StyleSheet.create({
     Root: {
       flex: 1,
-      backgroundColor: Colors.dargBg,
+      backgroundColor: Colors.background,
     },
     Flex: {
       flex: 1,
@@ -32,13 +32,13 @@ export const getStyles = (language: string) =>
     Welcome_Txt: {
       fontSize: 26,
       fontFamily: Fonts.SF_Bold,
-      color: Colors.White,
+      color: Colors.white,
       lineHeight: 32,
       textAlign: 'center',
     },
     SignUp_Txt: {
       fontSize: 15,
-      color: Colors.Grey9,
+      color: Colors.textMuted,
       fontFamily: Fonts.SF_Medium,
       lineHeight: 21,
       textAlign: 'center',
@@ -49,35 +49,35 @@ export const getStyles = (language: string) =>
     // ── Form ──────────────────────────────
     InputContainer: {
       width: '100%',
-      // backgroundColor:'red'
+      // backgroundColor:Colors.accent
     },
     PhoneInput_Field: {
       flexDirection: language === 'en' ? 'row' : 'row-reverse',
       alignItems: 'center',
       height: 58,
-      backgroundColor: '#191B20',
+      backgroundColor: Colors.surface,
       borderWidth: 1.5,
-      borderColor: Colors.grey1,
+      borderColor: Colors.textSecondary,
       borderRadius: 14,
       paddingHorizontal: 6,
       zIndex: 10,
     },
     Active_Input_Field: {
-      borderColor: Colors.Green,
+      borderColor: Colors.brandGreen,
     },
     PhoneNumber_Input: {
       flex: 1,
       minWidth: 0,
       height: 44,
       fontSize: 15,
-      color: Colors.White,
+      color: Colors.white,
       paddingVertical: 0,
       paddingHorizontal: 12,
       textAlign: language === 'en' ? 'left' : 'right',
       borderLeftWidth: language === 'en' ? 1 : 0,
       borderRightWidth: language === 'en' ? 0 : 1,
-      borderColor: Colors.Grey9,
-      backgroundColor: 'transparent',
+      borderColor: Colors.textMuted,
+      backgroundColor: Colors.transparent,
       letterSpacing: 0.3,
     },
     ErrorSlot: {
@@ -87,7 +87,7 @@ export const getStyles = (language: string) =>
     Error: {
       fontSize: 12,
       fontWeight: '600',
-      color: '#FF5A5A',
+      color: Colors.accent,
       textAlign: language === 'en' ? 'left' : 'right',
     },
     Link_Btn: {
@@ -96,7 +96,7 @@ export const getStyles = (language: string) =>
       paddingVertical: 6,
     },
     Link_Txt: {
-      color: Colors.White,
+      color: Colors.white,
       fontSize: 14,
       fontWeight: '600',
       textDecorationLine: 'underline',
@@ -116,10 +116,10 @@ export const getStyles = (language: string) =>
     DividerLine: {
       flex: 1,
       height: 1,
-      backgroundColor: 'rgba(255,255,255,0.12)',
+      backgroundColor: Colors.lightOverlaySubtle,
     },
     DividerTxt: {
-      color: Colors.Grey9,
+      color: Colors.textMuted,
       fontSize: 12,
       marginHorizontal: 12,
     },
@@ -128,13 +128,13 @@ export const getStyles = (language: string) =>
       height: 52,
       borderRadius: 14,
       borderWidth: 1,
-      borderColor: 'rgba(255,255,255,0.22)',
+      borderColor: Colors.lightOverlaySubtle,
       alignItems: 'center',
       justifyContent: 'center',
     },
     Partner_Txt: {
       fontSize: 14,
-      color: Colors.White,
+      color: Colors.white,
       fontWeight: '600',
     },
   });

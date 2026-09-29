@@ -8,6 +8,8 @@ import { RootState } from '../../redux_toolkit/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { switchLanguage } from '../../redux_toolkit/language/languageSlice'; // Import the switchLanguage action
 
+import {hbsText} from '../../i18n/translations';
+
 type LanProps = {
   visible: boolean;
   onClose: () => void;
@@ -28,25 +30,25 @@ const LanguageModal: React.FC<LanProps> = ({ visible, onClose }) => {
       <View style={styles.overlay}>
         <View style={styles.container}>
           <Text style={styles.headerText}>
-            {language === 'en' ? 'Language' : 'لغة'} 
+            {hbsText(language === 'ar', 'ui_language')} 
           </Text>
 
           <TouchableOpacity 
             style={[styles.languageButton, language === 'en' && styles.selectedButton]} 
             onPress={() => handleLanguageChange('en')}
           >
-            <Text style={[styles.languageText,language === 'en' && styles.selectedButtonTxt]}>English</Text>
+            <Text style={[styles.languageText,language === 'en' && styles.selectedButtonTxt]}>{hbsText(language === 'ar', 'ui_english')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity 
             style={[styles.languageButton, language === 'ar' && styles.selectedButton]} 
             onPress={() => handleLanguageChange('ar')}
           >
-            <Text style={[styles.languageText,language === 'ar' && styles.selectedButtonTxt]}>العربية</Text>
+            <Text style={[styles.languageText,language === 'ar' && styles.selectedButtonTxt]}>{hbsText(language === 'ar', 'ui_arabic')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-            <Text style={styles.closeButtonText}>Close</Text>
+            <Text style={styles.closeButtonText}>{hbsText(language === 'ar', 'ui_close_2')}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -59,17 +61,17 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    backgroundColor: Colors.overlay,
   },
   container: {
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     paddingTop: 15,
     width: '85%',
     height: 255,
     borderRadius: 12,
     alignItems: 'center',
     elevation: 5,
-    shadowColor: '#000',
+    shadowColor: Colors.black,
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
@@ -77,14 +79,14 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 20,
     fontFamily: Fonts.SF_Bold,
-    color: '#F5F6F8',
+    color: Colors.textPrimary,
     marginBottom: 15,
     lineHeight: 30,
   },
   languageButton: {
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     borderWidth:2,
-    borderColor:Colors.Red,
+    borderColor:Colors.accent,
     width: '80%',
     height: 60,
     borderRadius: 8,
@@ -93,13 +95,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   selectedButton: {
-    backgroundColor: Colors.Red, // Highlight selected language
+    backgroundColor: Colors.accent, // Highlight selected language
   },
   selectedButtonTxt:{
-   color:"#FFF"
+   color:Colors.white
   },
   languageText: {
-    color: Colors.Red,
+    color: Colors.accent,
     fontSize: 16,
     fontFamily: Fonts.SF_Bold,
   },
@@ -110,7 +112,7 @@ const styles = StyleSheet.create({
   },
   closeButtonText: {
     fontSize: 16,
-    color: '#F5F6F8',
+    color: Colors.textPrimary,
     fontFamily: Fonts.SF_Bold,
   },
 });

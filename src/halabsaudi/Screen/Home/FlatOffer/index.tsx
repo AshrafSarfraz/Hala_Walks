@@ -9,6 +9,8 @@ import {getStyles} from './style';
 import FastImage from 'react-native-fast-image';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import {Colors} from '../../../Themes/Colors';
+
 const {width} = Dimensions.get('screen');
 
 const OFFERS_CACHE_KEY = 'H-Offer_cache_v7';
@@ -207,7 +209,7 @@ const ImageSlider: React.FC<{onLoadError?: () => void}> = ({onLoadError}) => {
             style={[
               styles.dot,
               {
-                backgroundColor: index === currentIndex ? '#191B20' : '#191B20',
+                backgroundColor: index === currentIndex ? Colors.surface : Colors.surface,
                 width: index === currentIndex ? 30 : 8,
               },
             ]}

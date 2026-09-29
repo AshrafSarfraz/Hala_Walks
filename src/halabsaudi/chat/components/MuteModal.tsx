@@ -96,7 +96,7 @@ export default function MuteModal({
             <Ionicons
               name={isMuted ? 'notifications-off' : 'notifications-outline'}
               size={22}
-              color={isMuted ? '#6B7280' : '#111827'}
+              color={isMuted ? Colors.textMuted : Colors.background}
             />
           </View>
           <View style={[{flex: 1, alignItems: isRTL ? 'flex-end' : 'flex-start'},
@@ -115,7 +115,7 @@ export default function MuteModal({
         {/* Unmute */}
         {isMuted ? (
           <TouchableOpacity style={styles.unmuteBtn} onPress={handleUnmute} activeOpacity={0.7}>
-            <Ionicons name="notifications-outline" size={20} color={Colors.Red} />
+            <Ionicons name="notifications-outline" size={20} color={Colors.accent} />
             <Text style={styles.unmuteText}>{t.unmute_btn}</Text>
           </TouchableOpacity>
         ) : (
@@ -132,18 +132,18 @@ export default function MuteModal({
                 activeOpacity={0.7}>
                 <View style={[styles.optionRow, {flexDirection: rowDir}]}>
                   <View style={[styles.optionIcon,
-                    {backgroundColor: selected === opt.value ? '#191B20' : '#191B20'}]}>
+                    {backgroundColor: selected === opt.value ? Colors.surface : Colors.surface}]}>
                     <Ionicons
                       name={opt.icon}
                       size={18}
-                      color={selected === opt.value ? Colors.Red : '#6B7280'}
+                      color={selected === opt.value ? Colors.accent : Colors.textMuted}
                     />
                   </View>
                   <View style={{flex: 1, alignItems: isRTL ? 'flex-end' : 'flex-start'}}>
                     <Text style={[
                       styles.optionLabel,
                       {textAlign: isRTL ? 'right' : 'left'},
-                      selected === opt.value && {color: Colors.Red},
+                      selected === opt.value && {color: Colors.accent},
                     ]}>
                       {opt.label}
                     </Text>
@@ -167,7 +167,7 @@ export default function MuteModal({
               <Ionicons
                 name="notifications-off-outline"
                 size={18}
-                color="#fff"
+                color={Colors.white}
                 style={isRTL ? {marginLeft: 8} : {marginRight: 8}}
               />
               <Text style={styles.confirmText}>{t.mute_chat_btn}</Text>
@@ -180,31 +180,31 @@ export default function MuteModal({
 }
 
 const styles = StyleSheet.create({
-  backdrop: {...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.45)'},
+  backdrop: {...StyleSheet.absoluteFillObject, backgroundColor: Colors.overlaySoft},
   sheet: {
     position: 'absolute', bottom: 0, left: 0, right: 0,
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     borderTopLeftRadius: 22, borderTopRightRadius: 22,
     paddingBottom: 40,
-    shadowColor: '#000', shadowOffset: {width: 0, height: -4},
+    shadowColor: Colors.black, shadowOffset: {width: 0, height: -4},
     shadowOpacity: 0.08, shadowRadius: 12, elevation: 20,
   },
   handle: {
     width: 36, height: 4, borderRadius: 2,
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     alignSelf: 'center', marginTop: 10, marginBottom: 6,
   },
   header: {alignItems: 'center', paddingHorizontal: 20, paddingVertical: 14},
   muteIconWrap: {
     width: 44, height: 44, borderRadius: 22,
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     justifyContent: 'center', alignItems: 'center',
   },
-  headerTitle: {fontSize: 17, fontWeight: '700', color: '#F5F6F8'},
-  headerSub:   {fontSize: 13, color: '#ABB2BF', marginTop: 2},
-  divider: {height: 0.5, backgroundColor: '#191B20'},
+  headerTitle: {fontSize: 17, fontWeight: '700', color: Colors.textPrimary},
+  headerSub:   {fontSize: 13, color: Colors.textSecondary, marginTop: 2},
+  divider: {height: 0.5, backgroundColor: Colors.surface},
   sectionLabel: {
-    fontSize: 12, fontWeight: '600', color: '#9CA3AF',
+    fontSize: 12, fontWeight: '600', color: Colors.textMuted,
     textTransform: 'uppercase', letterSpacing: 0.2,
     marginHorizontal: 20, marginTop: 16, marginBottom: 8,
   },
@@ -213,34 +213,34 @@ const styles = StyleSheet.create({
     marginHorizontal: 12, borderRadius: 14, marginBottom: 2,
   },
   optionRow: {alignItems: 'center', gap: 12, paddingVertical: 7},
-  optionSelected: {backgroundColor: '#191B20'},
+  optionSelected: {backgroundColor: Colors.surface},
   optionIcon: {
     width: 38, height: 38, borderRadius: 10,
     justifyContent: 'center', alignItems: 'center',
   },
-  optionLabel: {fontSize: 15, fontWeight: '500', color: '#F5F6F8'},
-  optionSub:   {fontSize: 12, color: '#9CA3AF', marginTop: 1},
+  optionLabel: {fontSize: 15, fontWeight: '500', color: Colors.textPrimary},
+  optionSub:   {fontSize: 12, color: Colors.textMuted, marginTop: 1},
   radio: {
     width: 20, height: 20, borderRadius: 10,
-    borderWidth: 2, borderColor: '#343841',
+    borderWidth: 2, borderColor: Colors.border,
     justifyContent: 'center', alignItems: 'center',
   },
-  radioSelected: {borderColor: Colors.Red},
-  radioDot: {width: 10, height: 10, borderRadius: 5, backgroundColor: Colors.Red},
+  radioSelected: {borderColor: Colors.accent},
+  radioDot: {width: 10, height: 10, borderRadius: 5, backgroundColor: Colors.accent},
   confirmBtn: {
     alignItems: 'center', justifyContent: 'center',
-    backgroundColor: Colors.Red, borderRadius: 16,
+    backgroundColor: Colors.accent, borderRadius: 16,
     height: 52, marginHorizontal: 20, marginTop: 20,
   },
-  confirmText: {fontSize: 16, fontWeight: '700', color: '#fff'},
+  confirmText: {fontSize: 16, fontWeight: '700', color: Colors.white},
   unmuteBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     gap: 10, marginHorizontal: 20, marginTop: 20,
     height: 52, borderRadius: 16,
-    backgroundColor: '#191B20',
-    borderWidth: 1, borderColor: '#343841',
+    backgroundColor: Colors.surface,
+    borderWidth: 1, borderColor: Colors.border,
   },
-  unmuteText: {fontSize: 15, fontWeight: '600', color: Colors.Red},
+  unmuteText: {fontSize: 15, fontWeight: '600', color: Colors.accent},
 });
 
 

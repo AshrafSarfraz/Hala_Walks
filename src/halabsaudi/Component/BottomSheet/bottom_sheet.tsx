@@ -3,6 +3,8 @@ import {Text} from '../../../ui/Text';
 import React, { forwardRef } from 'react';
 import {View, StyleSheet, ScrollView} from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
+import {Colors} from '../../Themes/Colors';
+
 type RBSheetRef = React.ElementRef<typeof RBSheet>;
 
 const FilterRBSheet = forwardRef<RBSheetRef>((props, ref) => {
@@ -13,14 +15,14 @@ const FilterRBSheet = forwardRef<RBSheetRef>((props, ref) => {
       height={550}
       closeOnPressMask={true}
       customStyles={{
-        wrapper: { backgroundColor: 'rgba(0, 0, 0, 0.3)' },
+        wrapper: { backgroundColor: Colors.overlaySoft },
         container: {
           borderTopLeftRadius: 20,
           borderTopRightRadius: 20,
-          backgroundColor: '#191B20',
+          backgroundColor: Colors.surface,
           elevation: 10,
         },
-        draggableIcon: { backgroundColor: '#191B20' },
+        draggableIcon: { backgroundColor: Colors.surface },
       }}
     >
       <ScrollView contentContainerStyle={styles.content}>
@@ -78,20 +80,20 @@ const styles = StyleSheet.create({
   heading: {
     fontSize: 20,
     fontWeight: '800',
-    color: '#F5F6F8',
+    color: Colors.textPrimary,
     marginBottom: 16,
     textAlign: 'center',
   },
   subheading: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#c0392b',
+    color: Colors.accent,
     marginTop: 20,
     marginBottom: 10,
   },
   paragraph: {
     fontSize: 15,
-    color: '#F5F6F8',
+    color: Colors.textPrimary,
     marginBottom: 15,
     lineHeight: 22,
   },
@@ -102,18 +104,18 @@ const styles = StyleSheet.create({
   },
   bullet: {
     fontSize: 18,
-    color: '#ABB2BF',
+    color: Colors.textSecondary,
     marginRight: 8,
   },
   text: {
     fontSize: 15,
-    color: '#F5F6F8',
+    color: Colors.textPrimary,
     lineHeight: 22,
     flex: 1,
   },
   highlight: {
     fontWeight: '600',
-    color: '#007aff',
+    color: Colors.info,
   },
 });
 

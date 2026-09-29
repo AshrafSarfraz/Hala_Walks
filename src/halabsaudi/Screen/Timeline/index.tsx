@@ -28,14 +28,14 @@ const NEARBY_RADIUS = 2000; // metres — same as MapScreen suggestions call
 const MAX_PHOTOS = 2;
 const SEARCH_DEBOUNCE_MS = 350;
 
-const PURPLE = '#E75049';
-const BG = '#101114';
-const CARD_BG = '#191B20';
-const SURFACE = '#23262D';
-const WHITE = '#FFFFFF';
-const WHITE_60 = 'rgba(255,255,255,0.6)';
-const WHITE_30 = 'rgba(255,255,255,0.3)';
-const WHITE_10 = 'rgba(255,255,255,0.1)';
+const PURPLE = Colors.accent;
+const BG = Colors.background;
+const CARD_BG = Colors.surface;
+const SURFACE = Colors.surfaceRaised;
+const WHITE = Colors.white;
+const WHITE_60 = Colors.lightOverlay;
+const WHITE_30 = Colors.lightOverlay;
+const WHITE_10 = Colors.lightOverlaySubtle;
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -170,7 +170,7 @@ const cardStyles = StyleSheet.create({
   image: {width: '100%', height: '100%'},
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.60)',
+    backgroundColor: Colors.overlay,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 8,
@@ -179,11 +179,11 @@ const cardStyles = StyleSheet.create({
   trackBg: {
     width: '100%',
     height: 4,
-    backgroundColor: 'rgba(255,255,255,0.25)',
+    backgroundColor: Colors.lightOverlaySubtle,
     borderRadius: 2,
     overflow: 'hidden',
   },
-  trackFill: {height: '100%', backgroundColor: Colors.dargBg, borderRadius: 2},
+  trackFill: {height: '100%', backgroundColor: Colors.background, borderRadius: 2},
   doneBadge: {
     position: 'absolute',
     bottom: 6,
@@ -191,11 +191,11 @@ const cardStyles = StyleSheet.create({
     width: 22,
     height: 22,
     borderRadius: 6,
-    backgroundColor: '#22c55e',
+    backgroundColor: Colors.success,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  errorBadge: {backgroundColor: '#ef4444'},
+  errorBadge: {backgroundColor: Colors.accent},
   badgeText: {color: WHITE, fontSize: 11, fontWeight: '800'},
   remove: {
     position: 'absolute',
@@ -204,7 +204,7 @@ const cardStyles = StyleSheet.create({
     width: 22,
     height: 22,
     borderRadius: 6,
-    backgroundColor: 'rgba(0,0,0,0.60)',
+    backgroundColor: Colors.overlay,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -525,7 +525,7 @@ const TimelineScreen: React.FC = () => {
     }
   };
 
-  // ── 7. Camera & Gallery — exact same as MapScreen ──────────────────────────
+  // ── 7. Photo capture & library selection ───────────────────────────────────
 
   const handleCamera = useCallback(() => {
     launchCamera(
@@ -691,7 +691,7 @@ const TimelineScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={Colors.dargBg} />
+      <StatusBar barStyle="light-content" backgroundColor={Colors.background} />
 
       {/* ── Header ── */}
       <View style={styles.header}>
@@ -715,16 +715,16 @@ const TimelineScreen: React.FC = () => {
           {/* ── Location card ── */}
           <View style={styles.card}>
             <View style={styles.cardHeader}>
-              <Ionicons name="location" size={16} color={Colors.btnRed} />
+              <Ionicons name="location" size={16} color={Colors.accent} />
               <Text style={styles.cardLabel}>Location</Text>
               {nearbyLoading && (
-                <ActivityIndicator size="small" color={Colors.btnRed} />
+                <ActivityIndicator size="small" color={Colors.accent} />
               )}
             </View>
 
             {locationLoading ? (
               <View style={styles.locationLoadingRow}>
-                <ActivityIndicator size="small" color={Colors.btnRed} />
+                <ActivityIndicator size="small" color={Colors.accent} />
                 <Text style={styles.locationLoadingText}>
                   Fetching your location…
                 </Text>
@@ -734,7 +734,7 @@ const TimelineScreen: React.FC = () => {
                 style={styles.errorRow}
                 onPress={fetchLocation}
                 activeOpacity={0.7}>
-                <Ionicons name="refresh" size={15} color={Colors.btnRed} />
+                <Ionicons name="refresh" size={15} color={Colors.accent} />
                 <Text style={styles.errorText}>{locationError}</Text>
               </TouchableOpacity>
             ) : (
@@ -753,7 +753,7 @@ const TimelineScreen: React.FC = () => {
                 <View style={styles.searchWrap}>
                   <TextInput
                     placeholder="Search any location..."
-                    placeholderTextColor={Colors.grey}
+                    placeholderTextColor={Colors.surfaceRaised}
                     value={searchText}
                     onChangeText={searchPlaces}
                     style={styles.searchInput}
@@ -763,7 +763,7 @@ const TimelineScreen: React.FC = () => {
                       style={styles.searchClearBtn}
                       onPress={clearSearch}
                       hitSlop={{top: 8, bottom: 8, left: 8, right: 8}}>
-                      <Ionicons name="close-circle" size={18} color={Colors.Red} />
+                      <Ionicons name="close-circle" size={18} color={Colors.accent} />
                     </TouchableOpacity>
                   )}
                 </View>
@@ -772,7 +772,7 @@ const TimelineScreen: React.FC = () => {
                   <View style={styles.suggestionBox}>
                     {searchLoading ? (
                       <View style={styles.suggestionLoader}>
-                        <ActivityIndicator size="small" color={Colors.btnRed} />
+                        <ActivityIndicator size="small" color={Colors.accent} />
                         <Text style={styles.suggestionLoaderText}>
                           Searching…
                         </Text>
@@ -793,7 +793,7 @@ const TimelineScreen: React.FC = () => {
                               <Ionicons
                                 name="location-outline"
                                 size={15}
-                                color={Colors.btnRed}
+                                color={Colors.accent}
                               />
                             </View>
                             <View style={styles.suggestionRight}>
@@ -822,7 +822,7 @@ const TimelineScreen: React.FC = () => {
                   <Ionicons
                     name={showSuggestions ? 'chevron-up' : 'swap-horizontal'}
                     size={13}
-                    color={Colors.btnRed}
+                    color={Colors.accent}
                   />
                   <Text style={styles.changeText}>
                     {showSuggestions
@@ -835,7 +835,7 @@ const TimelineScreen: React.FC = () => {
                   <View style={styles.suggestionBox}>
                     {nearbyLoading ? (
                       <View style={styles.suggestionLoader}>
-                        <ActivityIndicator size="small" color={Colors.btnRed} />
+                        <ActivityIndicator size="small" color={Colors.accent} />
                         <Text style={styles.suggestionLoaderText}>
                           Loading nearby places…
                         </Text>
@@ -868,7 +868,7 @@ const TimelineScreen: React.FC = () => {
                                       : 'location-outline'
                                   }
                                   size={15}
-                                  color={isActive ? Colors.White :'#000'}
+                                  color={isActive ? Colors.white :Colors.black}
                                 />
                               </View>
                               <View style={styles.suggestionRight}>
@@ -891,7 +891,7 @@ const TimelineScreen: React.FC = () => {
                                 <Ionicons
                                   name="checkmark-circle"
                                   size={18}
-                                  color={Colors.btnRed}
+                                  color={Colors.accent}
                                 />
                               )}
                             </TouchableOpacity>
@@ -908,12 +908,12 @@ const TimelineScreen: React.FC = () => {
           {/* ── Caption card ── */}
           <View style={styles.card}>
             <View style={styles.cardHeader}>
-              <Ionicons name="create-outline" size={16} color={Colors.btnRed} />
+              <Ionicons name="create-outline" size={16} color={Colors.accent} />
               <Text style={styles.cardLabel}>Caption</Text>
             </View>
             <TextInput
               placeholder="What're you up to?"
-              placeholderTextColor={Colors.grey}
+              placeholderTextColor={Colors.surfaceRaised}
               value={description}
               onChangeText={setDescription}
               style={styles.input}
@@ -926,7 +926,7 @@ const TimelineScreen: React.FC = () => {
           {/* ── Photos card ── */}
           <View style={styles.card}>
             <View style={styles.cardHeader}>
-              <Ionicons name="images-outline" size={16} color={Colors.btnRed} />
+              <Ionicons name="images-outline" size={16} color={Colors.accent} />
               <Text style={styles.cardLabel}>Photos</Text>
               <Text style={styles.slotBadge}>
                 {photos.length}/{MAX_PHOTOS}
@@ -942,8 +942,8 @@ const TimelineScreen: React.FC = () => {
                 onPress={handleCamera}
                 disabled={photos.length >= MAX_PHOTOS}
                 activeOpacity={0.8}>
-                <Ionicons name="camera-outline" size={20} color={WHITE} />
-                <Text style={styles.photoBtnText}>Camera</Text>
+                <Ionicons name="image-outline" size={20} color={WHITE} />
+                <Text style={styles.photoBtnText}>Photo</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -955,7 +955,7 @@ const TimelineScreen: React.FC = () => {
                 disabled={photos.length >= MAX_PHOTOS}
                 activeOpacity={0.8}>
                 <Ionicons name="image-outline" size={20} color={WHITE} />
-                <Text style={styles.photoBtnText}>Gallery</Text>
+                <Text style={styles.photoBtnText}>Photo / Video</Text>
               </TouchableOpacity>
             </View>
 
@@ -975,7 +975,7 @@ const TimelineScreen: React.FC = () => {
               />
             ) : (
               <View style={styles.emptyPhotos}>
-                <Ionicons name="camera-outline" size={32} color={WHITE_10} />
+                <Ionicons name="images-outline" size={32} color={WHITE_10} />
                 <Text style={styles.emptyPhotosText}>
                   Add at least one photo
                 </Text>
@@ -1010,7 +1010,7 @@ export default TimelineScreen;
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
-  container: {flex: 1, backgroundColor: Colors.dargBg},
+  container: {flex:1, marginTop:10, backgroundColor: Colors.background},
 
   header: {
     flexDirection: 'row',
@@ -1020,32 +1020,33 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     borderBottomWidth: StyleSheet.hairlineWidth,
     position: 'relative',
+    marginBottom:10
   },
   headerTitle: {fontSize: 18, fontWeight: '700', color: WHITE},
   closeBtn: {
     position: 'absolute',
     right: 20,
     width: 36,
-    height: 36,
+    height: 46,
     borderRadius: 6,
-    backgroundColor: Colors.dargBg,
+    backgroundColor: Colors.background,
     alignItems: 'center',
     justifyContent: 'center',
   },
 
   scroll: {
     paddingHorizontal: 16,
-    paddingTop: 20,
+    paddingTop: 1,
     paddingBottom: 40,
     gap: 14,
   },
 
   card: {
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     borderRadius: 6,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#343841',
+    borderColor: Colors.border,
   },
   cardHeader: {
     flexDirection: 'row',
@@ -1056,7 +1057,7 @@ const styles = StyleSheet.create({
   cardLabel: {
     fontSize: 11,
     fontWeight: '700',
-    color: Colors.White,
+    color: Colors.white,
     textTransform: 'uppercase',
     letterSpacing: 0.2,
     flex: 1,
@@ -1069,23 +1070,23 @@ const styles = StyleSheet.create({
     gap: 10,
     paddingVertical: 6,
   },
-  locationLoadingText: {fontSize: 14, color: Colors.White},
+  locationLoadingText: {fontSize: 14, color: Colors.white},
   errorRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 7,
     paddingVertical: 6,
   },
-  errorText: {fontSize: 13, color: Colors.btnRed, flex: 1},
+  errorText: {fontSize: 13, color: Colors.accent, flex: 1},
   locationName: {
     fontSize: 17,
     fontWeight: '700',
-    color: Colors.White,
+    color: Colors.white,
     marginBottom: 2,
   },
   addressLine: {
     fontSize: 12,
-    color: Colors.White,
+    color: Colors.white,
     marginBottom: 10,
     lineHeight: 18,
   },
@@ -1096,7 +1097,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     marginTop: 6,
   },
-  changeText: {fontSize: 13, fontWeight: '600', color: Colors.White},
+  changeText: {fontSize: 13, fontWeight: '600', color: Colors.white},
 
   // Search
   searchWrap: {
@@ -1107,11 +1108,11 @@ const styles = StyleSheet.create({
   searchInput: {
     height: 40,
     borderWidth: 1,
-    borderColor: '#343841',
+    borderColor: Colors.border,
     borderRadius: 6,
     paddingHorizontal: 14,
     paddingRight: 36,
-    color: Colors.White,
+    color: Colors.white,
     alignItems:'center',
     justifyContent:'center',
   },
@@ -1130,7 +1131,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: WHITE_10,
     overflow: 'hidden',
-    backgroundColor: '#23262D',
+    backgroundColor: Colors.surfaceRaised,
     maxHeight: 220,
   },
   suggestionLoader: {
@@ -1139,7 +1140,7 @@ const styles = StyleSheet.create({
     gap: 10,
     padding: 14,
   },
-  suggestionLoaderText: {fontSize: 13, color: Colors.White},
+  suggestionLoaderText: {fontSize: 13, color: Colors.white},
   emptyText: {
     color: WHITE,
     textAlign: 'center',
@@ -1155,25 +1156,25 @@ const styles = StyleSheet.create({
     borderBottomColor: WHITE_10,
     gap: 10,
   },
-  suggestionItemActive: {backgroundColor: Colors.dargBg},
+  suggestionItemActive: {backgroundColor: Colors.background},
   suggestionLeft: {width: 20, alignItems: 'center'},
   suggestionRight: {flex: 1},
-  suggestionName: {fontSize: 14, fontWeight: '600', color: Colors.White},
-  suggestionNameActive: {color: Colors.White},
-  suggestionVicinity: {fontSize: 13, color: '#ABB2BF', marginTop: 2},
-  suggestionVicinityActive:{color: Colors.White},
+  suggestionName: {fontSize: 14, fontWeight: '600', color: Colors.white},
+  suggestionNameActive: {color: Colors.white},
+  suggestionVicinity: {fontSize: 13, color: Colors.textSecondary, marginTop: 2},
+  suggestionVicinityActive:{color: Colors.white},
 
   // Caption
   input: {
     height: 90,
-    color: Colors.White,
+    color: Colors.white,
     fontSize: 15,
     textAlignVertical: 'top',
     lineHeight: 22,
   },
   charCount: {
     fontSize: 11,
-    color: Colors.White,
+    color: Colors.white,
     textAlign: 'right',
     marginTop: 6,
   },
@@ -1182,8 +1183,8 @@ const styles = StyleSheet.create({
   slotBadge: {
     fontSize: 11,
     fontWeight: '700',
-    color: Colors.White,
-    backgroundColor: Colors.Red,
+    color: Colors.white,
+    backgroundColor: Colors.accent,
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 6,
@@ -1195,11 +1196,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 7,
-    backgroundColor: Colors.Red,
+    backgroundColor: Colors.accent,
     paddingVertical: 13,
     borderRadius: 12,
 
-    borderColor: Colors.grey,
+    borderColor: Colors.surfaceRaised,
   },
   photoBtnDisabled: {opacity: 0.35},
   photoBtnText: {fontSize: 14, fontWeight: '600', color: WHITE},
@@ -1214,7 +1215,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 8,
     marginTop: 6,
-    backgroundColor: Colors.Red,
+    backgroundColor: Colors.accent,
     paddingVertical: 16,
     borderRadius: 28,
   },

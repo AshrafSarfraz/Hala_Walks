@@ -1,4 +1,6 @@
 import {unwrapMessages} from '../api/unwrap';
+import {hbsText} from '../i18n/translations';
+
 /** FlatList is inverted: index zero must always be the newest message. */
 export function mergeMessages<T extends {_id: string; tempId?: string; createdAt: Date | string}>(items: T[]): T[] {
   const ids = new Set<string>();
@@ -22,7 +24,7 @@ export function dateLabel(date: Date | string, locale = 'en', now = new Date()) 
   const value = new Date(date);
   if (Number.isNaN(value.getTime())) return '';
   const yesterday = new Date(now); yesterday.setDate(now.getDate() - 1);
-  if (value.toDateString() === now.toDateString()) return locale === 'ar' ? 'اليوم' : 'Today';
-  if (value.toDateString() === yesterday.toDateString()) return locale === 'ar' ? 'أمس' : 'Yesterday';
+  if (value.toDateString() === now.toDateString()) return hbsText(locale === 'ar', 'ui_today');
+  if (value.toDateString() === yesterday.toDateString()) return hbsText(locale === 'ar', 'ui_yesterday');
   return value.toLocaleDateString(locale, {day: 'numeric', month: 'short', year: value.getFullYear() === now.getFullYear() ? undefined : 'numeric'});
 }

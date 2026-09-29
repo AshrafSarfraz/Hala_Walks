@@ -1,6 +1,8 @@
 import { Dimensions, StyleSheet } from "react-native";
 import { Fonts } from "../../../Themes/Fonts";
 
+import {Colors} from '../../../Themes/Colors';
+
 const { width } = Dimensions.get('window');
 export  const getStyles=(language:string) => StyleSheet.create({
     container: {
@@ -28,7 +30,7 @@ export  const getStyles=(language:string) => StyleSheet.create({
     },
     Txt:{
       fontSize:language==='en'?12:10,
-      color:'#ffffff',
+      color:Colors.white,
       fontWeight:"bold",
       textAlign:"center",
       lineHeight:language==='en'?14:14,

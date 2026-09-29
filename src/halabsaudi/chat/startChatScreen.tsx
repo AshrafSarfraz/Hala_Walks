@@ -17,6 +17,8 @@ import {languageData} from '../redux_toolkit/language/languageSlice';
 import {RootState} from '../redux_toolkit/store';
 import {useStatusBar} from '../Component/UseStatusBar/useStatusBar';
 
+import {hbsText} from '../i18n/translations';
+
 type User = {
   _id: string; name: string; bio?: string | null; avatar?: string | null; isOnline?: boolean;
   privacySettings?: {isPrivate?: boolean};
@@ -127,7 +129,7 @@ async function fetchPeople(token: string, myId: string): Promise<FetchResult> {
 }
 
 export default function StartChatScreen({navigation}: Props) {
-  useStatusBar('light-content', Colors.darkgrey);
+  useStatusBar('light-content', Colors.surface);
   const language = useSelector((state: RootState) => state.language.language);
   const t        = languageData[language];
   const isRTL    = language === 'ar';
@@ -284,9 +286,9 @@ export default function StartChatScreen({navigation}: Props) {
         <View style={[styles.rowInfo, {alignItems: isRTL ? 'flex-end' : 'flex-start'}]}>
           <View style={[styles.nameLine, {flexDirection: rowDir}]}>
             <Text style={[styles.rowName, {textAlign: isRTL ? 'right' : 'left'}]}>{item.name}</Text>
-            {item.privacySettings?.isPrivate && <Ionicons name="lock-closed" size={12} color={Colors.Grey9} />}
+            {item.privacySettings?.isPrivate && <Ionicons name="lock-closed" size={12} color={Colors.textMuted} />}
           </View>
-          {/* <Text style={{color: Colors.Grey9, fontSize: 13, marginTop: 4, lineHeight: 18, textAlign: isRTL ? 'right' : 'left'}}>{bioPreview(item.bio)}</Text> */}
+          {/* <Text style={{color: Colors.textMuted, fontSize: 13, marginTop: 4, lineHeight: 18, textAlign: isRTL ? 'right' : 'left'}}>{bioPreview(item.bio)}</Text> */}
         </View>
 
       </TouchableOpacity>
@@ -298,7 +300,7 @@ export default function StartChatScreen({navigation}: Props) {
       {/* ── Header: SocialConnectionsScreen jaisa simple ── */}
       <View style={[styles.header, {flexDirection: rowDir}]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.back} activeOpacity={0.7}>
-          <Ionicons name={isRTL ? 'arrow-forward' : 'arrow-back'} size={22} color={Colors.White} />
+          <Ionicons name={isRTL ? 'arrow-forward' : 'arrow-back'} size={22} color={Colors.white} />
         </TouchableOpacity>
         <Text style={styles.title} numberOfLines={1}>{t.add_new_friend}</Text>
         <View style={styles.back} />
@@ -307,11 +309,11 @@ export default function StartChatScreen({navigation}: Props) {
       {/* ── Search ── */}
       <View style={styles.searchWrap}>
         <View style={[styles.searchBox, {flexDirection: rowDir}]}>
-          <Ionicons name="search-outline" size={16} color={Colors.White} />
+          <Ionicons name="search-outline" size={16} color={Colors.white} />
           <TextInput
             placeholder={t.search_members}
-            placeholderTextColor="rgba(255,255,255,0.4)"
-            underlineColorAndroid="transparent"
+            placeholderTextColor={Colors.lightOverlay}
+            underlineColorAndroid={Colors.transparent}
             autoCorrect={false}
             autoCapitalize="none"
             style={[styles.searchInput, {textAlign: isRTL ? 'right' : 'left', writingDirection: isRTL ? 'rtl' : 'ltr'}]}
@@ -319,10 +321,10 @@ export default function StartChatScreen({navigation}: Props) {
             onChangeText={setSearch}
             returnKeyType="search"
           />
-          {searching && <ActivityIndicator size="small" color={Colors.btnRed} />}
+          {searching && <ActivityIndicator size="small" color={Colors.accent} />}
           {search.length > 0 && (
             <TouchableOpacity onPress={() => setSearch('')} hitSlop={{top: 8, bottom: 8, left: 8, right: 8}}>
-              <Ionicons name="close-circle" size={17} color={Colors.btnRed} />
+              <Ionicons name="close-circle" size={17} color={Colors.accent} />
             </TouchableOpacity>
           )}
         </View>
@@ -332,7 +334,7 @@ export default function StartChatScreen({navigation}: Props) {
       <View style={styles.body}>
         {loading ? (
           <View style={styles.loaderWrap}>
-            <ActivityIndicator size="large" color={Colors.Red} />
+            <ActivityIndicator size="large" color={Colors.accent} />
             <Text style={styles.loaderText}>{t.finding_people}</Text>
           </View>
         ) : (
@@ -342,14 +344,14 @@ export default function StartChatScreen({navigation}: Props) {
             renderItem={renderItem}
             ListHeaderComponent={loadError && !q ? (
               <TouchableOpacity onPress={onRefresh} style={{padding: 16}}>
-                <Text style={{color: '#FF827C', textAlign: 'center'}}>
-                  {isRTL ? 'تعذر تحديث الأشخاص · إعادة المحاولة' : 'Could not refresh people · Tap to retry'}
+                <Text style={{color: Colors.accent, textAlign: 'center'}}>
+                  {hbsText(isRTL, 'ui_could_not_refresh_people_tap_to_retry')}
                 </Text>
               </TouchableOpacity>
             ) : null}
             ListEmptyComponent={searching ? null : (
               <View style={styles.emptyWrap}>
-                <View style={styles.emptyRing}><Text style={styles.emptyEmoji}>🌿</Text></View>
+                <View style={styles.emptyRing}><Ionicons name="people-outline" size={34} color={Colors.textMuted} /></View>
                 <Text style={styles.emptyTitle}>{t.no_members_found}</Text>
                 <Text style={styles.emptySub}>{t.try_different_search}</Text>
               </View>
@@ -358,9 +360,9 @@ export default function StartChatScreen({navigation}: Props) {
               <RefreshControl
                 refreshing={refreshing}
                 onRefresh={onRefresh}
-                tintColor={Colors.btnRed}
-                colors={[Colors.btnRed]}
-                progressBackgroundColor={Colors.darkgrey}
+                tintColor={Colors.accent}
+                colors={[Colors.accent]}
+                progressBackgroundColor={Colors.surface}
               />
             }
             showsVerticalScrollIndicator={false}
@@ -379,35 +381,34 @@ export default function StartChatScreen({navigation}: Props) {
 }
 
 const styles = StyleSheet.create({
-  safe:          {flex: 1, backgroundColor: Colors.darkgrey},
+  safe:          {flex: 1, backgroundColor: Colors.surface},
   header:        {height: 58, alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 14},
   back:          {width: 38, height: 38, justifyContent: 'center', alignItems: 'center'},
-  title:         {flex: 1, textAlign: 'center', color: Colors.White, fontSize: 17, fontWeight: '800'},
+  title:         {flex: 1, textAlign: 'center', color: Colors.white, fontSize: 17, fontWeight: '800'},
   searchWrap:    {paddingHorizontal: 14, paddingBottom: 12},
-  searchBox:     {alignItems: 'center', gap: 8, height: 46, backgroundColor: 'rgba(255,255,255,0.13)', borderRadius: 14, paddingHorizontal: 14, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)'},
-  searchInput:   {flex: 1, fontSize: 15, color: Colors.White, backgroundColor: 'transparent', borderWidth: 0, margin: 0, paddingVertical: 0, paddingHorizontal: 0, includeFontPadding: false},
-  body:          {flex: 1, backgroundColor: Colors.dargBg},
+  searchBox:     {alignItems: 'center', gap: 8, height: 46, backgroundColor: Colors.lightOverlaySubtle, borderRadius: 14, paddingHorizontal: 14, borderWidth: 1, borderColor: Colors.lightOverlaySubtle},
+  searchInput:   {flex: 1, fontSize: 15, color: Colors.white, backgroundColor: Colors.transparent, borderWidth: 0, margin: 0, paddingVertical: 0, paddingHorizontal: 0, includeFontPadding: false},
+  body:          {flex: 1, backgroundColor: Colors.background},
   loaderWrap:    {flex: 1, justifyContent: 'center', alignItems: 'center', gap: 14},
-  loaderText:    {color: Colors.Red, fontSize: 14, marginTop: 4, fontWeight: '500'},
+  loaderText:    {color: Colors.accent, fontSize: 14, marginTop: 4, fontWeight: '500'},
   listContent:   {paddingHorizontal: 14, paddingTop: 14, paddingBottom: 40},
   sectionHeader: {paddingHorizontal: 4, paddingTop: 8, paddingBottom: 6},
-  sectionLabel:  {fontSize: 11, fontWeight: '700', color: Colors.btnRed, letterSpacing: 0.2, textTransform: 'uppercase'},
-  row:           {alignItems: 'center', backgroundColor: '#191B20', borderRadius: 16, paddingVertical: 12, paddingHorizontal: 14, shadowColor: '#1A202C', shadowOffset: {width: 0, height: 2}, shadowOpacity: 0.05, shadowRadius: 8},
+  sectionLabel:  {fontSize: 11, fontWeight: '700', color: Colors.accent, letterSpacing: 0.2, textTransform: 'uppercase'},
+  row:           {alignItems: 'center', backgroundColor: Colors.surface, borderRadius: 16, paddingVertical: 12, paddingHorizontal: 14, shadowColor: Colors.black, shadowOffset: {width: 0, height: 2}, shadowOpacity: 0.05, shadowRadius: 8},
   avatarWrap:    {position: 'relative', flexShrink: 0},
   avatarImg:     {width: 50, height: 50, borderRadius: 25},
   avatarCircle:  {width: 50, height: 50, borderRadius: 25, justifyContent: 'center', alignItems: 'center'},
-  avatarLetter:  {color: Colors.White, fontSize: 19, fontWeight: '800'},
-  onlineDot:     {width: 12, height: 12, borderRadius: 6, backgroundColor: Colors.btnRed, position: 'absolute', bottom: 0, right: 0, borderWidth: 2, borderColor: Colors.White},
+  avatarLetter:  {color: Colors.white, fontSize: 19, fontWeight: '800'},
+  onlineDot:     {width: 12, height: 12, borderRadius: 6, backgroundColor: Colors.accent, position: 'absolute', bottom: 0, right: 0, borderWidth: 2, borderColor: Colors.white},
   rowInfo:       {flex: 1},
   nameLine:      {alignItems: 'center', gap: 5},
-  rowName:       {fontSize: 15, fontWeight: '700', color: Colors.White},
-  msgChip:       {alignItems: 'center', backgroundColor: '#191B20', borderRadius: 20, paddingHorizontal: 12, paddingVertical: 7, borderWidth: 1, borderColor: Colors.btnRed},
-  msgChipText:   {color: Colors.btnRed, fontSize: 12, fontWeight: '700'},
-  msgChipLocked: {borderColor: '#343841'},
-  msgChipTextLocked: {color: Colors.Grey9},
+  rowName:       {fontSize: 15, fontWeight: '700', color: Colors.white},
+  msgChip:       {alignItems: 'center', backgroundColor: Colors.surface, borderRadius: 20, paddingHorizontal: 12, paddingVertical: 7, borderWidth: 1, borderColor: Colors.accent},
+  msgChipText:   {color: Colors.accent, fontSize: 12, fontWeight: '700'},
+  msgChipLocked: {borderColor: Colors.border},
+  msgChipTextLocked: {color: Colors.textMuted},
   emptyWrap:     {flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 40, gap: 10, marginTop: 80},
-  emptyRing:     {width: 84, height: 84, borderRadius: 42, backgroundColor: '#191B20', justifyContent: 'center', alignItems: 'center', marginBottom: 8, borderWidth: 3, borderColor: Colors.Red},
-  emptyEmoji:    {fontSize: 36},
-  emptyTitle:    {fontSize: 18, fontWeight: '700', color: Colors.White},
-  emptySub:      {fontSize: 13, color: Colors.Grey9, textAlign: 'center'},
+  emptyRing:     {width: 84, height: 84, borderRadius: 42, backgroundColor: Colors.surface, justifyContent: 'center', alignItems: 'center', marginBottom: 8, borderWidth: 3, borderColor: Colors.accent},
+  emptyTitle:    {fontSize: 18, fontWeight: '700', color: Colors.white},
+  emptySub:      {fontSize: 13, color: Colors.textMuted, textAlign: 'center'},
 });

@@ -5,7 +5,7 @@ import { Colors } from "../../../Themes/Colors";
 export const getStyles=(language:string) => StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: Colors.dargBg,
+      backgroundColor: Colors.background,
       paddingHorizontal:24,
       paddingTop:Platform.OS==='ios'?0:20
 
@@ -22,7 +22,7 @@ export const getStyles=(language:string) => StyleSheet.create({
     },
     heading: {
       fontSize: 24,
-      color:Colors.White,
+      color:Colors.white,
       fontFamily:Fonts.SF_Bold,
       marginBottom: 20,
       textAlign: 'center',
@@ -31,21 +31,21 @@ export const getStyles=(language:string) => StyleSheet.create({
       width:'90%',
       fontSize: 14,
       fontFamily:Fonts.SF_Medium,
-      color:Colors.whiteGrey,
+      color:Colors.textSecondary,
       lineHeight: 20,
       textAlign: 'center',
       alignSelf:"center"
   
     },
     button: {
-      backgroundColor: '#007BFF',
+      backgroundColor: Colors.info,
       paddingVertical: 12,
       paddingHorizontal: 32,
       borderRadius: 10,
       alignSelf: 'center',
     },
     buttonText: {
-      color: '#fff',
+      color: Colors.white,
       fontSize: 18,
     },
   });

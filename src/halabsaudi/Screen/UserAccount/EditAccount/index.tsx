@@ -19,10 +19,12 @@ import {languageData} from '../../../redux_toolkit/language/languageSlice';
 import {RootState} from '../../../redux_toolkit/store';
 import { useStatusBar } from '../../../Component/UseStatusBar/useStatusBar';
 
+import {hbsText} from '../../../i18n/translations';
+
 const BASE_URL = 'https://hala-b-saudi.onrender.com';
 
 const EditAccountScreen: React.FC = ({navigation}: any) => {
- useStatusBar('dark-content', Colors.White4, true);
+ useStatusBar('light-content', Colors.surface, true);
   const language = useSelector((state: RootState) => state.language.language);
   const t = languageData[language];
   const isRTL = language === 'ar';
@@ -111,12 +113,12 @@ const EditAccountScreen: React.FC = ({navigation}: any) => {
   // ─── Remove Avatar ─────────────────────────────────────────────────
   const removeAvatar = () => {
     Alert.alert(
-      isRTL ? 'حذف الصورة' : 'Remove Photo',
-      isRTL ? 'هل أنت متأكد؟' : 'Are you sure you want to remove your photo?',
+      hbsText(isRTL, 'ui_remove_photo'),
+      hbsText(isRTL, 'ui_are_you_sure_you_want_to_remove_your_photo'),
       [
-        {text: isRTL ? 'إلغاء' : 'Cancel', style: 'cancel'},
+        {text: hbsText(isRTL, 'ui_cancel'), style: 'cancel'},
         {
-          text: isRTL ? 'حذف' : 'Remove',
+          text: hbsText(isRTL, 'ui_remove'),
           style: 'destructive',
           onPress: async () => {
             setRemoving(true);
@@ -219,7 +221,7 @@ const EditAccountScreen: React.FC = ({navigation}: any) => {
   };
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor:'#191B20'}}>
+    <SafeAreaView style={{flex: 1, backgroundColor:Colors.surface}}>
       <KeyboardAvoidingView
         style={{flex: 1}}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
@@ -230,13 +232,13 @@ const EditAccountScreen: React.FC = ({navigation}: any) => {
             <Ionicons
               name={isRTL ? 'chevron-forward' : 'chevron-back'}
               size={26}
-              color={Colors.Red}
+              color={Colors.accent}
             />
           </TouchableOpacity>
           <Text style={s.headerTitle}>{t.edit_profile}</Text>
           <TouchableOpacity onPress={saveProfile}>
             {loading ? (
-              <ActivityIndicator color={Colors.Red} />
+              <ActivityIndicator color={Colors.accent} />
             ) : (
               <Text style={s.saveTxt}>{t.save}</Text>
             )}
@@ -254,13 +256,13 @@ const EditAccountScreen: React.FC = ({navigation}: any) => {
               {/* ✅ uploading ya removing dono mein spinner */}
               {uploading || removing ? (
                 <View style={s.avatarCircle}>
-                  <ActivityIndicator color="#fff" />
+                  <ActivityIndicator color={Colors.white} />
                 </View>
               ) : (
                 <View>
                   <UserAvatar uri={avatar} style={s.avatarImg} />
                   <View style={s.avatarEditBadge}>
-                    <Ionicons name="camera-outline" size={14} color="#fff" />
+                    <Ionicons name="image-outline" size={14} color={Colors.white} />
                   </View>
                 </View>
               )}
@@ -280,7 +282,7 @@ const EditAccountScreen: React.FC = ({navigation}: any) => {
                 value={name}
                 onChangeText={setName}
                 placeholder={t.enter_name}
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor={Colors.textMuted}
                 style={[
                   s.input,
                   {
@@ -301,7 +303,7 @@ const EditAccountScreen: React.FC = ({navigation}: any) => {
                 <Ionicons
                   name="lock-closed-outline"
                   size={15}
-                  color="#9CA3AF"
+                  color={Colors.textMuted}
                 />
               </View>
             </View>
@@ -315,7 +317,7 @@ const EditAccountScreen: React.FC = ({navigation}: any) => {
                 value={bio}
                 onChangeText={setBio}
                 placeholder={t.bio_placeholder}
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor={Colors.textMuted}
                 style={[
                   s.input,
                   {
@@ -341,10 +343,10 @@ const EditAccountScreen: React.FC = ({navigation}: any) => {
                 style={[s.dateInput, {flexDirection: rowDir}]}
                 onPress={() => setShowDatePicker(true)}
                 activeOpacity={0.7}>
-                <Text style={{color: birthday ? '#F5F6F8' : '#9CA3AF'}}>
+                <Text style={{color: birthday ? Colors.textPrimary : Colors.textMuted}}>
                   {birthday || t.select_birthday}
                 </Text>
-                <Ionicons name="calendar-outline" size={20} color="#9CA3AF" />
+                <Ionicons name="calendar-outline" size={20} color={Colors.textMuted} />
               </TouchableOpacity>
             </View>
 
@@ -401,10 +403,10 @@ const s = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 14,
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
   },
-  headerTitle: {fontSize: 17, fontWeight: '700', color: '#F5F6F8'},
-  saveTxt: {color: Colors.Red, fontSize: 16, fontWeight: '600'},
+  headerTitle: {fontSize: 17, fontWeight: '700', color: Colors.textPrimary},
+  saveTxt: {color: Colors.accent, fontSize: 16, fontWeight: '600'},
 
   avatarSection: {alignItems: 'center', marginTop: 20, marginBottom: 8},
   avatarImg: {
@@ -412,17 +414,17 @@ const s = StyleSheet.create({
     height: 100,
     borderRadius: 50,
     borderWidth: 3,
-    borderColor: Colors.Red,
+    borderColor: Colors.accent,
   },
   avatarCircle: {
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: Colors.Red,
+    backgroundColor: Colors.accent,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  avatarInitials: {color: '#fff', fontSize: 30, fontWeight: '700'},
+  avatarInitials: {color: Colors.white, fontSize: 30, fontWeight: '700'},
   avatarEditBadge: {
     position: 'absolute',
     bottom: 2,
@@ -430,16 +432,16 @@ const s = StyleSheet.create({
     width: 26,
     height: 26,
     borderRadius: 13,
-    backgroundColor: Colors.Red,
+    backgroundColor: Colors.accent,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: '#343841',
+    borderColor: Colors.border,
   },
   changePhotoTxt: {
     marginTop: 10,
     fontSize: 13,
-    color: Colors.Red,
+    color: Colors.accent,
     fontWeight: '500',
   },
 
@@ -448,31 +450,31 @@ const s = StyleSheet.create({
   label: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#ABB2BF',
+    color: Colors.textSecondary,
     marginBottom: 8,
     textTransform: 'uppercase',
     letterSpacing: 0.2,
   },
   input: {
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     borderRadius: 12,
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontSize: 15,
-    color: '#F5F6F8',
+    color: Colors.textPrimary,
   },
-  charCount: {fontSize: 11, color: '#9CA3AF', marginTop: 4},
+  charCount: {fontSize: 11, color: Colors.textMuted, marginTop: 4},
   readonlyInput: {
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     borderRadius: 12,
     paddingHorizontal: 14,
     paddingVertical: 12,
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  readonlyText: {fontSize: 15, color: '#ABB2BF'},
+  readonlyText: {fontSize: 15, color: Colors.textSecondary},
   dateInput: {
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     borderRadius: 12,
     paddingHorizontal: 14,
     paddingVertical: 12,

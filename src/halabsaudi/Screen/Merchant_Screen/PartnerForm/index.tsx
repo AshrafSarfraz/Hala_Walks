@@ -28,7 +28,7 @@ const WebViewScreen:React.FC<{navigation: import('@react-navigation/native').Nav
 
     {showHeader && (
           <CustomHeader title="Register Your Brand" onBackPress={() => navigation.goBack()}
-            textColor={Colors.White} iconColor={Colors.White} backgroundColor={Colors.darkgrey} />
+            textColor={Colors.white} iconColor={Colors.white} backgroundColor={Colors.surface} />
         )}
       <WebView 
         source={{ uri: 'https://halab-saudi.vercel.app/AddBrand/12652154214641264521465124xxp1' }} 

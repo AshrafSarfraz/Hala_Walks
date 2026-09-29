@@ -69,19 +69,19 @@ const styles = StyleSheet.create({
     padding: 24,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.7)', // darker dim for dark theme
+    backgroundColor: Colors.overlay, // darker dim for dark theme
   },
   cardWrap: {
     width: '100%',
     maxWidth: CARD_MAX_WIDTH,
     borderRadius: 16,
-    backgroundColor: Colors.dargBg,        // ✅ dark card
+    backgroundColor: Colors.background,        // ✅ dark card
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: 'rgba(255,255,255,0.12)', // subtle light border
+    borderColor: Colors.lightOverlaySubtle, // subtle light border
     paddingTop: 20,
     paddingHorizontal: 20,
     paddingBottom: 16,
-    shadowColor: '#000',
+    shadowColor: Colors.black,
     shadowOpacity: 0.3,
     shadowRadius: 12,
     shadowOffset: { width: 0, height: 8 },
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 20,
     lineHeight: 28,
-    color: Colors.White,                   // ✅ white title
+    color: Colors.white,                   // ✅ white title
     fontFamily: Fonts.SF_Bold,
     letterSpacing: 0.2,
   },
@@ -100,12 +100,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 15,
     lineHeight: 22,
-    color: 'rgba(255,255,255,0.7)',        // ✅ soft white message
+    color: Colors.lightOverlay,        // ✅ soft white message
     fontFamily: (Fonts as any).SF_Regular ?? Fonts.SF_Bold,
   },
   divider: {
     height: StyleSheet.hairlineWidth,
-    backgroundColor: 'rgba(255,255,255,0.12)', // ✅ light divider on dark
+    backgroundColor: Colors.lightOverlaySubtle, // ✅ light divider on dark
     marginVertical: 18,
   },
   actionsRow: {
@@ -117,20 +117,20 @@ const styles = StyleSheet.create({
     height: 48,
     borderRadius: 10,
     borderWidth: 2,
-    borderColor: Colors.Red,
+    borderColor: Colors.accent,
     justifyContent: 'center',
     alignItems: 'center',
   },
   btnSecondaryTxt: {
     fontSize: 14,
     fontFamily: Fonts.SF_Bold,
-    color: Colors.Red,                    // ✅ green text on dark
+    color: Colors.accent,                    // ✅ green text on dark
   },
   btnPrimary: {
     flex: 1,
     height: 48,
     borderRadius: 10,
-    backgroundColor: Colors.Red,
+    backgroundColor: Colors.accent,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
   btnPrimaryTxt: {
     fontSize: 14,
     fontFamily: Fonts.SF_Bold,
-    color: Colors.White,
+    color: Colors.white,
   },
 });
 

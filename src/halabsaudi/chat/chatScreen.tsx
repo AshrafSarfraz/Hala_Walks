@@ -7,7 +7,7 @@ import {Alert} from '../../ui/Alert';
 import {TextInput} from '../../ui/TextInput';
 // src/halabsaudi/chat/chatScreen.tsx
 import React, {useEffect, useRef, useState, useCallback, useMemo} from 'react';
-import {View, Platform, StyleSheet, TouchableOpacity, FlatList, KeyboardAvoidingView, Image, Animated, PanResponder, Keyboard} from 'react-native';
+import {View, Platform, StyleSheet, TouchableOpacity, FlatList, Image, Animated, PanResponder, Keyboard} from 'react-native';
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo';
@@ -15,7 +15,6 @@ import axios from 'axios';
 import {jwtDecode} from 'jwt-decode';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
-import EmojiKeyboard from 'rn-emoji-keyboard';
 import {useSelector} from 'react-redux';
 import {BASE_URL} from '../../config/api';
 import {Colors} from '../Themes/Colors';
@@ -41,6 +40,8 @@ import {RootState} from '../redux_toolkit/store';
 import { useStatusBar } from '../Component/UseStatusBar/useStatusBar';
 // ✅ NEW — chat kholte hi us chat ki notifications tray se hatao
 import {clearChatNotifications} from '../Notifications/badge';
+
+import {hbsText} from '../i18n/translations';
 
 // ─── Module-level stores ──────────────────────────────────────────────────────
 const messageCache = new Map<string, Message[]>();
@@ -162,20 +163,20 @@ function TickIcon({
   forImage?: boolean;
 }) {
   const size = forImage ? 13 : 14;
-  const dim = forImage ? 'rgba(255,255,255,0.75)' : '#9CA3AF';
+  const dim = forImage ? Colors.lightOverlay : Colors.textMuted;
   if (status === 'pending')
     return (
       <Ionicons
         name="time-outline"
         size={size}
-        color={forImage ? 'rgba(255,255,255,0.8)' : '#9CA3AF'}
+        color={forImage ? Colors.lightOverlay : Colors.textMuted}
       />
     );
   if (status === 'sending')
     return (
       <ActivityIndicator
         size="small"
-        color={forImage ? 'rgba(255,255,255,0.8)' : '#9CA3AF'}
+        color={forImage ? Colors.lightOverlay : Colors.textMuted}
         style={{width: size, height: size}}
       />
     );
@@ -184,7 +185,7 @@ function TickIcon({
       <Ionicons
         name="alert-circle"
         size={size}
-        color={forImage ? '#FCA5A5' : '#EF4444'}
+        color={forImage ? Colors.textSecondary : Colors.accent}
       />
     );
   if (msgStatus === 'seen')
@@ -192,7 +193,7 @@ function TickIcon({
       <Ionicons
         name="checkmark-done"
         size={size}
-        color={forImage ? '#93C5FD' : '#53BDEB'}
+        color={forImage ? Colors.textSecondary : Colors.info}
       />
     );
   if (msgStatus === 'delivered')
@@ -272,7 +273,7 @@ function SwipeableMessage({children, onSwipeReply, disabled}: SwipeableProps) {
     <View style={{position: 'relative'}}>
       <Animated.View
         style={[styles.swipeReplyIcon, {opacity: replyIconOpacity}]}>
-        <Ionicons name="return-down-back-outline" size={20} color='#ABB2BF' />
+        <Ionicons name="return-down-back-outline" size={20} color={Colors.textSecondary} />
       </Animated.View>
       <Animated.View
         style={{transform: [{translateX}]}}
@@ -288,7 +289,7 @@ export default function ChatScreen(props: any) {
   return <ChatScreenContent key={String(props.route.params?.chatId || 'missing')} {...props} />;
 }
 function ChatScreenContent({route, navigation}: any) {
- useStatusBar('light-content', Colors.darkgrey, true);
+ useStatusBar('light-content', Colors.surface, true);
   const language = useSelector((state: RootState) => state.language.language);
   const t = languageData[language];
   const isRTL = language === 'ar';
@@ -341,7 +342,6 @@ function ChatScreenContent({route, navigation}: any) {
   const [sending, setSending] = useState(false);
   const [muteDuration, setMuteDuration] = useState<any>(null);
   const isMuted = muteDuration !== null;
-  const [emojiKeyboardOpen, setEmojiKeyboardOpen] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [composerHeight, setComposerHeight] = useState(68);
   const [attachSheetOpen, setAttachSheetOpen] = useState(false);
@@ -500,7 +500,7 @@ function ChatScreenContent({route, navigation}: any) {
           if (err?.response?.status === 403) {setAccess('waiting'); setLoadError(false); setHasMore(false);}
           else {
             setLoadError(true); setAccess('error');
-            setLoadErrorText(err?.response?.status === 401 ? (isRTL ? 'انتهت الجلسة. سجّل الدخول مجدداً.' : 'Session expired. Please sign in again.') : err?.response?.status === 404 ? (isRTL ? 'المحادثة غير متاحة. ارجع وأعد فتحها.' : 'Conversation unavailable. Go back and reopen it.') : (isRTL ? 'تعذر الاتصال. اضغط لإعادة المحاولة.' : 'Could not connect. Tap to retry.'));
+            setLoadErrorText(err?.response?.status === 401 ? (hbsText(isRTL, 'ui_session_expired_please_sign_in_again')) : err?.response?.status === 404 ? (hbsText(isRTL, 'ui_conversation_unavailable_go_back_and_reopen_it')) : (hbsText(isRTL, 'ui_could_not_connect_tap_to_retry')));
           }
         }
       } finally {
@@ -519,7 +519,7 @@ function ChatScreenContent({route, navigation}: any) {
 
     const show = Keyboard.addListener(showEvent, event => {
       if (Platform.OS === 'ios') {
-        setKeyboardHeight(event.endCoordinates?.height || 0);
+        setKeyboardHeight(event.endCoordinates?.height+35 || 0);
       } else {
         // AndroidManifest uses adjustResize, so don't double-shift.
         setKeyboardHeight(0);
@@ -865,7 +865,7 @@ function ChatScreenContent({route, navigation}: any) {
   const onSend = useCallback(() => {
     const text = inputText.trim();
     if (!text || isBlocked || sending || !canSendRef.current) return;
-    setEmojiKeyboardOpen(false);
+    
     jumpToLatest();
 
     if (editingMessage) {
@@ -1128,7 +1128,7 @@ function ChatScreenContent({route, navigation}: any) {
 
   const handleAttach = useCallback(() => {
     if (isBlocked || !canSendRef.current) return;
-    setEmojiKeyboardOpen(false);
+    
     Keyboard.dismiss();
     setAttachSheetOpen(true);
   }, [isBlocked]);
@@ -1201,7 +1201,7 @@ function ChatScreenContent({route, navigation}: any) {
   const onInputChange = useCallback(
     (text: string) => {
       setInputText(text);
-      setEmojiKeyboardOpen(false);
+      
       const socket = getSocket();
       if (!socket) return;
       if (text.length > 0) {
@@ -1222,7 +1222,7 @@ function ChatScreenContent({route, navigation}: any) {
   // ─── Long press modal ─────────────────────────────────────────────────────
   const onLongPress = useCallback((msg: Message, pageY: number) => {
     Keyboard.dismiss();
-    setEmojiKeyboardOpen(false);
+    
     setMsgModalTarget(msg);
     setMsgModalY(pageY);
     setMsgModalIsMe(String(msg.senderId) === currentUserIdRef.current);
@@ -1316,7 +1316,7 @@ function ChatScreenContent({route, navigation}: any) {
         return (
           <View style={[styles.msgRow, isMe ? styles.rowRight : styles.rowLeft]}>
             <View style={[styles.deletedBubble, {flexDirection: rowDir}]}>
-              <Ionicons name="ban-outline" size={13} color="#9CA3AF" />
+              <Ionicons name="ban-outline" size={13} color={Colors.textMuted} />
               <Text style={styles.deletedText}> {t.deleted_message_text}</Text>
             </View>
           </View>
@@ -1330,9 +1330,9 @@ function ChatScreenContent({route, navigation}: any) {
       const Footer = (
         <View style={styles.msgFooter}>
           {msg.edited && (
-            <Text style={[styles.editedLabel, {color: '#9CA3AF'}]}>edited </Text>
+            <Text style={[styles.editedLabel, {color: Colors.textMuted}]}>edited </Text>
           )}
-          <Text style={[styles.msgTime, {color: '#9CA3AF'}]}>
+          <Text style={[styles.msgTime, {color: Colors.textMuted}]}>
             {formatTime(msg.createdAt)}
           </Text>
           {isMe && (
@@ -1369,7 +1369,7 @@ function ChatScreenContent({route, navigation}: any) {
 
               {!!msg.uploadStage && msg.uploadStage !== 'failed' && (
                 <View style={styles.uploadOverlay}>
-                  <ActivityIndicator size="small" color="#fff" />
+                  <ActivityIndicator size="small" color={Colors.white} />
                   <Text style={styles.uploadOverlayText}>
                     {msg.uploadStage === 'uploading'
                       ? `${Math.max(1, msg.uploadProgress || 1)}%`
@@ -1386,7 +1386,7 @@ function ChatScreenContent({route, navigation}: any) {
                   onPress={() => {
                     if (msg.tempId) retryMediaJob(msg.tempId);
                   }}>
-                  <Ionicons name="refresh" size={24} color="#fff" />
+                  <Ionicons name="refresh" size={24} color={Colors.white} />
                   <Text style={styles.uploadOverlayText}>Tap to retry</Text>
                 </TouchableOpacity>
               )}
@@ -1407,7 +1407,7 @@ function ChatScreenContent({route, navigation}: any) {
           activeOpacity={0.85}
           onLongPress={e => onLongPress(msg, e.nativeEvent.pageY)}
           delayLongPress={300}
-          onPress={() => { Keyboard.dismiss(); setEmojiKeyboardOpen(false); }}
+          onPress={() => { Keyboard.dismiss();  }}
           style={[styles.msgRow, isMe ? styles.rowRight : styles.rowLeft]}>
           {msg.replyTo && (
             <View
@@ -1446,7 +1446,7 @@ function ChatScreenContent({route, navigation}: any) {
             )}
             {msg.mediaUrl && msg.mediaType === 'video' && (
               <View style={styles.videoThumb}>
-                <Ionicons name="play-circle" size={44} color="rgba(255,255,255,0.9)" />
+                <Ionicons name="play-circle" size={44} color={Colors.lightOverlay} />
               </View>
             )}
             {msg.mediaUrl && msg.mediaType === 'document' && (
@@ -1454,18 +1454,18 @@ function ChatScreenContent({route, navigation}: any) {
                 <View
                   style={[
                     styles.docIconWrap,
-                    {backgroundColor: isMe ? 'rgba(0,0,0,0.08)' : '#191B20'},
+                    {backgroundColor: isMe ? Colors.overlaySubtle : Colors.surface},
                   ]}>
                   <Ionicons
                     name="document-attach-outline"
                     size={18}
-                    color={isMe ? '#374151' : Colors.Green}
+                    color={isMe ? Colors.border : Colors.brandGreen}
                   />
                 </View>
                 <Text
                   style={[
                     styles.docName,
-                    {color: '#F5F6F8', textAlign: isRTL ? 'right' : 'left'},
+                    {color: Colors.textPrimary, textAlign: isRTL ? 'right' : 'left'},
                   ]}
                   numberOfLines={2}>
                   {msg.mediaName || 'Document'}
@@ -1537,13 +1537,13 @@ function ChatScreenContent({route, navigation}: any) {
 
   if (loading)
     return (
-      <SafeAreaView style={styles.loader}><TouchableOpacity accessibilityRole="button" onPress={() => navigation.goBack()} style={{padding: 20}}><Text style={{color: Colors.White}}>{isRTL ? 'رجوع' : 'Back'}</Text></TouchableOpacity><ActivityIndicator size="large" color={Colors.btnRed} /></SafeAreaView>
+      <SafeAreaView style={styles.loader}><TouchableOpacity accessibilityRole="button" onPress={() => navigation.goBack()} style={{padding: 20}}><Text style={{color: Colors.white}}>{hbsText(isRTL, 'ui_back')}</Text></TouchableOpacity><ActivityIndicator size="large" color={Colors.accent} /></SafeAreaView>
     );
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
       <View style={styles.container}>
-        <View style={{backgroundColor: Colors.darkgrey}}>
+        <View style={{backgroundColor: Colors.surface}}>
         <ChatScreenHeader
           name={participantName}
           userId={participantId}
@@ -1558,7 +1558,7 @@ function ChatScreenContent({route, navigation}: any) {
           hidesLastSeen={participantHidesLastSeen}
         />
         </View>
-<View style={{ flex:1,backgroundColor: Colors.dargBg}}>
+<View style={{ flex:1,backgroundColor: Colors.background}}>
 
 
           <View
@@ -1584,7 +1584,7 @@ function ChatScreenContent({route, navigation}: any) {
                 {item.status === 'failed' && !item.localMediaUri && <TouchableOpacity onPress={() => {
                   if (!canSendRef.current) {setReload(v => v + 1); return;}
                   const socket = getSocket();
-                  if (!socket?.connected) {Alert.alert(isRTL ? 'غير متصل' : 'Offline', isRTL ? 'تحقق من اتصال الإنترنت وحاول مجدداً.' : 'Reconnect to the internet and try again.'); return;}
+                  if (!socket?.connected) {Alert.alert(hbsText(isRTL, 'ui_offline'), hbsText(isRTL, 'ui_reconnect_to_the_internet_and_try_again')); return;}
                   const tempId = item.tempId || item._id;
                   setMessages(prev => prev.map(m => m._id === item._id ? {...m, tempId, status: 'sending'} : m));
                   socket.emit('send-message', {
@@ -1601,7 +1601,7 @@ function ChatScreenContent({route, navigation}: any) {
                     mediaHeight: item.mediaHeight ?? null,
                   });
                   setTimeout(() => setMessages(prev => prev.map(m => m.tempId === tempId && m.status === 'sending' ? {...m, status: 'failed'} : m)), 10000);
-                }}><Text style={styles.retryText}>{isRTL ? 'لم يتم تأكيد الإرسال · إعادة المحاولة' : (access === 'waiting' ? 'Waiting for friend request acceptance' : 'Not sent · Tap to retry')}</Text></TouchableOpacity>}
+                }}><Text style={styles.retryText}>{access === 'waiting' ? hbsText(isRTL, 'ui_waiting_for_friend_request_acceptance') : hbsText(isRTL, 'ui_send_not_confirmed_tap_to_retry')}</Text></TouchableOpacity>}
                 </View>;
               }}
               inverted
@@ -1632,14 +1632,14 @@ function ChatScreenContent({route, navigation}: any) {
                   </View>
                 ) : null
               }
-              ListEmptyComponent={!loadError ? <View style={styles.historyNotice}><Text style={styles.historyText}>{isRTL ? 'لا توجد رسائل بعد. ابدأ المحادثة.' : 'No messages yet. Say hello.'}</Text></View> : null}
+              ListEmptyComponent={!loadError ? <View style={styles.historyNotice}><Text style={styles.historyText}>{hbsText(isRTL, 'ui_no_messages_yet_say_hello')}</Text></View> : null}
               ListFooterComponent={<View style={styles.historyNotice}>
                 {loadingMore ? <ActivityIndicator size="small" /> : <TouchableOpacity disabled={!hasMore && !loadError} onPress={() => loadError ? setReload(v => v + 1) : loadMore()}>
-                  <Text style={styles.historyText}>{loadError ? loadErrorText : olderError ? (isRTL ? 'تعذر تحميل الرسائل السابقة · إعادة المحاولة' : 'Could not load earlier messages · Retry') : hasMore ? (isRTL ? 'تحميل الرسائل السابقة ↑' : '↑ Load earlier messages') : (isRTL ? 'بداية المحادثة' : 'Beginning of conversation')}</Text>
+                  <Text style={styles.historyText}>{loadError ? loadErrorText : olderError ? (hbsText(isRTL, 'ui_could_not_load_earlier_messages_retry')) : hasMore ? (hbsText(isRTL, 'ui_load_earlier_messages')) : (hbsText(isRTL, 'ui_beginning_of_conversation'))}</Text>
                 </TouchableOpacity>}
               </View>}
             />
-            {awayFromLatest && <TouchableOpacity accessibilityRole="button" accessibilityLabel="Jump to latest messages" onPress={jumpToLatest} style={styles.latestButton}><Ionicons name="chevron-down" size={20} color={Colors.White} /><Text style={{color: Colors.White, fontSize: 12}}>{newCount ? `${newCount} ${isRTL ? 'جديد' : 'new'}` : isRTL ? 'الأحدث' : 'Latest'}</Text></TouchableOpacity>}
+            {awayFromLatest && <TouchableOpacity accessibilityRole="button" accessibilityLabel="Jump to latest messages" onPress={jumpToLatest} style={styles.latestButton}><Ionicons name="chevron-down" size={20} color={Colors.white} /><Text style={{color: Colors.white, fontSize: 12}}>{newCount ? `${newCount} ${hbsText(isRTL, 'ui_new')}` : hbsText(isRTL, 'ui_latest')}</Text></TouchableOpacity>}
           </View>
 
           <View
@@ -1658,13 +1658,13 @@ function ChatScreenContent({route, navigation}: any) {
                   styles.replyBarInner,
                   {flexDirection: rowDir},
                   isRTL
-                    ? {borderRightWidth: 3, borderRightColor: Colors.Green, borderLeftWidth: 0}
-                    : {borderLeftWidth: 3, borderLeftColor: Colors.Green},
+                    ? {borderRightWidth: 3, borderRightColor: Colors.brandGreen, borderLeftWidth: 0}
+                    : {borderLeftWidth: 3, borderLeftColor: Colors.brandGreen},
                 ]}>
                 <Ionicons
                   name={editingMessage ? 'create-outline' : 'return-down-back-outline'}
                   size={16}
-                  color={Colors.btnRed}
+                  color={Colors.accent}
                   style={isRTL ? {marginLeft: 8} : {marginRight: 8}}
                 />
                 <View style={{flex: 1, alignItems: isRTL ? 'flex-end' : 'flex-start'}}>
@@ -1686,7 +1686,7 @@ function ChatScreenContent({route, navigation}: any) {
                     setInputText('');
                   }}
                   hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}>
-                  <Ionicons name="close-circle" size={20} color="#9CA3AF" />
+                  <Ionicons name="close-circle" size={20} color={Colors.textMuted} />
                 </TouchableOpacity>
               </View>
             </View>
@@ -1694,8 +1694,8 @@ function ChatScreenContent({route, navigation}: any) {
 
           {/* ── Input row ── */}
           {access !== 'allowed' && !isBlocked ? (
-            <TouchableOpacity accessibilityRole="button" onPress={() => setReload(v => v + 1)} style={{padding: 20, backgroundColor: Colors.darkgrey}}>
-              <Text style={styles.historyText}>{access === 'waiting' ? (isRTL ? 'الدردشة غير متاحة. افتح الملف الشخصي للتحقق من الصداقة أو إرسال طلب جديد. اضغط هنا للتحديث.' : 'Chat is unavailable. Open their profile to check your friendship or send a new request. Tap here to refresh.') : access === 'checking' ? (isRTL ? 'جارٍ التحقق من إمكانية المراسلة…' : 'Checking messaging permission…') : (isRTL ? 'تعذر التحقق من إمكانية المراسلة. اضغط لإعادة المحاولة.' : 'Could not verify messaging permission. Tap to retry.')}</Text>
+            <TouchableOpacity accessibilityRole="button" onPress={() => setReload(v => v + 1)} style={{padding: 20, backgroundColor: Colors.surface}}>
+              <Text style={styles.historyText}>{access === 'waiting' ? (hbsText(isRTL, 'ui_chat_is_unavailable_open_their_profile_to_check_')) : access === 'checking' ? (hbsText(isRTL, 'ui_checking_messaging_permission')) : (hbsText(isRTL, 'ui_could_not_verify_messaging_permission_tap_to_ret'))}</Text>
             </TouchableOpacity>
           ) : !isBlocked ? (
             <View
@@ -1712,9 +1712,9 @@ function ChatScreenContent({route, navigation}: any) {
                 onPress={handleAttach}
                 disabled={mediaUploading}>
                 {mediaUploading ? (
-                  <ActivityIndicator size="small" color={Colors.btnRed} />
+                  <ActivityIndicator size="small" color={Colors.accent} />
                 ) : (
-                  <Ionicons name="add-circle-outline" size={24} color="#9CA3AF" />
+                  <Ionicons name="add-circle-outline" size={24} color={Colors.textMuted} />
                 )}
               </TouchableOpacity>
               <View style={styles.inputBox}>
@@ -1725,10 +1725,9 @@ function ChatScreenContent({route, navigation}: any) {
                     {textAlign: isRTL ? 'right' : 'left', writingDirection: isRTL ? 'rtl' : 'ltr'},
                   ]}
                   placeholder={t.message_placeholder}
-                  placeholderTextColor="#9CA3AF"
+                  placeholderTextColor={Colors.textMuted}
                   value={inputText}
                   onChangeText={onInputChange}
-                  onFocus={() => setEmojiKeyboardOpen(false)}
                   multiline
                   maxLength={1000}
                 />
@@ -1736,17 +1735,17 @@ function ChatScreenContent({route, navigation}: any) {
               <TouchableOpacity
                 style={[
                   styles.sendBtn,
-                  {backgroundColor: inputText.trim() && !sending ? Colors.btnRed : '#191B20'},
+                  {backgroundColor: inputText.trim() && !sending ? Colors.accent : Colors.surface},
                 ]}
                 onPress={onSend}
                 disabled={!inputText.trim() || sending}>
                 {sending ? (
-                  <ActivityIndicator size="small" color="#fff" />
+                  <ActivityIndicator size="small" color={Colors.white} />
                 ) : (
                   <Ionicons
                     name={editingMessage ? 'checkmark' : 'send'}
                     size={18}
-                    color={inputText.trim() ? '#fff' : '#9CA3AF'}
+                    color={inputText.trim() ? Colors.white : Colors.textMuted}
                   />
                 )}
               </TouchableOpacity>
@@ -1760,7 +1759,7 @@ function ChatScreenContent({route, navigation}: any) {
               <Ionicons
                 name="ban-outline"
                 size={16}
-                color="#9CA3AF"
+                color={Colors.textMuted}
                 style={isRTL ? {marginLeft: 6} : {marginRight: 6}}
               />
               <Text style={styles.blockedText}>
@@ -1771,27 +1770,6 @@ function ChatScreenContent({route, navigation}: any) {
           </View>
 
       </View>
-
-      <EmojiKeyboard
-        onEmojiSelected={({emoji}) => setInputText(prev => prev + emoji)}
-        open={emojiKeyboardOpen}
-        onClose={() => setEmojiKeyboardOpen(false)}
-        enableSearchBar
-        theme={{
-          backdrop: 'rgba(0,0,0,0.6)',
-          container: '#191B20',
-          knob: Colors.Green,
-          header: '#F5F6F8',
-          skinTonesContainer: '#23262D',
-          category: {
-            icon: '#6B7280',
-            iconActive: Colors.Green,
-            container: '#191B20',
-            containerActive: '#443035',
-          },
-          emoji: {selected: Colors.Green},
-        }}
-      />
 
       <WhatsAppMessageModal
         visible={msgModalVisible}
@@ -1846,48 +1824,48 @@ function ChatScreenContent({route, navigation}: any) {
 }
 
 const styles = StyleSheet.create({
-  datePill: {alignSelf: 'center', backgroundColor: '#23262D', borderRadius: 12, paddingVertical: 5, paddingHorizontal: 12, marginVertical: 14},
+  datePill: {alignSelf: 'center', backgroundColor: Colors.surfaceRaised, borderRadius: 12, paddingVertical: 5, paddingHorizontal: 12, marginVertical: 14},
   historyNotice: {padding: 20, alignItems: 'center'},
-  historyText: {color: '#ABB2BF', fontSize: 12, textAlign: 'center', lineHeight: 18},
-  retryText: {color: '#FF827C', fontSize: 12, textAlign: 'right', padding: 8},
-  latestButton: {position: 'absolute', bottom: 14, right: 16, minHeight: 44, backgroundColor: '#343841', borderRadius: 22, paddingHorizontal: 14, flexDirection: 'row', alignItems: 'center', gap: 5},
-  safeArea: {flex: 1, backgroundColor: Colors.darkgrey},
-  container: {flex: 1, backgroundColor: Colors.darkgrey},
-  loader: {flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#191B20'},
+  historyText: {color: Colors.textSecondary, fontSize: 12, textAlign: 'center', lineHeight: 18},
+  retryText: {color: Colors.accent, fontSize: 12, textAlign: 'right', padding: 8},
+  latestButton: {position: 'absolute', bottom: 14, right: 16, minHeight: 44, backgroundColor: Colors.border, borderRadius: 22, paddingHorizontal: 14, flexDirection: 'row', alignItems: 'center', gap: 5},
+  safeArea: {flex: 1, backgroundColor: Colors.surface},
+  container: {flex: 1, backgroundColor: Colors.surface},
+  loader: {flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.surface},
   msgRow: {marginVertical: 1},
   rowRight: {alignItems: 'flex-end'},
   rowLeft: {alignItems: 'flex-start'},
   bubble: {maxWidth: '82%', borderRadius: 18, paddingHorizontal: 11, paddingTop: 7, paddingBottom: 5},
-  bubbleRight: {backgroundColor: '#191B20', borderBottomRightRadius: 3},
-  bubbleLeft: {backgroundColor: '#23262D', borderBottomLeftRadius: 3},
+  bubbleRight: {backgroundColor: Colors.surface, borderBottomRightRadius: 3},
+  bubbleLeft: {backgroundColor: Colors.surfaceRaised, borderBottomLeftRadius: 3},
   imageBubble: {maxWidth: 260, borderRadius: 16, overflow: 'hidden'},
   imageBubbleRight: {borderBottomRightRadius: 3},
   imageBubbleLeft: {borderBottomLeftRadius: 3},
   mediaImageFull: {width: 260, height: 200},
   uploadOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.42)',
+    backgroundColor: Colors.overlaySoft,
     alignItems: 'center',
     justifyContent: 'center',
     gap: 7,
   },
   uploadOverlayText: {
-    color: '#fff',
+    color: Colors.white,
     fontSize: 12,
     fontWeight: '600',
   },
   imageTimeOverlay: {
     position: 'absolute', bottom: 6, right: 8,
     flexDirection: 'row', alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.38)', borderRadius: 8,
+    backgroundColor: Colors.overlaySoft, borderRadius: 8,
     paddingHorizontal: 6, paddingVertical: 2,
   },
-  imageTime: {color: '#fff', fontSize: 11},
+  imageTime: {color: Colors.white, fontSize: 11},
   mediaImagePadded: {width: 220, height: 160, borderRadius: 10, marginBottom: 2},
   textWithTime: {flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-end'},
   msgText: {fontSize: 15, lineHeight: 21, flexShrink: 1},
-  msgTextDark: {color: '#F5F6F8'},
-  timeSpacer: {color: 'transparent', fontSize: 11},
+  msgTextDark: {color: Colors.textPrimary},
+  timeSpacer: {color: Colors.transparent, fontSize: 11},
   inlineTime: {marginLeft: 'auto' as any, paddingBottom: 1},
   msgFooter: {flexDirection: 'row', alignItems: 'center'},
   msgFooterRow: {flexDirection: 'row', justifyContent: 'flex-end', marginTop: 3},
@@ -1895,41 +1873,41 @@ const styles = StyleSheet.create({
   editedLabel: {fontSize: 11, fontStyle: 'italic', marginRight: 2},
   replyPreview: {
     flexDirection: 'row', maxWidth: '82%', marginBottom: 2,
-    backgroundColor: 'rgba(0,0,0,0.06)', borderRadius: 12, overflow: 'hidden',
+    backgroundColor: Colors.overlaySubtle, borderRadius: 12, overflow: 'hidden',
   },
   replyRight: {alignSelf: 'flex-end'},
   replyLeft: {alignSelf: 'flex-start'},
-  replyAccent: {width: 3, backgroundColor: Colors.Green},
-  replyName: {fontSize: 12, fontWeight: '700', color: Colors.White},
-  replyText: {fontSize: 12, color: '#ABB2BF'},
+  replyAccent: {width: 3, backgroundColor: Colors.brandGreen},
+  replyName: {fontSize: 12, fontWeight: '700', color: Colors.white},
+  replyText: {fontSize: 12, color: Colors.textSecondary},
   videoThumb: {
-    width: 220, height: 160, borderRadius: 10, backgroundColor: '#111',
+    width: 220, height: 160, borderRadius: 10, backgroundColor: Colors.background,
     justifyContent: 'center', alignItems: 'center', marginBottom: 2,
   },
   docRow: {alignItems: 'center', gap: 10, paddingVertical: 4, maxWidth: 220},
   docIconWrap: {width: 36, height: 36, borderRadius: 10, justifyContent: 'center', alignItems: 'center'},
   docName: {fontSize: 13, fontWeight: '600', flex: 1},
   deletedBubble: {
-    alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.06)',
+    alignItems: 'center', backgroundColor: Colors.overlaySubtle,
     borderRadius: 16, paddingHorizontal: 12, paddingVertical: 8,
   },
-  deletedText: {fontStyle: 'italic', color: '#9CA3AF', fontSize: 13},
+  deletedText: {fontStyle: 'italic', color: Colors.textMuted, fontSize: 13},
   typingDots: {flexDirection: 'row', gap: 4, alignItems: 'center'},
-  dot: {width: 7, height: 7, borderRadius: 4, backgroundColor: '#191B20'},
+  dot: {width: 7, height: 7, borderRadius: 4, backgroundColor: Colors.surface},
   reactionsRow: {flexDirection: 'row', flexWrap: 'wrap', gap: 4, maxWidth: '82%'},
   reactionsRight: {alignSelf: 'flex-end'},
   reactionsLeft: {alignSelf: 'flex-start'},
   reactionChip: {
     flexDirection: 'row', alignItems: 'center',
-    backgroundColor: '#191B20', borderRadius: 12, paddingHorizontal: 7, paddingVertical: 3,
+    backgroundColor: Colors.surface, borderRadius: 12, paddingHorizontal: 7, paddingVertical: 3,
   },
-  reactionChipMine: {borderColor: Colors.Green, backgroundColor: '#191B20'},
+  reactionChipMine: {borderColor: Colors.brandGreen, backgroundColor: Colors.surface},
   reactionEmoji: {fontSize: 15},
-  reactionCount: {fontSize: 11, color: '#ABB2BF', fontWeight: '600'},
+  reactionCount: {fontSize: 11, color: Colors.textSecondary, fontWeight: '600'},
   swipeReplyIcon: {
     position: 'absolute', left: 4, top: '50%', marginTop: -14,
     width: 28, height: 28, borderRadius: 14,
-    backgroundColor: 'rgba(0,0,0,0.12)',
+    backgroundColor: Colors.overlaySubtle,
     justifyContent: 'center', alignItems: 'center', zIndex: -1,
   },
   composerDock: {
@@ -1938,22 +1916,22 @@ const styles = StyleSheet.create({
     right: 0,
     zIndex: 50,
     elevation: 20,
-    backgroundColor: Colors.dargBg,
+    backgroundColor: Colors.background,
   },
 
   replyBarOuter: {
-    backgroundColor: '#191B20', borderTopWidth: 0.5,
-    borderTopColor: '#343841', paddingHorizontal: 12, paddingVertical: 8,
+    backgroundColor: Colors.surface, borderTopWidth: 0.5,
+    borderTopColor: Colors.border, paddingHorizontal: 12, paddingVertical: 8,
   },
-  replyBarInner: {alignItems: 'center', backgroundColor: Colors.darkgrey, borderRadius: 12, padding: 8},
-  replyBarLabel: {fontSize: 12, fontWeight: '700', color: Colors.White},
-  replyBarText: {fontSize: 13, color: Colors.whiteGrey, marginTop: 1},
+  replyBarInner: {alignItems: 'center', backgroundColor: Colors.surface, borderRadius: 12, padding: 8},
+  replyBarLabel: {fontSize: 12, fontWeight: '700', color: Colors.white},
+  replyBarText: {fontSize: 13, color: Colors.textSecondary, marginTop: 1},
   inputRow: {
     alignItems: 'center',
     paddingHorizontal: 8,
     paddingTop: 6,
     marginBottom: 0,
-    backgroundColor: Colors.dargBg,
+    backgroundColor: Colors.background,
   },
   attachBtn: {width: 32, height: 36, justifyContent: 'center', alignItems: 'center'},
   // ✅ FIX: inputBox SAFAID tha aur textInput ka color bhi SAFAID —
@@ -1961,22 +1939,22 @@ const styles = StyleSheet.create({
   //    (app ke theme jaisa) aur text safaid. Placeholder bhi set kiya.
   inputBox: {
     flex: 1,
-    backgroundColor: Colors.darkgrey,
+    backgroundColor: Colors.surface,
     borderRadius: 18,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.12)',
+    borderColor: Colors.lightOverlaySubtle,
     paddingHorizontal: 15,
-    paddingVertical: 8,
+
     minHeight: 40,
-    maxHeight: 110,
+    maxHeight: 60,
     marginRight: 10,
   },
-  textInput: {fontSize: 15, lineHeight: 20, color: Colors.White, padding: 0},
+  textInput: {fontSize: 15, lineHeight: 20, color: Colors.white, padding: 0},
   sendBtn: {width: 44, height: 44, borderRadius: 22, justifyContent: 'center', alignItems: 'center'},
   blockedFooter: {
     alignItems: 'center', justifyContent: 'center', padding: 16,
-    backgroundColor: Colors.darkgrey,
-    borderTopWidth: 0.5, borderTopColor: 'rgba(255,255,255,0.12)',
+    backgroundColor: Colors.surface,
+    borderTopWidth: 0.5, borderTopColor: Colors.lightOverlaySubtle,
   },
-  blockedText: {color: Colors.whiteGrey, fontSize: 14},
+  blockedText: {color: Colors.textSecondary, fontSize: 14},
 });

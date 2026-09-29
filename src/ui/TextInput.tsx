@@ -7,13 +7,10 @@ export const TextInput = forwardRef<NativeTextInput, TextInputProps>((props, ref
     {...props}
     ref={ref}
     keyboardAppearance="dark"
-    placeholderTextColor={theme.muted}
-    selectionColor={theme.accent}
-    style={[styles.input, props.style, {color: theme.text, backgroundColor: theme.surface}]}
+    placeholderTextColor={props.placeholderTextColor ?? theme.muted}
+    selectionColor={props.selectionColor ?? theme.accent}
+    style={[styles.input, props.style]}
   />
 ));
-TextInput.displayName = 'DarkTextInput';
-const styles = StyleSheet.create({input: {
-  color: theme.text, backgroundColor: 'transparent', fontSize: 15,
-  letterSpacing: 0, paddingVertical: 12, minHeight: 44,
-}});
+TextInput.displayName = 'AppTextInput';
+const styles = StyleSheet.create({input: {color: theme.text, backgroundColor: theme.surface, fontSize: 15, letterSpacing: 0, paddingVertical: 12, minHeight: 44}});

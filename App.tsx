@@ -13,6 +13,13 @@ import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { navigate } from './src/halabsaudi/Notifications/RootNavigation';
 import { checkPendingNavigation } from './src/halabsaudi/Notifications/index';
+import {
+  displaySocialNotification,
+  isSocialNotification,
+  openPendingSocialNotification,
+  openSocialNotification,
+  saveSocialNavigation,
+} from './src/halabsaudi/Notifications/social';
 import { connectSocket, getSocket } from './src/halabsaudi/chat/socket';
 import { registerFCMToken } from './src/halabsaudi/chat/registerFCMToken';
 // ✅ NEW — notification count / tray manager
@@ -103,6 +110,7 @@ const App = () => {
         // ✅ FIX: agar user ne notifications khud swipe kar di hon to badge
         //    bhi utna kam ho jaye. Pehle badge atka rehta tha.
         await syncBadgeWithTray();
+        await openPendingSocialNotification();
       }
       appState.current = nextState;
     });
@@ -110,18 +118,25 @@ const App = () => {
     // ✅ App CLOSED → tap notification
     messaging()
       .getInitialNotification()
-      .then(remoteMessage => {
-        if (remoteMessage?.data?.chatId) {
-          navigateToChat(remoteMessage.data, 1500);
+      .then(async remoteMessage => {
+        const data = remoteMessage?.data as Record<string, any> | undefined;
+        if (isSocialNotification(data)) {
+          await saveSocialNavigation(data);
+          setTimeout(() => openPendingSocialNotification(), 1500);
+          return;
         }
+        if (data?.chatId) navigateToChat(data, 1500);
       });
 
     // ✅ App BACKGROUND → tap notification
     const unsubscribeFCMBackground = messaging().onNotificationOpenedApp(
-      remoteMessage => {
-        if (remoteMessage?.data?.chatId) {
-          navigateToChat(remoteMessage.data);
+      async remoteMessage => {
+        const data = remoteMessage?.data as Record<string, any> | undefined;
+        if (isSocialNotification(data)) {
+          await openSocialNotification(data);
+          return;
         }
+        if (data?.chatId) navigateToChat(data);
       },
     );
 
@@ -130,6 +145,11 @@ const App = () => {
       async remoteMessage => {
         try {
           await createChatChannel();
+          const socialData = remoteMessage?.data as Record<string, any> | undefined;
+          if (isSocialNotification(socialData)) {
+            await displaySocialNotification(remoteMessage);
+            return;
+          }
           const chatId = remoteMessage?.data?.chatId;
           if (!chatId) return;
 
@@ -159,7 +179,11 @@ const App = () => {
     const unsubscribeForeground = notifee.onForegroundEvent(
       ({ type, detail }) => {
         if (type === EventType.PRESS) {
-          const d = detail.notification?.data;
+          const d = detail.notification?.data as Record<string, any> | undefined;
+          if (isSocialNotification(d)) {
+            openSocialNotification(d);
+            return;
+          }
           if (d?.chatId) navigateToChat(d);
           if (d?.venueId) navigate('SelectedVenue', { venueId: d.venueId });
         }

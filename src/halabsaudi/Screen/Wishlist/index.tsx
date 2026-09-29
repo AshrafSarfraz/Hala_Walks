@@ -22,7 +22,7 @@ const { width } = Dimensions.get('screen');
 type WishlistProps = { navigation: any };
 
 const Wishlist: React.FC<WishlistProps> = () => {
- useStatusBar('light-content', Colors.darkgrey, true);
+ useStatusBar('light-content', Colors.surface, true);
   const navigation = useNavigation<any>();
   const dispatch = useDispatch();
 
@@ -89,7 +89,7 @@ const Wishlist: React.FC<WishlistProps> = () => {
        
         <View style={[s.headerRow, { flexDirection: rowDir }]}>
 
-          <TouchableOpacity accessibilityRole="button" accessibilityLabel="Back" onPress={() => navigation.canGoBack() ? navigation.goBack() : navigation.navigate('BottomTab', {screen: 'Home'})} style={{width: 44, height: 44, justifyContent: 'center', alignItems: 'center', marginRight: 8}}><Ionicons name="arrow-back" size={25} color={Colors.White} /></TouchableOpacity>
+          <TouchableOpacity accessibilityRole="button" accessibilityLabel="Back" onPress={() => navigation.canGoBack() ? navigation.goBack() : navigation.navigate('BottomTab', {screen: 'Home'})} style={{width: 44, height: 44, justifyContent: 'center', alignItems: 'center', marginRight: 8}}><Ionicons name="arrow-back" size={25} color={Colors.white} /></TouchableOpacity>
           <View style={[s.headerText, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
             <Text style={[s.eyebrow, { textAlign }]}>{t.hala_community}</Text>
             <Text style={[s.headerTitle, { textAlign }]}>{t.Wishlist}</Text>
@@ -123,7 +123,7 @@ const Wishlist: React.FC<WishlistProps> = () => {
           ListEmptyComponent={() => (
             <View style={s.emptyWrap}>
               <View style={s.emptyRing}>
-                <Ionicons name="heart-outline" size={42} color={Colors.Black} />
+                <Ionicons name="heart-outline" size={42} color={Colors.black} />
               </View>
               <Text style={[s.emptyTitle, { textAlign: 'center' }]}>
                 {t.No_Items_Found}
@@ -211,12 +211,12 @@ const CARD_WIDTH = (width - 12 * 2 - 10) / 2;
 const s = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: Colors.darkgrey,
+    backgroundColor: Colors.surface,
   },
 
   // ── Header ──
   header: {
-    backgroundColor: Colors.darkgrey,
+    backgroundColor: Colors.surface,
     paddingTop: Platform.OS === 'ios' ? 4 : 10,
     paddingBottom: 20,
     paddingHorizontal: 18,
@@ -230,7 +230,7 @@ const s = StyleSheet.create({
   headerText: { flex: 1 },
   eyebrow: {
     fontSize: 10,
-    color: Colors.White,
+    color: Colors.white,
     letterSpacing: 0.2,
     textTransform: 'uppercase',
     marginBottom: 3,
@@ -238,19 +238,19 @@ const s = StyleSheet.create({
   headerTitle: {
     fontSize: 22,
     fontWeight: '800',
-    color: Colors.White,
+    color: Colors.white,
     letterSpacing: -0.3,
   },
   countBadge: {
-    backgroundColor: 'rgba(255,255,255,0.18)',
+    backgroundColor: Colors.lightOverlaySubtle,
     borderRadius: 20,
     paddingHorizontal: 12,
     paddingVertical: 5,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.15)',
+    borderColor: Colors.lightOverlaySubtle,
   },
   countBadgeText: {
-    color: Colors.White,
+    color: Colors.white,
     fontSize: 13,
     fontWeight: '700',
   },
@@ -258,7 +258,7 @@ const s = StyleSheet.create({
   // ── Body ──
   body: {
     flex: 1,
-    backgroundColor: Colors.dargBg,
+    backgroundColor: Colors.background,
     paddingTop: 10,
   },
 
@@ -270,10 +270,10 @@ const s = StyleSheet.create({
   // ── Card ──
   card: {
     width: CARD_WIDTH,
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     borderRadius: 16,
     overflow: 'hidden',
-    shadowColor: '#1A202C',
+    shadowColor: Colors.black,
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.07,
     shadowRadius: 10,
@@ -285,7 +285,7 @@ const s = StyleSheet.create({
   },
   imageOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.08)',
+    backgroundColor: Colors.overlaySubtle,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
   },
@@ -294,7 +294,7 @@ const s = StyleSheet.create({
     width: 34,
     height: 34,
     borderRadius: 17,
-    backgroundColor: 'rgba(255,255,255,0.85)',
+    backgroundColor: Colors.lightOverlay,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -302,7 +302,7 @@ const s = StyleSheet.create({
     width: 18,
     height: 18,
     resizeMode: 'contain',
-    tintColor: 'red',
+    tintColor: Colors.accent,
   },
 
   cardBody: {
@@ -313,11 +313,11 @@ const s = StyleSheet.create({
   cardName: {
     fontSize: 13,
     fontFamily: Fonts.SF_Bold,
-    color: Colors.White,
+    color: Colors.white,
     marginBottom: 6,
   },
   categoryPill: {
-    backgroundColor: '#D0A700',
+    backgroundColor: Colors.warning,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 6,
@@ -326,7 +326,7 @@ const s = StyleSheet.create({
   },
   categoryPillText: {
     fontSize: 10,
-    color: Colors.White,
+    color: Colors.white,
     fontFamily: Fonts.SF_Medium,
     lineHeight: 13,
   },
@@ -344,16 +344,16 @@ const s = StyleSheet.create({
     width: 11,
     height: 11,
     resizeMode: 'contain',
-    tintColor: Colors.btnRed,
+    tintColor: Colors.accent,
   },
   locText: {
     fontSize: 10,
-    color: Colors.btnRed,
+    color: Colors.accent,
     fontFamily: Fonts.SF_Medium,
   },
   venueTxt: {
     fontSize: 10,
-    color: Colors.btnRed,
+    color: Colors.accent,
     fontFamily: Fonts.SF_Medium,
     maxWidth: '45%',
   },
@@ -367,18 +367,18 @@ const s = StyleSheet.create({
   },
   emptyRing: {
     width: 84, height: 84, borderRadius: 42,
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     justifyContent: 'center', alignItems: 'center',
     marginBottom: 8,
-    borderWidth: 3, borderColor: Colors.Black,
+    borderWidth: 3, borderColor: Colors.black,
   },
   emptyTitle: {
     fontSize: 17,
     fontWeight: '700',
-    color: Colors.White,
+    color: Colors.white,
   },
   emptySub: {
     fontSize: 13,
-    color: Colors.Grey9,
+    color: Colors.textMuted,
   },
 });

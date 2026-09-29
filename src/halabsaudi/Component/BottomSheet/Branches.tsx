@@ -17,6 +17,8 @@ import {Fonts} from '../../Themes/Fonts';
 import {RootState} from '../../redux_toolkit/store';
 import {languageData} from '../../redux_toolkit/language/languageSlice';
 
+import {hbsText} from '../../i18n/translations';
+
 type Brand = {
   id: string; // mapped from _id
   _id?: any;
@@ -248,24 +250,18 @@ const Branches = forwardRef<RBSheetRef, Props>(
         closeOnPressMask
         height={height}
         customStyles={{
-          wrapper: {backgroundColor: 'rgba(0, 0, 0, 0.3)'},
+          wrapper: {backgroundColor: Colors.overlaySoft},
           container: {
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
-            backgroundColor: '#191B20',
+            backgroundColor: Colors.surface,
             elevation: 10,
           },
-          draggableIcon: {backgroundColor: '#191B20'},
+          draggableIcon: {backgroundColor: Colors.surface},
         }}>
         <View style={styles.container}>
           <Text style={styles.sheetTitle}>
-            {language === 'ar'
-              ? brandName
-                ? `فروع ${brandName}`
-                : 'الفروع'
-              : brandName
-              ? `Branches of ${brandName}`
-              : 'Branches'}
+            {brandName ? hbsText(language === 'ar', 'ui_branches_of_name', {name: brandName}) : hbsText(language === 'ar', 'ui_branches')}
           </Text>
 
           {loading ? (
@@ -296,14 +292,14 @@ const getStyles = (language: string) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#191B20',
+      backgroundColor: Colors.surface,
       paddingHorizontal: '4%',
       paddingTop: Platform.OS === 'ios' ? '5%' : '5%',
       paddingBottom: Platform.OS === 'ios' ? '2%' : '2%',
     },
     sheetTitle: {
       fontSize: 16,
-      color: '#F5F6F8',
+      color: Colors.textPrimary,
       fontFamily: Fonts.SF_Bold,
       textAlign: language === 'ar' ? 'right' : 'left',
       marginBottom: 10,
@@ -314,13 +310,13 @@ const getStyles = (language: string) =>
     itemContainer: {
       flexDirection: language === 'ar' ? 'row-reverse' : 'row',
       alignItems: 'center',
-      backgroundColor: '#191B20',
+      backgroundColor: Colors.surface,
       padding: 12,
       marginBottom: 10,
       borderRadius: 8,
       borderWidth: 1,
-      borderColor: '#343841',
-      shadowColor: '#000',
+      borderColor: Colors.border,
+      shadowColor: Colors.black,
       shadowOffset: {width: 0, height: 2},
       shadowOpacity: 0.1,
       shadowRadius: 4,
@@ -333,26 +329,26 @@ const getStyles = (language: string) =>
       marginRight: language === 'ar' ? 0 : 10,
       marginLeft: language === 'ar' ? 10 : 0,
       resizeMode: 'cover',
-      backgroundColor: '#191B20',
+      backgroundColor: Colors.surface,
     },
     imgPlaceholder: {
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: '#191B20',
+      backgroundColor: Colors.surface,
     },
     itemInfo: {
       flex: 1,
     },
     itemTitle: {
       fontSize: 16,
-      color: '#F5F6F8',
+      color: Colors.textPrimary,
       fontFamily: Fonts.SF_Bold,
       textAlign: language === 'ar' ? 'right' : 'left',
     },
     itemDescription: {
       marginTop: 4,
       fontSize: 12,
-      color: '#ABB2BF',
+      color: Colors.textSecondary,
       fontFamily: Fonts.SF_Regular,
       lineHeight: 18,
       textAlign: language === 'ar' ? 'right' : 'left',
@@ -360,14 +356,14 @@ const getStyles = (language: string) =>
     itemVenue: {
       marginTop: 6,
       fontSize: 12,
-      color: '#F5F6F8',
+      color: Colors.textPrimary,
       fontFamily: Fonts.SF_Medium,
       textAlign: language === 'ar' ? 'right' : 'left',
     },
     emptyText: {
       paddingVertical: 24,
       textAlign: 'center',
-      color: '#ABB2BF',
+      color: Colors.textSecondary,
       fontFamily: Fonts.SF_Regular,
     },
   });

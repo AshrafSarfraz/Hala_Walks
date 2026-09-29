@@ -23,12 +23,14 @@ import {getStyles} from './style';
 import {useStatusBar} from '../../Component/UseStatusBar/useStatusBar';
 import {BASE_URL} from '../../../config/api';
 
-const CHEVRON_COLOR = '#5C616B';
-const ICON_COLOR = Colors.btnRed;
+import {hbsText} from '../../i18n/translations';
+
+const CHEVRON_COLOR = Colors.border;
+const ICON_COLOR = Colors.accent;
 
 const Profile: React.FC = () => {
   const navigation = useNavigation<any>();
-  useStatusBar('dark-content', Colors.White4, true);
+  useStatusBar('light-content', Colors.surface, true);
   const [alertVisible, setAlertVisible] = useState(false);
   const [showLastSeen, setShowLastSeen] = useState(true);
   const [showOnlineStatus, setShowOnlineStatus] = useState(true);
@@ -48,7 +50,6 @@ const Profile: React.FC = () => {
   const t = languageData[language];
   const s = getStyles(language);
   const chevron = isAr ? 'chevron-back' : 'chevron-forward';
-  const tr = (en: string, ar: string) => (isAr ? ar : en);
 
   const getToken = async () => await AsyncStorage.getItem('hala_token');
 
@@ -224,14 +225,14 @@ const Profile: React.FC = () => {
       </View>
       <View style={s.switchSlot}>
         {loading ? (
-          <ActivityIndicator size="small" color={Colors.Red} />
+          <ActivityIndicator size="small" color={Colors.accent} />
         ) : (
           <Switch
             value={value}
             onValueChange={onChange}
-            trackColor={{false: '#3A3E47', true: Colors.Red}}
-            thumbColor="#fff"
-            ios_backgroundColor="#3A3E47"
+            trackColor={{false: Colors.surfaceRaised, true: Colors.accent}}
+            thumbColor={Colors.white}
+            ios_backgroundColor={Colors.surfaceRaised}
             style={s.switch}
           />
         )}
@@ -242,17 +243,17 @@ const Profile: React.FC = () => {
   const Divider = () => <View style={s.divider} />;
 
   const messageOptions: [string, string][] = [
-    ['friends', tr('Friends', 'الأصدقاء')],
-    ['nobody', tr('Nobody', 'لا أحد')],
+    ['friends', hbsText(isAr, 'ui_friends_3')],
+    ['nobody', hbsText(isAr, 'ui_nobody')],
   ];
 
   return (
     <SafeAreaView style={s.safe} edges={['top', 'bottom']}>
-      <CustomHeader title={tr('Settings', 'الإعدادات')} onBackPress={() => navigation.goBack()} />
+      <CustomHeader title={hbsText(isAr, 'ui_settings_2')} onBackPress={() => navigation.goBack()} />
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: 48}}>
         {/* Account */}
-        <Text style={s.sectionLabel}>{tr('Account', 'الحساب')}</Text>
+        <Text style={s.sectionLabel}>{hbsText(isAr, 'ui_account')}</Text>
         <View style={s.card}>
           <NavRow icon="person-outline" label={t.account} onPress={() => navigation.navigate('EditAccount')} />
           <Divider />
@@ -264,38 +265,35 @@ const Profile: React.FC = () => {
         </View>
 
         {/* Chat & people */}
-        <Text style={s.sectionLabel}>{tr('Chat', 'الدردشة')}</Text>
+        <Text style={s.sectionLabel}>{hbsText(isAr, 'ui_chat')}</Text>
         <View style={s.card}>
           <NavRow
             icon="people-outline"
-            label={tr('Friends', 'الأصدقاء')}
+            label={hbsText(isAr, 'ui_friends_3')}
             onPress={() => navigation.navigate('SocialConnections', {mode: 'friends'})}
           />
           <Divider />
           <NavRow
             icon="person-add-outline"
-            label={tr('Friend requests', 'طلبات الصداقة')}
+            label={hbsText(isAr, 'ui_friend_requests_2')}
             onPress={() => navigation.navigate('SocialConnections', {mode: 'requests'})}
           />
           <Divider />
           <NavRow
             icon="ban-outline"
-            label={t.blocked_accounts || tr('Blocked users', 'المستخدمون المحظورون')}
+            label={t.blocked_accounts || hbsText(isAr, 'ui_blocked_users')}
             onPress={() => navigation.navigate('BlockedUsers')}
-            right={<Text style={s.rightLabel}>{tr('Manage', 'إدارة')}</Text>}
+            right={<Text style={s.rightLabel}>{hbsText(isAr, 'ui_manage')}</Text>}
           />
         </View>
 
         {/* Privacy */}
-        <Text style={s.sectionLabel}>{tr('Privacy', 'الخصوصية')}</Text>
+        <Text style={s.sectionLabel}>{hbsText(isAr, 'ui_privacy')}</Text>
         <View style={s.card}>
           <SwitchRow
             icon="lock-closed-outline"
-            label={tr('Private account', 'حساب خاص')}
-            sub={tr(
-              'Only friends can see your check-ins and friends list. Counts stay visible.',
-              'يمكن للأصدقاء فقط رؤية زياراتك وقائمة أصدقائك. تبقى الأعداد ظاهرة.',
-            )}
+            label={hbsText(isAr, 'ui_private_account')}
+            sub={hbsText(isAr, 'ui_only_friends_can_see_private_content')}
             value={isPrivate}
             loading={privacySaving}
             onChange={value => updateAccountPrivacy({isPrivate: value})}
@@ -304,7 +302,7 @@ const Profile: React.FC = () => {
           <TouchableOpacity style={s.switchRow} activeOpacity={0.6} onPress={() => setMessagePickerOpen(true)}>
             <Icon name="chatbubble-ellipses-outline" />
             <View style={s.rowText}>
-              <Text style={s.switchLabel}>{tr('Who can message you', 'من يمكنه مراسلتك')}</Text>
+              <Text style={s.switchLabel}>{hbsText(isAr, 'ui_who_can_message_you')}</Text>
               <Text style={s.switchSub}>
                 {messagePermission === 'nobody' ? messageOptions[1][1] : messageOptions[0][1]}
               </Text>
@@ -315,7 +313,7 @@ const Profile: React.FC = () => {
           <SwitchRow
             icon="time-outline"
             label={t.show_last_seen}
-            sub={showLastSeen ? t.last_seen_desc : tr('Last seen hidden from everyone', 'آخر ظهور مخفي')}
+            sub={showLastSeen ? t.last_seen_desc : hbsText(isAr, 'ui_last_seen_hidden_from_everyone')}
             value={showLastSeen}
             loading={lastSeenLoading}
             onChange={val => updatePrivacy('hideLastSeen', val)}
@@ -324,7 +322,7 @@ const Profile: React.FC = () => {
           <SwitchRow
             icon="radio-button-on-outline"
             label={t.online_status}
-            sub={showOnlineStatus ? t.online_status_desc : tr('Online status hidden from everyone', 'حالة الاتصال مخفية')}
+            sub={showOnlineStatus ? t.online_status_desc : hbsText(isAr, 'ui_online_status_hidden_from_everyone')}
             value={showOnlineStatus}
             loading={onlineLoading}
             onChange={val => updatePrivacy('hideOnlineStatus', val)}
@@ -336,7 +334,7 @@ const Profile: React.FC = () => {
         <View style={s.card}>
           <TouchableOpacity style={s.logoutRow} onPress={handleLogout} activeOpacity={0.7}>
             <View style={s.iconBubble}>
-              <Ionicons name="log-out-outline" size={18} color="#EF4444" />
+              <Ionicons name="log-out-outline" size={18} color={Colors.accent} />
             </View>
             <Text style={s.logoutTxt}>{t.logout}</Text>
           </TouchableOpacity>
@@ -354,12 +352,9 @@ const Profile: React.FC = () => {
         <Pressable style={s.sheetBackdrop} onPress={() => setMessagePickerOpen(false)}>
           <Pressable style={s.sheet} onPress={() => {}}>
             <View style={s.sheetHandle} />
-            <Text style={s.sheetTitle}>{tr('Who can message you?', 'من يمكنه مراسلتك؟')}</Text>
+            <Text style={s.sheetTitle}>{hbsText(isAr, 'ui_who_can_message_you_2')}</Text>
             <Text style={s.sheetSub}>
-              {tr(
-                'Only accepted friends can message you. You can also turn messaging off.',
-                'يمكن للأصدقاء المقبولين فقط مراسلتك. يمكنك أيضاً إيقاف المراسلة.',
-              )}
+              {hbsText(isAr, 'ui_only_accepted_friends_can_message')}
             </Text>
             {messageOptions.map(([value, label], i) => (
               <TouchableOpacity
@@ -371,7 +366,7 @@ const Profile: React.FC = () => {
                 }}>
                 <Text style={s.sheetOptionTxt}>{label}</Text>
                 {messagePermission === value && (
-                  <Ionicons name="checkmark-circle" size={22} color={Colors.btnRed} />
+                  <Ionicons name="checkmark-circle" size={22} color={Colors.accent} />
                 )}
               </TouchableOpacity>
             ))}
@@ -387,7 +382,7 @@ const Profile: React.FC = () => {
         onRequestClose={() => setShowFullImage(false)}>
         <View style={s.imageOverlay}>
           <TouchableOpacity style={s.closeBtn} onPress={() => setShowFullImage(false)}>
-            <Ionicons name="close" size={24} color="#fff" />
+            <Ionicons name="close" size={24} color={Colors.white} />
           </TouchableOpacity>
           <Text style={s.viewerName}>{userName}</Text>
           {userAvatar && (
@@ -407,8 +402,8 @@ const Profile: React.FC = () => {
               setShowFullImage(false);
               navigation.navigate('EditAccount');
             }}>
-            <Ionicons name="pencil-outline" size={16} color="#fff" />
-            <Text style={s.viewerEditTxt}>{tr('Change Photo', 'تغيير الصورة')}</Text>
+            <Ionicons name="pencil-outline" size={16} color={Colors.white} />
+            <Text style={s.viewerEditTxt}>{hbsText(isAr, 'ui_change_photo')}</Text>
           </TouchableOpacity>
         </View>
       </Modal>
@@ -417,8 +412,8 @@ const Profile: React.FC = () => {
       {loggingOut && (
         <View style={s.overlay}>
           <View style={s.overlayBox}>
-            <ActivityIndicator size="large" color={Colors.Red} />
-            <Text style={s.overlayText}>{tr('Logging out…', 'جارٍ تسجيل الخروج…')}</Text>
+            <ActivityIndicator size="large" color={Colors.accent} />
+            <Text style={s.overlayText}>{hbsText(isAr, 'ui_logging_out')}</Text>
           </View>
         </View>
       )}

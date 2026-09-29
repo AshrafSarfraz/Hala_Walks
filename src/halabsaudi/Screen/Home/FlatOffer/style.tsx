@@ -7,7 +7,7 @@ const {width} = Dimensions.get('window'); // ✅ window instead of screen
 export const getStyles = (language: string) =>
   StyleSheet.create({
     container: {
-      backgroundColor: Colors.dargBg,
+      backgroundColor: Colors.background,
       alignItems: 'center',
       marginHorizontal: '4%',
       marginTop: 10,
@@ -28,13 +28,13 @@ export const getStyles = (language: string) =>
     },
     overlay: {
       ...StyleSheet.absoluteFillObject,
-      backgroundColor: 'rgba(0, 0, 0, 0.3)',
+      backgroundColor: Colors.overlaySoft,
       padding: '4%',
       justifyContent: 'flex-end',
       alignItems: 'flex-end',
     },
     imageText: {
-      color: 'white',
+      color: Colors.white,
       fontSize: 18,
       fontWeight: 'bold',
     },

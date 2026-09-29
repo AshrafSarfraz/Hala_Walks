@@ -6,7 +6,7 @@ export const getStyles = (language: string) =>
   StyleSheet.create({
     Root: {
       flex: 1,
-      backgroundColor: Colors.dargBg,
+      backgroundColor: Colors.background,
     },
     Flex: {
       flex: 1,
@@ -32,13 +32,13 @@ export const getStyles = (language: string) =>
     Welcome_Txt: {
       fontSize: 24,
       fontFamily: Fonts.SF_Bold,
-      color: Colors.White,
+      color: Colors.white,
       lineHeight: 30,
       textAlign: 'center',
     },
     SignUp_Txt: {
       fontSize: 15,
-      color: Colors.Grey9,
+      color: Colors.textMuted,
       fontFamily: Fonts.SF_Medium,
       lineHeight: 21,
       textAlign: 'center',
@@ -54,9 +54,9 @@ export const getStyles = (language: string) =>
       flexDirection: language === 'en' ? 'row' : 'row-reverse',
       alignItems: 'center',
       height: 58,
-      backgroundColor: '#191B20',
+      backgroundColor: Colors.surface,
       borderWidth: 1.5,
-      borderColor: Colors.grey1,
+      borderColor: Colors.textSecondary,
       borderRadius: 14,
       paddingHorizontal: 14,
       marginBottom: 12,
@@ -72,9 +72,9 @@ export const getStyles = (language: string) =>
       flexDirection: language === 'en' ? 'row' : 'row-reverse',
       alignItems: 'center',
       height: 58,
-      backgroundColor: '#191B20',
+      backgroundColor: Colors.surface,
       borderWidth: 1.5,
-      borderColor: Colors.grey1,
+      borderColor: Colors.textSecondary,
       borderRadius: 14,
       paddingHorizontal: 6,
       marginBottom: 12,
@@ -82,16 +82,16 @@ export const getStyles = (language: string) =>
     },
     // Colour only — border width stays 1.5 so nothing shifts while typing.
     Active_Input_Field: {
-      borderColor: Colors.Green,
+      borderColor: Colors.brandGreen,
     },
     User_Input: {
       flex: 1,
       minWidth: 0,
       height: 44,
       fontSize: 15,
-      color: Colors.White,
+      color: Colors.white,
       paddingVertical: 0,
-      backgroundColor: 'transparent',
+      backgroundColor: Colors.transparent,
       textAlign: language === 'en' ? 'left' : 'right',
     },
     PhoneNumber_Input: {
@@ -99,14 +99,14 @@ export const getStyles = (language: string) =>
       minWidth: 0,
       height: 44,
       fontSize: 15,
-      color: Colors.White,
+      color: Colors.white,
       paddingVertical: 0,
       paddingHorizontal: 12,
       textAlign: language === 'en' ? 'left' : 'right',
       borderLeftWidth: language === 'en' ? 1 : 0,
       borderRightWidth: language === 'en' ? 0 : 1,
-      borderColor: Colors.Grey9,
-      backgroundColor: 'transparent',
+      borderColor: Colors.textMuted,
+      backgroundColor: Colors.transparent,
       letterSpacing: 0.3,
     },
     CheckboxRow: {
@@ -121,7 +121,7 @@ export const getStyles = (language: string) =>
     Error: {
       fontSize: 12,
       fontWeight: '600',
-      color: '#FF5A5A',
+      color: Colors.accent,
       textAlign: language === 'en' ? 'left' : 'right',
     },
     Link_Btn: {
@@ -130,7 +130,7 @@ export const getStyles = (language: string) =>
       paddingVertical: 6,
     },
     Link_Txt: {
-      color: Colors.White,
+      color: Colors.white,
       fontSize: 14,
       fontWeight: '600',
       textDecorationLine: 'underline',

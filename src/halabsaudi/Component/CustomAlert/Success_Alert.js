@@ -28,10 +28,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: Colors.overlaySoft,
   },
   alertContainer: {
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     borderRadius: 10,
     padding: '5%',
     width: '90%',
@@ -43,25 +43,25 @@ const styles = StyleSheet.create({
     Header_Txt:{
       fontSize:20,
       fontFamily:Fonts.SF_Bold,
-      color:'#F5F6F8',
+      color:Colors.textPrimary,
       lineHeight:26,
     },
     Txt:{
       fontSize:16,
       fontFamily:Fonts.SF_Medium,
-      color:'#F5F6F8',
+      color:Colors.textPrimary,
       lineHeight:20,
       textAlign:"center",
       marginVertical:"5%"
     },
   okButton: {
-    backgroundColor:Colors.Green,
+    backgroundColor:Colors.brandGreen,
     paddingVertical: '6%',
     paddingHorizontal: '12%',
     borderRadius: 10,
   },
   okButtonText: {
-    color: Colors.White,
+    color: Colors.white,
     fontSize: 14,
     lineHeight:18,
     fontFamily:Fonts.SF_Bold

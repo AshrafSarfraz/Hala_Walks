@@ -6,7 +6,7 @@ export const getStyles =(language:String)=> StyleSheet.create({
   
   Container: {
     flex:1,
-    backgroundColor: Colors.dargBg,
+    backgroundColor: Colors.background,
     paddingHorizontal: Platform.OS === 'ios' ? '0%' : '0%',
     // ✅ marginTop: Platform.OS === 'ios' ? 0 : '8%'  HATAYA.
     // 8% har phone par alag pixel banta tha (SE=25px, Pro Max=58px).
@@ -18,7 +18,7 @@ export const getStyles =(language:String)=> StyleSheet.create({
     flexDirection: language==='en'?'row':'row-reverse',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor:Colors.darkgrey,
+    backgroundColor:Colors.surface,
     paddingBottom:4,
     zIndex: 999,        // ✅
     elevation: 999,     // ✅ Android — header sabse upar
@@ -44,14 +44,14 @@ export const getStyles =(language:String)=> StyleSheet.create({
     width: 25,
     height: 25,
     resizeMode: 'contain',
-    tintColor: '#F5F6F8',
+    tintColor: Colors.textPrimary,
   },
 
   Scope_Icon: {
     width: 24,
     height: 24,
     resizeMode: 'contain',
-    tintColor: '#FFF',
+    tintColor: Colors.white,
     marginRight:5
   },
   Categories_Cont: {
@@ -60,7 +60,7 @@ export const getStyles =(language:String)=> StyleSheet.create({
   Categories_Txt: {
     fontSize: language==='en'?18:16,
     fontFamily: language==='en'?Fonts.SF_Bold:'',
-    color: Colors.White,
+    color: Colors.white,
     fontWeight:language==='en'?'400':'bold',
     lineHeight: language==='en'?24:30,
     marginHorizontal:'4%',
@@ -73,7 +73,7 @@ export const getStyles =(language:String)=> StyleSheet.create({
   BestSeller_Txt: {
   fontSize: language==='en'?18:16,
     fontFamily: language==='en'?Fonts.SF_Bold:'',
-    color: Colors.White,
+    color: Colors.white,
     fontWeight:language==='en'?'400':'bold',
     lineHeight: language==='en'?24:30,
     marginHorizontal:'4%',

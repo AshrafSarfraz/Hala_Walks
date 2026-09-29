@@ -21,11 +21,13 @@ import Branches from '../../Component/BottomSheet/Branches';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {useStatusBar} from '../../Component/UseStatusBar/useStatusBar';
 
+import {hbsText} from '../../i18n/translations';
+
 const {width} = Dimensions.get('screen');
 
 const DetailScreen: React.FC<{route: any}> = ({route}) => {
   const {item} = route.params;
-  useStatusBar('light-content', Colors.dargBg);
+  useStatusBar('light-content', Colors.background);
   const dispatch = useDispatch();
   const navigation = useNavigation<any>();
   const refRBSheet = useRef<React.ElementRef<typeof RBSheet>>(null);
@@ -120,13 +122,13 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
   };
 
   const daysArabic: any = {
-    monday: 'الاثنين',
-    tuesday: 'الثلاثاء',
-    wednesday: 'الأربعاء',
-    thursday: 'الخميس',
-    friday: 'الجمعة',
-    saturday: 'السبت',
-    sunday: 'الأحد',
+    monday: hbsText(true, 'ui_monday'),
+    tuesday: hbsText(true, 'ui_tuesday'),
+    wednesday: hbsText(true, 'ui_wednesday'),
+    thursday: hbsText(true, 'ui_thursday'),
+    friday: hbsText(true, 'ui_friday'),
+    saturday: hbsText(true, 'ui_saturday'),
+    sunday: hbsText(true, 'ui_sunday'),
   };
 
   const sliderUrls = useMemo(() => {
@@ -139,8 +141,8 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
   }, [item]);
 
   return (
-    <View style={{flex: 1, backgroundColor: Colors.dargBg}}>
-      <SafeAreaView edges={['top']} style={{backgroundColor: Colors.darkgrey}}>
+    <View style={{flex: 1, backgroundColor: Colors.background}}>
+      <SafeAreaView edges={['top']} style={{backgroundColor: Colors.surface}}>
         <View style={styles.HeaderCont}>
           <CustomHeader
             title={languageData[language].Detail_Screen}

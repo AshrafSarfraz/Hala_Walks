@@ -29,7 +29,7 @@ type CacheShape = {
 
 const SelectedVenues: React.FC<{route: any}> = ({route}) => {
   const navigation = useNavigation<any>();
-  useStatusBar('light-content', Colors.dargBg);
+  useStatusBar('light-content', Colors.background);
   const {item} = route.params;
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -248,13 +248,13 @@ const SelectedVenues: React.FC<{route: any}> = ({route}) => {
 
   return (
     <View style={styles.container}>
-      <SafeAreaView edges={['top']} style={{backgroundColor: Colors.darkgrey}}>
+      <SafeAreaView edges={['top']} style={{backgroundColor: Colors.surface}}>
         <View style={{paddingHorizontal: '4%', paddingBottom: 5}}>
           <CustomHeader title={item?.venueName} onBackPress={() => navigation.goBack()} />
         </View>
       </SafeAreaView>
 
-      <View style={{flex: 1, paddingHorizontal: '4%', backgroundColor: Colors.dargBg}}>
+      <View style={{flex: 1, paddingHorizontal: '4%', backgroundColor: Colors.background}}>
         <View style={{marginTop: '4%'}} />
 
         <View style={styles.searchContainer}>
@@ -262,7 +262,7 @@ const SelectedVenues: React.FC<{route: any}> = ({route}) => {
           <TextInput
             style={styles.searchInput}
             placeholder={languageData[language].Search_for_anything}
-            placeholderTextColor='#ccc'
+            placeholderTextColor={Colors.textSecondary}
             value={searchQuery}
             onChangeText={setSearchQuery}
           />

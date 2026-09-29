@@ -190,14 +190,14 @@ export default function WhatsAppMessageModal({
               <Text
                 style={[
                   styles.label,
-                  a.destructive && {color: 'red'},
+                  a.destructive && {color: Colors.accent},
                 ]}>
                 {a.label}
               </Text>
               <Ionicons
                 name={a.icon}
                 size={18}
-                color={a.destructive ? 'red' : '#333'}
+                color={a.destructive ? Colors.accent : Colors.textPrimary}
               />
             </TouchableOpacity>
           ))}
@@ -210,7 +210,7 @@ export default function WhatsAppMessageModal({
 const styles = StyleSheet.create({
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.45)',
+    backgroundColor: Colors.overlaySoft,
   },
 
   wrapper: {
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
 
   reactionBar: {
     flexDirection: 'row',
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     borderRadius: 30,
     padding: 6,
     marginBottom: 8,
@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
   },
 
   menu: {
-    backgroundColor: '#191B20',
+    backgroundColor: Colors.surface,
     borderRadius: 14,
     overflow: 'hidden',
     elevation: 6,
@@ -248,11 +248,11 @@ const styles = StyleSheet.create({
   },
   border: {
     borderBottomWidth: 0.5,
-    borderColor: '#343841',
+    borderColor: Colors.border,
   },
   label: {
     fontSize: 15,
-    color: '#F5F6F8',
+    color: Colors.textPrimary,
   },
 
   // ✅ TOAST
@@ -260,13 +260,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: SCREEN_H * 0.4,
     alignSelf: 'center',
-    backgroundColor: 'rgba(0,0,0,0.75)',
+    backgroundColor: Colors.overlay,
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
   },
   toastText: {
-    color: '#fff',
+    color: Colors.white,
     fontSize: 14,
     fontWeight: '600',
   },

@@ -8,6 +8,10 @@ import {Text} from '../../../ui/Text';
 import {BASE_URL} from '../../../config/api';
 import {useSocialRefresh} from '../useSocialRefresh';
 
+import {Colors} from '../../Themes/Colors';
+
+import {hbsText} from '../../i18n/translations';
+
 export default function FollowRequestsButton({navigation}: {navigation: any}) {
   const ar = useSelector((state: any) => state.language.language === 'ar');
   const [count, setCount] = useState<number | null>(null);
@@ -23,14 +27,14 @@ export default function FollowRequestsButton({navigation}: {navigation: any}) {
     } catch { /* Keep the requests inbox accessible even without a connection. */ }
   }, []);
   useSocialRefresh(load, clear);
-  return <Pressable accessibilityRole="button" accessibilityLabel={ar ? 'طلبات المتابعة' : 'Follow requests'}
+  return <Pressable accessibilityRole="button" accessibilityLabel={hbsText(ar, 'ui_follow_requests')}
     onPress={() => navigation.navigate('SocialConnections', {mode: 'requests'})}
-    style={{marginHorizontal: 20, marginBottom: 12, padding: 12, borderRadius: 12, backgroundColor: '#272B33', flexDirection: ar ? 'row-reverse' : 'row', alignItems: 'center', gap: 10}}>
-    <Ionicons name="person-add-outline" size={20} color="#F5F6F8" />
-    <Text style={{flex: 1, color: '#F5F6F8', fontWeight: '600'}}>{ar ? 'طلبات المتابعة' : 'Follow requests'}</Text>
-    {count !== null && <View style={{backgroundColor: count ? '#E75049' : '#343841', borderRadius: 12, minWidth: 24, padding: 4, alignItems: 'center'}}>
-      <Text style={{color: '#fff', fontWeight: '700'}}>{count}</Text>
+    style={{marginHorizontal: 20, marginBottom: 12, padding: 12, borderRadius: 12, backgroundColor: Colors.surfaceRaised, flexDirection: ar ? 'row-reverse' : 'row', alignItems: 'center', gap: 10}}>
+    <Ionicons name="person-add-outline" size={20} color={Colors.textPrimary} />
+    <Text style={{flex: 1, color: Colors.textPrimary, fontWeight: '600'}}>{hbsText(ar, 'ui_follow_requests')}</Text>
+    {count !== null && <View style={{backgroundColor: count ? Colors.accent : Colors.border, borderRadius: 12, minWidth: 24, padding: 4, alignItems: 'center'}}>
+      <Text style={{color: Colors.white, fontWeight: '700'}}>{count}</Text>
     </View>}
-    <Ionicons name={ar ? 'chevron-back' : 'chevron-forward'} size={18} color="#F5F6F8" />
+    <Ionicons name={ar ? 'chevron-back' : 'chevron-forward'} size={18} color={Colors.textPrimary} />
   </Pressable>;
 }

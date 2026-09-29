@@ -28,10 +28,10 @@ const CustomButton2:React.FC<buttonProps>= ({ title, onPress, disabled = false }
 const getStyles=(language:string) => StyleSheet.create({
   button: {
     alignItems:language==='en'?'flex-start':'flex-end',
-    backgroundColor: '#191B20', // Example color
+    backgroundColor: Colors.surface, // Example color
     width:'100%',
     elevation:3,
-    shadowColor:'#000',
+    shadowColor:Colors.black,
     alignSelf:"center",
     height:55,
     justifyContent:"center",
@@ -40,7 +40,7 @@ const getStyles=(language:string) => StyleSheet.create({
     paddingHorizontal:"4%"
   },
   buttonText: {
-    color: '#F5F6F8',
+    color: Colors.textPrimary,
     fontSize: language==='en'?16:14,
     fontFamily:Fonts.SF_Bold,
     lineHeight:language==='en'?22:26,

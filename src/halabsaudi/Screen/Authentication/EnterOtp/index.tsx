@@ -19,10 +19,12 @@ import {apiPost} from '../../../firebase/api/client';
 import FastImage from 'react-native-fast-image';
 import {useStatusBar} from '../../../Component/UseStatusBar/useStatusBar';
 
+import {hbsText} from '../../../i18n/translations';
+
 interface OtpProps extends NativeStackScreenProps<any> {}
 
 const Otp: React.FC<OtpProps> = ({route, navigation}) => {
-  useStatusBar('light-content', Colors.dargBg);
+  useStatusBar('light-content', Colors.background);
   const {Phone, CountryCode, isDummy} = route.params || {};
 
   const [otp, setOtp] = useState<string>('');
@@ -212,7 +214,7 @@ const Otp: React.FC<OtpProps> = ({route, navigation}) => {
               otp.length === 6 && styles.otpInputFilled,
             ]}
             placeholder="Enter OTP"
-            placeholderTextColor={Colors.Grey9}
+            placeholderTextColor={Colors.textMuted}
             returnKeyType="done"
             onSubmitEditing={() => {
               if (otp.length === 6) confirmCode();
@@ -225,7 +227,7 @@ const Otp: React.FC<OtpProps> = ({route, navigation}) => {
 
         {!isDummy && (
           <View style={styles.resendRow}>
-            <Text style={styles.resendHint}>{language === 'ar' ? 'لم تستلم الرمز؟' : 'Didn’t receive a code?'}</Text>
+            <Text style={styles.resendHint}>{hbsText(language === 'ar', 'ui_didn_t_receive_a_code')}</Text>
             <TouchableOpacity
               disabled={resendCooldown > 0 || isResending}
               onPress={handleResendOtp}>
