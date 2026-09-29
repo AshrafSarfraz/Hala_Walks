@@ -111,14 +111,15 @@ const Login: React.FC<NativeStackScreenProps<any>> = ({navigation}) => {
         backgroundColor={Colors.background}
       />
 
-      <KeyboardAvoidingView
-        style={styles.Flex}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <ScrollView
-          contentContainerStyle={styles.MainContainer}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-          bounces={false}>
+<KeyboardAvoidingView
+  style={styles.Flex}
+  behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+  <ScrollView
+    style={styles.Flex}
+    contentContainerStyle={styles.MainContainer}
+    keyboardShouldPersistTaps="handled"
+    showsVerticalScrollIndicator={false}
+    bounces={false}>
           {/* ── Hero ── */}
           <View style={styles.HeroBlock}>
             <Image source={Hbk_White} style={styles.H_Logo} resizeMode="contain" />

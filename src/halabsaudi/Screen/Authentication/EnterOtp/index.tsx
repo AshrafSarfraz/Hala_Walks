@@ -1,7 +1,7 @@
 import {Text} from '../../../../ui/Text';
 import {TextInput} from '../../../../ui/TextInput';
 import React, {useState, useEffect, useRef, useCallback} from 'react';
-import {View, ScrollView, Image, TouchableOpacity} from 'react-native';
+import {View, ScrollView, Image, TouchableOpacity, KeyboardAvoidingView, Platform} from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {Back_Icon, Hbk_White, HBS_Logo} from '../../../Themes/Images';
 import CustomButton from '../../../Component/CustomButton/CustomButton';
@@ -18,7 +18,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {apiPost} from '../../../firebase/api/client';
 import FastImage from 'react-native-fast-image';
 import {useStatusBar} from '../../../Component/UseStatusBar/useStatusBar';
-
 import {hbsText} from '../../../i18n/translations';
 
 interface OtpProps extends NativeStackScreenProps<any> {}
@@ -182,11 +181,17 @@ const Otp: React.FC<OtpProps> = ({route, navigation}) => {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <ScrollView contentContainerStyle={styles.MainCont} showsVerticalScrollIndicator={false}>
-        <TouchableOpacity style={styles.Header} onPress={() => navigation.goBack()}>
+       <KeyboardAvoidingView
+    style={{flex: 1}}
+    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+    <ScrollView
+      style={{flex: 1}}
+      contentContainerStyle={styles.MainCont}
+      keyboardShouldPersistTaps="handled"
+      showsVerticalScrollIndicator={false}> 
+      <TouchableOpacity style={styles.Header} onPress={() => navigation.goBack()}>
           <Image source={Back_Icon} style={styles.BackIcon} />
         </TouchableOpacity>
-
         <Image source={Hbk_White} style={styles.Logo} resizeMode="contain" />
 
         <Text style={styles.digit_Txt}>{languageData[language].enter_otp}</Text>
@@ -256,6 +261,7 @@ const Otp: React.FC<OtpProps> = ({route, navigation}) => {
           <ActivityIndicatorModal visible={isVerifying || isResending} />
         )}
       </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
