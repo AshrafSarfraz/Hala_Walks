@@ -256,8 +256,9 @@ const MapPin = memo(function MapPin({
   return (
     <View
       collapsable={false}
-      style={[styles.brandPin, selected && styles.pinSelected]}
-    />
+      style={[styles.brandPin, selected && styles.pinSelected]}>
+      <Ionicons name="storefront-outline" size={24} color={PIN.white} />
+    </View>
   );
 });
 
@@ -265,12 +266,14 @@ const ImagePin = memo(function ImagePin({
   type,
   selected,
   imageUri,
+  onImageLoadEnd,
 }: {
   type: 'venue' | 'brand';
   selected: boolean;
   imageUri: string;
+  onImageLoadEnd: () => void;
 }) {
-  const size = type === 'venue' ? 36 : 28;
+  const size = type === 'venue' ? (selected ? 45 : 36) : (selected ? 60 : 46);
   const borderColor = type === 'venue' ? PIN.venue : PIN.brandFill;
   return (
     <View
@@ -278,7 +281,7 @@ const ImagePin = memo(function ImagePin({
       style={[
         styles.imagePin,
         {width: size, height: size, borderRadius: size / 2, borderColor},
-        selected && styles.pinSelected,
+        selected && {...styles.pinSelected, transform: [{scale: 1}]},
       ]}>
       <Image
         source={{uri: imageUri}}
@@ -287,7 +290,8 @@ const ImagePin = memo(function ImagePin({
           height: size - 4,
           borderRadius: (size - 4) / 2,
         }}
-        resizeMode="cover"
+        resizeMode={type === 'brand' ? 'cover' : 'cover'}
+        onLoadEnd={onImageLoadEnd}
       />
     </View>
   );
@@ -310,6 +314,11 @@ function CatalogMarker({
   const [tracks, setTracks] = useState(useImagePin);
 
   useEffect(() => {
+    setTracks(true);
+  }, [selected, resolvedImage]);
+  const onImageLoadEnd = useCallback(() => setTracks(true), []);
+
+  useEffect(() => {
     if (!tracks) return;
     const delay = Platform.OS === 'android' ? 500 : 800;
     const t = setTimeout(() => setTracks(false), delay);
@@ -328,6 +337,7 @@ function CatalogMarker({
           type={item.type}
           selected={selected}
           imageUri={resolvedImage as string}
+          onImageLoadEnd={onImageLoadEnd}
         />
       ) : (
         <MapPin type={item.type} selected={selected} />
@@ -1240,6 +1250,7 @@ const MapScreen = () => {
                     (selectedMarker.image as string),
                 }}
                 style={styles.markerCardImage}
+                resizeMode="contain"
               />
             ) : (
               <View style={[styles.markerCardImage, styles.markerCardImageFallback]}>
@@ -1336,7 +1347,6 @@ const styles = StyleSheet.create({
     right: 16,
     alignItems: 'center',
     gap: 6,
-    
 
   },
   fab: {
@@ -1347,7 +1357,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: Colors.black,
-  
 
   },
   markerCard: {
@@ -1383,8 +1392,8 @@ const styles = StyleSheet.create({
     paddingRight: 20,
   },
   markerCardImage: {
-    width: 56,
-    height: 56,
+    width: 90,
+    height: 90,
     borderRadius: 12,
     backgroundColor: Colors.surface,
   },
@@ -1415,7 +1424,7 @@ const styles = StyleSheet.create({
   imagePin: {
     borderWidth: 2,
     backgroundColor: Colors.surface,
-    overflow: 'hidden',
+
     alignItems: 'center',
     justifyContent: 'center',
     ...Platform.select({
@@ -1445,9 +1454,11 @@ const styles = StyleSheet.create({
     backgroundColor: PIN.venue,
   },
   brandPin: {
-    width: Platform.OS === 'android' ? 20 : 14,
-    height: Platform.OS === 'android' ? 20 : 14,
-    borderRadius: Platform.OS === 'android' ? 10 : 7,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: PIN.brandFill,
     borderWidth: 2,
     borderColor: PIN.white,

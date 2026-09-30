@@ -5,7 +5,7 @@ import {Alert} from '../../../ui/Alert';
 import {ActivityIndicator} from '../../../ui/ActivityIndicator';
 
 import React, {useState, useEffect, useRef, useCallback} from 'react';
-import {View, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar, FlatList, Image, Animated, ScrollView, KeyboardAvoidingView, Platform} from 'react-native';
+import {View, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar, FlatList, Image, Animated, ScrollView, KeyboardAvoidingView, Platform, Keyboard} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import storage from '@react-native-firebase/storage';
@@ -13,20 +13,13 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {BASE_URL} from '../../../config/api';
-import {
-  ensureLocationPermission,
-  getDeviceLocation,
-} from '../../utils/getDeviceLocation';
+import {useSelector} from 'react-redux';
+import {hbsText} from '../../i18n/translations';
 import { Colors } from '../../Themes/Colors';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-// Same key as MapScreen — no separate export needed
-const GOOGLE_MAPS_API_KEY = 'AIzaSyB6CWvlf9f5twQnSjWbEjeNrxmGW2DOins';
-
-const NEARBY_RADIUS = 2000; // metres — same as MapScreen suggestions call
 const MAX_PHOTOS = 2;
-const SEARCH_DEBOUNCE_MS = 350;
 
 const PURPLE = Colors.accent;
 const BG = Colors.background;
@@ -47,14 +40,13 @@ type PhotoEntry = {
   error: boolean;
 };
 
-type Coords = {latitude: number; longitude: number};
-
-type NearbyPlace = {
-  placeId: string;
-  name: string;
-  vicinity: string;
-  lat?: number;
-  lng?: number;
+type CommunityBrand = {
+  _id: string;
+  nameEng?: string;
+  nameArabic?: string;
+  address?: string;
+  selectedCity?: string;
+  selectedCountry?: string;
 };
 
 // ─── Firebase upload ──────────────────────────────────────────────────────────
@@ -216,318 +208,46 @@ const cardStyles = StyleSheet.create({
 const TimelineScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
 
-  // ── Location ────────────────────────────────────────────────────────────────
-  const [coords, setCoords] = useState<Coords | null>(null);
-  const [address, setAddress] = useState('');
-  const [locationLoading, setLocationLoading] = useState(true);
-  const [locationError, setLocationError] = useState<string | null>(null);
-
-  // ── Nearby places ───────────────────────────────────────────────────────────
-  const [nearbyPlaces, setNearbyPlaces] = useState<NearbyPlace[]>([]);
-  const [nearbyLoading, setNearbyLoading] = useState(false);
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const [selectedPlace, setSelectedPlace] = useState<NearbyPlace | null>(null);
-  const [locationId, setLocationId] = useState<string | null>(null);
-
-  // ── Form ────────────────────────────────────────────────────────────────────
+  const isAr = useSelector((state: any) => state.language.language === 'ar');
+  const [brands, setBrands] = useState<CommunityBrand[]>([]);
+  const [selectedBrand, setSelectedBrand] = useState<CommunityBrand | null>(null);
+  const [brandsLoading, setBrandsLoading] = useState(true);
+  const [brandsError, setBrandsError] = useState(false);
+  const [searchText, setSearchText] = useState('');
   const [description, setDescription] = useState('');
   const [photos, setPhotos] = useState<PhotoEntry[]>([]);
   const [uploading, setUploading] = useState(false);
 
-  // ── Search location ─────────────────────────────────────────────────────────
-  const [searchText, setSearchText] = useState('');
-  const [searchResults, setSearchResults] = useState<NearbyPlace[]>([]);
-  const [searchLoading, setSearchLoading] = useState(false);
-  const [showSearchResults, setShowSearchResults] = useState(false);
-  const searchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const placeDetailsLoadingRef = useRef<string | null>(null);
-
-  // ── 1. GPS — exact same flow as MapScreen ──────────────────────────────────
-
-  const fetchLocation = useCallback(async () => {
-    setLocationLoading(true);
-    setLocationError(null);
-
-    const permitted = await ensureLocationPermission();
-    if (!permitted) {
-      setLocationError('Location permission denied. Tap to retry.');
-      setLocationLoading(false);
-      return;
-    }
-
-    try {
-      const c = await getDeviceLocation();
-      setCoords(c);
-      // Run geocode + nearby in parallel, don't block each other
-      reverseGeocode(c.latitude, c.longitude);
-      fetchNearby(c.latitude, c.longitude);
-    } catch (err: any) {
-      console.log('[Timeline] getDeviceLocation error:', err);
-      setLocationError('Could not get your location. Tap to retry.');
-    } finally {
-      setLocationLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchLocation();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // ── 2. Reverse geocode — same logic as MapScreen.resolveLocationMeta ────────
-
-  const reverseGeocode = async (lat: number, lng: number) => {
-    try {
-      const url =
-        `https://maps.googleapis.com/maps/api/geocode/json` +
-        `?latlng=${lat},${lng}` +
-        `&key=${GOOGLE_MAPS_API_KEY}` +
-        `&language=en` +
-        `&result_type=neighborhood|sublocality|locality`;
-
-      const res = await fetch(url);
-      const json = await res.json();
-
-      if (json.status === 'OK' && json.results?.length > 0) {
-        const components: {types: string[]; long_name: string}[] =
-          json.results[0].address_components ?? [];
-
-        const pick = (type: string) =>
-          components.find(c => c.types.includes(type))?.long_name ?? null;
-
-        const name =
-          pick('neighborhood') ??
-          pick('sublocality_level_1') ??
-          pick('sublocality') ??
-          pick('locality') ??
-          pick('administrative_area_level_2') ??
-          pick('administrative_area_level_1') ??
-          json.results[0].formatted_address?.split(',')[0] ??
-          null;
-
-        if (name) setAddress(name);
-      }
-    } catch (err) {
-      console.log('[Timeline] reverseGeocode error:', err);
-    }
-
-    // Also try backend for locationId — same as MapScreen
-    try {
-      const locRes = await axios.post(`${BASE_URL}/api/hbs/map/location`, {
-        lat,
-        lng,
-      });
-      const locData = locRes?.data?.data ?? locRes?.data;
-      if (locData?.name) setAddress(locData.name);
-      if (locData?._id) setLocationId(locData._id);
-    } catch (err) {
-      console.log('[Timeline] backend location error:', err);
-    }
-  };
-
-  // ── 3. Nearby places — Google Places Nearby Search ──────────────────────────
-
-  const fetchNearby = async (lat: number, lng: number) => {
-    setNearbyLoading(true);
-
-    try {
-      // First try your backend suggestions (same as MapScreen)
-      const sugRes = await axios.get(`${BASE_URL}/api/hbs/map/suggestions`, {
-        params: {lat, lng, radius: NEARBY_RADIUS, limit: 10},
-      });
-      const sugData = sugRes?.data?.data;
-      if (Array.isArray(sugData) && sugData.length > 0) {
-        setNearbyPlaces(
-          sugData.map((s: any) => ({
-            placeId: s.placeId ?? s._id ?? String(Math.random()),
-            name: s.name,
-            vicinity: s.vicinity ?? s.address ?? '',
-            lat: s.lat ?? s.location?.lat,
-            lng: s.lng ?? s.location?.lng,
-          })),
-        );
-        return;
-      }
-    } catch {
-      // fallback to Google Places below
-    }
-
-    // Fallback: Google Places Nearby Search
-    try {
-      const url =
-        `https://maps.googleapis.com/maps/api/place/nearbysearch/json` +
-        `?location=${lat},${lng}` +
-        `&radius=${NEARBY_RADIUS}` +
-        `&key=${GOOGLE_MAPS_API_KEY}`;
-      const res = await fetch(url);
-      const json = await res.json();
-      const places: NearbyPlace[] = (json.results ?? [])
-        .slice(0, 10)
-        .map((p: any) => ({
-          placeId: p.place_id,
-          name: p.name,
-          vicinity: p.vicinity ?? '',
-          lat: p.geometry?.location?.lat,
-          lng: p.geometry?.location?.lng,
-        }));
-      setNearbyPlaces(places);
-    } catch (err) {
-      console.log('[Timeline] fetchNearby Google error:', err);
-    } finally {
-      setNearbyLoading(false);
-    }
-  };
-
-  // ── 4. Search any location — Places Autocomplete (debounced) ───────────────
-
-  const searchPlaces = useCallback(
-    (text: string) => {
-      setSearchText(text);
-
-      if (searchDebounceRef.current) {
-        clearTimeout(searchDebounceRef.current);
-      }
-
-      const trimmed = text.trim();
-      if (trimmed.length < 2) {
-        setSearchResults([]);
-        setShowSearchResults(false);
-        setSearchLoading(false);
-        return;
-      }
-
-      setShowSearchResults(true);
-      setSearchLoading(true);
-
-      searchDebounceRef.current = setTimeout(async () => {
-        try {
-          let url =
-            `https://maps.googleapis.com/maps/api/place/autocomplete/json` +
-            `?input=${encodeURIComponent(trimmed)}` +
-            `&key=${GOOGLE_MAPS_API_KEY}`;
-
-          // Bias results toward current location, if available
-          if (coords) {
-            url +=
-              `&location=${coords.latitude},${coords.longitude}` +
-              `&radius=${NEARBY_RADIUS}`;
-          }
-
-          const res = await fetch(url);
-          const json = await res.json();
-
-          const results: NearbyPlace[] =
-            json.predictions?.map((item: any) => ({
-              placeId: item.place_id,
-              name: item.structured_formatting?.main_text || item.description,
-              vicinity: item.structured_formatting?.secondary_text || '',
-            })) || [];
-
-          setSearchResults(results);
-        } catch (error) {
-          console.log('[Timeline] Search place error', error);
-          setSearchResults([]);
-        } finally {
-          setSearchLoading(false);
-        }
-      }, SEARCH_DEBOUNCE_MS);
-    },
-    [coords],
-  );
-
-  // Cleanup debounce timer on unmount
-  useEffect(() => {
-    return () => {
-      if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
-    };
-  }, []);
-
-  const clearSearch = () => {
-    setSearchText('');
-    setSearchResults([]);
-    setShowSearchResults(false);
-    setSearchLoading(false);
-  };
-
-  // ── 5. Get coordinates for a place (Place Details) ──────────────────────────
-
-  const resolvePlaceCoords = async (
-    placeId: string,
-  ): Promise<{lat: number; lng: number} | null> => {
-    try {
-      const url =
-        `https://maps.googleapis.com/maps/api/place/details/json` +
-        `?place_id=${encodeURIComponent(placeId)}` +
-        `&fields=geometry,formatted_address` +
-        `&key=${GOOGLE_MAPS_API_KEY}`;
-      const res = await fetch(url);
-      const json = await res.json();
-      const loc = json?.result?.geometry?.location;
-      if (loc?.lat != null && loc?.lng != null) {
-        return {lat: loc.lat, lng: loc.lng};
-      }
-    } catch (err) {
-      console.log('[Timeline] resolvePlaceCoords error:', err);
-    }
-    return null;
-  };
-
-  // ── 6. Pick a place (from nearby OR search results) ─────────────────────────
-
-  const handlePickPlace = async (place: NearbyPlace) => {
-    // Close both suggestion UIs and reset search text
-    setShowSuggestions(false);
-    clearSearch();
-
-    let lat = place.lat ?? coords?.latitude;
-    let lng = place.lng ?? coords?.longitude;
-
-    // If we don't have coordinates yet (e.g. from autocomplete), resolve them
-    if (place.lat == null || place.lng == null) {
-      placeDetailsLoadingRef.current = place.placeId;
-      const resolved = await resolvePlaceCoords(place.placeId);
-      if (resolved) {
-        lat = resolved.lat;
-        lng = resolved.lng;
-      }
-      placeDetailsLoadingRef.current = null;
-    }
-
-    const finalPlace: NearbyPlace = {...place, lat, lng};
-    setSelectedPlace(finalPlace);
-
-    if (lat != null && lng != null) {
-      setCoords({latitude: lat, longitude: lng});
-    }
-    if (!place.vicinity && finalPlace.name) {
-      setAddress(finalPlace.name);
-    }
-
-    // Try to create/get location doc on backend
+  const loadBrands = useCallback(async () => {
+    setBrandsLoading(true);
+    setBrandsError(false);
     try {
       const token = await AsyncStorage.getItem('hala_token');
-      const headers = token ? {Authorization: `Bearer ${token}`} : undefined;
-      const locRes = await axios.post(
-        `${BASE_URL}/api/hbs/map/location`,
-        {
-          name: finalPlace.name,
-          address: finalPlace.vicinity,
-          placeId: finalPlace.placeId,
-          lat,
-          lng,
-        },
-        {headers},
-      );
-      const id = locRes?.data?.data?._id ?? locRes?.data?._id ?? null;
-      if (id) setLocationId(id);
-    } catch (err) {
-      console.log('[Timeline] handlePickPlace error:', err);
+      const response = await axios.get(`${BASE_URL}/api/hbs/map/community-brands`, {
+        headers: {Authorization: `Bearer ${token}`}, timeout: 15000,
+      });
+      setBrands(Array.isArray(response.data?.data) ? response.data.data : []);
+    } catch {
+      setBrandsError(true);
+    } finally {
+      setBrandsLoading(false);
     }
-  };
+  }, []);
+  useEffect(() => {loadBrands();}, [loadBrands]);
+  const brandName = (brand: CommunityBrand) =>
+    (isAr ? brand.nameArabic || brand.nameEng : brand.nameEng || brand.nameArabic) || '';
+  const brandAddress = (brand: CommunityBrand) =>
+    brand.address || [brand.selectedCity, brand.selectedCountry].filter(Boolean).join(', ');
+  const query = searchText.trim().toLocaleLowerCase();
+  const filteredBrands = brands.filter(brand =>
+    [brand.nameEng, brand.nameArabic, brand.address, brand.selectedCity, brand.selectedCountry]
+      .some(value => value?.toLocaleLowerCase().includes(query)),
+  );
 
   // ── 7. Photo capture & library selection ───────────────────────────────────
 
   const handleCamera = useCallback(() => {
+    Keyboard.dismiss();
     launchCamera(
       {mediaType: 'photo', quality: 0.8, saveToPhotos: true},
       response => {
@@ -539,6 +259,7 @@ const TimelineScreen: React.FC = () => {
   }, [photos]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleGallery = useCallback(() => {
+    Keyboard.dismiss();
     launchImageLibrary(
       {mediaType: 'photo', quality: 0.8, selectionLimit: 1},
       response => {
@@ -582,8 +303,8 @@ const TimelineScreen: React.FC = () => {
       Alert.alert('Missing photo', 'Please add at least one photo.');
       return;
     }
-    if (!coords) {
-      Alert.alert('No location', 'Waiting for your location…');
+    if (!selectedBrand) {
+      Alert.alert(hbsText(isAr, 'ui_hala_brands'), hbsText(isAr, 'ui_select_hala_brand'));
       return;
     }
 
@@ -591,27 +312,6 @@ const TimelineScreen: React.FC = () => {
       setUploading(true);
       const token = await AsyncStorage.getItem('hala_token');
       const headers = token ? {Authorization: `Bearer ${token}`} : undefined;
-
-      // Resolve location id
-      let targetId = locationId;
-      if (!targetId) {
-        const locRes = await axios.post(
-          `${BASE_URL}/api/hbs/map/location`,
-          {
-            name: selectedPlace?.name ?? address ?? 'Timeline Check-in',
-            address: selectedPlace?.vicinity ?? address ?? '',
-            lat: coords.latitude,
-            lng: coords.longitude,
-          },
-          {headers},
-        );
-        targetId = locRes?.data?.data?._id ?? locRes?.data?._id ?? null;
-      }
-
-      if (!targetId) {
-        Alert.alert('Location error', 'Unable to resolve location.');
-        return;
-      }
 
       // Upload photos to Firebase
       const results = await Promise.all(
@@ -646,7 +346,7 @@ const TimelineScreen: React.FC = () => {
           axios.post(
             `${BASE_URL}/api/hbs/map/photos`,
             {
-              locationId: targetId,
+              brandId: selectedBrand._id,
               image: url,
               caption: description?.trim() || 'Uploaded from app',
             },
@@ -658,8 +358,7 @@ const TimelineScreen: React.FC = () => {
       Alert.alert('Success', 'Check-in uploaded 🎉');
       setDescription('');
       setPhotos([]);
-      setSelectedPlace(null);
-      setLocationId(null);
+      setSelectedBrand(null);
       navigation.goBack();
     } catch (error) {
       const err = error as any;
@@ -670,7 +369,7 @@ const TimelineScreen: React.FC = () => {
       );
       Alert.alert(
         'Upload failed',
-        err?.response?.data?.message || 'Could not upload check-in.',
+        err?.response?.data?.error || err?.response?.data?.message || 'Could not upload check-in.',
       );
     } finally {
       setUploading(false);
@@ -683,9 +382,8 @@ const TimelineScreen: React.FC = () => {
     p => p.progress !== null && p.progress < 100 && !p.error,
   );
   const isDisabled =
-    uploading || !photos.length || anyActiveUpload || locationLoading;
+    uploading || !photos.length || anyActiveUpload || brandsLoading || !selectedBrand;
 
-  const displayName = selectedPlace?.name ?? address;
 
   // ── Render ──────────────────────────────────────────────────────────────────
 
@@ -712,197 +410,62 @@ const TimelineScreen: React.FC = () => {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}>
 
-          {/* ── Location card ── */}
           <View style={styles.card}>
             <View style={styles.cardHeader}>
               <Ionicons name="location" size={16} color={Colors.accent} />
-              <Text style={styles.cardLabel}>Location</Text>
-              {nearbyLoading && (
-                <ActivityIndicator size="small" color={Colors.accent} />
-              )}
+              <Text style={styles.cardLabel}>{hbsText(isAr, 'ui_hala_brands')}</Text>
             </View>
-
-            {locationLoading ? (
-              <View style={styles.locationLoadingRow}>
-                <ActivityIndicator size="small" color={Colors.accent} />
-                <Text style={styles.locationLoadingText}>
-                  Fetching your location…
-                </Text>
-              </View>
-            ) : locationError ? (
-              <TouchableOpacity
-                style={styles.errorRow}
-                onPress={fetchLocation}
-                activeOpacity={0.7}>
-                <Ionicons name="refresh" size={15} color={Colors.accent} />
-                <Text style={styles.errorText}>{locationError}</Text>
-              </TouchableOpacity>
-            ) : (
-              <>
-                <Text style={styles.locationName} numberOfLines={1}>
-                  {displayName || 'Resolving address…'}
-                </Text>
-
-                {selectedPlace && address ? (
-                  <Text style={styles.addressLine} numberOfLines={2}>
-                    {address}
-                  </Text>
-                ) : null}
-
-                {/* ── Search any location ── */}
-                <View style={styles.searchWrap}>
-                  <TextInput
-                    placeholder="Search any location..."
-                    placeholderTextColor={Colors.surfaceRaised}
-                    value={searchText}
-                    onChangeText={searchPlaces}
-                    style={styles.searchInput}
-                  />
-                  {searchText.length > 0 && (
-                    <TouchableOpacity
-                      style={styles.searchClearBtn}
-                      onPress={clearSearch}
-                      hitSlop={{top: 8, bottom: 8, left: 8, right: 8}}>
-                      <Ionicons name="close-circle" size={18} color={Colors.accent} />
-                    </TouchableOpacity>
-                  )}
-                </View>
-
-                {showSearchResults && (
-                  <View style={styles.suggestionBox}>
-                    {searchLoading ? (
-                      <View style={styles.suggestionLoader}>
-                        <ActivityIndicator size="small" color={Colors.accent} />
-                        <Text style={styles.suggestionLoaderText}>
-                          Searching…
-                        </Text>
-                      </View>
-                    ) : searchResults.length === 0 ? (
-                      <Text style={styles.emptyText}>No results found</Text>
-                    ) : (
-                      <FlatList
-                        data={searchResults}
-                        keyExtractor={item => item.placeId}
-                        scrollEnabled={false}
-                        renderItem={({item}) => (
-                          <TouchableOpacity
-                            style={styles.suggestionItem}
-                            onPress={() => handlePickPlace(item)}
-                            activeOpacity={0.7}>
-                            <View style={styles.suggestionLeft}>
-                              <Ionicons
-                                name="location-outline"
-                                size={15}
-                                color={Colors.accent}
-                              />
-                            </View>
-                            <View style={styles.suggestionRight}>
-                              <Text style={styles.suggestionName}>
-                                {item.name}
-                              </Text>
-                              {!!item.vicinity && (
-                                <Text
-                                  style={styles.suggestionVicinity}
-                                  numberOfLines={1}>
-                                  {item.vicinity}
-                                </Text>
-                              )}
-                            </View>
-                          </TouchableOpacity>
-                        )}
-                      />
-                    )}
-                  </View>
-                )}
-
+            {selectedBrand ? (
+              <View style={styles.suggestionItemActive}>
+                <Text style={styles.locationName}>{brandName(selectedBrand)}</Text>
+                <Text style={styles.addressLine}>{brandAddress(selectedBrand)}</Text>
                 <TouchableOpacity
                   style={styles.changeRow}
-                  onPress={() => setShowSuggestions(p => !p)}
-                  activeOpacity={0.7}>
-                  <Ionicons
-                    name={showSuggestions ? 'chevron-up' : 'swap-horizontal'}
-                    size={13}
-                    color={Colors.accent}
-                  />
-                  <Text style={styles.changeText}>
-                    {showSuggestions
-                      ? 'Hide nearby places'
-                      : 'Change location'}
-                  </Text>
+                  disabled={uploading}
+                  onPress={() => {
+                    setSelectedBrand(null);
+                    setSearchText('');
+                  }}>
+                  <Ionicons name="swap-horizontal" size={16} color={Colors.accent} />
+                  <Text style={styles.changeText}>{isAr ? 'تغيير العلامة' : 'Change brand'}</Text>
                 </TouchableOpacity>
-
-                {showSuggestions && (
-                  <View style={styles.suggestionBox}>
-                    {nearbyLoading ? (
-                      <View style={styles.suggestionLoader}>
-                        <ActivityIndicator size="small" color={Colors.accent} />
-                        <Text style={styles.suggestionLoaderText}>
-                          Loading nearby places…
-                        </Text>
-                      </View>
-                    ) : nearbyPlaces.length === 0 ? (
-                      <Text style={styles.emptyText}>
-                        No nearby places found
-                      </Text>
-                    ) : (
-                      <FlatList
-                        data={nearbyPlaces}
-                        keyExtractor={item => item.placeId}
-                        scrollEnabled={true}
-                        renderItem={({item}) => {
-                          const isActive =
-                            selectedPlace?.placeId === item.placeId;
-                          return (
-                            <TouchableOpacity
-                              style={[
-                                styles.suggestionItem,
-                                isActive && styles.suggestionItemActive,
-                              ]}
-                              onPress={() => handlePickPlace(item)}
-                              activeOpacity={0.7}>
-                              <View style={styles.suggestionLeft}>
-                                <Ionicons
-                                  name={
-                                    isActive
-                                      ? 'location'
-                                      : 'location-outline'
-                                  }
-                                  size={15}
-                                  color={isActive ? Colors.white :Colors.black}
-                                />
-                              </View>
-                              <View style={styles.suggestionRight}>
-                                <Text
-                                  style={[
-                                    styles.suggestionName,
-                                    isActive && styles.suggestionNameActive,
-                                  ]}>
-                                  {item.name}
-                                </Text>
-                                {!!item.vicinity && (
-                                  <Text
-                                    style={[styles.suggestionVicinity, isActive && styles.suggestionVicinityActive,]}
-                                    numberOfLines={1}>
-                                    {item.vicinity}
-                                  </Text>
-                                )}
-                              </View>
-                              {isActive && (
-                                <Ionicons
-                                  name="checkmark-circle"
-                                  size={18}
-                                  color={Colors.accent}
-                                />
-                              )}
-                            </TouchableOpacity>
-                          );
-                        }}
-                      />
-                    )}
+              </View>
+            ) : (
+              <>
+            <View style={styles.searchWrap}>
+              <TextInput
+                placeholder={hbsText(isAr, 'ui_search_hala_brands')}
+                placeholderTextColor={Colors.textMuted}
+                value={searchText} onChangeText={setSearchText} style={styles.searchInput}
+              />
+            </View>
+            {brandsLoading ? <ActivityIndicator color={Colors.accent} /> : brandsError ? (
+              <TouchableOpacity onPress={loadBrands} style={styles.errorRow}>
+                <Text style={styles.errorText}>{hbsText(isAr, 'ui_hala_brands_retry')}</Text>
+              </TouchableOpacity>
+            ) : filteredBrands.length === 0 ? (
+              <Text style={styles.emptyText}>{hbsText(isAr, query ? 'ui_not_hala_member' : 'ui_no_hala_brands')}</Text>
+            ) : (
+              <ScrollView style={{maxHeight: 240}} nestedScrollEnabled keyboardShouldPersistTaps="handled">
+                {filteredBrands.map(brand => <TouchableOpacity
+                  key={brand._id} disabled={uploading}
+                  style={[styles.suggestionItem, selectedBrand?._id === brand._id && styles.suggestionItemActive]}
+                  onPress={() => {
+                    setSelectedBrand(brand);
+                    setSearchText('');
+                    Keyboard.dismiss();
+                  }}>
+                  <View style={styles.suggestionRight}>
+                    <Text style={styles.suggestionName}>{brandName(brand)}</Text>
+                    <Text style={styles.suggestionVicinity}>{brandAddress(brand)}</Text>
                   </View>
-                )}
+                  {selectedBrand?._id === brand._id && <Ionicons name="checkmark-circle" size={20} color={Colors.accent} />}
+                </TouchableOpacity>)}
+              </ScrollView>
+            )}
               </>
             )}
+
           </View>
 
           {/* ── Caption card ── */}
@@ -942,8 +505,8 @@ const TimelineScreen: React.FC = () => {
                 onPress={handleCamera}
                 disabled={photos.length >= MAX_PHOTOS}
                 activeOpacity={0.8}>
-                <Ionicons name="image-outline" size={20} color={WHITE} />
-                <Text style={styles.photoBtnText}>Photo</Text>
+                <Ionicons name="camera-outline" size={20} color={WHITE} />
+                <Text style={styles.photoBtnText}>{isAr ? 'الكاميرا' : 'Camera'}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -955,7 +518,7 @@ const TimelineScreen: React.FC = () => {
                 disabled={photos.length >= MAX_PHOTOS}
                 activeOpacity={0.8}>
                 <Ionicons name="image-outline" size={20} color={WHITE} />
-                <Text style={styles.photoBtnText}>Photo / Video</Text>
+                <Text style={styles.photoBtnText}>{isAr ? 'الصور' : 'Gallery'}</Text>
               </TouchableOpacity>
             </View>
 

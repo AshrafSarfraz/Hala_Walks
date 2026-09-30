@@ -1,9 +1,12 @@
 import {Text} from '../../ui/Text';
 import {ActivityIndicator} from '../../ui/ActivityIndicator';
 import React, {useCallback, useEffect, useState} from 'react';
-import {View, StyleSheet, Image, FlatList, TouchableOpacity, Dimensions, Modal, Platform, StatusBar} from 'react-native';
-import {useNavigation, useRoute} from '@react-navigation/native';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import {View, StyleSheet, FlatList, TouchableOpacity, Dimensions, Modal, Platform, StatusBar} from 'react-native';
+import FastImage from 'react-native-fast-image';
+import {useNavigation, useRoute, useFocusEffect} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useSelector} from 'react-redux';
+import {hbsText} from '../i18n/translations';
 import axios from 'axios';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import {Colors} from '../Themes/Colors';
@@ -26,36 +29,13 @@ type EntityDetail = {
   address?: string | null;
   description?: string | null;
   category?: string | null;
+  offers?: string[];
 };
-
-// ─── API helpers ────────────────────────────────────────────────────────────
-// TODO: point these at your real backend routes — these are best-guess
-// endpoints based on the shape of VENUES_API / BRANDS_API used in MapScreen.
 
 const detailUrl = (type: EntityType, id: string) =>
-  type === 'venue'
-    ? `${HBS_API}/api/hbs/venues/${id}`
-    : `${HBS_API}/api/hbs/brands/${id}`;
+  `${HBS_API}/api/hbs/${type === 'venue' ? 'venues' : 'brands'}/${id}`;
 
-// Expected to return every image any user has uploaded for this venue/brand.
-const imagesUrl = (type: EntityType, id: string) =>
-  `${HBS_API}/api/hbs/uploads?entityType=${type}&entityId=${id}`;
-
-// Expected to accept a multipart upload and attach it to this venue/brand.
-const uploadImageUrl = () => `${HBS_API}/api/hbs/uploads`;
-
-const extractImageUrls = (raw: any): string[] => {
-  const list: any[] =
-    (Array.isArray(raw?.data) && raw.data) ||
-    (Array.isArray(raw?.results) && raw.results) ||
-    (Array.isArray(raw) && raw) ||
-    [];
-  return list
-    .map(item =>
-      typeof item === 'string' ? item : item?.url ?? item?.image ?? item?.img,
-    )
-    .filter(Boolean);
-};
+type CheckIn = {_id: string; image: string; caption?: string; createdAt?: string; user?: {name?: string}};
 
 // ─── Layout constants ───────────────────────────────────────────────────────
 
@@ -95,7 +75,11 @@ const ImageSlider = ({images}: {images: string[]}) => {
         showsHorizontalScrollIndicator={false}
         onMomentumScrollEnd={onMomentumScrollEnd}
         renderItem={({item}) => (
-          <Image source={{uri: item}} style={styles.slide} resizeMode="cover" />
+          <FastImage
+            source={{uri: item, priority: FastImage.priority.high}}
+            style={styles.slide}
+            resizeMode={FastImage.resizeMode.cover}
+          />
         )}
       />
       {images.length > 1 && (
@@ -131,6 +115,9 @@ const PhotoViewerModal = ({
     if (visible) setIndex(initialIndex);
   }, [visible, initialIndex]);
 
+  // Mount at the tapped photo on every open, including after a previous swipe.
+  if (!visible) return null;
+
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View style={styles.viewerBackdrop}>
@@ -158,10 +145,10 @@ const PhotoViewerModal = ({
           }
           renderItem={({item}) => (
             <View style={styles.viewerSlide}>
-              <Image
-                source={{uri: item}}
+              <FastImage
+                source={{uri: item, priority: FastImage.priority.high}}
                 style={styles.viewerImage}
-                resizeMode="contain"
+                resizeMode={FastImage.resizeMode.contain}
               />
             </View>
           )}
@@ -187,27 +174,35 @@ const BrandDetailScreen = () => {
   const [loading, setLoading] = useState(true);
   const [detail, setDetail] = useState<EntityDetail | null>(null);
   const [images, setImages] = useState<string[]>([]);
-  const [uploading, setUploading] = useState(false);
+  const isAr = useSelector((state: any) => state.language.language === 'ar');
+  const [posts, setPosts] = useState<CheckIn[]>([]);
+  const [postsError, setPostsError] = useState(false);
+  const [officialImages, setOfficialImages] = useState<string[]>([]);
   const [viewerVisible, setViewerVisible] = useState(false);
   const [viewerIndex, setViewerIndex] = useState(0);
 
   const fetchAll = useCallback(async () => {
     setLoading(true);
+    setPostsError(false);
+    const token = await AsyncStorage.getItem('hala_token');
     const [detailRes, imagesRes] = await Promise.allSettled([
       axios.get(detailUrl(type, id)),
-      axios.get(imagesUrl(type, id)),
+      type === 'brand' ? axios.get(`${HBS_API}/api/hbs/map/brands/${id}/photos`, {
+        headers: {Authorization: `Bearer ${token}`}, timeout: 15000,
+      }) : Promise.resolve({data: {data: []}}),
     ]);
 
     if (detailRes.status === 'fulfilled') {
       const data = detailRes.value?.data?.data ?? detailRes.value?.data;
       setDetail({
-        name: data?.venueName ?? data?.nameEng ?? data?.name ?? routeName ?? 'Untitled',
+        name: (isAr ? data?.nameArabic ?? data?.venueNameAr : null) ?? data?.venueName ?? data?.nameEng ?? data?.name ?? routeName ?? 'Untitled',
         address:
           [data?.city, data?.country].filter(Boolean).join(', ') ||
           data?.address ||
           routeAddress ||
           null,
-        description: data?.description ?? data?.about ?? null,
+        description: (isAr ? data?.descriptionArabic : data?.descriptionEng) ?? data?.description ?? data?.about ?? null,
+        offers: (data?.discounts ?? []).map((offer: any) => `${offer.value}${data?.isFlatOffer ? '' : '%'} — ${isAr ? offer.descriptionArabic || offer.descriptionEng : offer.descriptionEng}`),
         category: data?.category ?? (type === 'venue' ? 'Venue' : 'Brand'),
       });
     } else {
@@ -221,67 +216,34 @@ const BrandDetailScreen = () => {
       });
     }
 
-    if (imagesRes.status === 'fulfilled') {
-      const urls = extractImageUrls(imagesRes.value?.data);
-      setImages(urls.length ? urls : routeImage ? [routeImage] : []);
-    } else {
-      console.log('[BrandDetailScreen] images error:', (imagesRes.reason as any)?.message);
-      setImages(routeImage ? [routeImage] : []);
-    }
+    const data = detailRes.status === 'fulfilled' ? detailRes.value.data?.data ?? detailRes.value.data : null;
+    const gallery = [data?.heroImage, ...(Array.isArray(data?.multiImageUrls) ? data.multiImageUrls : []), data?.img ?? routeImage]
+      .filter((url): url is string => typeof url === 'string' && !!url.trim());
+    const uniqueGallery = [...new Set(gallery)];
+    setOfficialImages(uniqueGallery);
+    const checkins: CheckIn[] = imagesRes.status === 'fulfilled' && Array.isArray(imagesRes.value.data?.data)
+      ? imagesRes.value.data.data.filter((post: CheckIn) => typeof post.image === 'string' && !!post.image) : [];
+    setPosts(checkins);
+    const checkinImages = checkins.map(post => post.image);
+    setImages(checkinImages);
+    setPostsError(imagesRes.status === 'rejected');
+
+    // Warm the cache so the slider and the full-screen viewer open instantly
+    FastImage.preload([...uniqueGallery, ...checkinImages].map(uri => ({uri})));
 
     setLoading(false);
-  }, [id, type, routeName, routeAddress, routeImage]);
+  }, [id, type, routeName, routeAddress, routeImage, isAr]);
 
-  useEffect(() => {
-    fetchAll();
-  }, [fetchAll]);
+  useFocusEffect(useCallback(() => {fetchAll();}, [fetchAll]));
 
   const openViewerAt = useCallback((idx: number) => {
     setViewerIndex(idx);
     setViewerVisible(true);
   }, []);
 
-  const addPhoto = useCallback(
-    async (fromCamera: boolean) => {
-      const pick = () =>
-        new Promise<{uri?: string} | null>(resolve => {
-          const cb = (r: any) => {
-            if (r.didCancel || r.errorCode) return resolve(null);
-            resolve(r.assets?.[0] ?? null);
-          };
-          if (fromCamera) {
-            launchCamera({mediaType: 'photo', quality: 0.8, saveToPhotos: true}, cb);
-          } else {
-            launchImageLibrary({mediaType: 'photo', quality: 0.8, selectionLimit: 1}, cb);
-          }
-        });
-
-      const asset = await pick();
-      if (!asset?.uri) return;
-
-      // Optimistically show it in the grid right away.
-      setImages(prev => [asset.uri as string, ...prev]);
-
-      // TODO: replace with your real multipart upload call, e.g.:
-      // const form = new FormData();
-      // form.append('entityType', type);
-      // form.append('entityId', id);
-      // form.append('file', {uri: asset.uri, name: 'photo.jpg', type: 'image/jpeg'} as any);
-      // await axios.post(uploadImageUrl(), form, {headers: {'Content-Type': 'multipart/form-data'}});
-      setUploading(true);
-      try {
-        // Placeholder — wire this up to your actual endpoint.
-        console.log('[BrandDetailScreen] TODO upload photo for', type, id, asset.uri);
-      } finally {
-        setUploading(false);
-      }
-    },
-    [id, type],
-  );
-
   const renderHeader = () => (
     <View>
-      <ImageSlider images={images} />
+      <ImageSlider images={officialImages} />
 
       <View style={styles.detailCard}>
         <View style={styles.detailTopRow}>
@@ -305,23 +267,11 @@ const BrandDetailScreen = () => {
         {!!detail?.description && (
           <Text style={styles.detailDescription}>{detail.description}</Text>
         )}
+        {detail?.offers?.map((offer, index) => <Text key={index} style={styles.detailDescription}>{offer}</Text>)}
       </View>
 
       <View style={styles.photosHeaderRow}>
-        <Text style={styles.photosHeaderTitle}>Photos ({images.length})</Text>
-        {/* <TouchableOpacity
-          style={styles.addPhotoBtn}
-          disabled={uploading}
-          onPress={() => addPhoto(false)}>
-          {uploading ? (
-            <ActivityIndicator size="small" color={Colors.accent} />
-          ) : (
-            <>
-              <Ionicons name="add-circle-outline" size={16} color={Colors.accent} />
-              <Text style={styles.addPhotoBtnText}>Add Photo</Text>
-            </>
-          )}
-        </TouchableOpacity> */}
+        <Text style={styles.photosHeaderTitle}>{hbsText(isAr, 'ui_brand_checkins')} ({posts.length})</Text>
       </View>
     </View>
   );
@@ -330,8 +280,9 @@ const BrandDetailScreen = () => {
     loading ? null : (
       <View style={styles.emptyGrid}>
         <Ionicons name="images-outline" size={30} color={Colors.textSecondary} />
-        <Text style={styles.emptyGridText}>No photos uploaded yet.</Text>
-        <Text style={styles.emptyGridSubtext}>Be the first to add one!</Text>
+        <TouchableOpacity disabled={!postsError} onPress={fetchAll}>
+          <Text style={styles.emptyGridText}>{hbsText(isAr, postsError ? 'ui_brand_photos_retry' : 'ui_no_brand_checkins')}</Text>
+        </TouchableOpacity>
       </View>
     );
 
@@ -352,23 +303,28 @@ const BrandDetailScreen = () => {
         <TouchableOpacity style={styles.overlayBtn} onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={20} color={Colors.white} />
         </TouchableOpacity>
-        {/* <TouchableOpacity style={styles.overlayBtn} onPress={() => addPhoto(true)}>
-          <Ionicons name="image-outline" size={19} color={Colors.white} />
-        </TouchableOpacity> */}
       </View>
 
       <FlatList
-        data={images}
-        keyExtractor={(uri, idx) => `grid-${uri}-${idx}`}
+        data={posts}
+        keyExtractor={post => post._id}
         numColumns={GRID_COLUMNS}
-        columnWrapperStyle={images.length > 0 ? styles.gridRow : undefined}
+        columnWrapperStyle={posts.length ? styles.gridRow : undefined}
         contentContainerStyle={styles.gridContent}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={renderHeader}
         ListEmptyComponent={renderEmptyGrid}
         renderItem={({item, index}) => (
-          <TouchableOpacity activeOpacity={0.85} onPress={() => openViewerAt(index)}>
-            <Image source={{uri: item}} style={styles.gridImage} resizeMode="cover" />
+          <TouchableOpacity
+            activeOpacity={0.85}
+            accessibilityRole="button"
+            accessibilityLabel={item.caption || item.user?.name || (isAr ? 'فتح الصورة' : 'Open photo')}
+            onPress={() => openViewerAt(index)}>
+            <FastImage
+              source={{uri: item.image, priority: FastImage.priority.normal}}
+              style={styles.gridImage}
+              resizeMode={FastImage.resizeMode.cover}
+            />
           </TouchableOpacity>
         )}
       />
@@ -588,6 +544,7 @@ const styles = StyleSheet.create({
   },
   viewerSlide: {
     width: SCREEN_WIDTH,
+    height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
   },

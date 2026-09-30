@@ -5,6 +5,16 @@
 
 export const languageData = {
   en: {
+    ui_hala_brands: 'Hala community brands',
+    ui_select_hala_brand: 'Select a Hala community brand to check in.',
+    ui_search_hala_brands: 'Search Hala brands or locations…',
+    ui_hala_brands_retry: 'Could not load brands. Tap to retry.',
+    ui_not_hala_member: 'No matching Hala member. Check the spelling or search by location. Check-ins are available for registered Hala brands only.',
+    ui_no_hala_brands: 'No Hala community brands available yet.',
+    ui_brand_checkins: 'Community check-ins',
+    ui_brand_photos_retry: 'Could not load check-ins. Tap to retry.',
+    ui_no_brand_checkins: 'No community check-ins yet.',
+
     welcome_back: 'Welcome', sign_in_message: 'Sign in with your account',
     full_name: 'Full name', phone_number: 'phone number', login: 'login',
     logout: 'Logout', country: 'country', agree_to: 'I agree to the ',
@@ -286,6 +296,16 @@ export const languageData = {
 },
 
   ar: {
+    ui_hala_brands: 'علامات مجتمع هلا',
+    ui_select_hala_brand: 'اختر علامة من مجتمع هلا لتسجيل زيارتك.',
+    ui_search_hala_brands: 'ابحث عن علامات هلا أو مواقعها…',
+    ui_hala_brands_retry: 'تعذر تحميل العلامات. اضغط للمحاولة مجدداً.',
+    ui_not_hala_member: 'لا توجد علامة مطابقة من مجتمع هلا. تحقق من الاسم أو ابحث بالموقع. تسجيل الزيارات متاح لعلامات هلا المسجلة فقط.',
+    ui_no_hala_brands: 'لا توجد علامات متاحة في مجتمع هلا حالياً.',
+    ui_brand_checkins: 'زيارات المجتمع',
+    ui_brand_photos_retry: 'تعذر تحميل الزيارات. اضغط للمحاولة مجدداً.',
+    ui_no_brand_checkins: 'لا توجد زيارات من المجتمع بعد.',
+
     welcome_back: 'مرحبًا بعودتك!', sign_in_message: 'سجّل الدخول إلى حسابك',
     full_name: 'الاسم الكامل', phone_number: 'رقم الهاتف', login: 'تسجيل الدخول',
     logout: 'تسجيل الخروج', country: 'الدولة', agree_to: 'أوافق على ',
