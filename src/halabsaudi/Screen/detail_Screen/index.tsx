@@ -1,6 +1,16 @@
+import {RemoteImage} from '../../../ui/RemoteImage';
 import {Text} from '../../../ui/Text';
-import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {View, Image, TouchableOpacity, Platform, ScrollView, Linking, Dimensions} from 'react-native';
+import React, {useMemo, useRef, useState} from 'react';
+import {
+  View,
+  Image,
+  TouchableOpacity,
+  Platform,
+  ScrollView,
+  Linking,
+  useWindowDimensions,
+  FlatList,
+} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import CustomHeader from '../../Component/CustomHeader/CustomHeader';
 import {useNavigation} from '@react-navigation/native';
@@ -10,23 +20,20 @@ import {toggleItemInCart} from '../../redux_toolkit/cartSlice';
 import {RootState} from '../../redux_toolkit/store';
 import {Dark_Heart, Light_Heart, Location} from '../../Themes/Images';
 import Pin_Modal from '../../Component/CustomAlert/Pin_Modal';
-import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
-import LinearGradient from 'react-native-linear-gradient';
 import {getStyles} from './style';
 import {languageData} from '../../redux_toolkit/language/languageSlice';
 import MenuUnavailableModal from '../../Component/CustomAlert/MenuAlert';
 import {Colors} from '../../Themes/Colors';
-import FastImage from 'react-native-fast-image';
 import Branches from '../../Component/BottomSheet/Branches';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {useStatusBar} from '../../Component/UseStatusBar/useStatusBar';
 
 import {hbsText} from '../../i18n/translations';
 
-const {width} = Dimensions.get('screen');
-
 const DetailScreen: React.FC<{route: any}> = ({route}) => {
   const {item} = route.params;
+  const {width} = useWindowDimensions();
+  const slideWidth = width * 0.92;
   useStatusBar('light-content', Colors.background);
   const dispatch = useDispatch();
   const navigation = useNavigation<any>();
@@ -45,7 +52,6 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [showTimings, setShowTimings] = useState(false);
 
-  const [imageLoaded, setImageLoaded] = useState<{[k: string]: boolean}>({});
   const [activeIndex, setActiveIndex] = useState(0);
 
   const language = useSelector((state: RootState) => state.language.language);
@@ -62,10 +68,6 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
     setSelectedDiscountValue(0);
   };
 
-  const handleLoad = (key: string) => {
-    setImageLoaded(prev => ({...prev, [key]: true}));
-  };
-
   const handleOpenMaps = () => {
     if (!latitude || !longitude) return;
     const url = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
@@ -76,30 +78,6 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
     if (!phoneNumber) return;
     Linking.openURL(`tel:${phoneNumber}`);
   };
-
-  // ✅ preload / cache images (so bar bar load na ho)
-  useEffect(() => {
-    const urls: {uri: string; priority: any; cache: any}[] = [];
-
-    const push = (u: any) => {
-      const s = String(u || '').trim();
-      if (s) {
-        urls.push({
-          uri: s,
-          priority: FastImage.priority.high,
-          cache: FastImage.cacheControl.immutable,
-        });
-      }
-    };
-
-    if (Array.isArray(item?.multiImageUrls)) {
-      item.multiImageUrls.forEach(push);
-    }
-    push(item?.heroImage);
-    push(item?.img);
-
-    if (urls.length) FastImage.preload(urls);
-  }, [item]);
 
   const hasOffer = Boolean(item?.pdfUrl || item?.menuUrl);
 
@@ -131,14 +109,22 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
     sunday: hbsText(true, 'ui_sunday'),
   };
 
-  const sliderUrls = useMemo(() => {
-    const arr = Array.isArray(item?.multiImageUrls) ? item.multiImageUrls : [];
-    return arr.filter(Boolean).map((x: any) => String(x));
-  }, [item]);
-
-  const mainImageUrl = useMemo(() => {
-    return String(item?.heroImage || item?.img || '').trim();
-  }, [item]);
+  const sliderUrls = useMemo(
+    () => [
+      ...new Set(
+        [
+          item?.heroImage,
+          ...(Array.isArray(item?.multiImageUrls) ? item.multiImageUrls : []),
+          item?.img,
+        ]
+          .filter(
+            (url): url is string => typeof url === 'string' && !!url.trim(),
+          )
+          .map(url => url.trim()),
+      ),
+    ],
+    [item],
+  );
 
   return (
     <View style={{flex: 1, backgroundColor: Colors.background}}>
@@ -160,77 +146,47 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <View style={styles.Body_Cont}>
-            {/* ✅ Image Slider / Single Image */}
-            {sliderUrls.length > 0 ? (
-              <>
-                <ScrollView
-                  horizontal
-                  pagingEnabled
-                  showsHorizontalScrollIndicator={false}
-                  style={{marginBottom: 10}}
-                  scrollEventThrottle={16}
-                  onScroll={e => {
-                    const i = Math.round(
-                      e.nativeEvent.contentOffset.x / width,
-                    );
-                    setActiveIndex(i);
-                  }}>
-                  {sliderUrls.map((url: string, index: number) => {
-                    const key = `slider-${index}`;
-                    return (
-                      <View key={key} style={styles.imageContainer}>
-                        <ShimmerPlaceholder
-                          LinearGradient={LinearGradient}
-                          visible={!!imageLoaded[key]}
-                          style={styles.imageSlider}>
-                          <FastImage
-                            source={{
-                              uri: url,
-                              priority:
-                                index <= 1
-                                  ? FastImage.priority.high
-                                  : FastImage.priority.normal,
-                              cache: FastImage.cacheControl.immutable,
-                            }}
-                            style={styles.imageSlider}
-                            resizeMode={FastImage.resizeMode.cover}
-                            onLoadEnd={() => handleLoad(key)}
-                            onError={() => handleLoad(key)}
-                          />
-                        </ShimmerPlaceholder>
-                      </View>
-                    );
-                  })}
-                </ScrollView>
-
-                {sliderUrls.length > 1 ? (
-                  <View style={styles.dotsRow}>
-                    {sliderUrls.map((_: unknown, i: number) => (
-                      <View
-                        key={`dot-${i}`}
-                        style={[styles.dot, i === activeIndex ? styles.dotActive : null]}
-                      />
-                    ))}
-                  </View>
-                ) : null}
-              </>
-            ) : (
-              <ShimmerPlaceholder
-                LinearGradient={LinearGradient}
-                visible={!!imageLoaded['single']}
-                style={styles.image}>
-                <FastImage
-                  source={{
-                    uri: mainImageUrl,
-                    priority: FastImage.priority.high,
-                    cache: FastImage.cacheControl.immutable,
-                  }}
-                  style={styles.image}
-                  resizeMode={FastImage.resizeMode.cover}
-                  onLoadEnd={() => handleLoad('single')}
-                  onError={() => handleLoad('single')}
+            <FlatList
+              key={String(slideWidth)}
+              data={sliderUrls.length ? sliderUrls : ['']}
+              keyExtractor={(url, index) => `${url}-${index}`}
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              initialNumToRender={1}
+              maxToRenderPerBatch={2}
+              windowSize={3}
+              style={{height: 250, marginBottom: 12}}
+              getItemLayout={(_, index) => ({
+                length: slideWidth,
+                offset: slideWidth * index,
+                index,
+              })}
+              onMomentumScrollEnd={event =>
+                setActiveIndex(
+                  Math.round(event.nativeEvent.contentOffset.x / slideWidth),
+                )
+              }
+              renderItem={({item: url, index}) => (
+                <RemoteImage
+                  uri={url}
+                  style={{width: slideWidth, height: 250, borderRadius: 16}}
+                  priority={index === 0 ? 'high' : 'normal'}
                 />
-              </ShimmerPlaceholder>
+              )}
+            />
+            {sliderUrls.length > 1 && (
+              <View style={styles.dotsRow}>
+                {sliderUrls.map((url, index) => (
+                  <View
+                    key={url}
+                    style={[
+                      styles.dot,
+                      index === activeIndex && styles.dotActive,
+                    ]}
+                  />
+                ))}
+              </View>
             )}
 
             {/* Category */}
@@ -304,40 +260,51 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
             <TouchableOpacity
               activeOpacity={0.9}
               disabled={!hasOffer}
-              style={[styles.offerBtn, !hasOffer ? styles.offerBtnDisabled : null]}
+              style={[
+                styles.offerBtn,
+                !hasOffer ? styles.offerBtnDisabled : null,
+              ]}
               onPress={onPressOffer}>
               <View style={styles.offerBtnLeft}>
                 <Text style={styles.offerBtnTitle}>
-                  {hasOffer ? languageData[language].Avaliable_Offer : 'No Menu Available'}
+                  {hasOffer
+                    ? languageData[language].Avaliable_Offer
+                    : 'No Menu Available'}
                 </Text>
                 <Text style={styles.offerBtnSub}>
-                  {hasOffer ? 'Tap to open menu / offer' : 'This brand has no menu right now'}
+                  {hasOffer
+                    ? 'Tap to open menu / offer'
+                    : 'This brand has no menu right now'}
                 </Text>
               </View>
-              <Text style={styles.offerBtnArrow}>{language === 'ar' ? '‹' : '›'}</Text>
+              <Text style={styles.offerBtnArrow}>
+                {language === 'ar' ? '‹' : '›'}
+              </Text>
             </TouchableOpacity>
 
             {/* Discounts */}
             <View style={{width: '100%', marginTop: 8}}>
-              {Array.isArray(item?.discounts) && item.discounts.length > 0 ? (
-                item.discounts.map((d: any, index: number) => {
-                  const englishText = `${d.value} ${d.descriptionEng}`;
-                  return (
-                    <TouchableOpacity
-                      key={`dis-${index}`}
-                      activeOpacity={0.85}
-                      style={styles.Dis_Cont}
-                      onPress={() => {
-                        setSelectedDiscountText(englishText);
-                        setSelectedDiscountValue(Number(d.value) || 0);
-                        setAlertVisible(true);
-                      }}>
-                      <Text style={styles.Total_Discount}>{englishText}</Text>
-                      <Text style={styles.disArrow}>{language === 'ar' ? '‹' : '›'}</Text>
-                    </TouchableOpacity>
-                  );
-                })
-              ) : null}
+              {Array.isArray(item?.discounts) && item.discounts.length > 0
+                ? item.discounts.map((d: any, index: number) => {
+                    const englishText = `${d.value} ${d.descriptionEng}`;
+                    return (
+                      <TouchableOpacity
+                        key={`dis-${index}`}
+                        activeOpacity={0.85}
+                        style={styles.Dis_Cont}
+                        onPress={() => {
+                          setSelectedDiscountText(englishText);
+                          setSelectedDiscountValue(Number(d.value) || 0);
+                          setAlertVisible(true);
+                        }}>
+                        <Text style={styles.Total_Discount}>{englishText}</Text>
+                        <Text style={styles.disArrow}>
+                          {language === 'ar' ? '‹' : '›'}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })
+                : null}
             </View>
 
             {/* Description */}
@@ -378,7 +345,11 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
           onClose={() => setModalVisible(false)}
         />
 
-        <Branches ref={refRBSheet} brandName={item.nameEng} excludeId={item.id} />
+        <Branches
+          ref={refRBSheet}
+          brandName={item.nameEng}
+          excludeId={item.id}
+        />
 
         <View style={{height: 80}} />
       </ScrollView>

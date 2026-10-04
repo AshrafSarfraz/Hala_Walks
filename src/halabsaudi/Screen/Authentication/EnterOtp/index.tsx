@@ -1,24 +1,25 @@
-import {Text} from '../../../../ui/Text';
-import {TextInput} from '../../../../ui/TextInput';
 import React, {useState, useEffect, useRef, useCallback} from 'react';
 import {View, ScrollView, Image, TouchableOpacity, KeyboardAvoidingView, Platform} from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
-import {Back_Icon, Hbk_White, HBS_Logo} from '../../../Themes/Images';
-import CustomButton from '../../../Component/CustomButton/CustomButton';
-import {Colors} from '../../../Themes/Colors';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {getStyles} from './style';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import ActivityIndicatorModal from '../../../Component/Loader/ActivityIndicator';
 import {useSelector} from 'react-redux';
-import {RootState} from '../../../redux_toolkit/store';
-import {languageData} from '../../../redux_toolkit/language/languageSlice';
 import {CommonActions} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {apiPost} from '../../../firebase/api/client';
 import FastImage from 'react-native-fast-image';
-import {useStatusBar} from '../../../Component/UseStatusBar/useStatusBar';
-import {hbsText} from '../../../i18n/translations';
+import { hbsText } from '../../../i18n/translations';
+import { Colors } from '../../../Themes/Colors';
+import { useStatusBar } from '../../../Component/UseStatusBar/useStatusBar';
+import { RootState } from '../../../redux_toolkit/store';
+import { apiPost } from '../../../firebase/api/client';
+import { Back_Icon, Hbk_White } from '../../../Themes/Images';
+import { Text } from '../../../../ui/Text';
+import { languageData } from '../../OnBoarding/DummyData';
+import { TextInput } from '../../../../ui/TextInput';
+import CustomButton from '../../../Component/CustomButton/CustomButton';
+import ActivityIndicatorModal from '../../../Component/Loader/ActivityIndicator';
+
 
 interface OtpProps extends NativeStackScreenProps<any> {}
 

@@ -13,14 +13,14 @@ import { getStyles } from './style';
 
 
 
-import {onboardingLanguageData} from '../../i18n/translations';
+import {languageData, onboardingLanguageData} from '../../i18n/translations';
 
 type OnBoardingProps = {
   navigation: NativeStackNavigationProp<any>;
 };
 
 const OnBoarding: React.FC<OnBoardingProps> = ({ navigation }) => {
-  const [showRealApp, setShowRealApp] = useState(false);
+  const [showRealApp] = useState(false);
   const sliderRef = useRef<AppIntroSlider<any>>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 

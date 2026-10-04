@@ -1,3 +1,4 @@
+import {readLocationAccess} from '../utils/locationPermissions';
 // src/halabsaudi/Notifications/venueTracker.ts
 // ✅ DUAL SYSTEM:
 //   1. GEOFENCING   — jaise hi venue radius mein enter karo → turant notification ⚡
@@ -8,23 +9,23 @@ import BackgroundGeolocation, {
   GeofenceEvent,
 } from 'react-native-background-geolocation';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import notifee, { AndroidImportance, EventType } from '@notifee/react-native';
-import { navigate } from './RootNavigation';
+import notifee, {AndroidImportance, EventType} from '@notifee/react-native';
+import {navigate} from './RootNavigation';
 import {isSocialNotification, saveSocialNavigation} from './social';
 
 // ─── CONFIG ───────────────────────────────────────────────────────────────────
-const VENUES_API     = 'https://hala-b-saudi.onrender.com/api/hbs/venues';
-const VENUES_CACHE   = 'hbs_venues_v1';
+const VENUES_API = 'https://hala-b-saudi.onrender.com/api/hbs/venues';
+const VENUES_CACHE = 'hbs_venues_v1';
 const COOLDOWN_STORE = 'hbs_cooldown_v2';
-const PENDING_NAV    = 'hbs_pending_nav';
-const CHANNEL_ID     = 'hbs_alerts';
+const PENDING_NAV = 'hbs_pending_nav';
+const CHANNEL_ID = 'hbs_alerts';
 export const RADIUS_METERS = 500;
 
-export { PENDING_NAV  as PENDING_VENUE_KEY };
-export { CHANNEL_ID };
-export { COOLDOWN_STORE };
+export {PENDING_NAV as PENDING_VENUE_KEY};
+export {CHANNEL_ID};
+export {COOLDOWN_STORE};
 
-let initialized    = false;
+let initialized = false;
 let geofenceSub: any = null;
 let periodicTimer: ReturnType<typeof setInterval> | null = null;
 
@@ -33,25 +34,27 @@ const _processingNow = new Set<string>();
 
 // ─── DISTANCE ─────────────────────────────────────────────────────────────────
 function getDistanceMeters(
-  lat1: number, lon1: number,
-  lat2: number, lon2: number,
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number,
 ): number {
-  const R    = 6371000;
+  const R = 6371000;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
   const dLon = ((lon2 - lon1) * Math.PI) / 180;
   const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.cos((lat1 * Math.PI) / 180) *
-    Math.cos((lat2 * Math.PI) / 180) *
-    Math.sin(dLon / 2) *
-    Math.sin(dLon / 2);
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
 // ─── VENUES ───────────────────────────────────────────────────────────────────
 async function fetchAndCacheVenues(): Promise<any[]> {
   try {
-    const res  = await fetch(VENUES_API);
+    const res = await fetch(VENUES_API);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const json = await res.json();
     if (!Array.isArray(json?.data)) return [];
@@ -78,7 +81,9 @@ export async function getVenues(): Promise<any[]> {
 }
 
 function venueName(v: any): string {
-  return v?.venueName || v?.name || v?.title || v?.branchName || 'a nearby venue';
+  return (
+    v?.venueName || v?.name || v?.title || v?.branchName || 'a nearby venue'
+  );
 }
 function venueId(v: any): string {
   return String(v?._id || v?.id || '');
@@ -87,7 +92,7 @@ function venueId(v: any): string {
 // ─── COOLDOWN — 1 per calendar day per venue ──────────────────────────────────
 export async function canNotify(id: string): Promise<boolean> {
   try {
-    const raw  = await AsyncStorage.getItem(COOLDOWN_STORE);
+    const raw = await AsyncStorage.getItem(COOLDOWN_STORE);
     const data: Record<string, string> = raw ? JSON.parse(raw) : {};
     return data[id] !== new Date().toDateString();
   } catch {
@@ -99,7 +104,9 @@ export async function markNotified(id: string): Promise<void> {
   try {
     const raw = await AsyncStorage.getItem(COOLDOWN_STORE);
     let data: Record<string, string> = {};
-    try { if (raw) data = JSON.parse(raw); } catch {}
+    try {
+      if (raw) data = JSON.parse(raw);
+    } catch {}
     data[id] = new Date().toDateString();
     await AsyncStorage.setItem(COOLDOWN_STORE, JSON.stringify(data));
   } catch (e) {
@@ -110,11 +117,11 @@ export async function markNotified(id: string): Promise<void> {
 // ─── NOTIFICATION ─────────────────────────────────────────────────────────────
 export async function createChannel() {
   await notifee.createChannel({
-    id:         CHANNEL_ID,
-    name:       'Venue Alerts',
+    id: CHANNEL_ID,
+    name: 'Venue Alerts',
     importance: AndroidImportance.HIGH,
-    vibration:  true,
-    sound:      'default',
+    vibration: true,
+    sound: 'default',
   });
 }
 
@@ -122,19 +129,22 @@ export async function showNotification(name: string, id: string) {
   try {
     await notifee.displayNotification({
       title: '🎉 Hala B Saudi',
-      body:  `You're near ${name}! Check exclusive offers now.`,
-      data:  { venueId: id },
+      body: `You're near ${name}! Check exclusive offers now.`,
+      data: {venueId: id},
       android: {
-        channelId:     CHANNEL_ID,
-        importance:    AndroidImportance.HIGH,
-        pressAction:   { id: 'default' },
-        smallIcon:     'ic_notification',
+        channelId: CHANNEL_ID,
+        importance: AndroidImportance.HIGH,
+        pressAction: {id: 'default'},
+        smallIcon: 'ic_notification',
         showTimestamp: true,
       },
       ios: {
         sound: 'default',
         foregroundPresentationOptions: {
-          alert: true, badge: true, sound: true, banner: true,
+          alert: true,
+          badge: true,
+          sound: true,
+          banner: true,
         },
       },
     });
@@ -159,7 +169,7 @@ async function tryNotifyVenue(id: string, name: string): Promise<void> {
   }
   _processingNow.add(id);
   try {
-    await markNotified(id);       // PEHLE mark
+    await markNotified(id); // PEHLE mark
     await showNotification(name, id); // PHIR notify
   } finally {
     _processingNow.delete(id);
@@ -169,7 +179,7 @@ async function tryNotifyVenue(id: string, name: string): Promise<void> {
 // ─── GEOFENCE ENTER HANDLER ───────────────────────────────────────────────────
 async function onGeofenceEnter(event: GeofenceEvent) {
   if (event.action !== 'ENTER') return;
-  const id   = event.identifier;
+  const id = event.identifier;
   const name = event.extras?.name || 'a nearby venue';
   console.log(`[HBS] GEOFENCE ENTER: ${name}`);
   await tryNotifyVenue(id, name);
@@ -182,11 +192,14 @@ export async function checkProximity(lat: number, lon: number): Promise<void> {
     for (const v of venues) {
       const vLat = Number(v?.latitude);
       const vLon = Number(v?.longitude);
-      const id   = venueId(v);
-      if (!id || isNaN(vLat) || isNaN(vLon) || vLat === 0 || vLon === 0) continue;
+      const id = venueId(v);
+      if (!id || isNaN(vLat) || isNaN(vLon) || vLat === 0 || vLon === 0)
+        continue;
       const dist = getDistanceMeters(lat, lon, vLat, vLon);
       if (dist > RADIUS_METERS) continue;
-      console.log(`[HBS] PERIODIC: in radius ${venueName(v)} | ${Math.round(dist)}m`);
+      console.log(
+        `[HBS] PERIODIC: in radius ${venueName(v)} | ${Math.round(dist)}m`,
+      );
       await tryNotifyVenue(id, venueName(v));
     }
   } catch (e) {
@@ -204,13 +217,13 @@ async function registerGeofences(venues: any[]) {
       return venueId(v) && !isNaN(lat) && !isNaN(lon) && lat !== 0 && lon !== 0;
     })
     .map(v => ({
-      identifier:    venueId(v),
-      latitude:      Number(v.latitude),
-      longitude:     Number(v.longitude),
-      radius:        RADIUS_METERS,
+      identifier: venueId(v),
+      latitude: Number(v.latitude),
+      longitude: Number(v.longitude),
+      radius: RADIUS_METERS,
       notifyOnEntry: true,
-      notifyOnExit:  false,
-      extras:        { name: venueName(v) },
+      notifyOnExit: false,
+      extras: {name: venueName(v)},
     }));
 
   if (!geofences.length) {
@@ -226,20 +239,20 @@ async function goToVenue(id: string) {
   try {
     const venues = await getVenues();
     const v = venues.find(x => venueId(x) === id);
-    if (v) navigate('SelectedVenue', { item: { id: venueId(v), ...v } });
+    if (v) navigate('SelectedVenue', {item: {id: venueId(v), ...v}});
   } catch (e) {
     console.log('[HBS] goToVenue error:', e);
   }
 }
 
 export function setupNotificationHandlers() {
-  notifee.onForegroundEvent(async ({ type, detail }) => {
+  notifee.onForegroundEvent(async ({type, detail}) => {
     if (type === EventType.PRESS) {
       const id = detail.notification?.data?.venueId as string;
       if (id) await goToVenue(id);
     }
   });
-  notifee.onBackgroundEvent(async ({ type, detail }) => {
+  notifee.onBackgroundEvent(async ({type, detail}) => {
     if (type === EventType.PRESS) {
       if (isSocialNotification(detail.notification?.data)) {
         await saveSocialNavigation(detail.notification?.data);
@@ -284,13 +297,23 @@ function startPeriodicCheck() {
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
+let initializing: Promise<void> | null = null;
 export async function initVenueTracker() {
+  if (initializing) return initializing;
+  initializing = initializeVenueTracker().finally(() => {
+    initializing = null;
+  });
+  return initializing;
+}
+async function initializeVenueTracker() {
   if (initialized) {
     console.log('[HBS] Already initialized');
     return;
   }
 
   try {
+    const consent = await AsyncStorage.getItem('hala_permissions_asked');
+    if (consent !== 'true' || !(await readLocationAccess()).background) return;
     await createChannel();
     setupNotificationHandlers();
 
@@ -298,8 +321,8 @@ export async function initVenueTracker() {
       geolocation: {
         distanceFilter: 200,
         desiredAccuracy: BackgroundGeolocation.DesiredAccuracy.High,
-        locationAuthorizationRequest: 'Always',
-        disableLocationAuthorizationAlert: false,
+        locationAuthorizationRequest: 'Any',
+        disableLocationAuthorizationAlert: true,
         pausesLocationUpdatesAutomatically: false,
         activityType: BackgroundGeolocation.ActivityType.Other,
         geofenceModeHighAccuracy: true,
@@ -308,7 +331,11 @@ export async function initVenueTracker() {
         stopOnTerminate: false,
         startOnBoot: true,
         enableHeadless: true,
-        notification: {title: 'Hala B Saudi', text: 'Watching for nearby venues...', channelId: CHANNEL_ID},
+        notification: {
+          title: 'Hala B Saudi',
+          text: 'Watching for nearby venues...',
+          channelId: CHANNEL_ID,
+        },
       },
       activity: {disableMotionActivityUpdates: true},
       logger: {debug: false, logLevel: BackgroundGeolocation.LogLevel.Off},
@@ -327,16 +354,14 @@ export async function initVenueTracker() {
     // ✅ System 2: 30-min periodic check (backup)
     startPeriodicCheck();
 
-    // ✅ Startup check — agar already andar hain
-    try {
-      const loc = await BackgroundGeolocation.getCurrentPosition({
-        timeout: 30, samples: 1, persist: false,
-      });
-      console.log('[HBS] Startup position check...');
-      await checkProximity(loc.coords.latitude, loc.coords.longitude);
-    } catch (e) {
-      console.log('[HBS] getCurrentPosition error:', e);
-    }
+    // A slow cold GPS fix must not keep initialization pending.
+    void BackgroundGeolocation.getCurrentPosition({
+      timeout: 8,
+      samples: 1,
+      persist: false,
+    })
+      .then(loc => checkProximity(loc.coords.latitude, loc.coords.longitude))
+      .catch(() => {});
 
     initialized = true;
     console.log('[HBS] ✅ Dual system active: Geofencing + Periodic (30min)');
@@ -349,7 +374,10 @@ export async function initVenueTracker() {
 // ─── STOP ─────────────────────────────────────────────────────────────────────
 export async function stopVenueTracker() {
   try {
-    if (periodicTimer) { clearInterval(periodicTimer); periodicTimer = null; }
+    if (periodicTimer) {
+      clearInterval(periodicTimer);
+      periodicTimer = null;
+    }
     geofenceSub?.remove?.();
     geofenceSub = null;
     initialized = false;

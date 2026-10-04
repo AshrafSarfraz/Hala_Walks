@@ -2,8 +2,8 @@
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { Platform } from 'react-native';
-import { BASE_URL } from '../../config/api';
+import {Platform} from 'react-native';
+import {BASE_URL} from '../../config/api';
 
 // ✅ Same token register baar baar mat karo
 let _lastRegisteredToken: string | null = null;
@@ -16,7 +16,7 @@ export async function registerFCMToken(): Promise<void> {
     if (!authToken) return;
 
     // ✅ Permission
-    const authStatus = await messaging().requestPermission();
+    const authStatus = await messaging().hasPermission();
     const enabled =
       authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
       authStatus === messaging.AuthorizationStatus.PROVISIONAL;
@@ -34,7 +34,10 @@ export async function registerFCMToken(): Promise<void> {
     }
 
     // ✅ Already registered — skip
-    if (_lastRegisteredToken === fcmToken && _lastRegisteredAccount === authToken) {
+    if (
+      _lastRegisteredToken === fcmToken &&
+      _lastRegisteredAccount === authToken
+    ) {
       console.log('[FCM] Token unchanged — skipping');
       return;
     }
@@ -43,8 +46,8 @@ export async function registerFCMToken(): Promise<void> {
 
     await axios.post(
       `${BASE_URL}/api/devices/register`,
-      { token: fcmToken, platform },
-      { headers: { Authorization: `Bearer ${authToken}` } }
+      {token: fcmToken, platform},
+      {headers: {Authorization: `Bearer ${authToken}`}},
     );
 
     _lastRegisteredToken = fcmToken;
@@ -53,24 +56,25 @@ export async function registerFCMToken(): Promise<void> {
 
     // ✅ Token refresh
     unsubscribeTokenRefresh?.();
-    unsubscribeTokenRefresh = messaging().onTokenRefresh(async (newToken: string) => {
-      try {
-        _lastRegisteredToken = null;
-        const t = await AsyncStorage.getItem('hala_token');
-        if (!t) return;
-        await axios.post(
-          `${BASE_URL}/api/devices/register`,
-          { token: newToken, platform },
-          { headers: { Authorization: `Bearer ${t}` } }
-        );
-        _lastRegisteredToken = newToken;
-        _lastRegisteredAccount = t;
-        console.log('[FCM] Token refreshed');
-      } catch (e) {
-        console.log('[FCM] Refresh error:', e);
-      }
-    });
-
+    unsubscribeTokenRefresh = messaging().onTokenRefresh(
+      async (newToken: string) => {
+        try {
+          _lastRegisteredToken = null;
+          const t = await AsyncStorage.getItem('hala_token');
+          if (!t) return;
+          await axios.post(
+            `${BASE_URL}/api/devices/register`,
+            {token: newToken, platform},
+            {headers: {Authorization: `Bearer ${t}`}},
+          );
+          _lastRegisteredToken = newToken;
+          _lastRegisteredAccount = t;
+          console.log('[FCM] Token refreshed');
+        } catch (e) {
+          console.log('[FCM] Refresh error:', e);
+        }
+      },
+    );
   } catch (e: any) {
     console.log('[FCM] registerFCMToken error:', e?.message || e);
   }
@@ -89,8 +93,8 @@ export async function unregisterFCMToken(): Promise<void> {
     if (!fcmToken) return;
 
     await axios.delete(`${BASE_URL}/api/devices/remove`, {
-      data: { token: fcmToken },
-      headers: { Authorization: `Bearer ${authToken}` },
+      data: {token: fcmToken},
+      headers: {Authorization: `Bearer ${authToken}`},
     });
 
     _lastRegisteredToken = null;

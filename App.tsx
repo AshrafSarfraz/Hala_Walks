@@ -2,17 +2,18 @@ import {AlertHost} from './src/ui/Alert';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 // App.tsx — ✅ Fixed: notification nav now passes participantName + participantId
 import 'react-native-gesture-handler';
-import React, { useEffect, useRef } from 'react';
-import { AppState, Platform } from 'react-native';
-import { Provider } from 'react-redux';
-import { PersistGate } from 'redux-persist/integration/react';
-import { persistor, store } from './src/westwalk/redux/store';
+import React, {useEffect, useRef} from 'react';
+import {AppState, Platform} from 'react-native';
+import {Provider} from 'react-redux';
+import {PersistGate} from 'redux-persist/integration/react';
+import {persistor, store} from './src/westwalk/redux/store';
 import AppStack from './src/HandlebothApp/handleNavigation';
-import notifee, { AndroidImportance, EventType, AuthorizationStatus } from '@notifee/react-native';
+import notifee, {AndroidImportance, EventType, AuthorizationStatus} from '@notifee/react-native';
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { navigate } from './src/halabsaudi/Notifications/RootNavigation';
-import { checkPendingNavigation } from './src/halabsaudi/Notifications/index';
+import {navigate} from './src/halabsaudi/Notifications/RootNavigation';
+import {initVenueTracker} from './src/halabsaudi/Notifications';
+import {checkPendingNavigation} from './src/halabsaudi/Notifications/index';
 import {
   displaySocialNotification,
   isSocialNotification,
@@ -20,8 +21,8 @@ import {
   openSocialNotification,
   saveSocialNavigation,
 } from './src/halabsaudi/Notifications/social';
-import { connectSocket, getSocket } from './src/halabsaudi/chat/socket';
-import { registerFCMToken } from './src/halabsaudi/chat/registerFCMToken';
+import {connectSocket, getSocket} from './src/halabsaudi/chat/socket';
+import {registerFCMToken} from './src/halabsaudi/chat/registerFCMToken';
 // ✅ NEW — notification count / tray manager
 import {
   displayChatNotification,
@@ -70,7 +71,7 @@ function navigateToChat(data: Record<string, any> | undefined, delay = 0) {
     chatId: String(data.chatId),
     participantName: data.senderName || data.participantName || '',
     participantId: String(data.senderId || data.participantId || ''),
-    participantAvatar: data.senderAvatar || null,           
+    participantAvatar: data.senderAvatar || null,
   };
   if (delay > 0) {
     setTimeout(() => navigate('ChatScreen', params), delay);
@@ -86,6 +87,7 @@ const App = () => {
     requestNotificationPermission();
     createChatChannel();
     checkPendingNavigation();
+    void initVenueTracker();
 
     const initSocket = async () => {
       const token = await AsyncStorage.getItem('hala_token');
@@ -111,6 +113,7 @@ const App = () => {
         //    bhi utna kam ho jaye. Pehle badge atka rehta tha.
         await syncBadgeWithTray();
         await openPendingSocialNotification();
+        void initVenueTracker();
       }
       appState.current = nextState;
     });
@@ -145,7 +148,9 @@ const App = () => {
       async remoteMessage => {
         try {
           await createChatChannel();
-          const socialData = remoteMessage?.data as Record<string, any> | undefined;
+          const socialData = remoteMessage?.data as
+            | Record<string, any>
+            | undefined;
           if (isSocialNotification(socialData)) {
             await displaySocialNotification(remoteMessage);
             return;
@@ -177,15 +182,17 @@ const App = () => {
 
     // ✅ Notifee tap handler (foreground)
     const unsubscribeForeground = notifee.onForegroundEvent(
-      ({ type, detail }) => {
+      ({type, detail}) => {
         if (type === EventType.PRESS) {
-          const d = detail.notification?.data as Record<string, any> | undefined;
+          const d = detail.notification?.data as
+            | Record<string, any>
+            | undefined;
           if (isSocialNotification(d)) {
             openSocialNotification(d);
             return;
           }
           if (d?.chatId) navigateToChat(d);
-          if (d?.venueId) navigate('SelectedVenue', { venueId: d.venueId });
+          if (d?.venueId) navigate('SelectedVenue', {venueId: d.venueId});
         }
       },
     );
@@ -199,12 +206,14 @@ const App = () => {
   }, []);
 
   return (
-    <SafeAreaProvider><Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <AppStack />
-        <AlertHost />
-      </PersistGate>
-    </Provider></SafeAreaProvider>
+    <SafeAreaProvider>
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <AppStack />
+          <AlertHost />
+        </PersistGate>
+      </Provider>
+    </SafeAreaProvider>
   );
 };
 
