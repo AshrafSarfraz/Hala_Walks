@@ -65,7 +65,7 @@ const HalaStack: React.FC = () => {
         } else if (halaData === 'true' && token) {
           setInitialRoute('BottomTab');
         } else {
-          setInitialRoute('Splash');
+          setInitialRoute('BottomTab');
         }
       } catch (e) {
         console.log('Error reading login state', e);

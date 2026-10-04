@@ -125,7 +125,6 @@ const Login: React.FC<NativeStackScreenProps<any>> = ({navigation}) => {
               source={Logo_G}
               style={styles.H_Logo}
               resizeMode="cover"
-             borderRadius={100}
             />
             <Text style={styles.Welcome_Txt}>
               {languageData[language].welcome_back}
