@@ -1,145 +1,35 @@
-import {Text} from '../../../ui/Text';
-
-// src/halabsaudi/Notifications/LocationDisclosure.tsx
-import React, { useState } from 'react';
-import {View, TouchableOpacity, StyleSheet, ScrollView, Platform, PermissionsAndroid} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { initVenueTracker } from '../../Notifications/index'
+import React,{ useState } from 'react';
+import { StyleSheet,View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSelector } from 'react-redux';
+import CustomHeader from '../../Component/CustomHeader/CustomHeader';
+import { useStatusBar } from '../../Component/UseStatusBar/useStatusBar';
 import { Colors } from '../../Themes/Colors';
-const LocationDisclosure = ({ navigation }: any) => {
-  const [loading, setLoading] = useState(false);
+import PermissionCard from '../../permissions/PermissionCard';
+import { permissionStatus } from '../../permissions/service';
+import { RootState } from '../../redux_toolkit/store';
 
-  const handleAllow = async () => {
-    setLoading(true);
-    try {
-      if (Platform.OS === 'android') {
-
-        // ─── Step 1: Foreground location ─────────────────────────────────────
-        const fine = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-          {
-            title:          'Location Permission',
-            message:        'Hala B Saudi needs your location to detect nearby venues and send exclusive offers.',
-            buttonNegative: 'Deny',
-            buttonPositive: 'Allow',
-          }
-        );
-
-        // ─── Step 2: Background location (sirf foreground granted ho tab) ───
-        // ✅ NO activity recognition — sirf location
-        if (fine === PermissionsAndroid.RESULTS.GRANTED && Platform.Version >= 29) {
-          await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION,
-            {
-              title:          'Background Location',
-              message:        'To receive offers when the app is closed, please select "Allow all the time".',
-              buttonNegative: 'While Using App Only',
-              buttonPositive: 'Allow All The Time',
-            }
-          );
-        }
-
-        // ✅ NO activity recognition request — removed
-      }
-
-      // ─── Save + start tracker ─────────────────────────────────────────────
-      await AsyncStorage.multiSet([
-        ['hala_permissions_asked', 'true'],
-        ['hala_location_permission_granted', 'true'],
-      ]);
-
-      await initVenueTracker();
-
-    } catch (e) {
-      console.log('[Disclosure] Error:', e);
-    } finally {
-      setLoading(false);
-      navigation.replace('BottomTab');
-    }
-  };
-
-  const handleSkip = async () => {
+export default function LocationDisclosure({navigation}: any) {
+  useStatusBar('dark-content', Colors.surface);
+  const ar = useSelector((state: RootState) => state.language.language === 'ar');
+  const [step, setStep] = useState(0);
+  const advance = async () => {
+    if (step === 0) {setStep(1); return;}
     await AsyncStorage.multiSet([
-      ['hala_permissions_asked', 'true'],
-      ['hala_location_permission_granted', 'false'],
+      ['hala_permissions_asked', 'true'], ['hala_permissions_v2', 'true'],
+      ['hala_location_permission_granted', String(await permissionStatus('location') === 'granted')],
     ]);
     navigation.replace('BottomTab');
   };
-
-  return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.icon}>📍</Text>
-      <Text style={styles.title}>Location Access</Text>
-
-      <Text style={styles.sectionTitle}>Why we need your location</Text>
-      <Text style={styles.text}>
-        <Text style={styles.bold}>Hala B Saudi</Text> uses your location to
-        detect nearby venues and send exclusive offers —{' '}
-        <Text style={styles.bold}>even when the app is closed.</Text>
-      </Text>
-
-      <View style={styles.tipBox}>
-        <Text style={styles.tipTitle}>Important</Text>
-        <Text style={styles.tipText}>
-          You will see <Text style={styles.bold}>2 location prompts</Text>:{'\n\n'}
-          First: select{' '}
-          <Text style={styles.bold}>"Allow"</Text>
-          {'\n'}
-          Second: select{' '}
-          <Text style={styles.bold}>"Allow All The Time"</Text>
-          {'\n\n'}
-          This lets us notify you near venues even when the app is closed.
-        </Text>
-      </View>
-
-      <Text style={styles.note}>
-        You can change this permission anytime in your device Settings.
-      </Text>
-
-      <TouchableOpacity
-        style={styles.button}
-        onPress={handleAllow}
-        disabled={loading}
-      >
-        <Text style={styles.buttonText}>
-          {loading ? 'Please wait...' : 'Allow Location Access'}
-        </Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.skipButton}
-        onPress={handleSkip}
-        disabled={loading}
-      >
-        <Text style={styles.skipText}>Not Now</Text>
-      </TouchableOpacity>
-    </ScrollView>
-  );
-};
-
-export default LocationDisclosure;
-
+  return <SafeAreaView edges={['top', 'bottom']} style={styles.safe}>
+    <CustomHeader title={ar ? 'اجعل هلا يناسبك' : 'Make Hala yours'} />
+    <View style={styles.progress}>{[0, 1].map(i => <View key={i} style={[styles.dot, i === step && styles.active]} />)}</View>
+    <PermissionCard key={step} kind={step === 0 ? 'location' : 'notifications'} onDone={advance} onSkip={advance} />
+  </SafeAreaView>;
+}
 const styles = StyleSheet.create({
-  container:    { flexGrow: 1, padding: 24, paddingTop: 60, backgroundColor:Colors.background },
-  icon:         { fontSize: 24, marginBottom: 12 },
-  title:        { fontSize: 26, fontWeight: '700', marginBottom: 24, color: Colors.textPrimary },
-  sectionTitle: { fontSize: 16, fontWeight: '700', color:Colors.textPrimary, marginTop: 16, marginBottom: 6 },
-  text:         { fontSize: 15, lineHeight: 24, color: Colors.textSecondary },
-  bold:         { fontWeight: '700' },
-  tipBox: {
-    backgroundColor: Colors.surface,
-    borderRadius: 12,
-    padding: 16,
-    marginTop: 16,
-    marginBottom: 8,
-    borderLeftWidth: 4,
-    borderLeftColor: Colors.accent,
-  },
-  tipTitle:   { fontWeight: '700', color: Colors.accent, marginBottom: 8, fontSize: 15 },
-  tipText:    { fontSize: 12, lineHeight: 22, color: Colors.textPrimary},
-  note:       { fontSize: 10, color: Colors.textSecondary, marginTop: 20, marginBottom: 8, fontStyle: 'italic' },
-  button:     { backgroundColor: Colors.accent, paddingVertical: 15, borderRadius: 12, alignItems: 'center', marginTop: 28 },
-  buttonText: { color: Colors.white, fontSize: 16, fontWeight: '700' },
-  skipButton: { marginTop: 12, alignItems: 'center', paddingBottom: 30 },
-  skipText:   { color: Colors.textSecondary, fontSize: 14 },
+  safe: {flex: 1, backgroundColor: Colors.surface},
+  progress: {flexDirection: 'row', justifyContent: 'center', gap: 6, paddingTop: 20},
+  dot: {width: 8, height: 8, borderRadius: 4, backgroundColor: Colors.border}, active: {width: 22, backgroundColor: Colors.accent},
 });

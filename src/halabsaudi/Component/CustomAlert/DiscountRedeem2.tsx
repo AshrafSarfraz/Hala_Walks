@@ -1,7 +1,7 @@
-import {Text} from '../../../ui/Text';
+import { Text } from '../../../ui/Text';
 
 import React from 'react';
-import {View, Modal, StyleSheet, Image, StatusBar} from 'react-native';
+import { Image,Modal,StyleSheet,View } from 'react-native';
 import { Colors } from '../../Themes/Colors';
 import { Fonts } from '../../Themes/Fonts';
 import { Giftpack } from '../../Themes/Images';
@@ -25,7 +25,6 @@ const Discount_Redeem2: React.FC<DiscountProps> = ({ visible, onClose, item }) =
 
   return (
     <Modal transparent visible={visible} animationType="fade">
-      <StatusBar hidden translucent animated />
       <View style={styles.overlay}>
         <View style={styles.container}>
           {/* 🏷 Brand Name */}

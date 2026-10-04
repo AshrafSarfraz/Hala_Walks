@@ -1,21 +1,21 @@
-import {fetchBrandCatalog} from '../../api/brandCatalog';
-import {Text} from '../../../ui/Text';
-import {TextInput} from '../../../ui/TextInput';
-import {ActivityIndicator} from '../../../ui/ActivityIndicator';
-import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {View, FlatList, Image, TouchableOpacity} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {useNavigation} from '@react-navigation/native';
-import {Search} from '../../Themes/Images';
-import CustomHeader from '../../Component/CustomHeader/CustomHeader';
-import {useSelector} from 'react-redux';
-import {RootState} from '../../redux_toolkit/store';
-import {getStyles} from './style';
-import {languageData} from '../../redux_toolkit/language/languageSlice';
-import {Colors} from '../../Themes/Colors';
-import FastImage from 'react-native-fast-image';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useStatusBar} from '../../Component/UseStatusBar/useStatusBar';
+import { useNavigation } from '@react-navigation/native';
+import React,{ useEffect,useMemo,useRef,useState } from 'react';
+import { FlatList,Image,TouchableOpacity,View } from 'react-native';
+import FastImage from 'react-native-fast-image';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSelector } from 'react-redux';
+import { ActivityIndicator } from '../../../ui/ActivityIndicator';
+import { Text } from '../../../ui/Text';
+import { TextInput } from '../../../ui/TextInput';
+import CustomHeader from '../../Component/CustomHeader/CustomHeader';
+import { useStatusBar } from '../../Component/UseStatusBar/useStatusBar';
+import { Colors } from '../../Themes/Colors';
+import { Search } from '../../Themes/Images';
+import { fetchBrandCatalog } from '../../api/brandCatalog';
+import { languageData } from '../../redux_toolkit/language/languageSlice';
+import { RootState } from '../../redux_toolkit/store';
+import { getStyles } from './style';
 
 const BRANDS_API = 'https://hala-b-saudi.onrender.com/api/hbs/brands';
 
@@ -249,9 +249,7 @@ const SelectedVenues: React.FC<{route: any}> = ({route}) => {
   return (
     <View style={styles.container}>
       <SafeAreaView edges={['top']} style={{backgroundColor: Colors.surface}}>
-        <View style={{paddingHorizontal: '4%', paddingBottom: 5}}>
-          <CustomHeader title={item?.venueName} onBackPress={() => navigation.goBack()} />
-        </View>
+        <CustomHeader title={language === 'ar' ? item?.venueNameAr || item?.venueName : item?.venueName} onBackPress={() => navigation.goBack()} />
       </SafeAreaView>
 
       <View style={{flex: 1, paddingHorizontal: '4%', backgroundColor: Colors.background}}>

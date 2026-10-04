@@ -1,23 +1,23 @@
-import UserAvatar from '../Component/UserAvatar';
-import type {HalaStackParamList} from '../Navigation/types';
-import {Text} from '../../ui/Text';
-import {ActivityIndicator} from '../../ui/ActivityIndicator';
-import {bioPreview} from './socialProfile';
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {View, FlatList, TouchableOpacity, StyleSheet, Platform, Image,TextInput, RefreshControl} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
 import Ionicons from '@react-native-vector-icons/ionicons';
-import {useSelector} from 'react-redux';
-import {BASE_URL} from '../../config/api';
-import {Colors} from '../Themes/Colors';
-import {languageData} from '../redux_toolkit/language/languageSlice';
-import {RootState} from '../redux_toolkit/store';
-import {useStatusBar} from '../Component/UseStatusBar/useStatusBar';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import axios from 'axios';
+import React,{ useCallback,useEffect,useMemo,useRef,useState } from 'react';
+import { FlatList,Platform,RefreshControl,StyleSheet,TextInput,TouchableOpacity,View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSelector } from 'react-redux';
+import { BASE_URL } from '../../config/api';
+import { ActivityIndicator } from '../../ui/ActivityIndicator';
+import { Text } from '../../ui/Text';
+import CustomHeader from '../Component/CustomHeader/CustomHeader';
+import { useStatusBar } from '../Component/UseStatusBar/useStatusBar';
+import UserAvatar from '../Component/UserAvatar';
+import type { HalaStackParamList } from '../Navigation/types';
+import { Colors } from '../Themes/Colors';
+import { languageData } from '../redux_toolkit/language/languageSlice';
+import { RootState } from '../redux_toolkit/store';
 
-import {hbsText} from '../i18n/translations';
+import { hbsText } from '../i18n/translations';
 
 type User = {
   _id: string; name: string; bio?: string | null; avatar?: string | null; isOnline?: boolean;
@@ -297,14 +297,7 @@ export default function StartChatScreen({navigation}: Props) {
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
-      {/* ── Header: SocialConnectionsScreen jaisa simple ── */}
-      <View style={[styles.header, {flexDirection: rowDir}]}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.back} activeOpacity={0.7}>
-          <Ionicons name={isRTL ? 'arrow-forward' : 'arrow-back'} size={22} color={Colors.textPrimary} />
-        </TouchableOpacity>
-        <Text style={styles.title} numberOfLines={1}>{t.add_new_friend}</Text>
-        <View style={styles.back} />
-      </View>
+      <CustomHeader title={t.add_new_friend} onBackPress={() => navigation.goBack()} />
 
       {/* ── Search ── */}
       <View style={styles.searchWrap}>

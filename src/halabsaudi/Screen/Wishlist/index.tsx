@@ -1,21 +1,23 @@
-import {Text} from '../../../ui/Text';
+import { Text } from '../../../ui/Text';
+import CustomHeader from '../../Component/CustomHeader/CustomHeader';
+import { permissionStatus } from '../../permissions/service';
 
-import React, { useEffect, useState } from 'react';
-import {View, FlatList, Image, TouchableOpacity, StatusBar, Platform, ImageBackground, PermissionsAndroid, StyleSheet, Dimensions} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
-import { useDispatch, useSelector } from 'react-redux';
 import Ionicons from '@react-native-vector-icons/ionicons';
+import { useNavigation } from '@react-navigation/native';
+import React,{ useEffect,useState } from 'react';
+import { Dimensions,FlatList,Image,ImageBackground,Platform,StyleSheet,TouchableOpacity,View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useDispatch,useSelector } from 'react-redux';
 
-import { Dark_Heart, Light_Heart, Location } from '../../Themes/Images';
+import Geolocation from '@react-native-community/geolocation';
+import { useStatusBar } from '../../Component/UseStatusBar/useStatusBar';
+import DistanceFromDevice from '../../Component/distanceCalculate/distanceCalculate';
 import { Colors } from '../../Themes/Colors';
 import { Fonts } from '../../Themes/Fonts';
-import { RootState } from '../../redux_toolkit/store';
+import { Dark_Heart,Light_Heart,Location } from '../../Themes/Images';
 import { toggleItemInCart } from '../../redux_toolkit/cartSlice';
-import DistanceFromDevice from '../../Component/distanceCalculate/distanceCalculate';
-import Geolocation from '@react-native-community/geolocation';
 import { languageData } from '../../redux_toolkit/language/languageSlice';
-import { useStatusBar } from '../../Component/UseStatusBar/useStatusBar';
+import { RootState } from '../../redux_toolkit/store';
 
 const { width } = Dimensions.get('screen');
 
@@ -49,26 +51,7 @@ const Wishlist: React.FC<WishlistProps> = () => {
 
     const requestLocationPermission = async () => {
       try {
-        if (Platform.OS === 'android') {
-          const already = await PermissionsAndroid.check(
-            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-          );
-          if (already) { getCurrentLocation(); return; }
-          const granted = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-            {
-              title: 'Location Permission',
-              message: 'We need access to your location to provide better services.',
-              buttonNeutral: 'Ask Me Later',
-              buttonNegative: 'Cancel',
-              buttonPositive: 'OK',
-            },
-          );
-          if (granted === PermissionsAndroid.RESULTS.GRANTED) getCurrentLocation();
-        } else {
-          Geolocation.requestAuthorization();
-          getCurrentLocation();
-        }
+        if (await permissionStatus('location') === 'granted') getCurrentLocation();
       } catch (e) { console.log('Permission error:', e); }
     };
 
@@ -84,24 +67,8 @@ const Wishlist: React.FC<WishlistProps> = () => {
 
   return (
     <SafeAreaView style={s.safe} edges={['top']}>
-      {/* ── Header ── */}
-      <View style={s.header}>
-       
-        <View style={[s.headerRow, { flexDirection: rowDir }]}>
-
-          <TouchableOpacity accessibilityRole="button" accessibilityLabel="Back" onPress={() => navigation.canGoBack() ? navigation.goBack() : navigation.navigate('BottomTab', {screen: 'Home'})} style={{width: 44, height: 44, justifyContent: 'center', alignItems: 'center', marginRight: 8}}><Ionicons name="arrow-back" size={25} color={Colors.textPrimary} /></TouchableOpacity>
-          <View style={[s.headerText, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
-            <Text style={[s.eyebrow, { textAlign }]}>{t.hala_community}</Text>
-            <Text style={[s.headerTitle, { textAlign }]}>{t.Wishlist}</Text>
-          </View>
-
-          {cartItems.length > 0 && (
-            <View style={s.countBadge}>
-              <Text style={s.countBadgeText}>{cartItems.length}</Text>
-            </View>
-          )}
-        </View>
-      </View>
+      <CustomHeader title={t.Wishlist} onBackPress={() => navigation.canGoBack() ? navigation.goBack() : navigation.navigate('BottomTab', {screen: 'Home'})}
+        right={cartItems.length > 0 ? <View style={s.countBadge}><Text style={s.countBadgeText}>{cartItems.length}</Text></View> : undefined} />
 
       {/* ── Body ── */}
       <View style={s.body}>
@@ -165,9 +132,7 @@ const Wishlist: React.FC<WishlistProps> = () => {
                 <Text
                   style={[s.cardName, { textAlign }]}
                   numberOfLines={1}>
-                  {item.nameEng.length > 20
-                    ? item.nameEng.substring(0, 20) + '…'
-                    : item.nameEng}
+                  {isRTL ? item.nameArabic || item.nameEng : item.nameEng}
                 </Text>
 
                 <View style={s.categoryPill}>
@@ -242,7 +207,7 @@ const s = StyleSheet.create({
     letterSpacing: -0.3,
   },
   countBadge: {
-    backgroundColor: Colors.border,
+    backgroundColor: Colors.accent,
     borderRadius: 20,
     paddingHorizontal: 12,
     paddingVertical: 5,
@@ -294,7 +259,7 @@ const s = StyleSheet.create({
     width: 34,
     height: 34,
     borderRadius: 17,
-    backgroundColor: Colors.textSecondary,
+    backgroundColor: Colors.surface,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -317,7 +282,7 @@ const s = StyleSheet.create({
     marginBottom: 6,
   },
   categoryPill: {
-    backgroundColor: Colors.warning,
+    backgroundColor: Colors.warningSoft,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 6,

@@ -1,19 +1,20 @@
-import {fetchBrandCatalog} from '../../../api/brandCatalog';
-import {Text} from '../../../../ui/Text';
-import {ActivityIndicator} from '../../../../ui/ActivityIndicator';
-import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {View, FlatList, Image, TouchableOpacity, Platform, PermissionsAndroid} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import {useSelector} from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import FastImage from 'react-native-fast-image';
 import Geolocation from '@react-native-community/geolocation';
-import {RootState} from '../../../redux_toolkit/store';
-import {getStyles} from './style';
-import DistanceFromDevice from '../../../Component/distanceCalculate/distanceCalculate';
+import { useNavigation } from '@react-navigation/native';
+import React,{ useEffect,useMemo,useRef,useState } from 'react';
+import { FlatList,Image,Platform,TouchableOpacity,View } from 'react-native';
+import FastImage from 'react-native-fast-image';
+import { useSelector } from 'react-redux';
+import { ActivityIndicator } from '../../../../ui/ActivityIndicator';
+import { Text } from '../../../../ui/Text';
 import DetectCountry from '../../../Component/distanceCalculate/DetectCountry';
-import {Location} from '../../../Themes/Images';
+import DistanceFromDevice from '../../../Component/distanceCalculate/distanceCalculate';
 import { Colors } from '../../../Themes/Colors';
+import { Location } from '../../../Themes/Images';
+import { fetchBrandCatalog } from '../../../api/brandCatalog';
+import { permissionStatus } from '../../../permissions/service';
+import { RootState } from '../../../redux_toolkit/store';
+import { getStyles } from './style';
 
 const BRANDS_API = 'https://hala-b-saudi.onrender.com/api/hbs/brands';
 const RECENT_TTL_MS = 3 * 60 * 60 * 1000;
@@ -61,31 +62,7 @@ const RecentlyAdded: React.FC<{onDataLoaded?: (hasData: boolean) => void; onLoad
 
     const requestLocationPermission = async () => {
       try {
-        if (Platform.OS === 'android') {
-          const already = await PermissionsAndroid.check(
-            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-          );
-          if (already) {
-            getCurrentLocation();
-            return;
-          }
-          const granted = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-            {
-              title: 'Location Permission',
-              message: 'We need access to your location to provide better services.',
-              buttonNeutral: 'Ask Me Later',
-              buttonNegative: 'Cancel',
-              buttonPositive: 'OK',
-            },
-          );
-          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-            getCurrentLocation();
-          }
-        } else {
-          Geolocation.requestAuthorization();
-          getCurrentLocation();
-        }
+        if (await permissionStatus('location') === 'granted') getCurrentLocation();
       } catch (e) {
         console.log('Permission error:', e);
       }

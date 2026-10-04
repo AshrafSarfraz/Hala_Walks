@@ -1,29 +1,26 @@
-import {Text} from '../../../ui/Text';
-import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {View, Image, TouchableOpacity, Platform, ScrollView, Linking, Dimensions} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import CustomHeader from '../../Component/CustomHeader/CustomHeader';
-import {useNavigation} from '@react-navigation/native';
-import CustomButton from '../../Component/CustomButton/CustomButton';
-import {useDispatch, useSelector} from 'react-redux';
-import {toggleItemInCart} from '../../redux_toolkit/cartSlice';
-import {RootState} from '../../redux_toolkit/store';
-import {Dark_Heart, Light_Heart, Location} from '../../Themes/Images';
-import Pin_Modal from '../../Component/CustomAlert/Pin_Modal';
-import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
-import LinearGradient from 'react-native-linear-gradient';
-import {getStyles} from './style';
-import {languageData} from '../../redux_toolkit/language/languageSlice';
-import MenuUnavailableModal from '../../Component/CustomAlert/MenuAlert';
-import {Colors} from '../../Themes/Colors';
-import FastImage from 'react-native-fast-image';
-import Branches from '../../Component/BottomSheet/Branches';
+import { useNavigation } from '@react-navigation/native';
+import React,{ useMemo,useRef,useState } from 'react';
+import { Image,Linking,Platform,ScrollView,TouchableOpacity,View } from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import {useStatusBar} from '../../Component/UseStatusBar/useStatusBar';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useDispatch,useSelector } from 'react-redux';
+import { Text } from '../../../ui/Text';
+import Branches from '../../Component/BottomSheet/Branches';
+import MenuUnavailableModal from '../../Component/CustomAlert/MenuAlert';
+import Pin_Modal from '../../Component/CustomAlert/Pin_Modal';
+import CustomButton from '../../Component/CustomButton/CustomButton';
+import CustomHeader from '../../Component/CustomHeader/CustomHeader';
+import ImageGallery from '../../Component/Media/ImageGallery';
+import { brandGallery } from '../../Component/Media/gallery';
+import { useStatusBar } from '../../Component/UseStatusBar/useStatusBar';
+import { Colors } from '../../Themes/Colors';
+import { Dark_Heart,Light_Heart,Location } from '../../Themes/Images';
+import { toggleItemInCart } from '../../redux_toolkit/cartSlice';
+import { languageData } from '../../redux_toolkit/language/languageSlice';
+import { RootState } from '../../redux_toolkit/store';
+import { getStyles } from './style';
 
-import {hbsText} from '../../i18n/translations';
-
-const {width} = Dimensions.get('screen');
+import { hbsText } from '../../i18n/translations';
 
 const DetailScreen: React.FC<{route: any}> = ({route}) => {
   const {item} = route.params;
@@ -45,9 +42,6 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [showTimings, setShowTimings] = useState(false);
 
-  const [imageLoaded, setImageLoaded] = useState<{[k: string]: boolean}>({});
-  const [activeIndex, setActiveIndex] = useState(0);
-
   const language = useSelector((state: RootState) => state.language.language);
   const styles = getStyles(language);
 
@@ -62,12 +56,8 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
     setSelectedDiscountValue(0);
   };
 
-  const handleLoad = (key: string) => {
-    setImageLoaded(prev => ({...prev, [key]: true}));
-  };
-
   const handleOpenMaps = () => {
-    if (!latitude || !longitude) return;
+    if (latitude == null || longitude == null) return;
     const url = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
     Linking.openURL(url);
   };
@@ -76,30 +66,6 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
     if (!phoneNumber) return;
     Linking.openURL(`tel:${phoneNumber}`);
   };
-
-  // ✅ preload / cache images (so bar bar load na ho)
-  useEffect(() => {
-    const urls: {uri: string; priority: any; cache: any}[] = [];
-
-    const push = (u: any) => {
-      const s = String(u || '').trim();
-      if (s) {
-        urls.push({
-          uri: s,
-          priority: FastImage.priority.high,
-          cache: FastImage.cacheControl.immutable,
-        });
-      }
-    };
-
-    if (Array.isArray(item?.multiImageUrls)) {
-      item.multiImageUrls.forEach(push);
-    }
-    push(item?.heroImage);
-    push(item?.img);
-
-    if (urls.length) FastImage.preload(urls);
-  }, [item]);
 
   const hasOffer = Boolean(item?.pdfUrl || item?.menuUrl);
 
@@ -131,107 +97,22 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
     sunday: hbsText(true, 'ui_sunday'),
   };
 
-  const sliderUrls = useMemo(() => {
-    const arr = Array.isArray(item?.multiImageUrls) ? item.multiImageUrls : [];
-    return arr.filter(Boolean).map((x: any) => String(x));
-  }, [item]);
-
-  const mainImageUrl = useMemo(() => {
-    return String(item?.heroImage || item?.img || '').trim();
-  }, [item]);
+  const sliderUrls = useMemo(() => brandGallery(item), [item]);
 
   return (
     <View style={{flex: 1, backgroundColor: Colors.background}}>
       <SafeAreaView edges={['top']} style={{backgroundColor: Colors.surface}}>
-        <View style={styles.HeaderCont}>
-          <CustomHeader
-            title={languageData[language].Detail_Screen}
-            onBackPress={() => navigation.goBack()}
-          />
-          <TouchableOpacity onPress={handleToggleCart}>
-            <Image
-              source={isInCart ? Dark_Heart : Light_Heart}
-              style={styles.HeartStyle}
-            />
-          </TouchableOpacity>
-        </View>
+        <CustomHeader title={languageData[language].Detail_Screen} onBackPress={() => navigation.goBack()}
+          right={<TouchableOpacity accessibilityRole="button" accessibilityLabel={language === 'ar' ? 'المفضلة' : 'Wishlist'}
+            onPress={handleToggleCart} style={{width: 44, height: 44, alignItems: 'center', justifyContent: 'center'}}>
+            <Image source={isInCart ? Dark_Heart : Light_Heart} style={[styles.HeartStyle, {width: 24, height: 24, tintColor: Colors.accent}]} />
+          </TouchableOpacity>} />
       </SafeAreaView>
 
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <View style={styles.Body_Cont}>
-            {/* ✅ Image Slider / Single Image */}
-            {sliderUrls.length > 0 ? (
-              <>
-                <ScrollView
-                  horizontal
-                  pagingEnabled
-                  showsHorizontalScrollIndicator={false}
-                  style={{marginBottom: 10}}
-                  scrollEventThrottle={16}
-                  onScroll={e => {
-                    const i = Math.round(
-                      e.nativeEvent.contentOffset.x / width,
-                    );
-                    setActiveIndex(i);
-                  }}>
-                  {sliderUrls.map((url: string, index: number) => {
-                    const key = `slider-${index}`;
-                    return (
-                      <View key={key} style={styles.imageContainer}>
-                        <ShimmerPlaceholder
-                          LinearGradient={LinearGradient}
-                          visible={!!imageLoaded[key]}
-                          style={styles.imageSlider}>
-                          <FastImage
-                            source={{
-                              uri: url,
-                              priority:
-                                index <= 1
-                                  ? FastImage.priority.high
-                                  : FastImage.priority.normal,
-                              cache: FastImage.cacheControl.immutable,
-                            }}
-                            style={styles.imageSlider}
-                            resizeMode={FastImage.resizeMode.cover}
-                            onLoadEnd={() => handleLoad(key)}
-                            onError={() => handleLoad(key)}
-                          />
-                        </ShimmerPlaceholder>
-                      </View>
-                    );
-                  })}
-                </ScrollView>
-
-                {sliderUrls.length > 1 ? (
-                  <View style={styles.dotsRow}>
-                    {sliderUrls.map((_: unknown, i: number) => (
-                      <View
-                        key={`dot-${i}`}
-                        style={[styles.dot, i === activeIndex ? styles.dotActive : null]}
-                      />
-                    ))}
-                  </View>
-                ) : null}
-              </>
-            ) : (
-              <ShimmerPlaceholder
-                LinearGradient={LinearGradient}
-                visible={!!imageLoaded['single']}
-                style={styles.image}>
-                <FastImage
-                  source={{
-                    uri: mainImageUrl,
-                    priority: FastImage.priority.high,
-                    cache: FastImage.cacheControl.immutable,
-                  }}
-                  style={styles.image}
-                  resizeMode={FastImage.resizeMode.cover}
-                  onLoadEnd={() => handleLoad('single')}
-                  onError={() => handleLoad('single')}
-                />
-              </ShimmerPlaceholder>
-            )}
+            <ImageGallery images={sliderUrls} inset={16} height={240} />
 
             {/* Category */}
             <View style={styles.Type_Cont}>
@@ -308,10 +189,10 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
               onPress={onPressOffer}>
               <View style={styles.offerBtnLeft}>
                 <Text style={[styles.offerBtnTitle, !hasOffer && {color: Colors.textSecondary}]}>
-                  {hasOffer ? languageData[language].Avaliable_Offer : 'No Menu Available'}
+                  {hasOffer ? languageData[language].Avaliable_Offer : (language === 'ar' ? 'لا توجد قائمة متاحة' : 'No menu available')}
                 </Text>
                 <Text style={[styles.offerBtnSub, !hasOffer && {color: Colors.textSecondary}]}>
-                  {hasOffer ? 'Tap to open menu / offer' : 'This brand has no menu right now'}
+                  {hasOffer ? (language === 'ar' ? 'اضغط لعرض القائمة أو العرض' : 'Tap to open menu / offer') : (language === 'ar' ? 'لا توجد قائمة لهذه العلامة حاليًا' : 'This brand has no menu right now')}
                 </Text>
               </View>
               <Text style={[styles.offerBtnArrow, !hasOffer && {color: Colors.textSecondary}]}>{language === 'ar' ? '‹' : '›'}</Text>
@@ -321,7 +202,7 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
             <View style={{width: '100%', marginTop: 8}}>
               {Array.isArray(item?.discounts) && item.discounts.length > 0 ? (
                 item.discounts.map((d: any, index: number) => {
-                  const englishText = `${d.value} ${d.descriptionEng}`;
+                  const englishText = `${d.value} ${language === 'ar' ? d.descriptionArabic || d.descriptionEng : d.descriptionEng}`;
                   return (
                     <TouchableOpacity
                       key={`dis-${index}`}

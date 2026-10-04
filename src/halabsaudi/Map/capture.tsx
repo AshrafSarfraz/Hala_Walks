@@ -1,13 +1,14 @@
-import {Text} from '../../ui/Text';
+import { Text } from '../../ui/Text';
+import { ensurePermission } from '../permissions/service';
 // /src/halabsaudi/Map/capture.tsx
-import React, {useState} from 'react';
-import {View, Button, Image, PermissionsAndroid, Platform} from 'react-native';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import React,{ useState } from 'react';
+import { Button,Image,View } from 'react-native';
+import { launchCamera,launchImageLibrary } from 'react-native-image-picker';
 
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
 import { BASE_URL } from '../../config/api';
-import {useCustomAlert} from './components/customAlert';
+import { useCustomAlert } from './components/customAlert';
 
 
 
@@ -18,15 +19,7 @@ const MapCaptureScreen = () => {
   const {alert, AlertComponent} = useCustomAlert();
 
   // ✅ Request Location Permission (Android)
-  const requestLocationPermission = async () => {
-    if (Platform.OS === 'android') {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-      );
-      return granted === PermissionsAndroid.RESULTS.GRANTED;
-    }
-    return true;
-  };
+  const requestLocationPermission = () => ensurePermission('location');
 
   // 📍 Get Location
   const getLocation = async () => {
@@ -82,11 +75,12 @@ const MapCaptureScreen = () => {
 };
   // Take photo
   const openCamera = async () => {
+  if (!await ensurePermission('camera')) return;
   launchCamera(
     {
       mediaType: 'photo',
       quality: 0.7,
-      saveToPhotos: true,
+      saveToPhotos: false,
     },
     response => {
       console.log('FULL CAMERA RESPONSE:', response);

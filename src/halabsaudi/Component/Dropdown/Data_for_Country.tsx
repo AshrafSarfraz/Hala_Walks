@@ -1,13 +1,13 @@
-import {Text} from '../../../ui/Text';
-import React, { useEffect, useState } from 'react';
-import {Image, StyleSheet, TouchableOpacity, View, ImageSourcePropType, Platform, PermissionsAndroid} from 'react-native';
-import { DropdownIcon } from '../../Themes/Images';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../redux_toolkit/store';
-import { switchCountryName } from '../../redux_toolkit/selectcountry.tsx/countrySlice';
 import Geolocation from '@react-native-community/geolocation';
+import React,{ useEffect,useState } from 'react';
+import { Image,ImageSourcePropType,StyleSheet,TouchableOpacity,View } from 'react-native';
+import { useDispatch,useSelector } from 'react-redux';
+import { Text } from '../../../ui/Text';
 import { Colors } from '../../Themes/Colors';
-import { COLORS } from '../../Themes/avatarColor';
+import { DropdownIcon } from '../../Themes/Images';
+import { permissionStatus } from '../../permissions/service';
+import { switchCountryName } from '../../redux_toolkit/selectcountry.tsx/countrySlice';
+import { RootState } from '../../redux_toolkit/store';
 
 type Country = {
   name: 'Qatar' | 'Bahrain' | 'Saudi Arabia';
@@ -84,33 +84,8 @@ const CountryDropdown2: React.FC<Props> = ({ onSelectCountry }) => {
 
     const requestAndDetect = async () => {
       try {
-        if (Platform.OS === 'android') {
-          const already = await PermissionsAndroid.check(
-            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-          );
-          if (already) {
-            detectFromLocation();
-            return;
-          }
-          const granted = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-            {
-              title: 'Location Permission',
-              message: 'App aapki location se country detect karega.',
-              buttonNeutral: 'Ask Me Later',
-              buttonNegative: 'Cancel',
-              buttonPositive: 'OK',
-            },
-          );
-          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-            detectFromLocation();
-          } else {
-            setLocationChecked(true); // permission deny — Qatar default
-          }
-        } else {
-          Geolocation.requestAuthorization();
-          detectFromLocation();
-        }
+        if (await permissionStatus('location') === 'granted') detectFromLocation();
+        else setLocationChecked(true);
       } catch (e) {
         console.log('Permission error:', e);
         setLocationChecked(true);

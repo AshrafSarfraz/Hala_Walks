@@ -1,47 +1,48 @@
-import {useSocialRefresh} from './useSocialRefresh';
-import {Text} from '../../ui/Text';
 import Clipboard from '@react-native-clipboard/clipboard';
-import {mergeMessages, messagePage, dateLabel} from './messageModel';
-import {ActivityIndicator} from '../../ui/ActivityIndicator';
-import {Alert} from '../../ui/Alert';
-import {TextInput} from '../../ui/TextInput';
+import { ActivityIndicator } from '../../ui/ActivityIndicator';
+import { Alert } from '../../ui/Alert';
+import { Text } from '../../ui/Text';
+import { TextInput } from '../../ui/TextInput';
+import { ensurePermission } from '../permissions/service';
+import { dateLabel,mergeMessages,messagePage } from './messageModel';
+import { useSocialRefresh } from './useSocialRefresh';
 // src/halabsaudi/chat/chatScreen.tsx
-import React, {useEffect, useRef, useState, useCallback, useMemo} from 'react';
-import {View, Platform, StyleSheet, TouchableOpacity, FlatList, Image, Animated, PanResponder, Keyboard} from 'react-native';
-import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo';
-import axios from 'axios';
-import {jwtDecode} from 'jwt-decode';
 import Ionicons from '@react-native-vector-icons/ionicons';
-import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
-import {useSelector} from 'react-redux';
-import {BASE_URL} from '../../config/api';
-import {Colors} from '../Themes/Colors';
-import {getSocket, connectSocket} from './socket';
-import {
-  getMediaOutbox,
-  subscribeMediaOutbox,
-  uploadMediaJob,
-  patchMediaJob,
-  removeMediaJob,
-  retryMediaJob,
-  MediaOutboxJob,
-} from './mediaOutbox';
+import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
+import React,{ useCallback,useEffect,useMemo,useRef,useState } from 'react';
+import { Animated,FlatList,Image,Keyboard,PanResponder,Platform,StyleSheet,TouchableOpacity,View } from 'react-native';
+import { launchCamera,launchImageLibrary } from 'react-native-image-picker';
+import { SafeAreaView,useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSelector } from 'react-redux';
+import { BASE_URL } from '../../config/api';
+import { useStatusBar } from '../Component/UseStatusBar/useStatusBar';
+import { Colors } from '../Themes/Colors';
+import { languageData } from '../redux_toolkit/language/languageSlice';
+import { RootState } from '../redux_toolkit/store';
 import AttachmentSheet from './components/AttachmentSheet';
 import ChatScreenHeader from './components/ChatHeaders/ChatScreenHeader';
 import DeleteMessageModal from './components/DeleteMessageModal';
 import ImageViewerModal from './components/ImageViewerModal';
-import WhatsAppMessageModal, {
-  MessageAction,
+import WhatsAppMessageModal,{
+MessageAction,
 } from './components/WhatsAppMessageModal';
-import {languageData} from '../redux_toolkit/language/languageSlice';
-import {RootState} from '../redux_toolkit/store';
-import { useStatusBar } from '../Component/UseStatusBar/useStatusBar';
+import {
+MediaOutboxJob,
+getMediaOutbox,
+patchMediaJob,
+removeMediaJob,
+retryMediaJob,
+subscribeMediaOutbox,
+uploadMediaJob,
+} from './mediaOutbox';
+import { connectSocket,getSocket } from './socket';
 // ✅ NEW — chat kholte hi us chat ki notifications tray se hatao
-import {clearChatNotifications} from '../Notifications/badge';
+import { clearChatNotifications } from '../Notifications/badge';
 
-import {hbsText} from '../i18n/translations';
+import { hbsText } from '../i18n/translations';
 
 // ─── Module-level stores ──────────────────────────────────────────────────────
 const messageCache = new Map<string, Message[]>();
@@ -1133,14 +1134,15 @@ function ChatScreenContent({route, navigation}: any) {
     setAttachSheetOpen(true);
   }, [isBlocked]);
 
-  const handleCamera = useCallback(() => {
+  const handleCamera = useCallback(async () => {
+    if (!await ensurePermission('camera')) return;
     launchCamera({mediaType: 'photo', quality: 0.9}, r => {
       if (!r.didCancel && r.assets?.[0]) openImagePreview(r.assets[0]);
     });
   }, [openImagePreview]);
 
   const handleGallery = useCallback(() => {
-    launchImageLibrary({mediaType: 'mixed', quality: 0.9}, r => {
+    launchImageLibrary({mediaType: 'photo', quality: 0.9}, r => {
       if (r.didCancel || !r.assets?.[0]) return;
       const asset = r.assets[0];
 

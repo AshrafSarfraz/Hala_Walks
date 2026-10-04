@@ -1,18 +1,18 @@
-import {Text} from '../../../ui/Text';
-import {TextInput} from '../../../ui/TextInput';
-import {ActivityIndicator} from '../../../ui/ActivityIndicator';
-import React, {useEffect, useRef, useState} from 'react';
-import {View, Modal, TouchableOpacity, StyleSheet, StatusBar} from 'react-native';
-import {Colors} from '../../Themes/Colors';
-import {Fonts} from '../../Themes/Fonts';
-import IncorrectPin from './IncorrectPin';
-import Discount_Redeem from './DiscountRedeem';
-import {useSelector} from 'react-redux';
-import {RootState} from '../../redux_toolkit/store';
-import {languageData} from '../../redux_toolkit/language/languageSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import React,{ useEffect,useRef,useState } from 'react';
+import { Modal,StyleSheet,TouchableOpacity,View } from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
+import { useSelector } from 'react-redux';
+import { ActivityIndicator } from '../../../ui/ActivityIndicator';
+import { Text } from '../../../ui/Text';
+import { TextInput } from '../../../ui/TextInput';
+import { Colors } from '../../Themes/Colors';
+import { Fonts } from '../../Themes/Fonts';
+import { languageData } from '../../redux_toolkit/language/languageSlice';
+import { RootState } from '../../redux_toolkit/store';
 import FilterRBSheet from '../BottomSheet/bottom_sheet';
+import Discount_Redeem from './DiscountRedeem';
+import IncorrectPin from './IncorrectPin';
 
 const BASE_URL = 'https://hala-b-saudi.onrender.com/api/hbs/redeem';
 
@@ -178,7 +178,6 @@ const Pin_Modal: React.FC<Props> = ({
         visible={visible && !incorrectPinModal && !successVisible}
         onRequestClose={onClose}
         presentationStyle="overFullScreen">
-        <StatusBar hidden translucent />
         <View style={styles.overlay}>
           <View style={styles.container}>
             <Text style={styles.headerText}>

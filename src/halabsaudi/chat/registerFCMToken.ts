@@ -1,7 +1,8 @@
-import {isDemoToken} from '../demo/session';
+import { isDemoToken } from '../demo/session';
 // src/halabsaudi/chat/registerFCMToken.ts
-import messaging from '@react-native-firebase/messaging';
+import notifee,{ AuthorizationStatus } from '@notifee/react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import messaging from '@react-native-firebase/messaging';
 import axios from 'axios';
 import { Platform } from 'react-native';
 import { BASE_URL } from '../../config/api';
@@ -16,16 +17,9 @@ export async function registerFCMToken(): Promise<void> {
     const authToken = await AsyncStorage.getItem('hala_token');
     if (!authToken || isDemoToken(authToken)) return;
 
-    // ✅ Permission
-    const authStatus = await messaging().requestPermission();
-    const enabled =
-      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-
-    if (!enabled) {
-      console.log('[FCM] Permission not granted');
-      return;
-    }
+    // Token registration never opens permission dialogs. The permission card owns consent.
+    const settings = await notifee.getNotificationSettings();
+    if (settings.authorizationStatus < AuthorizationStatus.AUTHORIZED) return;
 
     // ✅ FCM token
     const fcmToken = await messaging().getToken();

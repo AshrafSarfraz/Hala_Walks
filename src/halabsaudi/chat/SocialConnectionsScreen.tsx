@@ -1,30 +1,29 @@
-import UserAvatar from '../Component/UserAvatar';
-import {useStatusBar} from '../Component/UseStatusBar/useStatusBar';
-import {Text} from '../../ui/Text';
-import {fetchCollection} from '../api/collection';
-import {
-  bioPreview,
-  canShowMessage,
-  openSocialChat,
-  SocialPerson,
-} from './socialProfile';
-import {useSocialRefresh} from './useSocialRefresh';
-import {ActivityIndicator} from '../../ui/ActivityIndicator';
-import {Alert} from '../../ui/Alert';
-import React, {useCallback, useRef, useState} from 'react';
-import {
-  FlatList,
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import Ionicons from '@react-native-vector-icons/ionicons';
-import {BASE_URL} from '../../config/api';
-import {Colors} from '../Themes/Colors';
+import React,{ useCallback,useRef,useState } from 'react';
+import {
+FlatList,
+StyleSheet,
+TouchableOpacity,
+View
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { BASE_URL } from '../../config/api';
+import { ActivityIndicator } from '../../ui/ActivityIndicator';
+import { Alert } from '../../ui/Alert';
+import { Text } from '../../ui/Text';
+import { fetchCollection } from '../api/collection';
+import CustomHeader from '../Component/CustomHeader/CustomHeader';
+import UserAvatar from '../Component/UserAvatar';
+import { useStatusBar } from '../Component/UseStatusBar/useStatusBar';
+import { Colors } from '../Themes/Colors';
+import {
+bioPreview,
+canShowMessage,
+openSocialChat,
+SocialPerson,
+} from './socialProfile';
+import { useSocialRefresh } from './useSocialRefresh';
 
 type Person = SocialPerson;
 type Request = {_id: string; user: Person};
@@ -241,17 +240,7 @@ export default function SocialConnectionsScreen({route, navigation}: any) {
 
   return (
     <SafeAreaView style={s.safe} edges={['top']}>
-      <View style={s.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={s.back}>
-          <Ionicons name="arrow-back" size={22} color={Colors.textPrimary} />
-        </TouchableOpacity>
-        <Text style={s.title} numberOfLines={1}>
-          {route.params?.profileName
-            ? `${route.params.profileName} · ${title}`
-            : title}
-        </Text>
-        <View style={s.back} />
-      </View>
+      <CustomHeader title={route.params?.profileName ? `${route.params.profileName} · ${title}` : title} onBackPress={() => navigation.goBack()} />
       {loading ? (
         <View style={s.center}>
           <ActivityIndicator size="large" color={Colors.accent} />

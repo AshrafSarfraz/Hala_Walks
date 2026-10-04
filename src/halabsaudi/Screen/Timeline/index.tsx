@@ -1,21 +1,22 @@
-import type {NavigationProp, ParamListBase} from '@react-navigation/native';
-import {Text} from '../../../ui/Text';
-import {TextInput} from '../../../ui/TextInput';
-import {Alert} from '../../../ui/Alert';
-import {ActivityIndicator} from '../../../ui/ActivityIndicator';
+import type { NavigationProp,ParamListBase } from '@react-navigation/native';
+import { ActivityIndicator } from '../../../ui/ActivityIndicator';
+import { Alert } from '../../../ui/Alert';
+import { Text } from '../../../ui/Text';
+import { TextInput } from '../../../ui/TextInput';
+import { ensurePermission } from '../../permissions/service';
 
-import React, {useState, useEffect, useRef, useCallback} from 'react';
-import {View, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar, FlatList, Image, Animated, ScrollView, KeyboardAvoidingView, Platform, Keyboard} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import Ionicons from '@react-native-vector-icons/ionicons';
-import storage from '@react-native-firebase/storage';
-import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-import {BASE_URL} from '../../../config/api';
-import {useSelector} from 'react-redux';
-import {hbsText} from '../../i18n/translations';
+import storage from '@react-native-firebase/storage';
+import Ionicons from '@react-native-vector-icons/ionicons';
+import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
+import React,{ useCallback,useEffect,useRef,useState } from 'react';
+import { Animated,FlatList,Image,Keyboard,KeyboardAvoidingView,Platform,SafeAreaView,ScrollView,StatusBar,StyleSheet,TouchableOpacity,View } from 'react-native';
+import { launchCamera,launchImageLibrary } from 'react-native-image-picker';
+import { useSelector } from 'react-redux';
+import { BASE_URL } from '../../../config/api';
 import { Colors } from '../../Themes/Colors';
+import { hbsText } from '../../i18n/translations';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -246,10 +247,11 @@ const TimelineScreen: React.FC = () => {
 
   // ── 7. Photo capture & library selection ───────────────────────────────────
 
-  const handleCamera = useCallback(() => {
+  const handleCamera = useCallback(async () => {
     Keyboard.dismiss();
+    if (!await ensurePermission('camera')) return;
     launchCamera(
-      {mediaType: 'photo', quality: 0.8, saveToPhotos: true},
+      {mediaType: 'photo', quality: 0.8, saveToPhotos: false},
       response => {
         if (response.didCancel || response.errorCode) return;
         const uri = response.assets?.[0]?.uri;
@@ -449,7 +451,7 @@ const TimelineScreen: React.FC = () => {
               <ScrollView style={{maxHeight: 240}} nestedScrollEnabled keyboardShouldPersistTaps="handled">
                 {filteredBrands.map(brand => <TouchableOpacity
                   key={brand._id} disabled={uploading}
-                  style={[styles.suggestionItem, selectedBrand?._id === brand._id && styles.suggestionItemActive]}
+                  style={styles.suggestionItem}
                   onPress={() => {
                     setSelectedBrand(brand);
                     setSearchText('');
@@ -459,7 +461,7 @@ const TimelineScreen: React.FC = () => {
                     <Text style={styles.suggestionName}>{brandName(brand)}</Text>
                     <Text style={styles.suggestionVicinity}>{brandAddress(brand)}</Text>
                   </View>
-                  {selectedBrand?._id === brand._id && <Ionicons name="checkmark-circle" size={20} color={Colors.accent} />}
+
                 </TouchableOpacity>)}
               </ScrollView>
             )}

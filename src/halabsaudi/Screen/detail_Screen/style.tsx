@@ -1,8 +1,8 @@
 
 
-import {Dimensions, Platform, StyleSheet} from 'react-native';
-import {Colors} from '../../Themes/Colors';
-import {Fonts} from '../../Themes/Fonts';
+import { Dimensions,Platform,StyleSheet } from 'react-native';
+import { Colors } from '../../Themes/Colors';
+import { Fonts } from '../../Themes/Fonts';
 
 const {width} = Dimensions.get('window');
 
@@ -10,14 +10,14 @@ export const getStyles = (language: string) =>
   StyleSheet.create({
   imageContainer: {width: '100%', height: 220, overflow: 'hidden', borderRadius: 16},
     container: {
-      paddingHorizontal: '4%',
+      paddingHorizontal: 16,
       paddingBottom: 10,
     },
 
     HeaderCont: {
       paddingTop: Platform.OS === 'ios' ? '2%' : '13%',
       marginBottom:10,
-      paddingHorizontal: '4%',
+      paddingHorizontal: 16,
       paddingBottom: 10,
       flexDirection: language === 'en' ? 'row' : 'row-reverse',
       justifyContent: 'space-between',
@@ -74,7 +74,7 @@ export const getStyles = (language: string) =>
     },
 
     Type_Cont: {
-      backgroundColor: Colors.warning,
+      backgroundColor: Colors.warningSoft,
       alignItems: 'center',
       alignSelf: language === 'en' ? 'flex-start' : 'flex-end',
       paddingVertical: 6,
@@ -98,8 +98,8 @@ export const getStyles = (language: string) =>
     },
     title: {
       width: '72%',
-      fontSize: 17,
-      lineHeight: language === 'en' ? 22 : 28,
+      fontSize: 22,
+      lineHeight: 30,
       color: Colors.textPrimary,
       letterSpacing: 0.3,
       fontFamily: language === 'en' ? Fonts.SF_Bold : '',
@@ -122,8 +122,8 @@ export const getStyles = (language: string) =>
       marginLeft: language === 'ar' ? 6 : 0,
     },
     call_txt: {
-      fontSize: 12,
-      lineHeight: 15,
+      fontSize: 14,
+      lineHeight: 20,
       color: Colors.textPrimary,
       fontFamily: Fonts.SF_Bold,
     },
@@ -146,8 +146,8 @@ export const getStyles = (language: string) =>
     },
     Loc_Txt: {
       flex: 1,
-      fontSize: 12,
-      lineHeight: 16,
+      fontSize: 14,
+      lineHeight: 22,
       color: Colors.textPrimary,
       textAlign: language === 'en' ? 'left' : 'right',
       opacity: 0.9,
@@ -187,7 +187,7 @@ export const getStyles = (language: string) =>
     },
     branchBtnText: {
       color: Colors.textPrimary,
-      fontSize: 12,
+      fontSize: 14,
       fontFamily: Fonts.SF_Medium,
     },
 
@@ -271,7 +271,7 @@ export const getStyles = (language: string) =>
     },
     offerBtnSub: {
       color: Colors.onAccent,
-      fontSize: 12,
+      fontSize: 14,
       marginTop: 4,
       fontFamily: Fonts.SF_Regular,
     },
@@ -297,7 +297,7 @@ export const getStyles = (language: string) =>
     },
     Detail: {
       fontSize: 14,
-      lineHeight: language === 'en' ? 18 : 26,
+      lineHeight: 24,
       color: Colors.textPrimary,
       fontFamily: language === 'en' ? Fonts.SF_Regular : '',
       marginBottom: 10,

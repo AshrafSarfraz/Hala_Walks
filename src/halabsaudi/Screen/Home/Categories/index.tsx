@@ -1,7 +1,7 @@
-import type {NavigationProp, ParamListBase} from '@react-navigation/native';
-import {Text} from '../../../../ui/Text';
-import React, { useEffect, useState } from 'react';
-import {View, FlatList, TouchableOpacity, ImageBackground} from 'react-native';
+import type { NavigationProp,ParamListBase } from '@react-navigation/native';
+import React,{ useState } from 'react';
+import { FlatList,ImageBackground,TouchableOpacity,View } from 'react-native';
+import { Text } from '../../../../ui/Text';
 
 import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
@@ -10,7 +10,7 @@ import { getStyles } from './style';
 
 
 
-import {hbsText} from '../../../i18n/translations';
+import { hbsText } from '../../../i18n/translations';
 
 const images = [
   { id: '1', text: 'Food and Drink', category: 'Food & Drink', translationKey: 'ui_food_drink', source: require('../../../assets/Images/food__drinks.jpg') },
@@ -32,7 +32,6 @@ type CategoriesProps={
 
 const Categories:React.FC<CategoriesProps> = () => {
   const navigation=useNavigation<NavigationProp<ParamListBase>>()
-  const [currentIndex, setCurrentIndex] = useState(0);
   const language = useSelector((state: RootState) => state.language.language); // Get the current language from Redux
   const styles = getStyles(language);
 
@@ -47,7 +46,7 @@ const Categories:React.FC<CategoriesProps> = () => {
         renderItem={({ item }) => (
           <TouchableOpacity  style={styles.Flatlist_Cont} onPress={() => navigation.navigate('CategoriesScreen', { item })}>
             <ImageBackground source={item.source}  imageStyle={{borderRadius:10}} style={styles.image}>
-            <Text style={styles.Txt} >{hbsText(language === 'ar', item.translationKey as any)}</Text>
+            <View style={styles.caption}><Text style={styles.Txt} >{hbsText(language === 'ar', item.translationKey as any)}</Text></View>
             </ImageBackground>
           </TouchableOpacity>
         )}

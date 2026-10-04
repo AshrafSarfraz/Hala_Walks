@@ -1,20 +1,21 @@
-import {Text} from '../../ui/Text';
+import { Text } from '../../ui/Text';
+import CustomHeader from '../Component/CustomHeader/CustomHeader';
 
 // src/halabsaudi/chat/AllMediaScreen.tsx
-import React, {useState} from 'react';
-import {View, StyleSheet, TouchableOpacity, Image, FlatList, Dimensions} from 'react-native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Ionicons from '@react-native-vector-icons/ionicons';
-import {useSelector} from 'react-redux';
-import {Colors} from '../Themes/Colors';
-import {getSocket} from './socket';
-import ImageViewerModal from './components/ImageViewerModal';
-import WhatsAppMessageModal, {MessageAction} from './components/WhatsAppMessageModal';
-import DeleteMessageModal from './components/DeleteMessageModal';
-import {languageData} from '../redux_toolkit/language/languageSlice';
-import {RootState} from '../redux_toolkit/store';
-import type {MediaItem} from './UserProfileScreen';
+import React,{ useState } from 'react';
+import { Dimensions,FlatList,Image,StyleSheet,TouchableOpacity,View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSelector } from 'react-redux';
 import { useStatusBar } from '../Component/UseStatusBar/useStatusBar';
+import { Colors } from '../Themes/Colors';
+import { languageData } from '../redux_toolkit/language/languageSlice';
+import { RootState } from '../redux_toolkit/store';
+import type { MediaItem } from './UserProfileScreen';
+import DeleteMessageModal from './components/DeleteMessageModal';
+import ImageViewerModal from './components/ImageViewerModal';
+import WhatsAppMessageModal,{ MessageAction } from './components/WhatsAppMessageModal';
+import { getSocket } from './socket';
 
 const {width: W} = Dimensions.get('window');
 const COL       = 3;
@@ -26,7 +27,6 @@ export default function AllMediaScreen({route, navigation}: Props) {
   const language = useSelector((state: RootState) => state.language.language);
   const t        = languageData[language];
   const isRTL    = language === 'ar';
-  const rowDir   = isRTL ? 'row-reverse' : 'row';
   useStatusBar('dark-content', Colors.surface, true);
   const {
     allMedia: initialMedia = [],
@@ -87,23 +87,8 @@ export default function AllMediaScreen({route, navigation}: Props) {
   return (
     <View style={[s.root, {paddingTop: insets.top}]}>
 
-      {/* ── Header ── */}
-      <View style={[s.header, {flexDirection: rowDir}]}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
-          <Ionicons
-            name={isRTL ? 'arrow-forward' : 'arrow-back'}
-            size={24}
-            color={Colors.textPrimary}
-          />
-        </TouchableOpacity>
-
-        <View style={s.headerCenter}>
-          <Text style={s.headerTitle} numberOfLines={1}>{participantName}</Text>
-          {!!subtitle && <Text style={s.headerSub}>{subtitle}</Text>}
-        </View>
-
-        <View style={{width: 40}} />
-      </View>
+      <CustomHeader title={participantName} onBackPress={() => navigation.goBack()} />
+      {!!subtitle && <Text style={[s.headerSub, {paddingHorizontal: 16, paddingVertical: 8}]}>{subtitle}</Text>}
 
       {/* ── Grid ── */}
       {media.length === 0 ? (

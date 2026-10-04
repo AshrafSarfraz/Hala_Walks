@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet } from "react-native";
+import { Dimensions,StyleSheet } from "react-native";
 import { Colors } from "../../../Themes/Colors";
 import { Fonts } from "../../../Themes/Fonts";
 
@@ -25,11 +25,11 @@ export const styles = StyleSheet.create({
     borderRadius: 10,
   },
   cate_txt: {
-    fontSize: 10,
+    fontSize: 12,
     color: Colors.textPrimary,
     fontFamily: Fonts.SF_Bold,
     marginTop: 5,
-    lineHeight: 14,
+    lineHeight: 18,
     letterSpacing: 0.3,
     textAlign: 'center',
     width: '100%',
@@ -43,7 +43,7 @@ export const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   showMoreText: {
-    color: Colors.textPrimary,
+    color: Colors.onAccent,
     fontSize: 12,
     fontWeight: 'bold',
   },

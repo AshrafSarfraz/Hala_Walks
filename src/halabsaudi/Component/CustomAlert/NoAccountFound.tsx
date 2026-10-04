@@ -1,13 +1,13 @@
-import type {NavigationProp, ParamListBase} from '@react-navigation/native';
-import {Text} from '../../../ui/Text';
+import type { NavigationProp,ParamListBase } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import React from 'react';
-import {View, Modal, TouchableOpacity, StyleSheet, StatusBar, Pressable, Platform} from 'react-native';
+import { Modal,Platform,Pressable,StyleSheet,TouchableOpacity,View } from 'react-native';
+import { useSelector } from 'react-redux';
+import { Text } from '../../../ui/Text';
 import { Colors } from '../../Themes/Colors';
 import { Fonts } from '../../Themes/Fonts';
-import { useNavigation } from '@react-navigation/native';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../redux_toolkit/store';
 import { languageData } from '../../redux_toolkit/language/languageSlice';
+import { RootState } from '../../redux_toolkit/store';
 
 type Props = {
   visible: boolean;
@@ -20,7 +20,6 @@ const AccountNotFoundModal: React.FC<Props> = ({ visible, onClose }) => {
 
   return (
     <Modal transparent visible={visible} animationType="none" statusBarTranslucent>
-      <StatusBar hidden translucent animated />
       <View style={styles.overlay}>
         <Pressable style={styles.cardWrap}>
           {/* Title & message */}

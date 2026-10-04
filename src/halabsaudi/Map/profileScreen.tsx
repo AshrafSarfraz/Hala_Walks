@@ -1,25 +1,25 @@
-import UserAvatar from '../Component/UserAvatar';
-import FriendRequestsButton from '../chat/components/FriendRequestsButton';
-import {groupPlaceAlbums, placeKey} from './placeAlbums';
-import FastImage from 'react-native-fast-image';
-import {Text} from '../../ui/Text';
-import React, {useCallback, useMemo, useRef, useState} from 'react';
-import {FlatList, Modal, Pressable, RefreshControl, StyleSheet, useWindowDimensions, View} from 'react-native';
-import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
-import {useFocusEffect} from '@react-navigation/native';
-import {useSelector} from 'react-redux';
-import Ionicons from '@react-native-vector-icons/ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Ionicons from '@react-native-vector-icons/ionicons';
+import { useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
-import {BASE_URL} from '../../config/api';
-import {theme as c} from '../../ui/theme';
-import {ActivityIndicator} from '../../ui/ActivityIndicator';
-import {unwrap, unwrapMeta} from '../api/unwrap';
-import {useStatusBar} from '../Component/UseStatusBar/useStatusBar';
+import React,{ useCallback,useMemo,useRef,useState } from 'react';
+import { FlatList,Modal,Pressable,RefreshControl,StyleSheet,View,useWindowDimensions } from 'react-native';
+import FastImage from 'react-native-fast-image';
+import { SafeAreaProvider,SafeAreaView } from 'react-native-safe-area-context';
+import { useSelector } from 'react-redux';
+import { BASE_URL } from '../../config/api';
+import { ActivityIndicator } from '../../ui/ActivityIndicator';
+import { Text } from '../../ui/Text';
+import { theme as c } from '../../ui/theme';
+import { useStatusBar } from '../Component/UseStatusBar/useStatusBar';
+import UserAvatar from '../Component/UserAvatar';
+import { unwrap,unwrapMeta } from '../api/unwrap';
+import FriendRequestsButton from '../chat/components/FriendRequestsButton';
+import { groupPlaceAlbums,placeKey } from './placeAlbums';
 
-import {Colors} from '../Themes/Colors';
+import { Colors } from '../Themes/Colors';
 
-import {hbsText} from '../i18n/translations';
+import { hbsText } from '../i18n/translations';
 
 function ProfilePhoto({uri, contain = false}: {uri: string; contain?: boolean}) {
   const [state, setState] = useState<'loading' | 'ready' | 'error'>('loading');
@@ -203,6 +203,6 @@ const s = StyleSheet.create({
   actions: {gap: 10, marginHorizontal: 20, marginBottom: 24}, secondary: {flexDirection: 'row', gap: 8, flex: 1, minHeight: 44, borderRadius: 12, backgroundColor: c.raised, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 14}, primary: {backgroundColor: c.accent}, buttonText: {color: c.text, fontSize: 14, fontWeight: '600'},
   addButton: {flexDirection: 'row', gap: 5, alignItems: 'center', justifyContent: 'center', backgroundColor: c.accent, borderRadius: 10, minHeight: 44, paddingHorizontal: 14, marginHorizontal: 8},
   tabs: {alignItems: 'center', borderBottomColor: c.border, borderBottomWidth: 1, marginBottom: 2}, tab: {flex: 1, flexDirection: 'row', gap: 8, justifyContent: 'center', alignItems: 'center', minHeight: 52, borderBottomWidth: 2, borderBottomColor: Colors.transparent}, activeTab: {borderBottomColor: c.accent}, tabText: {fontSize: 14, color: c.muted, fontWeight: '600'},
-  tile: {margin: 1, backgroundColor: c.surface}, tileCaption: {position: 'absolute', bottom: 0, left: 0, right: 0, padding: 8, backgroundColor: c.overlay}, placeName: {color: c.text, fontSize: 12, fontWeight: '600'},
+  tile: {margin: 1, backgroundColor: c.surface}, tileCaption: {position: 'absolute', bottom: 0, left: 0, right: 0, padding: 8, backgroundColor: c.overlay}, placeName: {color: Colors.onMedia, fontSize: 12, fontWeight: '600'},
   empty: {alignItems: 'center', padding: 32, gap: 12}, emptyTitle: {fontSize: 20, color: c.text, fontWeight: '600'}, muted: {fontSize: 14, lineHeight: 21, color: c.muted, textAlign: 'center'}, error: {padding: 14, backgroundColor: c.accentSoft}, viewerHeader: {flexDirection: 'row', alignItems: 'center', padding: 16},
 });

@@ -1,3 +1,4 @@
+import { ensurePermission } from '../../../permissions/service';
 // import UserAvatar from '../../../Component/UserAvatar';
 // import {Text} from '../../../../ui/Text';
 // import {TextInput} from '../../../../ui/TextInput';
@@ -462,26 +463,26 @@
 
 
 
-import UserAvatar from '../../../Component/UserAvatar';
-import {Text} from '../../../../ui/Text';
-import {TextInput} from '../../../../ui/TextInput';
-import {ActivityIndicator} from '../../../../ui/ActivityIndicator';
-import {Alert} from '../../../../ui/Alert';
-import React, {useState, useEffect} from 'react';
-import {View, TouchableOpacity, ScrollView, Platform, StyleSheet, KeyboardAvoidingView, Keyboard} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
-import Ionicons from '@react-native-vector-icons/ionicons';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import {useSelector} from 'react-redux';
+import Ionicons from '@react-native-vector-icons/ionicons';
+import React,{ useEffect,useState } from 'react';
+import { Keyboard,KeyboardAvoidingView,Platform,ScrollView,StyleSheet,TouchableOpacity,View } from 'react-native';
 import FastImage from 'react-native-fast-image';
-import {Colors} from '../../../Themes/Colors';
-import AttachmentSheet from '../../../chat/components/AttachmentSheet';
-import {languageData} from '../../../redux_toolkit/language/languageSlice';
-import {RootState} from '../../../redux_toolkit/store';
+import { launchCamera,launchImageLibrary } from 'react-native-image-picker';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSelector } from 'react-redux';
+import { ActivityIndicator } from '../../../../ui/ActivityIndicator';
+import { Alert } from '../../../../ui/Alert';
+import { Text } from '../../../../ui/Text';
+import { TextInput } from '../../../../ui/TextInput';
 import { useStatusBar } from '../../../Component/UseStatusBar/useStatusBar';
-import {hbsText} from '../../../i18n/translations';
+import UserAvatar from '../../../Component/UserAvatar';
+import { Colors } from '../../../Themes/Colors';
+import AttachmentSheet from '../../../chat/components/AttachmentSheet';
+import { hbsText } from '../../../i18n/translations';
+import { languageData } from '../../../redux_toolkit/language/languageSlice';
+import { RootState } from '../../../redux_toolkit/store';
 const BASE_URL = 'https://hala-b-saudi.onrender.com';
 const EditAccountScreen: React.FC = ({navigation}: any) => {
  useStatusBar('dark-content', Colors.surface);
@@ -624,6 +625,7 @@ const EditAccountScreen: React.FC = ({navigation}: any) => {
     if (!result.didCancel && result.assets?.[0]) uploadImage(result.assets[0]);
   };
   const pickFromCamera = async () => {
+    if (!await ensurePermission('camera')) return;
     const result = await launchCamera({mediaType: 'photo', quality: 0.8});
     if (!result.didCancel && result.assets?.[0]) uploadImage(result.assets[0]);
   };

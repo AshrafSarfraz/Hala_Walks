@@ -1,10 +1,9 @@
-import { Dimensions, StyleSheet } from "react-native";
+import { Dimensions,StyleSheet } from "react-native";
 import { Fonts } from "../../../Themes/Fonts";
 
-import {Colors} from '../../../Themes/Colors';
+import { Colors } from '../../../Themes/Colors';
 
-const { width } = Dimensions.get('window');
-export  const getStyles=(language:string) => StyleSheet.create({
+export  const getStyles=(_language:string) => StyleSheet.create({
     container: {
       alignItems: 'center',
       marginHorizontal:"3%",
@@ -28,15 +27,6 @@ export  const getStyles=(language:string) => StyleSheet.create({
       lineHeight:16,
       letterSpacing:0.3
     },
-    Txt:{
-      fontSize:language==='en'?12:10,
-      color:Colors.textPrimary,
-      fontWeight:"bold",
-      textAlign:"center",
-      lineHeight:language==='en'?14:14,
-      marginTop:language==='en'?96:94,
-      width:language==='en'?'80%':'70%',
-      alignSelf:"center"
-    }
+    caption: {position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: Colors.overlay, padding: 8, borderBottomLeftRadius: 10, borderBottomRightRadius: 10},
+    Txt: {fontSize: 13, color: Colors.onMedia, fontWeight: '600', textAlign: 'center', lineHeight: 20},
   });
-  

@@ -1,19 +1,19 @@
-import {Text} from '../../../ui/Text';
-import {TextInput} from '../../../ui/TextInput';
+import { Text } from '../../../ui/Text';
+import { TextInput } from '../../../ui/TextInput';
 // /src/halabsaudi/Map/components/bottomSheet.tsx
 
-import React, {useState, useEffect, useRef} from 'react';
-import {View, StyleSheet, TouchableOpacity, FlatList, Image, Animated} from 'react-native';
-import Modal from 'react-native-modal';
-import axios from 'axios';
-import storage from '@react-native-firebase/storage';
-import {BASE_URL} from '../../../config/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import storage from '@react-native-firebase/storage';
 import Ionicons from '@react-native-vector-icons/ionicons';
-import type {PlaceSuggestion} from '../mapScreen';
-import {Colors} from '../../Themes/Colors';
+import axios from 'axios';
+import React,{ useEffect,useRef,useState } from 'react';
+import { Animated,FlatList,Image,StyleSheet,TouchableOpacity,View } from 'react-native';
+import Modal from 'react-native-modal';
+import { BASE_URL } from '../../../config/api';
 import ActivityIndicatorModal from '../../Component/Loader/ActivityIndicator';
-import {useCustomAlert} from './customAlert'
+import { Colors } from '../../Themes/Colors';
+import type { PlaceSuggestion } from '../mapScreen';
+import { useCustomAlert } from './customAlert';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -231,7 +231,7 @@ const LocationToggle = ({
         <Ionicons
           name="location"
           size={12}
-          color={mode === 'current' ? Colors.textPrimary : Colors.purple}
+          color={mode === 'current' ? Colors.onAccent : Colors.purple}
         />
         <Text
           style={[
@@ -252,7 +252,7 @@ const LocationToggle = ({
         <Ionicons
           name="search"
           size={12}
-          color={mode === 'searched' ? Colors.textPrimary : Colors.purple}
+          color={mode === 'searched' ? Colors.onAccent : Colors.purple}
         />
         <Text
           style={[
@@ -307,7 +307,7 @@ const toggleStyles = StyleSheet.create({
     flexShrink: 1,
   },
   pillTextActive: {
-    color: Colors.textPrimary,
+    color: Colors.onAccent,
   },
 });
 

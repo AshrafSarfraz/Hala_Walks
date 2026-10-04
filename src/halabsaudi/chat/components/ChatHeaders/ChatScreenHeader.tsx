@@ -1,13 +1,14 @@
+import { Text } from '../../../../ui/Text';
+import { BackButton } from '../../../Component/CustomHeader/CustomHeader';
 import UserAvatar from '../../../Component/UserAvatar';
-import {Text} from '../../../../ui/Text';
 // src/halabsaudi/Component/ChatHeaders/ChatScreenHeader.tsx
-import React from 'react';
-import {View, TouchableOpacity, Image, StyleSheet, Platform} from 'react-native';
 import Ionicons from '@react-native-vector-icons/ionicons';
-import {useSelector} from 'react-redux';
-import {Colors} from '../../../Themes/Colors';
-import {languageData} from '../../../redux_toolkit/language/languageSlice';
-import {RootState} from '../../../redux_toolkit/store';
+import React from 'react';
+import { StyleSheet,TouchableOpacity,View } from 'react-native';
+import { useSelector } from 'react-redux';
+import { Colors } from '../../../Themes/Colors';
+import { languageData } from '../../../redux_toolkit/language/languageSlice';
+import { RootState } from '../../../redux_toolkit/store';
 
 type Props = {
   name: string;
@@ -55,16 +56,7 @@ export default function ChatScreenHeader({
      
 
       {/* Back — chevron flips for RTL */}
-      <TouchableOpacity
-        onPress={onBackPress}
-        style={styles.backBtn}
-        hitSlop={{top: 8, bottom: 8, left: 8, right: 8}}>
-        <Ionicons
-          name={isRTL ? 'arrow-forward' : 'arrow-back'}
-          color={Colors.textPrimary}
-          size={22}
-        />
-      </TouchableOpacity>
+      <BackButton onPress={onBackPress} />
 
       {/* Avatar + name */}
       <TouchableOpacity
@@ -128,8 +120,10 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.header,
     alignItems: 'center',
     paddingHorizontal: 10,
-    paddingTop: Platform.OS === 'ios' ? 12 : 14,
-    paddingBottom: 14,
+    minHeight: 64,
+    paddingVertical: 8,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: Colors.border,
   },
  
   backBtn: {padding: 8, marginRight: 4},

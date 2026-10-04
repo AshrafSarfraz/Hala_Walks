@@ -1,13 +1,13 @@
-import {Text} from '../../../ui/Text';
+import { Text } from '../../../ui/Text';
 
 import React from 'react';
-import {View, Modal, TouchableOpacity, StyleSheet, StatusBar} from 'react-native';
+import { Modal,StyleSheet,View } from 'react-native';
+import { useSelector } from 'react-redux';
 import { Colors } from '../../Themes/Colors';
 import { Fonts } from '../../Themes/Fonts';
-import CustomButton from '../CustomButton/CustomButton';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../redux_toolkit/store';
 import { languageData } from '../../redux_toolkit/language/languageSlice';
+import { RootState } from '../../redux_toolkit/store';
+import CustomButton from '../CustomButton/CustomButton';
 
 type LanProps = {
   visible: boolean;
@@ -21,7 +21,6 @@ const IncorrectPin: React.FC<LanProps> = ({ visible, onClose, message }) => {
 
   return (
     <Modal transparent visible={visible} animationType="fade">
-      <StatusBar barStyle="dark-content" />
       <View style={styles.overlay}>
         <View style={styles.container}>
         <Text style={styles.messageText}>{message}</Text>

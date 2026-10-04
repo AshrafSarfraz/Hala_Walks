@@ -1,6 +1,6 @@
-import {StyleSheet, Platform} from 'react-native';
-import {Colors} from '../../Themes/Colors';
-import {Fonts} from '../../Themes/Fonts';
+import { Platform,StyleSheet } from 'react-native';
+import { Colors } from '../../Themes/Colors';
+import { Fonts } from '../../Themes/Fonts';
 
 export const getStyles =(language:String)=> StyleSheet.create({
   
@@ -19,13 +19,16 @@ export const getStyles =(language:String)=> StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor:Colors.surface,
-    paddingBottom:4,
+    minHeight: 56,
+    paddingVertical: 4,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: Colors.border,
     zIndex: 999,        // ✅
     elevation: 999,     // ✅ Android — header sabse upar
   },
   logo: {
-    width: 140,
-    height: 60,
+    width: 120,
+    height: 44,
     resizeMode: 'contain',
   },
   language_Cont: {
@@ -35,8 +38,8 @@ export const getStyles =(language:String)=> StyleSheet.create({
     justifyContent: 'space-between',
   },
   Btn: {
-    width: 40,
-    height: 40,
+    width: 44,
+    height: 44,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -58,7 +61,7 @@ export const getStyles =(language:String)=> StyleSheet.create({
     width:'100%',
   },
   Categories_Txt: {
-    fontSize: language==='en'?18:16,
+    fontSize: 18,
     fontFamily: language==='en'?Fonts.SF_Bold:'',
     color: Colors.textPrimary,
     fontWeight:language==='en'?'400':'bold',
@@ -71,7 +74,7 @@ export const getStyles =(language:String)=> StyleSheet.create({
    marginBottom:"4%",
   },
   BestSeller_Txt: {
-  fontSize: language==='en'?18:16,
+  fontSize: 18,
     fontFamily: language==='en'?Fonts.SF_Bold:'',
     color: Colors.textPrimary,
     fontWeight:language==='en'?'400':'bold',

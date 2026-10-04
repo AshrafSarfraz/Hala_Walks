@@ -1,34 +1,35 @@
-import UserAvatar from '../Component/UserAvatar';
-import React, {useCallback, useRef, useState} from 'react';
-import {
-  View,
-  FlatList,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  useWindowDimensions,
-} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {useSelector} from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
 import Ionicons from '@react-native-vector-icons/ionicons';
-import {Text} from '../../ui/Text';
-import {ActivityIndicator} from '../../ui/ActivityIndicator';
-import {Alert} from '../../ui/Alert';
-import {BASE_URL} from '../../config/api';
-import {Colors} from '../Themes/Colors';
-import {RootState} from '../redux_toolkit/store';
-import {fetchCollection} from '../api/collection';
-import {useStatusBar} from '../Component/UseStatusBar/useStatusBar';
-import ImageViewerModal from './components/ImageViewerModal';
+import axios from 'axios';
+import React,{ useCallback,useRef,useState } from 'react';
+import {
+FlatList,
+Image,
+StyleSheet,
+TouchableOpacity,
+View,
+useWindowDimensions,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSelector } from 'react-redux';
+import { BASE_URL } from '../../config/api';
+import { ActivityIndicator } from '../../ui/ActivityIndicator';
+import { Alert } from '../../ui/Alert';
+import { Text } from '../../ui/Text';
+import CustomHeader from '../Component/CustomHeader/CustomHeader';
+import { useStatusBar } from '../Component/UseStatusBar/useStatusBar';
+import UserAvatar from '../Component/UserAvatar';
+import { Colors } from '../Themes/Colors';
+import { fetchCollection } from '../api/collection';
+import { RootState } from '../redux_toolkit/store';
 import BlockUserModal from './components/BlockUserModal';
-import MuteModal, {MuteDuration} from './components/MuteModal';
-import {SocialPerson, canShowMessage, openSocialChat} from './socialProfile';
-import {useSocialRefresh} from './useSocialRefresh';
-import {clearPeopleCache} from './startChatScreen';
+import ImageViewerModal from './components/ImageViewerModal';
+import MuteModal,{ MuteDuration } from './components/MuteModal';
+import { SocialPerson,canShowMessage,openSocialChat } from './socialProfile';
+import { clearPeopleCache } from './startChatScreen';
+import { useSocialRefresh } from './useSocialRefresh';
 
-import {hbsText} from '../i18n/translations';
+import { hbsText } from '../i18n/translations';
 
 export type MediaItem = {
   id: string;
@@ -450,19 +451,7 @@ export default function UserProfileScreen({route, navigation}: any) {
 
   return (
     <SafeAreaView style={s.safe} edges={['top', 'bottom']}>
-      <View style={[s.nav, {flexDirection: isRTL ? 'row-reverse' : 'row'}]}>
-        <TouchableOpacity
-          accessibilityLabel="Back"
-          style={s.back}
-          onPress={() => navigation.goBack()}>
-          <Ionicons
-            name={isRTL ? 'arrow-forward' : 'arrow-back'}
-            size={24}
-            color={Colors.textPrimary}
-          />
-        </TouchableOpacity>
-        <View style={s.back} />
-      </View>
+      <CustomHeader title={isRTL ? 'الملف الشخصي' : 'Profile'} onBackPress={() => navigation.goBack()} />
       {loading ? (
         <View style={s.empty}>
           <ActivityIndicator size="large" />

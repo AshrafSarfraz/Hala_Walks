@@ -1,16 +1,16 @@
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Text } from '../../../../ui/Text';
+import { TextInput } from '../../../../ui/TextInput';
 import UserAvatar from '../../../Component/UserAvatar';
-import {Text} from '../../../../ui/Text';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {TextInput} from '../../../../ui/TextInput';
 // src/halabsaudi/Component/ChatHeaders/conversation.tsx
-import React, {useState, useRef} from 'react';
-import {View, TouchableOpacity, StyleSheet, Animated, Platform} from 'react-native';
 import Ionicons from '@react-native-vector-icons/ionicons';
-import {useSelector} from 'react-redux';
-import {getAvatarColor} from '../../../Themes/avatarColor';
-import {Colors} from '../../../Themes/Colors';
-import {languageData} from '../../../redux_toolkit/language/languageSlice';
-import {RootState} from '../../../redux_toolkit/store';
+import React,{ useRef,useState } from 'react';
+import { Animated,Platform,StyleSheet,TouchableOpacity,View } from 'react-native';
+import { useSelector } from 'react-redux';
+import { Colors } from '../../../Themes/Colors';
+import { getAvatarColor } from '../../../Themes/avatarColor';
+import { languageData } from '../../../redux_toolkit/language/languageSlice';
+import { RootState } from '../../../redux_toolkit/store';
 
 type Props = {
   profileName?: string;
@@ -66,7 +66,7 @@ export default function ConversationHeader({
   });
 
   return (
-    <View style={[styles.wrapper, {paddingTop: insets.top + 16}]}>
+    <View style={[styles.wrapper, {paddingTop: insets.top + 8}]}>
       
 
       {/* ── Top row ── */}
@@ -164,16 +164,16 @@ const styles = StyleSheet.create({
     fontSize: 11, color: Colors.textPrimary,
     letterSpacing: 0.2, textTransform: 'uppercase', marginBottom: 3,
   },
-  title: {color: Colors.textPrimary, fontSize: 26, fontWeight: '800', letterSpacing: -0.4},
+  title: {color: Colors.textPrimary, fontSize: 22, fontWeight: '800', letterSpacing: -0.4},
   actions: {alignItems: 'center', gap: 10, marginTop: 4},
   iconBtn: {
-    width: 38, height: 38, borderRadius: 19,
+    width: 44, height: 44, borderRadius: 22,
     backgroundColor: Colors.surfaceRaised,
     justifyContent: 'center', alignItems: 'center',
     borderWidth: 1, borderColor: Colors.border,
   },
   avatar: {
-    width: 38, height: 38, borderRadius: 19,
+    width: 44, height: 44, borderRadius: 22,
     justifyContent: 'center', alignItems: 'center',
     borderWidth: 2, borderColor: Colors.success,
     position: 'relative',

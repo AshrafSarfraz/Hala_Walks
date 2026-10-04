@@ -1,16 +1,17 @@
+import { permissionStatus } from '../permissions/service';
 // src/halabsaudi/Notifications/venueTracker.ts
 // ✅ DUAL SYSTEM:
 //   1. GEOFENCING   — jaise hi venue radius mein enter karo → turant notification ⚡
 //   2. PERIODIC     — har 30 min location check → backup (agar already andar ho)
 //   Both cooldown share karte hain — sirf 1 notification per venue per day
 
-import BackgroundGeolocation, {
-  GeofenceEvent,
-} from 'react-native-background-geolocation';
+import notifee,{ AndroidImportance,EventType } from '@notifee/react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import notifee, { AndroidImportance, EventType } from '@notifee/react-native';
+import BackgroundGeolocation,{
+GeofenceEvent,
+} from 'react-native-background-geolocation';
 import { navigate } from './RootNavigation';
-import {isSocialNotification, saveSocialNavigation} from './social';
+import { isSocialNotification,saveSocialNavigation } from './social';
 
 // ─── CONFIG ───────────────────────────────────────────────────────────────────
 const VENUES_API     = 'https://hala-b-saudi.onrender.com/api/hbs/venues';
@@ -20,7 +21,7 @@ const PENDING_NAV    = 'hbs_pending_nav';
 const CHANNEL_ID     = 'hbs_alerts';
 export const RADIUS_METERS = 500;
 
-export { PENDING_NAV  as PENDING_VENUE_KEY };
+export { PENDING_NAV as PENDING_VENUE_KEY };
 export { CHANNEL_ID };
 export { COOLDOWN_STORE };
 
@@ -285,6 +286,9 @@ function startPeriodicCheck() {
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 export async function initVenueTracker() {
+  // Background venue alerts require separate, explicit consent. Foreground discovery
+  // and chat notifications work without starting this always-on tracker.
+  if (await AsyncStorage.getItem('hala_background_location_opt_in') !== 'true' || await permissionStatus('backgroundLocation') !== 'granted' || await permissionStatus('notifications') !== 'granted') return;
   if (initialized) {
     console.log('[HBS] Already initialized');
     return;
@@ -299,7 +303,7 @@ export async function initVenueTracker() {
         distanceFilter: 200,
         desiredAccuracy: BackgroundGeolocation.DesiredAccuracy.High,
         locationAuthorizationRequest: 'Always',
-        disableLocationAuthorizationAlert: false,
+        disableLocationAuthorizationAlert: true,
         pausesLocationUpdatesAutomatically: false,
         activityType: BackgroundGeolocation.ActivityType.Other,
         geofenceModeHighAccuracy: true,

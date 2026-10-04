@@ -3405,6 +3405,8 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - RNDeviceInfo (14.1.1):
+    - React-Core
   - RNFastImage (8.6.3):
     - React-Core
     - SDWebImage (~> 5.11.1)
@@ -3740,6 +3742,7 @@ DEPENDENCIES:
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - "RNCClipboard (from `../node_modules/@react-native-clipboard/clipboard`)"
   - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
+  - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNFastImage (from `../node_modules/react-native-fast-image`)
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBAuth (from `../node_modules/@react-native-firebase/auth`)"
@@ -3959,6 +3962,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-clipboard/clipboard"
   RNDateTimePicker:
     :path: "../node_modules/@react-native-community/datetimepicker"
+  RNDeviceInfo:
+    :path: "../node_modules/react-native-device-info"
   RNFastImage:
     :path: "../node_modules/react-native-fast-image"
   RNFBApp:
@@ -4097,6 +4102,7 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: 6a8127b6987dc9fbce778669b252b14c8355c7ce
   RNCClipboard: 9f7b908de4bf4353871fb454c15fc03db4917b88
   RNDateTimePicker: 8e80a4311de835692e82142ea3314817814a214a
+  RNDeviceInfo: bcce8752b5043a623fe3c26789679b473f705d3c
   RNFastImage: 462a183c4b0b6b26fdfd639e1ed6ba37536c3b87
   RNFBApp: 90cf0209fb8f0460ab069a7de857d7ec851c8476
   RNFBAuth: 7a28922f8ae64c5079211ca7af299c9842206839
@@ -4105,7 +4111,7 @@ SPEC CHECKSUMS:
   RNFBStorage: d535dbe7de6ba96d7f74979d31c1e11e2b538727
   RNGestureHandler: c76d4f5dfdbc009fb235a9811063f969799eb638
   RNNotifee: 5e3b271e8ea7456a36eec994085543c9adca9168
-  RNPermissions: e9ef763cec9506a6dae4335a7844d357ee3e12f4
+  RNPermissions: e8e6560c461e430acda420f69ed3af73c165026b
   RNReanimated: 057095003c94d23452a2dd3eb071808285435c68
   RNScreens: 04304337930029a5d0db297b22eb0f07adc31a2c
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
@@ -4115,6 +4121,6 @@ SPEC CHECKSUMS:
   TSLocationManager: d8c3074f2dfc8f93eff7c64b69b61ff30a7f50e4
   Yoga: be02ca501b03c79d7027a6bbbd0a8db985034f11
 
-PODFILE CHECKSUM: 9a02550b4a975cfecdc407e7f680ee02dcb0bab7
+PODFILE CHECKSUM: 56256aa6e2c42fc942d7326797e8e4f30f63823d
 
 COCOAPODS: 1.16.2

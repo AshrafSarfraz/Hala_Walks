@@ -1,14 +1,14 @@
-import {Text} from '../../../ui/Text';
+import { Text } from '../../../ui/Text';
 
 import React from 'react';
-import {View, Modal, TouchableOpacity, StyleSheet, StatusBar} from 'react-native';
+import { Modal,StyleSheet,TouchableOpacity,View } from 'react-native';
+import { useDispatch,useSelector } from 'react-redux';
 import { Colors } from '../../Themes/Colors';
 import { Fonts } from '../../Themes/Fonts';
-import { RootState } from '../../redux_toolkit/store';
-import { useDispatch, useSelector } from 'react-redux';
 import { switchLanguage } from '../../redux_toolkit/language/languageSlice'; // Import the switchLanguage action
+import { RootState } from '../../redux_toolkit/store';
 
-import {hbsText} from '../../i18n/translations';
+import { hbsText } from '../../i18n/translations';
 
 type LanProps = {
   visible: boolean;
@@ -26,7 +26,6 @@ const LanguageModal: React.FC<LanProps> = ({ visible, onClose }) => {
 
   return (
     <Modal transparent visible={visible} animationType="fade">
-        <StatusBar barStyle="dark-content" />
       <View style={styles.overlay}>
         <View style={styles.container}>
           <Text style={styles.headerText}>

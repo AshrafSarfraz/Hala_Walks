@@ -1,32 +1,32 @@
-import {AlertHost} from './src/ui/Alert';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { AlertHost } from './src/ui/Alert';
 // App.tsx — ✅ Fixed: notification nav now passes participantName + participantId
+import notifee,{ AndroidImportance,EventType } from '@notifee/react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import messaging from '@react-native-firebase/messaging';
+import React,{ useEffect,useRef } from 'react';
+import { AppState } from 'react-native';
 import 'react-native-gesture-handler';
-import React, { useEffect, useRef } from 'react';
-import { AppState, Platform } from 'react-native';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
-import { persistor, store } from './src/westwalk/redux/store';
 import AppStack from './src/HandlebothApp/handleNavigation';
-import notifee, { AndroidImportance, EventType, AuthorizationStatus } from '@notifee/react-native';
-import messaging from '@react-native-firebase/messaging';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { navigate } from './src/halabsaudi/Notifications/RootNavigation';
 import { checkPendingNavigation } from './src/halabsaudi/Notifications/index';
 import {
-  displaySocialNotification,
-  isSocialNotification,
-  openPendingSocialNotification,
-  openSocialNotification,
-  saveSocialNavigation,
+displaySocialNotification,
+isSocialNotification,
+openPendingSocialNotification,
+openSocialNotification,
+saveSocialNavigation,
 } from './src/halabsaudi/Notifications/social';
-import { connectSocket, getSocket } from './src/halabsaudi/chat/socket';
 import { registerFCMToken } from './src/halabsaudi/chat/registerFCMToken';
+import { connectSocket,getSocket } from './src/halabsaudi/chat/socket';
+import { persistor,store } from './src/westwalk/redux/store';
 // ✅ NEW — notification count / tray manager
 import {
-  displayChatNotification,
-  clearChatNotifications,
-  syncBadgeWithTray,
+clearChatNotifications,
+displayChatNotification,
+syncBadgeWithTray,
 } from './src/halabsaudi/Notifications/badge';
 
 const CHAT_CHANNEL_ID = 'chat_messages';
@@ -39,26 +39,6 @@ async function createChatChannel() {
     vibration: true,
     sound: 'default',
   });
-}
-
-async function requestNotificationPermission() {
-  try {
-    const settings = await notifee.getNotificationSettings();
-    if (
-      settings.authorizationStatus === AuthorizationStatus.NOT_DETERMINED ||
-      settings.authorizationStatus === AuthorizationStatus.DENIED
-    ) {
-      await notifee.requestPermission();
-    }
-    if (Platform.OS === 'android' && Platform.Version >= 33) {
-      const { PermissionsAndroid } = require('react-native');
-      await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
-      );
-    }
-  } catch (e) {
-    console.log('[App] Notification permission error:', e);
-  }
 }
 
 // ✅ Helper — navigate to chat with all available params from notification data
@@ -83,7 +63,6 @@ const App = () => {
   const appState = useRef(AppState.currentState);
 
   useEffect(() => {
-    requestNotificationPermission();
     createChatChannel();
     checkPendingNavigation();
 

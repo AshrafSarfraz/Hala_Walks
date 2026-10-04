@@ -1,17 +1,19 @@
-import {fetchBrandCatalog} from '../../../api/brandCatalog';
-import {ActivityIndicator} from '../../../../ui/ActivityIndicator';
-import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {View, FlatList, Dimensions, TouchableOpacity} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import {useSelector} from 'react-redux';
-import {RootState} from '../../../redux_toolkit/store';
-import {getStyles} from './style';
-import FastImage from 'react-native-fast-image';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
+import React,{ useEffect,useMemo,useRef,useState } from 'react';
+import { Dimensions,FlatList,TouchableOpacity,View } from 'react-native';
+import FastImage from 'react-native-fast-image';
+import { useSelector } from 'react-redux';
+import { ActivityIndicator } from '../../../../ui/ActivityIndicator';
+import CachedImage from '../../../Component/Media/CachedImage';
+import { fetchBrandCatalog } from '../../../api/brandCatalog';
+import { RootState } from '../../../redux_toolkit/store';
+import { getStyles } from './style';
 
-import {Colors} from '../../../Themes/Colors';
+import { Colors } from '../../../Themes/Colors';
 
-const {width} = Dimensions.get('screen');
+const {width} = Dimensions.get('window');
+const PAGE_WIDTH = width - 32;
 
 const OFFERS_CACHE_KEY = 'H-Offer_cache_v7';
 const OFFERS_TTL_MS = 6 * 60 * 60 * 1000; // 6 hours (adjust)
@@ -155,7 +157,7 @@ const ImageSlider: React.FC<{onLoadError?: () => void}> = ({onLoadError}) => {
   }, []);
 
   const handleScroll = (event: any) => {
-    const slideIndex = Math.round(event.nativeEvent.contentOffset.x / width);
+    const slideIndex = Math.round(event.nativeEvent.contentOffset.x / PAGE_WIDTH);
     setCurrentIndex(slideIndex);
   };
 
@@ -180,6 +182,8 @@ const ImageSlider: React.FC<{onLoadError?: () => void}> = ({onLoadError}) => {
     );
   }
 
+  if (!visibleOffers.length) return null;
+
   return (
     <View style={styles.container}>
       <FlatList
@@ -188,13 +192,14 @@ const ImageSlider: React.FC<{onLoadError?: () => void}> = ({onLoadError}) => {
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
-        onScroll={handleScroll}
+        onMomentumScrollEnd={handleScroll}
+        getItemLayout={(_, index) => ({length: PAGE_WIDTH, offset: PAGE_WIDTH * index, index})}
         renderItem={({item}) => (
           <TouchableOpacity
             style={styles.imageContainer}
             onPress={() => navigation.navigate('DetailScreen', {item})}>
-            <FastImage
-              source={{uri: getHeroImage(item), priority: FastImage.priority.high}}
+            <CachedImage
+              uri={getHeroImage(item)} priority="high"
               style={styles.image}
               resizeMode={FastImage.resizeMode.cover}
             />
@@ -209,7 +214,7 @@ const ImageSlider: React.FC<{onLoadError?: () => void}> = ({onLoadError}) => {
             style={[
               styles.dot,
               {
-                backgroundColor: index === currentIndex ? Colors.surface : Colors.surface,
+                backgroundColor: index === currentIndex ? Colors.accent : Colors.border,
                 width: index === currentIndex ? 30 : 8,
               },
             ]}

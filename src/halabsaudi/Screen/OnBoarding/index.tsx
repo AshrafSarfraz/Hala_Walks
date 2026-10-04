@@ -1,19 +1,20 @@
-import {Text} from '../../../ui/Text';
+import { Text } from '../../../ui/Text';
+import { languageData } from '../../redux_toolkit/language/languageSlice';
 
-import React, { useState, useRef } from 'react';
-import {View, Image, TouchableOpacity, StatusBar} from 'react-native';
-import AppIntroSlider from 'react-native-app-intro-slider';
-import CustomButton from '../../Component/CustomButton/CustomButton';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import React,{ useRef,useState } from 'react';
+import { Image,StatusBar,TouchableOpacity,View } from 'react-native';
+import AppIntroSlider from 'react-native-app-intro-slider';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../redux_toolkit/store';
+import CustomButton from '../../Component/CustomButton/CustomButton';
 import { Colors } from '../../Themes/Colors';
+import { RootState } from '../../redux_toolkit/store';
 import { getStyles } from './style';
 
 
 
-import {onboardingLanguageData} from '../../i18n/translations';
+import { onboardingLanguageData } from '../../i18n/translations';
 
 type OnBoardingProps = {
   navigation: NativeStackNavigationProp<any>;

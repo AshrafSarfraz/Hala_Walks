@@ -1,31 +1,33 @@
-import {Text} from '../../../ui/Text';
-import {clearAllChatData} from '../../chat/chatStorage';
-import {clearChatSession} from '../../chat/chatScreen';
-import {clearPeopleCache} from '../../chat/startChatScreen';
-import CustomHeader from '../../Component/CustomHeader/CustomHeader';
-import {Alert} from '../../../ui/Alert';
-import {ActivityIndicator} from '../../../ui/ActivityIndicator';
-import React, {useState, useCallback} from 'react';
-import {View, TouchableOpacity, ScrollView, Switch, Modal, Pressable} from 'react-native';
-import FastImage from 'react-native-fast-image';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import Ionicons from '@react-native-vector-icons/ionicons';
-import {useNavigation, useFocusEffect} from '@react-navigation/native';
-import {useSelector} from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Colors} from '../../Themes/Colors';
-import {RootState} from '../../redux_toolkit/store';
-import {languageData} from '../../redux_toolkit/language/languageSlice';
+import Ionicons from '@react-native-vector-icons/ionicons';
+import { useFocusEffect,useNavigation } from '@react-navigation/native';
+import React,{ useCallback,useState } from 'react';
+import { Modal,Pressable,ScrollView,Switch,TouchableOpacity,View } from 'react-native';
+import FastImage from 'react-native-fast-image';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSelector } from 'react-redux';
+import { BASE_URL } from '../../../config/api';
+import { ActivityIndicator } from '../../../ui/ActivityIndicator';
+import { Alert } from '../../../ui/Alert';
+import { Text } from '../../../ui/Text';
 import LanguageModal from '../../Component/CustomAlert/Lan_Modal';
-import {disconnectSocket} from '../../chat/socket';
-import {unregisterFCMToken} from '../../chat/registerFCMToken';
-import {getStyles} from './style';
-import {useStatusBar} from '../../Component/UseStatusBar/useStatusBar';
-import {BASE_URL} from '../../../config/api';
+import CustomHeader from '../../Component/CustomHeader/CustomHeader';
+import { useStatusBar } from '../../Component/UseStatusBar/useStatusBar';
+import { initVenueTracker,stopVenueTracker } from '../../Notifications';
+import { Colors } from '../../Themes/Colors';
+import { clearChatSession } from '../../chat/chatScreen';
+import { clearAllChatData } from '../../chat/chatStorage';
+import { unregisterFCMToken } from '../../chat/registerFCMToken';
+import { disconnectSocket } from '../../chat/socket';
+import { clearPeopleCache } from '../../chat/startChatScreen';
+import { ensurePermission } from '../../permissions/service';
+import { languageData } from '../../redux_toolkit/language/languageSlice';
+import { RootState } from '../../redux_toolkit/store';
+import { getStyles } from './style';
 
-import {hbsText} from '../../i18n/translations';
+import { hbsText } from '../../i18n/translations';
 
-const CHEVRON_COLOR = Colors.border;
+const CHEVRON_COLOR = Colors.textMuted;
 const ICON_COLOR = Colors.accent;
 
 const Profile: React.FC = () => {
@@ -44,6 +46,8 @@ const Profile: React.FC = () => {
   const [userAvatar, setUserAvatar] = useState<string | null>(null);
   const [showFullImage, setShowFullImage] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
+  const [nearbyAlerts, setNearbyAlerts] = useState(false);
+  const [nearbyBusy, setNearbyBusy] = useState(false);
 
   const language = useSelector((state: RootState) => state.language.language);
   const isAr = language === 'ar';
@@ -56,6 +60,7 @@ const Profile: React.FC = () => {
   useFocusEffect(
     useCallback(() => {
       const load = async () => {
+        setNearbyAlerts(await AsyncStorage.getItem('hala_background_location_opt_in') === 'true');
         const raw = await AsyncStorage.getItem('hala_user_backend');
         if (raw) {
           const user = JSON.parse(raw);
@@ -154,6 +159,7 @@ const Profile: React.FC = () => {
         onPress: async () => {
           setLoggingOut(true);
           try {
+            await stopVenueTracker();
             await unregisterFCMToken();
             disconnectSocket();
             clearChatSession();
@@ -261,7 +267,26 @@ const Profile: React.FC = () => {
           <Divider />
           <NavRow icon="heart-outline" label={t.Wishlist} onPress={() => navigation.navigate('Wishlist')} />
           <Divider />
+          <NavRow icon="shield-checkmark-outline" label={isAr ? 'أذونات التطبيق' : 'App permissions'} onPress={() => navigation.navigate('LocationDisclosure')} />
+          <Divider />
           <NavRow icon="language-outline" label={t.language} onPress={() => setAlertVisible(true)} />
+        </View>
+
+        <Text style={s.sectionLabel}>{isAr ? 'الإشعارات' : 'Notifications'}</Text>
+        <View style={s.card}>
+          <SwitchRow icon="navigate-outline" label={isAr ? 'تنبيهات العروض القريبة' : 'Nearby offer alerts'}
+            sub={isAr ? 'اختياري: يستخدم الموقع أثناء إغلاق التطبيق' : 'Optional: uses location while the app is closed'}
+            value={nearbyAlerts} loading={nearbyBusy} onChange={async value => {
+              if (nearbyBusy) return;
+              setNearbyBusy(true);
+              try {
+                if (value && (!await ensurePermission('location') || !await ensurePermission('notifications') || !await ensurePermission('backgroundLocation'))) return;
+                await AsyncStorage.setItem('hala_background_location_opt_in', String(value));
+                setNearbyAlerts(value);
+                if (value) void initVenueTracker(); else await stopVenueTracker();
+              } catch {Alert.alert(isAr ? 'حاول مرة أخرى' : 'Please try again');}
+              finally {setNearbyBusy(false);}
+            }} />
         </View>
 
         {/* Chat & people */}

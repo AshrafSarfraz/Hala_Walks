@@ -1,29 +1,29 @@
-import {Text} from '../../../../ui/Text';
-import {TextInput} from '../../../../ui/TextInput';
-import React, {useState, useEffect, useRef, useCallback} from 'react';
-import {
-  View,
-  ScrollView,
-  Image,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
-} from 'react-native';
-import Clipboard from '@react-native-clipboard/clipboard';
-import {Back_Icon, Otpverification} from '../../../Themes/Images';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {getStyles, AuthColors} from './style';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import ActivityIndicatorModal from '../../../Component/Loader/ActivityIndicator';
-import {useSelector} from 'react-redux';
-import {RootState} from '../../../redux_toolkit/store';
-import {languageData} from '../../../redux_toolkit/language/languageSlice';
-import {CommonActions} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {apiPost} from '../../../firebase/api/client';
+import Clipboard from '@react-native-clipboard/clipboard';
+import { CommonActions } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import React,{ useCallback,useEffect,useRef,useState } from 'react';
+import {
+Image,
+KeyboardAvoidingView,
+Platform,
+ScrollView,
+TouchableOpacity,
+View,
+} from 'react-native';
 import FastImage from 'react-native-fast-image';
-import {useStatusBar} from '../../../Component/UseStatusBar/useStatusBar';
-import {hbsText} from '../../../i18n/translations';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSelector } from 'react-redux';
+import { Text } from '../../../../ui/Text';
+import { TextInput } from '../../../../ui/TextInput';
+import ActivityIndicatorModal from '../../../Component/Loader/ActivityIndicator';
+import { useStatusBar } from '../../../Component/UseStatusBar/useStatusBar';
+import { Back_Icon,Otpverification } from '../../../Themes/Images';
+import { apiPost } from '../../../firebase/api/client';
+import { hbsText } from '../../../i18n/translations';
+import { languageData } from '../../../redux_toolkit/language/languageSlice';
+import { RootState } from '../../../redux_toolkit/store';
+import { AuthColors,getStyles } from './style';
 
 interface OtpProps extends NativeStackScreenProps<any> {}
 const Otp: React.FC<OtpProps> = ({route, navigation}) => {
@@ -78,7 +78,7 @@ const Otp: React.FC<OtpProps> = ({route, navigation}) => {
 
   const navigateAfterLogin = async () => {
     const permissionsAsked = await AsyncStorage.getItem(
-      'hala_permissions_asked',
+      'hala_permissions_v2',
     );
 
     navigation.dispatch(

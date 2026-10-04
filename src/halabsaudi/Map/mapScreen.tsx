@@ -1,30 +1,32 @@
-import {fetchBrandCatalog} from '../api/brandCatalog';
-import {Text} from '../../ui/Text';
-import {darkMapStyle} from '../../ui/darkMap';
-import {ActivityIndicator} from '../../ui/ActivityIndicator';
-import {TextInput} from '../../ui/TextInput';
-import React, {
-  memo,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import {View, StyleSheet, Platform, TouchableOpacity, Image, FlatList, Keyboard} from 'react-native';
-import MapView, {Marker, PROVIDER_GOOGLE, Region} from 'react-native-maps';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import axios from 'axios';
 import Ionicons from '@react-native-vector-icons/ionicons';
-import {Colors} from '../Themes/Colors';
+import { useFocusEffect,useNavigation } from '@react-navigation/native';
+import axios from 'axios';
+import React,{
+memo,
+useCallback,
+useEffect,
+useMemo,
+useRef,
+useState,
+} from 'react';
+import { FlatList,Image,Keyboard,Platform,StyleSheet,TouchableOpacity,View } from 'react-native';
+import { launchCamera,launchImageLibrary } from 'react-native-image-picker';
+import MapView,{ Marker,PROVIDER_GOOGLE,Region } from 'react-native-maps';
+import { ActivityIndicator } from '../../ui/ActivityIndicator';
+import { Text } from '../../ui/Text';
+import { TextInput } from '../../ui/TextInput';
+import { darkMapStyle } from '../../ui/darkMap';
+import { useStatusBar } from '../Component/UseStatusBar/useStatusBar';
+import { Colors } from '../Themes/Colors';
+import { fetchBrandCatalog } from '../api/brandCatalog';
+import { ensurePermission } from '../permissions/service';
 
-import {BASE_URL, HBS_API} from '../../config/api';
-import {
-  ensureLocationPermission,
-  getDeviceLocation,
-} from '../utils/getDeviceLocation';
+import { BASE_URL,HBS_API } from '../../config/api';
 import ActivityIndicatorModal from '../Component/Loader/ActivityIndicator';
+import {
+ensureLocationPermission,
+getDeviceLocation,
+} from '../utils/getDeviceLocation';
 
 // ─── Exported types ───────────────────────────────────────────────────────────
 
@@ -741,6 +743,7 @@ const searchBarStyles = StyleSheet.create({
 // ─── Main screen ──────────────────────────────────────────────────────────────
 
 const MapScreen = () => {
+  useStatusBar('dark-content', Colors.header);
   const navigation = useNavigation<any>();
   const mapRef = useRef<MapView>(null);
   const didFitRef = useRef(false);
@@ -1101,9 +1104,10 @@ const MapScreen = () => {
   );
 
   const openCamera = useCallback(async () => {
+    if (!await ensurePermission('camera')) return null;
     return new Promise<{uri?: string} | null>(resolve => {
       launchCamera(
-        {mediaType: 'photo', quality: 0.8, saveToPhotos: true},
+        {mediaType: 'photo', quality: 0.8, saveToPhotos: false},
         r => {
           if (r.didCancel || r.errorCode) return resolve(null);
           const asset = r.assets?.[0] ?? null;

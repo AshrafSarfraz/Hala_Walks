@@ -1,25 +1,26 @@
-import {fetchBrandCatalog} from '../../api/brandCatalog';
-import {Text} from '../../../ui/Text';
-import React, { useEffect, useState,  } from 'react';
-import {View, FlatList, Image, TouchableOpacity, PermissionsAndroid, TextInput, Platform} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
-import { Location, Search } from '../../Themes/Images';
-import { Colors } from '../../Themes/Colors';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../redux_toolkit/store';
-import { getStyles } from './style';
-import { languageData } from '../../redux_toolkit/language/languageSlice';
-import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
-import LinearGradient from 'react-native-linear-gradient';
-import FastImage from 'react-native-fast-image';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Geolocation from '@react-native-community/geolocation';
+import { useNavigation } from '@react-navigation/native';
+import React,{ useEffect,useState,} from 'react';
+import { FlatList,Image,TextInput,TouchableOpacity,View } from 'react-native';
+import FastImage from 'react-native-fast-image';
+import LinearGradient from 'react-native-linear-gradient';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
+import { useSelector } from 'react-redux';
+import { Text } from '../../../ui/Text';
+import CustomHeader from '../../Component/CustomHeader/CustomHeader';
+import { useStatusBar } from '../../Component/UseStatusBar/useStatusBar';
 import DetectCountry from '../../Component/distanceCalculate/DetectCountry';
 import DistanceFromDevice from '../../Component/distanceCalculate/distanceCalculate';
-import Geolocation from '@react-native-community/geolocation';
-import { useStatusBar } from '../../Component/UseStatusBar/useStatusBar';
+import { Colors } from '../../Themes/Colors';
+import { Location,Search } from '../../Themes/Images';
+import { fetchBrandCatalog } from '../../api/brandCatalog';
+import { permissionStatus } from '../../permissions/service';
+import { languageData } from '../../redux_toolkit/language/languageSlice';
+import { RootState } from '../../redux_toolkit/store';
+import { getStyles } from './style';
 
-import {hbsText} from '../../i18n/translations';
 
 const BRANDS_API = 'https://hala-b-saudi.onrender.com/api/hbs/brands';
 
@@ -62,33 +63,7 @@ const SelectedCategories: React.FC<{ route: any }> = ({ route }) => {
 
     const requestLocationPermission = async () => {
       try {
-        if (Platform.OS === 'android') {
-          const already = await PermissionsAndroid.check(
-            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-          );
-          if (already) {
-            getCurrentLocation();
-            return;
-          }
-          const granted = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-            {
-              title: 'Location Permission',
-              message: 'We need access to your location to provide better services.',
-              buttonNeutral: 'Ask Me Later',
-              buttonNegative: 'Cancel',
-              buttonPositive: 'OK',
-            },
-          );
-          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-            getCurrentLocation();
-          } else {
-            console.log('❌ Permission denied');
-          }
-        } else {
-          Geolocation.requestAuthorization();
-          getCurrentLocation();
-        }
+        if (await permissionStatus('location') === 'granted') getCurrentLocation();
       } catch (e) {
         console.log('Permission error:', e);
       }
@@ -234,15 +209,7 @@ const SelectedCategories: React.FC<{ route: any }> = ({ route }) => {
     <SafeAreaView
   edges={['top']}
   style={{ backgroundColor: Colors.surface }}>
-  <View style={styles.header}>
-    <TouchableOpacity
-      style={styles.backButton}
-      onPress={() => navigation.goBack()}
-      accessibilityRole="button"
-      accessibilityLabel={hbsText(language === 'ar', 'ui_go_back')}>
-      <View style={styles.backChevron} />
-    </TouchableOpacity> 
-
+  <CustomHeader title="" onBackPress={() => navigation.goBack()}>
     <View style={styles.searchContainer}>
       <Image source={Search} style={styles.searchIcon} />
       <TextInput
@@ -253,7 +220,7 @@ const SelectedCategories: React.FC<{ route: any }> = ({ route }) => {
         onChangeText={setSearchQuery}
       />
     </View>
-  </View>
+  </CustomHeader>
 </SafeAreaView>
 
       <View style={{ flex: 1, paddingHorizontal: '4%', backgroundColor: Colors.background }}>

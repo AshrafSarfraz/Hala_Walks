@@ -1,19 +1,20 @@
+import { ActivityIndicator } from '../../ui/ActivityIndicator';
+import { Alert } from '../../ui/Alert';
+import { Text } from '../../ui/Text';
+import CustomHeader from '../Component/CustomHeader/CustomHeader';
 import UserAvatar from '../Component/UserAvatar';
-import {Text} from '../../ui/Text';
-import {ActivityIndicator} from '../../ui/ActivityIndicator';
-import {Alert} from '../../ui/Alert';
 // src/halabsaudi/chat/BlockedUsersScreen.tsx
-import React, {useEffect, useState, useCallback} from 'react';
-import {View, FlatList, TouchableOpacity, StyleSheet, Platform, StatusBar} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
 import Ionicons from '@react-native-vector-icons/ionicons';
-import {useSelector} from 'react-redux';
-import {BASE_URL} from '../../config/api';
-import {Colors} from '../Themes/Colors';
-import {languageData} from '../redux_toolkit/language/languageSlice';
-import {RootState} from '../redux_toolkit/store';
+import axios from 'axios';
+import React,{ useCallback,useEffect,useState } from 'react';
+import { FlatList,Platform,StatusBar,StyleSheet,TouchableOpacity,View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSelector } from 'react-redux';
+import { BASE_URL } from '../../config/api';
+import { Colors } from '../Themes/Colors';
+import { languageData } from '../redux_toolkit/language/languageSlice';
+import { RootState } from '../redux_toolkit/store';
 
 type BlockedUser = {
   _id: string;
@@ -127,36 +128,8 @@ export default function BlockedUsers({navigation}: any) {
     <SafeAreaView style={styles.safe} edges={['top']}>
       <StatusBar barStyle="dark-content" backgroundColor={Colors.surface} />
 
-      {/* ── Header ── */}
-      <View style={styles.header}>
-        <View style={[styles.headerRow, {flexDirection: rowDir}]}>
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            style={styles.backBtn}
-            activeOpacity={0.7}>
-            <Ionicons
-              name={isRTL ? 'arrow-forward' : 'arrow-back'}
-              size={20}
-              color={Colors.textPrimary}
-            />
-          </TouchableOpacity>
-
-          <View style={[styles.headerText, {alignItems: isRTL ? 'flex-end' : 'flex-start'}]}>
-            <Text style={[styles.eyebrow, {textAlign: isRTL ? 'right' : 'left'}]}>
-              {t.account_settings}
-            </Text>
-            <Text style={[styles.headerTitle, {textAlign: isRTL ? 'right' : 'left'}]}>
-              {t.blocked_users_title}
-            </Text>
-          </View>
-
-          {!loading && blockedUsers.length > 0 && (
-            <View style={styles.countBadge}>
-              <Text style={styles.countBadgeText}>{blockedUsers.length}</Text>
-            </View>
-          )}
-        </View>
-      </View>
+      <CustomHeader title={t.blocked_users_title} onBackPress={() => navigation.goBack()}
+        right={!loading && blockedUsers.length > 0 ? <View style={styles.countBadge}><Text style={styles.countBadgeText}>{blockedUsers.length}</Text></View> : undefined} />
 
       {/* ── Body ── */}
       <View style={styles.body}>

@@ -1,19 +1,20 @@
-import {Text} from '../../../ui/Text';
-import {ActivityIndicator} from '../../../ui/ActivityIndicator';
+import { ActivityIndicator } from '../../../ui/ActivityIndicator';
+import { Text } from '../../../ui/Text';
+import CustomHeader from '../../Component/CustomHeader/CustomHeader';
 // src/screens/Redeem/Redeem_His.tsx
-import React, {useEffect, useState} from 'react';
-import {View, FlatList, StatusBar, TouchableOpacity, StyleSheet, Platform} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Ionicons from '@react-native-vector-icons/ionicons';
-import {useNavigation} from '@react-navigation/native';
-import {useSelector} from 'react-redux';
-import {Colors} from '../../Themes/Colors';
-import {RootState} from '../../redux_toolkit/store';
-import {languageData} from '../../redux_toolkit/language/languageSlice';
+import { useNavigation } from '@react-navigation/native';
+import React,{ useEffect,useState } from 'react';
+import { FlatList,Platform,StyleSheet,TouchableOpacity,View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSelector } from 'react-redux';
 import Discount_Redeem2 from '../../Component/CustomAlert/DiscountRedeem2';
-import { Fonts } from '../../Themes/Fonts';
 import { useStatusBar } from '../../Component/UseStatusBar/useStatusBar';
+import { Colors } from '../../Themes/Colors';
+import { Fonts } from '../../Themes/Fonts';
+import { languageData } from '../../redux_toolkit/language/languageSlice';
+import { RootState } from '../../redux_toolkit/store';
 
 type RedeemItem = {
   id: string;
@@ -164,35 +165,8 @@ const Redeem_His: React.FC = () => {
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
   
-      {/* ── Header (always green) ── */}
-      <View style={styles.header}>
-        <View style={[styles.headerRow, {flexDirection: rowDir}]}>
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            style={styles.backBtn}
-            activeOpacity={0.7}>
-            <Ionicons
-              name={isRTL ? 'arrow-forward' : 'arrow-back'}
-              size={20} color={Colors.textPrimary}
-            />
-          </TouchableOpacity>
-
-          <View style={[styles.headerText, {alignItems: isRTL ? 'flex-end' : 'flex-start'}]}>
-            <Text style={[styles.eyebrow, {textAlign: isRTL ? 'right' : 'left'}]}>
-              {t.account}
-            </Text>
-            <Text style={[styles.headerTitle, {textAlign: isRTL ? 'right' : 'left'}]}>
-              {t.redeem_history}
-            </Text>
-          </View>
-
-          {!loading && history.length > 0 && (
-            <View style={styles.countBadge}>
-              <Text style={styles.countBadgeText}>{history.length}</Text>
-            </View>
-          )}
-        </View>
-      </View>
+      <CustomHeader title={t.redeem_history} onBackPress={() => navigation.goBack()}
+        right={!loading && history.length > 0 ? <View style={styles.countBadge}><Text style={styles.countBadgeText}>{history.length}</Text></View> : undefined} />
 
       {/* ── Body — always Colors.background ── */}
       <View style={styles.body}>

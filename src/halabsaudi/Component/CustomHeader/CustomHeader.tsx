@@ -1,68 +1,100 @@
-import {Text} from '../../../ui/Text';
+import Ionicons from '@react-native-vector-icons/ionicons';
 import React from 'react';
-import {Image, StyleSheet, TouchableOpacity, View} from 'react-native';
-import { Colors } from '../../Themes/Colors';
-import { Fonts } from '../../Themes/Fonts';
-import { Back_Icon } from '../../Themes/Images';
+import { StyleSheet,TouchableOpacity,View } from 'react-native';
 import { useSelector } from 'react-redux';
+import { Text } from '../../../ui/Text';
+import { Colors } from '../../Themes/Colors';
 import { RootState } from '../../redux_toolkit/store';
+
+export function BackButton({
+  onPress,
+  color = Colors.textPrimary,
+}: {
+  onPress: () => void;
+  color?: string;
+}) {
+  const ar = useSelector(
+    (state: RootState) => state.language.language === 'ar',
+  );
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={ar ? 'رجوع' : 'Back'}
+      style={styles.action}>
+      <Ionicons
+        name={ar ? 'chevron-forward' : 'chevron-back'}
+        size={24}
+        color={color}
+      />
+    </TouchableOpacity>
+  );
+}
 
 type HeaderProps = {
   title: string;
-  onBackPress: () => void;
-  backgroundColor?: string;   // ✅ optional 
-  iconColor?: string;         // ✅ optional 
-  textColor?: string;         // ✅ optional
+  onBackPress?: () => void;
+  backgroundColor?: string;
+  iconColor?: string;
+  textColor?: string;
+  right?: React.ReactNode;
+  children?: React.ReactNode;
 };
 
-const CustomHeader: React.FC<HeaderProps> = ({
-  onBackPress,
+// Two layouts: title header, or back button + search/custom content.
+export default function CustomHeader({
   title,
-  backgroundColor,
-  iconColor,
-  textColor,
-}) => {
-  const language = useSelector((state: RootState) => state.language.language);
-  const styles = getStyles(language);
-
+  onBackPress,
+  backgroundColor = Colors.header,
+  iconColor = Colors.textPrimary,
+  textColor = Colors.textPrimary,
+  right,
+  children,
+}: HeaderProps) {
+  const ar = useSelector(
+    (state: RootState) => state.language.language === 'ar',
+  );
   return (
-    <View style={[styles.header, backgroundColor ? { backgroundColor } : null]}>
-      <TouchableOpacity onPress={onBackPress} accessibilityRole="button" accessibilityLabel="Back" style={{minWidth: 44, minHeight: 44, justifyContent: 'center'}}>
-        <Image
-          source={Back_Icon}
-          style={[styles.backIcon, iconColor ? { tintColor: iconColor } : null]}
-        />
-      </TouchableOpacity>
-      <Text style={[styles.headerText, textColor ? { color: textColor } : null]}>
-        {title}
-      </Text>
+    <View
+      style={[
+        styles.header,
+        {backgroundColor, flexDirection: ar ? 'row-reverse' : 'row'},
+      ]}>
+      {onBackPress && <BackButton onPress={onBackPress} color={iconColor} />}
+      <View style={styles.content}>
+        {children || (
+          <Text
+            numberOfLines={1}
+            accessibilityRole="header"
+            style={[
+              styles.title,
+              {color: textColor, textAlign: ar ? 'right' : 'left'},
+            ]}>
+            {title}
+          </Text>
+        )}
+      </View>
+      {right && <View style={styles.trailing}>{right}</View>}
     </View>
   );
-};
-
-const getStyles = (language: String) => StyleSheet.create({
+}
+const styles = StyleSheet.create({
   header: {
-    flexDirection: language === 'en' ? 'row' : 'row-reverse',
+    minHeight: 56,
+    paddingHorizontal: 16,
+    paddingVertical: 4,
     alignItems: 'center',
-    backgroundColor: Colors.header,   // ✅ default
-    
-    minHeight:56,
-    paddingHorizontal: 16
+    gap: 8,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: Colors.border,
   },
-  backIcon: {
-    width: 26,
-    height: 26,
-    marginRight: language === 'en' ? 12 : 0,
-    marginLeft: language === 'ar' ? 12 : 0,
-    tintColor: Colors.accent,            // ✅ default
-    transform: language === 'en' ? [{ scaleX: 1 }] : [{ scaleX: -1 }],
+  action: {
+    width: 44,
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  headerText: {
-    fontSize: 18,
-    fontFamily: Fonts.SF_Bold,
-    lineHeight: language === 'en' ? 24 : 30,
-    color: Colors.textPrimary,                // ✅ default
-  },
+  content: {flex: 1, minWidth: 0},
+  trailing: {alignItems: 'center', justifyContent: 'center'},
+  title: {fontSize: 18, lineHeight: 28, fontWeight: '700'},
 });
-
-export default CustomHeader;

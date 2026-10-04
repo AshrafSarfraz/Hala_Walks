@@ -1,23 +1,23 @@
 // style.ts
-import {Dimensions, Platform, StyleSheet} from 'react-native';
-import {Colors} from '../../../Themes/Colors';
+import { Dimensions,StyleSheet } from 'react-native';
+import { Colors } from '../../../Themes/Colors';
 
 const {width} = Dimensions.get('window'); // ✅ window instead of screen
 
-export const getStyles = (language: string) =>
+export const getStyles = (_language: string) =>
   StyleSheet.create({
     container: {
       backgroundColor: Colors.background,
       alignItems: 'center',
-      marginHorizontal: '4%',
+      marginHorizontal: 16,
       marginTop: 10,
     },
     imageContainer: {
-      width: width - 40,
+      width: width - 32,
       height: 200,
       borderRadius: 8,
       overflow: 'hidden', // ✅ fix for Android clipping
-      marginRight: 8,
+
     },
     image: {
       width: '100%',
@@ -34,7 +34,7 @@ export const getStyles = (language: string) =>
       alignItems: 'flex-end',
     },
     imageText: {
-      color: Colors.textPrimary,
+      color: Colors.onMedia,
       fontSize: 18,
       fontWeight: 'bold',
     },
