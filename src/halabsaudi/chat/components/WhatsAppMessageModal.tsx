@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   toastText: {
-    color: Colors.white,
+    color: Colors.onMedia,
     fontSize: 14,
     fontWeight: '600',
   },

@@ -27,7 +27,7 @@ export default function AllMediaScreen({route, navigation}: Props) {
   const t        = languageData[language];
   const isRTL    = language === 'ar';
   const rowDir   = isRTL ? 'row-reverse' : 'row';
-  useStatusBar('light-content', Colors.surface, true);
+  useStatusBar('dark-content', Colors.surface, true);
   const {
     allMedia: initialMedia = [],
     participantName = 'Media',
@@ -171,7 +171,7 @@ const s = StyleSheet.create({
   },
   backBtn:      {width: 40, height: 40, justifyContent: 'center', alignItems: 'center', borderRadius: 20},
   headerCenter: {flex: 1, alignItems: 'center'},
-  headerTitle:  {fontSize: 16, fontWeight: '700', color: Colors.white},
+  headerTitle:  {fontSize: 16, fontWeight: '700', color: Colors.textPrimary},
   headerSub:    {fontSize: 12, color: Colors.textSecondary, marginTop: 1},
   grid: {padding: 2},
   row:  {gap: 2},

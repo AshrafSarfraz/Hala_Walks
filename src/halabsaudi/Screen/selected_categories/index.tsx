@@ -25,7 +25,7 @@ const BRANDS_API = 'https://hala-b-saudi.onrender.com/api/hbs/brands';
 
 const SelectedCategories: React.FC<{ route: any }> = ({ route }) => {
   const navigation = useNavigation<any>();
-  useStatusBar('light-content', Colors.background);
+  useStatusBar('dark-content', Colors.background);
   const { item } = route.params;
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -248,7 +248,7 @@ const SelectedCategories: React.FC<{ route: any }> = ({ route }) => {
       <TextInput
         style={styles.searchInput}
         placeholder={languageData[language].Search_for_anything}
-        placeholderTextColor={Colors.white}
+        placeholderTextColor={Colors.textMuted}
         value={searchQuery}
         onChangeText={setSearchQuery}
       />

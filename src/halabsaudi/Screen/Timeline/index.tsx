@@ -5,38 +5,30 @@ import {Alert} from '../../../ui/Alert';
 import {ActivityIndicator} from '../../../ui/ActivityIndicator';
 
 import React, {useState, useEffect, useRef, useCallback} from 'react';
-import {
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  SafeAreaView,
-  StatusBar,
-  FlatList,
-  Image,
-  Animated,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-  Keyboard,
-} from 'react-native';
+import {View, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar, FlatList, Image, Animated, ScrollView, KeyboardAvoidingView, Platform, Keyboard} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import Ionicons from '@react-native-vector-icons/ionicons';
-import {uploadCheckInPhoto} from '../../utils/uploadCheckInPhoto';
+import storage from '@react-native-firebase/storage';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {BASE_URL} from '../../../config/api';
 import {useSelector} from 'react-redux';
 import {hbsText} from '../../i18n/translations';
-import {Colors} from '../../Themes/Colors';
+import { Colors } from '../../Themes/Colors';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const MAX_PHOTOS = 2;
 
-const WHITE = Colors.white;
-const WHITE_60 = Colors.lightOverlay;
-const WHITE_10 = Colors.lightOverlaySubtle;
+const PURPLE = Colors.accent;
+const BG = Colors.background;
+const CARD_BG = Colors.surface;
+const SURFACE = Colors.surfaceRaised;
+const WHITE = Colors.textPrimary;
+const WHITE_60 = Colors.textSecondary;
+const WHITE_30 = Colors.textMuted;
+const WHITE_10 = Colors.border;
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -46,7 +38,6 @@ type PhotoEntry = {
   progress: number | null;
   downloadUrl: string | null;
   error: boolean;
-  saved?: boolean;
 };
 
 type CommunityBrand = {
@@ -59,6 +50,35 @@ type CommunityBrand = {
 };
 
 // ─── Firebase upload ──────────────────────────────────────────────────────────
+
+const uploadToFirebase = (
+  uri: string,
+  onProgress: (pct: number) => void,
+): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const filename = `mapGallery/${Date.now()}_${Math.random()
+      .toString(36)
+      .slice(2)}.jpg`;
+    const ref = storage().ref(filename);
+    const task = ref.putFile(uri);
+    task.on(
+      'state_changed',
+      snapshot => {
+        const pct = Math.round(
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100,
+        );
+        onProgress(pct);
+      },
+      err => reject(err),
+      async () => {
+        try {
+          resolve(await ref.getDownloadURL());
+        } catch (err) {
+          reject(err);
+        }
+      },
+    );
+  });
 
 // ─── PhotoCard ────────────────────────────────────────────────────────────────
 
@@ -147,19 +167,15 @@ const cardStyles = StyleSheet.create({
     alignItems: 'center',
     padding: 8,
   },
-  pct: {color: WHITE, fontSize: 13, fontWeight: '700', marginBottom: 6},
+  pct: {color: Colors.onAccent, fontSize: 13, fontWeight: '700', marginBottom: 6},
   trackBg: {
     width: '100%',
     height: 4,
-    backgroundColor: Colors.lightOverlaySubtle,
+    backgroundColor: Colors.border,
     borderRadius: 2,
     overflow: 'hidden',
   },
-  trackFill: {
-    height: '100%',
-    backgroundColor: Colors.background,
-    borderRadius: 2,
-  },
+  trackFill: {height: '100%', backgroundColor: Colors.background, borderRadius: 2},
   doneBadge: {
     position: 'absolute',
     bottom: 6,
@@ -172,7 +188,7 @@ const cardStyles = StyleSheet.create({
     alignItems: 'center',
   },
   errorBadge: {backgroundColor: Colors.accent},
-  badgeText: {color: WHITE, fontSize: 11, fontWeight: '800'},
+  badgeText: {color: Colors.onAccent, fontSize: 11, fontWeight: '800'},
   remove: {
     position: 'absolute',
     top: 5,
@@ -184,7 +200,7 @@ const cardStyles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  removeText: {color: WHITE, fontSize: 10, fontWeight: '700'},
+  removeText: {color: Colors.onAccent, fontSize: 10, fontWeight: '700'},
 });
 
 // ─── TimelineScreen ───────────────────────────────────────────────────────────
@@ -194,38 +210,22 @@ const TimelineScreen: React.FC = () => {
 
   const isAr = useSelector((state: any) => state.language.language === 'ar');
   const [brands, setBrands] = useState<CommunityBrand[]>([]);
-  const [selectedBrand, setSelectedBrand] = useState<CommunityBrand | null>(
-    null,
-  );
+  const [selectedBrand, setSelectedBrand] = useState<CommunityBrand | null>(null);
   const [brandsLoading, setBrandsLoading] = useState(true);
   const [brandsError, setBrandsError] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [description, setDescription] = useState('');
   const [photos, setPhotos] = useState<PhotoEntry[]>([]);
   const [uploading, setUploading] = useState(false);
-  const uploadController = useRef<AbortController | null>(null);
-  const mounted = useRef(true);
-  const submitting = useRef(false);
-  useEffect(() => {
-    mounted.current = true;
-    return () => {
-      mounted.current = false;
-      uploadController.current?.abort();
-    };
-  }, []);
 
   const loadBrands = useCallback(async () => {
     setBrandsLoading(true);
     setBrandsError(false);
     try {
       const token = await AsyncStorage.getItem('hala_token');
-      const response = await axios.get(
-        `${BASE_URL}/api/hbs/map/community-brands`,
-        {
-          headers: {Authorization: `Bearer ${token}`},
-          timeout: 15000,
-        },
-      );
+      const response = await axios.get(`${BASE_URL}/api/hbs/map/community-brands`, {
+        headers: {Authorization: `Bearer ${token}`}, timeout: 15000,
+      });
       setBrands(Array.isArray(response.data?.data) ? response.data.data : []);
     } catch {
       setBrandsError(true);
@@ -233,25 +233,15 @@ const TimelineScreen: React.FC = () => {
       setBrandsLoading(false);
     }
   }, []);
-  useEffect(() => {
-    loadBrands();
-  }, [loadBrands]);
+  useEffect(() => {loadBrands();}, [loadBrands]);
   const brandName = (brand: CommunityBrand) =>
-    (isAr
-      ? brand.nameArabic || brand.nameEng
-      : brand.nameEng || brand.nameArabic) || '';
+    (isAr ? brand.nameArabic || brand.nameEng : brand.nameEng || brand.nameArabic) || '';
   const brandAddress = (brand: CommunityBrand) =>
-    brand.address ||
-    [brand.selectedCity, brand.selectedCountry].filter(Boolean).join(', ');
+    brand.address || [brand.selectedCity, brand.selectedCountry].filter(Boolean).join(', ');
   const query = searchText.trim().toLocaleLowerCase();
   const filteredBrands = brands.filter(brand =>
-    [
-      brand.nameEng,
-      brand.nameArabic,
-      brand.address,
-      brand.selectedCity,
-      brand.selectedCountry,
-    ].some(value => value?.toLocaleLowerCase().includes(query)),
+    [brand.nameEng, brand.nameArabic, brand.address, brand.selectedCity, brand.selectedCountry]
+      .some(value => value?.toLocaleLowerCase().includes(query)),
   );
 
   // ── 7. Photo capture & library selection ───────────────────────────────────
@@ -259,7 +249,7 @@ const TimelineScreen: React.FC = () => {
   const handleCamera = useCallback(() => {
     Keyboard.dismiss();
     launchCamera(
-      {mediaType: 'photo', quality: 0.8, maxWidth: 1600, maxHeight: 1600},
+      {mediaType: 'photo', quality: 0.8, saveToPhotos: true},
       response => {
         if (response.didCancel || response.errorCode) return;
         const uri = response.assets?.[0]?.uri;
@@ -271,13 +261,7 @@ const TimelineScreen: React.FC = () => {
   const handleGallery = useCallback(() => {
     Keyboard.dismiss();
     launchImageLibrary(
-      {
-        mediaType: 'photo',
-        quality: 0.8,
-        maxWidth: 1600,
-        maxHeight: 1600,
-        selectionLimit: 1,
-      },
+      {mediaType: 'photo', quality: 0.8, selectionLimit: 1},
       response => {
         if (response.didCancel || response.errorCode) return;
         const uri = response.assets?.[0]?.uri;
@@ -315,69 +299,68 @@ const TimelineScreen: React.FC = () => {
   // ── 9. Check-in / upload ────────────────────────────────────────────────────
 
   const handleCheckIn = async () => {
-    if (submitting.current) return;
-    Keyboard.dismiss();
     if (!photos.length) {
       Alert.alert('Missing photo', 'Please add at least one photo.');
       return;
     }
     if (!selectedBrand) {
-      Alert.alert(
-        hbsText(isAr, 'ui_hala_brands'),
-        hbsText(isAr, 'ui_select_hala_brand'),
-      );
+      Alert.alert(hbsText(isAr, 'ui_hala_brands'), hbsText(isAr, 'ui_select_hala_brand'));
       return;
     }
 
-    const controller = new AbortController();
-    uploadController.current = controller;
-    submitting.current = true;
     try {
       setUploading(true);
       const token = await AsyncStorage.getItem('hala_token');
-      if (!token) throw new Error('Please sign in again.');
-      const headers = {Authorization: `Bearer ${token}`};
-      // Process one resized photo at a time to keep native/JS memory bounded.
-      for (const entry of photos) {
-        if (entry.saved) continue;
-        if (controller.signal.aborted) return;
-        patchPhoto(entry.id, {
-          error: false,
-          progress: entry.downloadUrl ? 100 : 0,
-        });
-        const url =
-          entry.downloadUrl ||
-          (await uploadCheckInPhoto(
-            entry.uri,
-            percent => {
-              if (mounted.current) patchPhoto(entry.id, {progress: percent});
-            },
-            controller.signal,
-          ));
-        if (!mounted.current) return;
-        patchPhoto(entry.id, {downloadUrl: url, progress: 100});
-        await axios.post(
-          `${BASE_URL}/api/hbs/map/photos`,
-          {
-            brandId: selectedBrand._id,
-            image: url,
-            caption: description.trim() || 'Uploaded from app',
-          },
-          {headers, timeout: 20000, signal: controller.signal},
+      const headers = token ? {Authorization: `Bearer ${token}`} : undefined;
+
+      // Upload photos to Firebase
+      const results = await Promise.all(
+        photos.map(entry =>
+          uploadToFirebase(entry.uri, pct =>
+            patchPhoto(entry.id, {progress: pct}),
+          )
+            .then(url => {
+              patchPhoto(entry.id, {downloadUrl: url, progress: 100});
+              return {ok: true as const, url};
+            })
+            .catch(err => {
+              console.log('[Timeline] Firebase upload error:', err);
+              patchPhoto(entry.id, {error: true});
+              return {ok: false as const, url: null};
+            }),
+        ),
+      );
+
+      const failed = results.filter(r => !r.ok);
+      if (failed.length) {
+        Alert.alert(
+          'Upload error',
+          `${failed.length} photo(s) failed. Remove them and try again.`,
         );
-        patchPhoto(entry.id, {saved: true});
+        return;
       }
-      if (!mounted.current || controller.signal.aborted) return;
+
+      // Save to backend
+      await Promise.all(
+        results.map(({url}) =>
+          axios.post(
+            `${BASE_URL}/api/hbs/map/photos`,
+            {
+              brandId: selectedBrand._id,
+              image: url,
+              caption: description?.trim() || 'Uploaded from app',
+            },
+            {headers},
+          ),
+        ),
+      );
+
       Alert.alert('Success', 'Check-in uploaded 🎉');
       setDescription('');
       setPhotos([]);
       setSelectedBrand(null);
       navigation.goBack();
     } catch (error) {
-      if (!mounted.current || controller.signal.aborted) return;
-      setPhotos(prev =>
-        prev.map(entry => (entry.saved ? entry : {...entry, error: true})),
-      );
       const err = error as any;
       console.log(
         '[Timeline] handleCheckIn error:',
@@ -386,15 +369,10 @@ const TimelineScreen: React.FC = () => {
       );
       Alert.alert(
         'Upload failed',
-        err?.response?.data?.error ||
-          err?.response?.data?.message ||
-          err?.message ||
-          'Could not upload check-in.',
+        err?.response?.data?.error || err?.response?.data?.message || 'Could not upload check-in.',
       );
     } finally {
-      submitting.current = false;
-      uploadController.current = null;
-      if (mounted.current) setUploading(false);
+      setUploading(false);
     }
   };
 
@@ -404,17 +382,14 @@ const TimelineScreen: React.FC = () => {
     p => p.progress !== null && p.progress < 100 && !p.error,
   );
   const isDisabled =
-    uploading ||
-    !photos.length ||
-    anyActiveUpload ||
-    brandsLoading ||
-    !selectedBrand;
+    uploading || !photos.length || anyActiveUpload || brandsLoading || !selectedBrand;
+
 
   // ── Render ──────────────────────────────────────────────────────────────────
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={Colors.background} />
+      <StatusBar barStyle="dark-content" backgroundColor={Colors.background} />
 
       {/* ── Header ── */}
       <View style={styles.header}>
@@ -423,7 +398,7 @@ const TimelineScreen: React.FC = () => {
           style={styles.closeBtn}
           onPress={() => navigation.goBack()}
           hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}>
-          <Ionicons name="close" size={22} color={WHITE} />
+          <Ionicons name="close" size={22} color={Colors.textPrimary} />
         </TouchableOpacity>
       </View>
 
@@ -434,21 +409,16 @@ const TimelineScreen: React.FC = () => {
           contentContainerStyle={styles.scroll}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}>
+
           <View style={styles.card}>
             <View style={styles.cardHeader}>
               <Ionicons name="location" size={16} color={Colors.accent} />
-              <Text style={styles.cardLabel}>
-                {hbsText(isAr, 'ui_hala_brands')}
-              </Text>
+              <Text style={styles.cardLabel}>{hbsText(isAr, 'ui_hala_brands')}</Text>
             </View>
             {selectedBrand ? (
               <View style={styles.suggestionItemActive}>
-                <Text style={styles.locationName}>
-                  {brandName(selectedBrand)}
-                </Text>
-                <Text style={styles.addressLine}>
-                  {brandAddress(selectedBrand)}
-                </Text>
+                <Text style={styles.locationName}>{brandName(selectedBrand)}</Text>
+                <Text style={styles.addressLine}>{brandAddress(selectedBrand)}</Text>
                 <TouchableOpacity
                   style={styles.changeRow}
                   disabled={uploading}
@@ -456,73 +426,46 @@ const TimelineScreen: React.FC = () => {
                     setSelectedBrand(null);
                     setSearchText('');
                   }}>
-                  <Ionicons
-                    name="swap-horizontal"
-                    size={16}
-                    color={Colors.accent}
-                  />
-                  <Text style={styles.changeText}>
-                    {isAr ? 'تغيير العلامة' : 'Change brand'}
-                  </Text>
+                  <Ionicons name="swap-horizontal" size={16} color={Colors.accent} />
+                  <Text style={styles.changeText}>{isAr ? 'تغيير العلامة' : 'Change brand'}</Text>
                 </TouchableOpacity>
               </View>
             ) : (
               <>
-                <View style={styles.searchWrap}>
-                  <TextInput
-                    placeholder={hbsText(isAr, 'ui_search_hala_brands')}
-                    placeholderTextColor={Colors.textMuted}
-                    value={searchText}
-                    onChangeText={setSearchText}
-                    style={styles.searchInput}
-                  />
-                </View>
-                {brandsLoading ? (
-                  <ActivityIndicator color={Colors.accent} />
-                ) : brandsError ? (
-                  <TouchableOpacity
-                    onPress={loadBrands}
-                    style={styles.errorRow}>
-                    <Text style={styles.errorText}>
-                      {hbsText(isAr, 'ui_hala_brands_retry')}
-                    </Text>
-                  </TouchableOpacity>
-                ) : filteredBrands.length === 0 ? (
-                  <Text style={styles.emptyText}>
-                    {hbsText(
-                      isAr,
-                      query ? 'ui_not_hala_member' : 'ui_no_hala_brands',
-                    )}
-                  </Text>
-                ) : (
-                  <ScrollView
-                    style={{maxHeight: 240}}
-                    nestedScrollEnabled
-                    keyboardShouldPersistTaps="handled">
-                    {filteredBrands.slice(0, 30).map(brand => (
-                      <TouchableOpacity
-                        key={brand._id}
-                        disabled={uploading}
-                        style={styles.suggestionItem}
-                        onPress={() => {
-                          setSelectedBrand(brand);
-                          setSearchText('');
-                          Keyboard.dismiss();
-                        }}>
-                        <View style={styles.suggestionRight}>
-                          <Text style={styles.suggestionName}>
-                            {brandName(brand)}
-                          </Text>
-                          <Text style={styles.suggestionVicinity}>
-                            {brandAddress(brand)}
-                          </Text>
-                        </View>
-                      </TouchableOpacity>
-                    ))}
-                  </ScrollView>
-                )}
+            <View style={styles.searchWrap}>
+              <TextInput
+                placeholder={hbsText(isAr, 'ui_search_hala_brands')}
+                placeholderTextColor={Colors.textMuted}
+                value={searchText} onChangeText={setSearchText} style={styles.searchInput}
+              />
+            </View>
+            {brandsLoading ? <ActivityIndicator color={Colors.accent} /> : brandsError ? (
+              <TouchableOpacity onPress={loadBrands} style={styles.errorRow}>
+                <Text style={styles.errorText}>{hbsText(isAr, 'ui_hala_brands_retry')}</Text>
+              </TouchableOpacity>
+            ) : filteredBrands.length === 0 ? (
+              <Text style={styles.emptyText}>{hbsText(isAr, query ? 'ui_not_hala_member' : 'ui_no_hala_brands')}</Text>
+            ) : (
+              <ScrollView style={{maxHeight: 240}} nestedScrollEnabled keyboardShouldPersistTaps="handled">
+                {filteredBrands.map(brand => <TouchableOpacity
+                  key={brand._id} disabled={uploading}
+                  style={[styles.suggestionItem, selectedBrand?._id === brand._id && styles.suggestionItemActive]}
+                  onPress={() => {
+                    setSelectedBrand(brand);
+                    setSearchText('');
+                    Keyboard.dismiss();
+                  }}>
+                  <View style={styles.suggestionRight}>
+                    <Text style={styles.suggestionName}>{brandName(brand)}</Text>
+                    <Text style={styles.suggestionVicinity}>{brandAddress(brand)}</Text>
+                  </View>
+                  {selectedBrand?._id === brand._id && <Ionicons name="checkmark-circle" size={20} color={Colors.accent} />}
+                </TouchableOpacity>)}
+              </ScrollView>
+            )}
               </>
             )}
+
           </View>
 
           {/* ── Caption card ── */}
@@ -560,12 +503,10 @@ const TimelineScreen: React.FC = () => {
                   photos.length >= MAX_PHOTOS && styles.photoBtnDisabled,
                 ]}
                 onPress={handleCamera}
-                disabled={uploading || photos.length >= MAX_PHOTOS}
+                disabled={photos.length >= MAX_PHOTOS}
                 activeOpacity={0.8}>
-                <Ionicons name="camera-outline" size={20} color={WHITE} />
-                <Text style={styles.photoBtnText}>
-                  {isAr ? 'الكاميرا' : 'Camera'}
-                </Text>
+                <Ionicons name="camera-outline" size={20} color={Colors.onAccent} />
+                <Text style={styles.photoBtnText}>{isAr ? 'الكاميرا' : 'Camera'}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -574,12 +515,10 @@ const TimelineScreen: React.FC = () => {
                   photos.length >= MAX_PHOTOS && styles.photoBtnDisabled,
                 ]}
                 onPress={handleGallery}
-                disabled={uploading || photos.length >= MAX_PHOTOS}
+                disabled={photos.length >= MAX_PHOTOS}
                 activeOpacity={0.8}>
-                <Ionicons name="image-outline" size={20} color={WHITE} />
-                <Text style={styles.photoBtnText}>
-                  {isAr ? 'الصور' : 'Gallery'}
-                </Text>
+                <Ionicons name="image-outline" size={20} color={Colors.onAccent} />
+                <Text style={styles.photoBtnText}>{isAr ? 'الصور' : 'Gallery'}</Text>
               </TouchableOpacity>
             </View>
 
@@ -593,9 +532,7 @@ const TimelineScreen: React.FC = () => {
                 renderItem={({item}) => (
                   <PhotoCard
                     entry={item}
-                    onRemove={() => {
-                      if (!uploading) removePhoto(item.id);
-                    }}
+                    onRemove={() => removePhoto(item.id)}
                   />
                 )}
               />
@@ -616,14 +553,15 @@ const TimelineScreen: React.FC = () => {
             disabled={isDisabled}
             activeOpacity={0.85}>
             {uploading ? (
-              <ActivityIndicator color={WHITE} />
+              <ActivityIndicator color={Colors.onAccent} />
             ) : (
               <>
-                <Ionicons name="pin" size={18} color={WHITE} />
+                <Ionicons name="pin" size={18} color={Colors.onAccent} />
                 <Text style={styles.checkInText}>Check in</Text>
               </>
             )}
           </TouchableOpacity>
+
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -635,7 +573,7 @@ export default TimelineScreen;
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
-  container: {flex: 1, marginTop: 10, backgroundColor: Colors.background},
+  container: {flex:1, marginTop:10, backgroundColor: Colors.background},
 
   header: {
     flexDirection: 'row',
@@ -645,7 +583,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     borderBottomWidth: StyleSheet.hairlineWidth,
     position: 'relative',
-    marginBottom: 10,
+    marginBottom:10
   },
   headerTitle: {fontSize: 18, fontWeight: '700', color: WHITE},
   closeBtn: {
@@ -682,7 +620,7 @@ const styles = StyleSheet.create({
   cardLabel: {
     fontSize: 11,
     fontWeight: '700',
-    color: Colors.white,
+    color: Colors.textPrimary,
     textTransform: 'uppercase',
     letterSpacing: 0.2,
     flex: 1,
@@ -695,7 +633,7 @@ const styles = StyleSheet.create({
     gap: 10,
     paddingVertical: 6,
   },
-  locationLoadingText: {fontSize: 14, color: Colors.white},
+  locationLoadingText: {fontSize: 14, color: Colors.textPrimary},
   errorRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -706,12 +644,12 @@ const styles = StyleSheet.create({
   locationName: {
     fontSize: 17,
     fontWeight: '700',
-    color: Colors.white,
+    color: Colors.textPrimary,
     marginBottom: 2,
   },
   addressLine: {
     fontSize: 12,
-    color: Colors.white,
+    color: Colors.textPrimary,
     marginBottom: 10,
     lineHeight: 18,
   },
@@ -722,7 +660,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     marginTop: 6,
   },
-  changeText: {fontSize: 13, fontWeight: '600', color: Colors.white},
+  changeText: {fontSize: 13, fontWeight: '600', color: Colors.textPrimary},
 
   // Search
   searchWrap: {
@@ -737,9 +675,9 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     paddingHorizontal: 14,
     paddingRight: 36,
-    color: Colors.white,
-    alignItems: 'center',
-    justifyContent: 'center',
+    color: Colors.textPrimary,
+    alignItems:'center',
+    justifyContent:'center',
   },
   searchClearBtn: {
     position: 'absolute',
@@ -765,7 +703,7 @@ const styles = StyleSheet.create({
     gap: 10,
     padding: 14,
   },
-  suggestionLoaderText: {fontSize: 13, color: Colors.white},
+  suggestionLoaderText: {fontSize: 13, color: Colors.textPrimary},
   emptyText: {
     color: WHITE,
     textAlign: 'center',
@@ -784,22 +722,22 @@ const styles = StyleSheet.create({
   suggestionItemActive: {backgroundColor: Colors.background},
   suggestionLeft: {width: 20, alignItems: 'center'},
   suggestionRight: {flex: 1},
-  suggestionName: {fontSize: 14, fontWeight: '600', color: Colors.white},
-  suggestionNameActive: {color: Colors.white},
+  suggestionName: {fontSize: 14, fontWeight: '600', color: Colors.textPrimary},
+  suggestionNameActive: {color: Colors.textPrimary},
   suggestionVicinity: {fontSize: 13, color: Colors.textSecondary, marginTop: 2},
-  suggestionVicinityActive: {color: Colors.white},
+  suggestionVicinityActive:{color: Colors.textSecondary},
 
   // Caption
   input: {
     height: 90,
-    color: Colors.white,
+    color: Colors.textPrimary,
     fontSize: 15,
     textAlignVertical: 'top',
     lineHeight: 22,
   },
   charCount: {
     fontSize: 11,
-    color: Colors.white,
+    color: Colors.textPrimary,
     textAlign: 'right',
     marginTop: 6,
   },
@@ -828,7 +766,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.surfaceRaised,
   },
   photoBtnDisabled: {opacity: 0.35},
-  photoBtnText: {fontSize: 14, fontWeight: '600', color: WHITE},
+  photoBtnText: {fontSize: 14, fontWeight: '600', color: Colors.onAccent},
   thumbList: {marginTop: 12},
   emptyPhotos: {alignItems: 'center', paddingVertical: 20, gap: 8},
   emptyPhotosText: {fontSize: 13, color: WHITE_60},
@@ -845,5 +783,5 @@ const styles = StyleSheet.create({
     borderRadius: 28,
   },
   checkInBtnOff: {opacity: 0.45},
-  checkInText: {fontSize: 16, fontWeight: '700', color: WHITE},
+  checkInText: {fontSize: 16, fontWeight: '700', color: Colors.onAccent},
 });

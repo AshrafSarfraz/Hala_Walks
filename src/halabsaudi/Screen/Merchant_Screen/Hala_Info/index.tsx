@@ -15,7 +15,7 @@ import { useStatusBar } from '../../../Component/UseStatusBar/useStatusBar';
 
 const HalaInfoScreen = () => {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
-  useStatusBar('light-content', Colors.background);
+  useStatusBar('dark-content', Colors.background);
   const language = useSelector((state: RootState) => state.language.language);
   const styles = getStyles(language);
 

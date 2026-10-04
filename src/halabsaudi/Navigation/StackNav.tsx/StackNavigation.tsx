@@ -1,3 +1,4 @@
+import {isDemoToken} from '../../demo/session';
 import type {HalaStackParamList} from '../types';
 import {View} from 'react-native';
 import {ActivityIndicator} from '../../../ui/ActivityIndicator';
@@ -6,7 +7,6 @@ import React, {useEffect, useState} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import HighOffers from '../../Screen/HighOffers';
 import Splash_Screen from '../../Screen/Authentication/Splash/SplashScreen';
 import OnBoarding from '../../Screen/OnBoarding';
 import Home from '../../Screen/Home';
@@ -23,7 +23,6 @@ import PDFViewerScreen from '../../Screen/pdfViewer';
 import HalaInfoScreen from '../../Screen/Merchant_Screen/Hala_Info';
 import BrandFormScreen from '../../Screen/Merchant_Screen/PartnerForm';
 import WelcomeScreen from '../../Screen/Authentication/Splash/welcome_screen';
-import SignuP from '../../Screen/Authentication/SignUp/signUp';
 
 import StackNavigation from '../../../westwalk/navigation/stackNavigation';
 import NotificationTestScreen from './NotificationTestScreen';
@@ -43,11 +42,16 @@ import Wishlist from '../../Screen/Wishlist';
 import TimelineScreen from '../../Screen/Timeline';
 import BrandDetailScreen from '../../Map/BrandDetailScreen';
 
+
+
 import {Colors} from '../../Themes/Colors';
+import SignUp from '../../Screen/Authentication/SignUp';
 
 const Stack = createNativeStackNavigator<HalaStackParamList>();
 const HalaStack: React.FC = () => {
   const [initialRoute, setInitialRoute] = useState<string | null>(null);
+
+
 
   useEffect(() => {
     const checkInitialRoute = async () => {
@@ -55,7 +59,10 @@ const HalaStack: React.FC = () => {
         const halaData = await AsyncStorage.getItem('hala_user');
         const token = await AsyncStorage.getItem('hala_token');
 
-        if (halaData === 'true' && token) {
+        if (!__DEV__ && isDemoToken(token)) {
+          await AsyncStorage.multiRemove(['hala_user', 'hala_token', 'hala_user_data', 'hala_user_backend', 'hala_conversations']);
+          setInitialRoute('Login');
+        } else if (halaData === 'true' && token) {
           setInitialRoute('BottomTab');
         } else {
           setInitialRoute('Splash');
@@ -69,49 +76,39 @@ const HalaStack: React.FC = () => {
   }, []);
 
   if (!initialRoute) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: Colors.background,
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
+    return <View style={{flex: 1, backgroundColor: Colors.background, alignItems: 'center', justifyContent: 'center'}}><ActivityIndicator size="large" /></View>;
   }
 
+
+  
   return (
     <Stack.Navigator
       initialRouteName={initialRoute}
-      screenOptions={{
-        headerShown: false,
-        contentStyle: {backgroundColor: Colors.background},
-      }}>
+      screenOptions={{headerShown: false, contentStyle: {backgroundColor: Colors.background}}}>
       {/* ── Auth & Onboarding ── */}
-      <Stack.Screen name="HighOffers" component={HighOffers} />
       <Stack.Screen name="Splash" component={Splash_Screen} />
       <Stack.Screen name="LocationDisclosure" component={LocationDisclosure} />
       <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} />
       <Stack.Screen name="WestwalkStack" component={StackNavigation} />
       <Stack.Screen name="Onboarding" component={OnBoarding} />
       <Stack.Screen name="Login" component={Login} />
-      <Stack.Screen name="SignUp" component={SignuP} />
+      <Stack.Screen name="SignUp" component={SignUp} />
       <Stack.Screen name="OTP" component={Otp} />
 
       {/* ── Main app (bottom tabs) ── */}
       <Stack.Screen name="BottomTab" component={Bottom} />
 
+
       <Stack.Screen
-        name="Timeline"
-        component={TimelineScreen}
-        options={{
-          presentation: 'modal',
-          headerShown: false,
-          gestureEnabled: true,
-        }}
-      />
+  name="Timeline"
+  component={TimelineScreen}
+  options={{
+    presentation: 'formSheet',
+    headerShown: false,
+    gestureEnabled: true,
+    sheetAllowedDetents: [0.9],
+  }}
+/>
 
       {/* ── App screens ── */}
       <Stack.Screen name="Home" component={Home} />
@@ -129,10 +126,7 @@ const HalaStack: React.FC = () => {
       <Stack.Screen name="ChatScreen" component={ChatScreen} />
       <Stack.Screen name="BlockedUsers" component={BlockedUsers} />
       <Stack.Screen name="UserProfile" component={UserProfileScreen} />
-      <Stack.Screen
-        name="SocialConnections"
-        component={SocialConnectionsScreen}
-      />
+      <Stack.Screen name="SocialConnections" component={SocialConnectionsScreen} />
       <Stack.Screen name="AllMediaScreen" component={AllMediaScreen} />
       <Stack.Screen
         name="ImagePreview"

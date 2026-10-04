@@ -125,7 +125,7 @@ export default function BlockedUsers({navigation}: any) {
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
-      <StatusBar barStyle="light-content" backgroundColor={Colors.surface} />
+      <StatusBar barStyle="dark-content" backgroundColor={Colors.surface} />
 
       {/* ── Header ── */}
       <View style={styles.header}>
@@ -137,7 +137,7 @@ export default function BlockedUsers({navigation}: any) {
             <Ionicons
               name={isRTL ? 'arrow-forward' : 'arrow-back'}
               size={20}
-              color={Colors.white}
+              color={Colors.textPrimary}
             />
           </TouchableOpacity>
 
@@ -206,22 +206,22 @@ const styles = StyleSheet.create({
   headerRow: {alignItems: 'center', gap: 12},
   backBtn: {
     width: 30, height: 30, borderRadius: 19,
-    backgroundColor: Colors.lightOverlaySubtle,
+    backgroundColor: Colors.border,
     justifyContent: 'center', alignItems: 'center',
-    borderWidth: 1, borderColor: Colors.lightOverlaySubtle, flexShrink: 0,
+    borderWidth: 1, borderColor: Colors.border, flexShrink: 0,
   },
   headerText: {flex: 1},
-  eyebrow: {fontSize: 10, color: Colors.white, letterSpacing: 0.2, textTransform: 'uppercase', marginBottom: 3},
-  headerTitle: {fontSize: 18, fontWeight: '700', color: Colors.white, letterSpacing: -0.3},
+  eyebrow: {fontSize: 10, color: Colors.textPrimary, letterSpacing: 0.2, textTransform: 'uppercase', marginBottom: 3},
+  headerTitle: {fontSize: 18, fontWeight: '700', color: Colors.textPrimary, letterSpacing: -0.3},
   countBadge: {
-    backgroundColor: Colors.lightOverlaySubtle, borderRadius: 20,
+    backgroundColor: Colors.border, borderRadius: 20,
     paddingHorizontal: 12, paddingVertical: 5,
-    borderWidth: 1, borderColor: Colors.lightOverlaySubtle,
+    borderWidth: 1, borderColor: Colors.border,
   },
   countBadgeText: {color: Colors.white, fontSize: 13, fontWeight: '700'},
   listContent: {paddingHorizontal: 14, paddingTop: 12, paddingBottom: 36},
   listHeader: {paddingHorizontal: 4, paddingBottom: 8},
-  listHeaderText: {fontSize: 11, fontWeight: '700', color: Colors.white, letterSpacing: 0.2, textTransform: 'uppercase'},
+  listHeaderText: {fontSize: 11, fontWeight: '700', color: Colors.textPrimary, letterSpacing: 0.2, textTransform: 'uppercase'},
   row: {
     alignItems: 'center', backgroundColor: Colors.surface,
     borderRadius: 16, paddingVertical: 12, paddingHorizontal: 14,
@@ -234,7 +234,7 @@ const styles = StyleSheet.create({
   },
   avatarLetter: {color: Colors.white, fontWeight: '800', fontSize: 19},
   info: {flex: 1},
-  name: {fontSize: 15, fontWeight: '700', color: Colors.white, marginBottom: 5},
+  name: {fontSize: 15, fontWeight: '700', color: Colors.textPrimary, marginBottom: 5},
   blockedPill: {
     alignItems: 'center', gap: 4, alignSelf: 'flex-start',
     backgroundColor: Colors.surface, paddingHorizontal: 8, paddingVertical: 3,
@@ -257,7 +257,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center', alignItems: 'center', marginBottom: 8,
     borderWidth: 3, borderColor: Colors.success,
   },
-  emptyTitle: {fontSize: 18, fontWeight: '700', color: Colors.white},
+  emptyTitle: {fontSize: 18, fontWeight: '700', color: Colors.textPrimary},
   emptySub: {fontSize: 13, color: Colors.textMuted, lineHeight: 20},
   loaderWrap: {flex: 1, justifyContent: 'center', alignItems: 'center', gap: 12},
   loaderText: {fontSize: 14, color: Colors.textMuted, marginTop: 4},

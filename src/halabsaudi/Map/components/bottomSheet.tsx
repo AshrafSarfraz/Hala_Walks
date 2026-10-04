@@ -172,7 +172,7 @@ const cardStyles = StyleSheet.create({
   trackBg: {
     width: '100%',
     height: 4,
-    backgroundColor: Colors.lightOverlay,
+    backgroundColor: Colors.textSecondary,
     borderRadius: 2,
     overflow: 'hidden',
   },
@@ -231,7 +231,7 @@ const LocationToggle = ({
         <Ionicons
           name="location"
           size={12}
-          color={mode === 'current' ? Colors.white : Colors.purple}
+          color={mode === 'current' ? Colors.textPrimary : Colors.purple}
         />
         <Text
           style={[
@@ -252,7 +252,7 @@ const LocationToggle = ({
         <Ionicons
           name="search"
           size={12}
-          color={mode === 'searched' ? Colors.white : Colors.purple}
+          color={mode === 'searched' ? Colors.textPrimary : Colors.purple}
         />
         <Text
           style={[
@@ -307,7 +307,7 @@ const toggleStyles = StyleSheet.create({
     flexShrink: 1,
   },
   pillTextActive: {
-    color: Colors.white,
+    color: Colors.textPrimary,
   },
 });
 
@@ -767,7 +767,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     textAlign: 'center',
     flexShrink: 1,
-    color: Colors.white,
+    color: Colors.textPrimary,
   },
   changeRow: {
     flexDirection: 'row',
@@ -831,7 +831,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: Colors.border,
   },
-  suggestionName: {fontSize: 14, fontWeight: '600', color: Colors.white},
+  suggestionName: {fontSize: 14, fontWeight: '600', color: Colors.textPrimary},
   suggestionVicinity: {fontSize: 12, color: Colors.textSecondary, marginTop: 2},
   emptyText: {color: Colors.textSecondary, textAlign: 'center', paddingVertical: 10},
 
@@ -845,7 +845,7 @@ const styles = StyleSheet.create({
     marginTop: 12,
     textAlignVertical: 'top',
     fontSize: 14,
-    color: Colors.white,
+    color: Colors.textPrimary,
   },
 
   // Photo buttons
@@ -862,7 +862,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   addPhotoBtnDisabled: {opacity: 0.4},
-  addPhotoText: {fontSize: 14, fontWeight: '600', color: Colors.white},
+  addPhotoText: {fontSize: 14, fontWeight: '600', color: Colors.textPrimary},
   slotCounter: {
     fontSize: 12,
     color: Colors.textSecondary,

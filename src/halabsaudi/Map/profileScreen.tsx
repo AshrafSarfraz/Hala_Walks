@@ -70,7 +70,7 @@ const [user, setUser] = useState<any>(null);
     finally {setDeleting(false);}
   };
   const [revision, setRevision] = useState(0);
-  useStatusBar('light-content', c.background);
+  useStatusBar('dark-content', c.background);
   useFocusEffect(useCallback(() => {
     let active = true;
     const version = ++loadVersion.current;

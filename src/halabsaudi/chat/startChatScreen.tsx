@@ -129,7 +129,7 @@ async function fetchPeople(token: string, myId: string): Promise<FetchResult> {
 }
 
 export default function StartChatScreen({navigation}: Props) {
-  useStatusBar('light-content', Colors.surface);
+  useStatusBar('dark-content', Colors.surface);
   const language = useSelector((state: RootState) => state.language.language);
   const t        = languageData[language];
   const isRTL    = language === 'ar';
@@ -300,7 +300,7 @@ export default function StartChatScreen({navigation}: Props) {
       {/* ── Header: SocialConnectionsScreen jaisa simple ── */}
       <View style={[styles.header, {flexDirection: rowDir}]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.back} activeOpacity={0.7}>
-          <Ionicons name={isRTL ? 'arrow-forward' : 'arrow-back'} size={22} color={Colors.white} />
+          <Ionicons name={isRTL ? 'arrow-forward' : 'arrow-back'} size={22} color={Colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.title} numberOfLines={1}>{t.add_new_friend}</Text>
         <View style={styles.back} />
@@ -309,10 +309,10 @@ export default function StartChatScreen({navigation}: Props) {
       {/* ── Search ── */}
       <View style={styles.searchWrap}>
         <View style={[styles.searchBox, {flexDirection: rowDir}]}>
-          <Ionicons name="search-outline" size={16} color={Colors.white} />
+          <Ionicons name="search-outline" size={16} color={Colors.textPrimary} />
           <TextInput
             placeholder={t.search_members}
-            placeholderTextColor={Colors.lightOverlay}
+            placeholderTextColor={Colors.textSecondary}
             underlineColorAndroid={Colors.transparent}
             autoCorrect={false}
             autoCapitalize="none"
@@ -384,10 +384,10 @@ const styles = StyleSheet.create({
   safe:          {flex: 1, backgroundColor: Colors.surface},
   header:        {height: 58, alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 14},
   back:          {width: 38, height: 38, justifyContent: 'center', alignItems: 'center'},
-  title:         {flex: 1, textAlign: 'center', color: Colors.white, fontSize: 17, fontWeight: '800'},
+  title:         {flex: 1, textAlign: 'center', color: Colors.textPrimary, fontSize: 17, fontWeight: '800'},
   searchWrap:    {paddingHorizontal: 14, paddingBottom: 12},
-  searchBox:     {alignItems: 'center', gap: 8, height: 46, backgroundColor: Colors.lightOverlaySubtle, borderRadius: 14, paddingHorizontal: 14, borderWidth: 1, borderColor: Colors.lightOverlaySubtle},
-  searchInput:   {flex: 1, fontSize: 15, color: Colors.white, backgroundColor: Colors.transparent, borderWidth: 0, margin: 0, paddingVertical: 0, paddingHorizontal: 0, includeFontPadding: false},
+  searchBox:     {alignItems: 'center', gap: 8, height: 46, backgroundColor: Colors.border, borderRadius: 14, paddingHorizontal: 14, borderWidth: 1, borderColor: Colors.border},
+  searchInput:   {flex: 1, fontSize: 15, color: Colors.textPrimary, backgroundColor: Colors.transparent, borderWidth: 0, margin: 0, paddingVertical: 0, paddingHorizontal: 0, includeFontPadding: false},
   body:          {flex: 1, backgroundColor: Colors.background},
   loaderWrap:    {flex: 1, justifyContent: 'center', alignItems: 'center', gap: 14},
   loaderText:    {color: Colors.accent, fontSize: 14, marginTop: 4, fontWeight: '500'},
@@ -402,13 +402,13 @@ const styles = StyleSheet.create({
   onlineDot:     {width: 12, height: 12, borderRadius: 6, backgroundColor: Colors.accent, position: 'absolute', bottom: 0, right: 0, borderWidth: 2, borderColor: Colors.white},
   rowInfo:       {flex: 1},
   nameLine:      {alignItems: 'center', gap: 5},
-  rowName:       {fontSize: 15, fontWeight: '700', color: Colors.white},
+  rowName:       {fontSize: 15, fontWeight: '700', color: Colors.textPrimary},
   msgChip:       {alignItems: 'center', backgroundColor: Colors.surface, borderRadius: 20, paddingHorizontal: 12, paddingVertical: 7, borderWidth: 1, borderColor: Colors.accent},
   msgChipText:   {color: Colors.accent, fontSize: 12, fontWeight: '700'},
   msgChipLocked: {borderColor: Colors.border},
   msgChipTextLocked: {color: Colors.textMuted},
   emptyWrap:     {flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 40, gap: 10, marginTop: 80},
   emptyRing:     {width: 84, height: 84, borderRadius: 42, backgroundColor: Colors.surface, justifyContent: 'center', alignItems: 'center', marginBottom: 8, borderWidth: 3, borderColor: Colors.accent},
-  emptyTitle:    {fontSize: 18, fontWeight: '700', color: Colors.white},
+  emptyTitle:    {fontSize: 18, fontWeight: '700', color: Colors.textPrimary},
   emptySub:      {fontSize: 13, color: Colors.textMuted, textAlign: 'center'},
 });

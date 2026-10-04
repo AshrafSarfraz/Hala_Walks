@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   clearText: {
-    color: Colors.white,
+    color: Colors.textPrimary,
     fontSize: 14,
     fontWeight: '600',
   },
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     minHeight: 200,
   },
   logTitle: {
-    color: Colors.white,
+    color: Colors.textPrimary,
     fontWeight: 'bold',
     marginBottom: 10,
     fontSize: 14,

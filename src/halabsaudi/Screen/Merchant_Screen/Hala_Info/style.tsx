@@ -22,7 +22,7 @@ export const getStyles=(language:string) => StyleSheet.create({
     },
     heading: {
       fontSize: 24,
-      color:Colors.white,
+      color:Colors.textPrimary,
       fontFamily:Fonts.SF_Bold,
       marginBottom: 20,
       textAlign: 'center',

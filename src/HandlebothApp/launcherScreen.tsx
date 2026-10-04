@@ -1,3 +1,4 @@
+import {Colors} from '../halabsaudi/Themes/Colors';
 import {Text} from '../ui/Text';
 
 import React from 'react';
@@ -21,15 +22,15 @@ export default LauncherScreen;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#191B20'
+    flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.background
   },
   title: {
     fontSize: 22, marginBottom: 30
   },
   button: {
-    backgroundColor: '#333', paddingVertical: 12, paddingHorizontal: 30, borderRadius: 10, marginVertical: 10
+    backgroundColor: Colors.accent, paddingVertical: 12, paddingHorizontal: 30, borderRadius: 10, marginVertical: 10
   },
   buttonText: {
-    color: '#fff', fontSize: 16
+    color: Colors.onAccent, fontSize: 16
   }
 });

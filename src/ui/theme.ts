@@ -11,7 +11,7 @@ export const theme = {
   accentSoft: Colors.accentSoft,
   outgoing: Colors.accentSoft,
   success: Colors.success,
-  danger: Colors.accent,
+  danger: Colors.danger,
   overlay: Colors.overlay,
   space: {xs: 4, sm: 8, md: 12, lg: 16, xl: 24, xxl: 32},
 };

@@ -19,7 +19,7 @@ export default StyleSheet.create({
     marginBottom: 20,
     fontSize: 18,
     fontFamily: Fonts.SF_Bold,
-    color: Colors.white,
+    color: Colors.textPrimary,
     textAlign: 'center',
   },
   row: {
@@ -51,7 +51,7 @@ export default StyleSheet.create({
     fontSize: 13,
     marginVertical: Platform.OS==='ios'?7:2,
     fontFamily: Fonts.SF_Bold,
-    color: Colors.white,
+    color: Colors.textPrimary,
     marginHorizontal:"4%",
   },
   Type_Cont: {
@@ -64,7 +64,7 @@ export default StyleSheet.create({
   Type_Text: {
     fontSize: 10,
     lineHeight: 13,
-    color: Colors.white,
+    color: Colors.textPrimary,
     fontFamily: Fonts.SF_Medium,
   },
   Loc_Status_Cont: {
@@ -126,6 +126,6 @@ export default StyleSheet.create({
    fontSize:16,
    marginTop:12,
    fontWeight:'bold',
-   color:Colors.white
+   color:Colors.textPrimary
   }
 });

@@ -21,7 +21,7 @@ export const getStyles = (language: string) =>
       width: 20,
       height: 20,
       resizeMode: 'contain',
-      tintColor: Colors.white,
+      tintColor: Colors.textPrimary,
       transform:language === 'en' ?  [{scaleX:1}] :  [{scaleX:-1}] 
      
     },
@@ -35,13 +35,13 @@ export const getStyles = (language: string) =>
       height: '45%',
       borderRadius: 20,
       marginTop: '5%',
-      color:Colors.white,
+      color:Colors.textPrimary,
     },
     title: {
       fontSize: 22,
       textAlign: 'center',
       fontFamily: language === 'en' ? Fonts.SF_Bold : undefined,
-      color: Colors.white,
+      color: Colors.textPrimary,
       lineHeight: language==='en'?28:40,
       marginTop: '3%',
       marginBottom: '2%',
@@ -63,7 +63,7 @@ export const getStyles = (language: string) =>
     },
   
     prevButtonText: {
-      color: Colors.white,
+      color: Colors.accent,
       fontSize: 16,
     },
     paginationContainer: {
@@ -76,17 +76,17 @@ export const getStyles = (language: string) =>
       width: 8,
       height: 8,
       borderRadius: 4,
-      backgroundColor: Colors.surface,
+      backgroundColor: Colors.border,
       marginHorizontal: 2,
     },
     activePaginationDot: {
-      backgroundColor: Colors.surface,
+      backgroundColor: Colors.accent,
       width: 30,
       height: 8,
       borderRadius: 6,
     },
     buttonText: {
-      color: Colors.white,
+      color: Colors.onAccent,
       fontSize: 16,
       fontWeight: 'bold',
       textAlign: 'center',

@@ -44,7 +44,7 @@ const getStyles = (language: String) => StyleSheet.create({
   header: {
     flexDirection: language === 'en' ? 'row' : 'row-reverse',
     alignItems: 'center',
-    backgroundColor: Colors.surface,   // ✅ default
+    backgroundColor: Colors.header,   // ✅ default
     
     minHeight:56,
     paddingHorizontal: 16
@@ -54,14 +54,14 @@ const getStyles = (language: String) => StyleSheet.create({
     height: 26,
     marginRight: language === 'en' ? 12 : 0,
     marginLeft: language === 'ar' ? 12 : 0,
-    tintColor: Colors.white,            // ✅ default
+    tintColor: Colors.accent,            // ✅ default
     transform: language === 'en' ? [{ scaleX: 1 }] : [{ scaleX: -1 }],
   },
   headerText: {
     fontSize: 18,
     fontFamily: Fonts.SF_Bold,
     lineHeight: language === 'en' ? 24 : 30,
-    color: Colors.white,                // ✅ default
+    color: Colors.textPrimary,                // ✅ default
   },
 });
 

@@ -30,7 +30,7 @@ export  const getStyles=(language:string) => StyleSheet.create({
     },
     Txt:{
       fontSize:language==='en'?12:10,
-      color:Colors.white,
+      color:Colors.textPrimary,
       fontWeight:"bold",
       textAlign:"center",
       lineHeight:language==='en'?14:14,

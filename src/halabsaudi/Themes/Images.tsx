@@ -1,16 +1,20 @@
 const ImgPath='../assets/Images/'
-export const BgImg=require(ImgPath+'bgImg.jpeg')
+export const Logo_W=require(ImgPath+'hbs_logo_White.png')
+export const Logo_G=require(ImgPath+'hbs_logo_Green.png')
+
 export const W_logo=require(ImgPath+'wel_logo.png')
 // export const Full_logo_w=require(ImgPath+'hbs_white.png')
-export const Full_logo_w=require(ImgPath+'Logo_White.png')
-export const Full_logo_B=require(ImgPath+'hbkLogo_B.png')
-export const Logo_W=require(ImgPath+'logo.png')
+export const Full_logo_w=require(ImgPath+'logo_B.png')
+export const Full_logo_B=require(ImgPath+'hbs_logo_White.png')
+// export const Logo_W=require(ImgPath+'logo.png')
 // export const LoginBg=require(ImgPath+'loginbg.png')
 export const Food2=require(ImgPath+'food2.png')
 export const Giftpack=require(ImgPath+'giftpack.png')
 export const WW_Icon=require(ImgPath+'ww_icon.png')
-export const HBS_Logo=require(ImgPath+'hbk_logo.png')
-export const Hbk_White=require(ImgPath+'HBK_WHITE.png')
+
+export const Hbk_White=require(ImgPath+'hbs_logo_White.png')
+export const Otpverification=require(ImgPath+'otp-verification.png')
+export const Phonelogin=require(ImgPath+'phone-login.png')
 
 
 
@@ -32,4 +36,4 @@ export const Search=require(IconPath+'search.png')
 export const Location=require(IconPath+'Location.png')
 export const Remove=require(IconPath+'remove.png')
 export const chatMessage=require(IconPath+'chatMessage.png')
-export const Hala_logo_white=require(IconPath+'hala_logo_white.png')
+export const Hala_logo_white=require(IconPath+'logo_B.png')

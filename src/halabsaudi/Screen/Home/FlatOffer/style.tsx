@@ -34,7 +34,7 @@ export const getStyles = (language: string) =>
       alignItems: 'flex-end',
     },
     imageText: {
-      color: Colors.white,
+      color: Colors.textPrimary,
       fontSize: 18,
       fontWeight: 'bold',
     },

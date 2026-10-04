@@ -53,7 +53,7 @@ type Profile = SocialPerson & {
 };
 
 export default function UserProfileScreen({route, navigation}: any) {
-  useStatusBar('light-content', Colors.surface);
+  useStatusBar('dark-content', Colors.surface);
   const {participantId, participantName, chatId} = route.params || {};
   const language = useSelector((state: RootState) => state.language.language);
   const isRTL = language === 'ar';
@@ -442,7 +442,7 @@ export default function UserProfileScreen({route, navigation}: any) {
         </View>
       )}
       <View style={s.section}>
-        <Ionicons name="grid-outline" size={18} color={Colors.white} />
+        <Ionicons name="grid-outline" size={18} color={Colors.textPrimary} />
         <Text style={s.sectionText}>{hbsText(isRTL, 'ui_check_ins')}</Text>
       </View>
     </View>
@@ -458,7 +458,7 @@ export default function UserProfileScreen({route, navigation}: any) {
           <Ionicons
             name={isRTL ? 'arrow-forward' : 'arrow-back'}
             size={24}
-            color={Colors.white}
+            color={Colors.textPrimary}
           />
         </TouchableOpacity>
         <View style={s.back} />
@@ -573,7 +573,7 @@ const s = StyleSheet.create({
   title: {
     flex: 1,
     textAlign: 'center',
-    color: Colors.white,
+    color: Colors.textPrimary,
     fontWeight: '700',
     fontSize: 17,
   },
@@ -585,7 +585,7 @@ const s = StyleSheet.create({
     justifyContent: 'center',
   },
   initial: {fontSize: 36, color: Colors.white},
-  name: {fontSize: 22, fontWeight: '800', color: Colors.white, marginTop: 14},
+  name: {fontSize: 22, fontWeight: '800', color: Colors.textPrimary, marginTop: 14},
   bio: {
     fontSize: 14,
     lineHeight: 21,
@@ -595,7 +595,7 @@ const s = StyleSheet.create({
   },
   counts: {width: '100%', marginVertical: 22},
   count: {flex: 1, alignItems: 'center', minHeight: 48},
-  number: {color: Colors.white, fontWeight: '800', fontSize: 20},
+  number: {color: Colors.textPrimary, fontWeight: '800', fontSize: 20},
   muted: {color: Colors.textMuted, fontSize: 13, marginTop: 4},
   actions: {flexDirection: 'row', gap: 10, justifyContent: 'center'},
   button: {
@@ -629,7 +629,7 @@ const s = StyleSheet.create({
     marginTop: 18,
     paddingVertical: 15,
   },
-  sectionText: {color: Colors.white, fontWeight: '700'},
+  sectionText: {color: Colors.textPrimary, fontWeight: '700'},
   post: {width: '100%', height: '100%'},
   empty: {
     flex: 1,
@@ -639,7 +639,7 @@ const s = StyleSheet.create({
     alignItems: 'center',
   },
   emptyTitle: {
-    color: Colors.white,
+    color: Colors.textPrimary,
     fontWeight: '700',
     fontSize: 17,
     marginTop: 14,

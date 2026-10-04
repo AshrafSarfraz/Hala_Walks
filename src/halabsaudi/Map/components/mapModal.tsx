@@ -48,7 +48,7 @@ const COLORS = {
   placeholder: Colors.textSecondary,
   overlay: Colors.overlaySoft,
   divider: Colors.border,
-  red: Colors.accent,
+  red: Colors.danger,
 };
 
 // ─── Types ────────────────────────────────────────────────────────────────────

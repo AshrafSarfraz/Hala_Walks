@@ -76,10 +76,10 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
   header: { flexDirection: "row", alignItems: "center", padding: 10, borderBottomWidth: 1, borderColor: Colors.textSecondary },
   searchInput: { flex: 1, backgroundColor: Colors.surface, borderRadius: 10, paddingHorizontal: 12, height: 40 },
-  cancel: { marginLeft: 10, color: Colors.white, fontWeight: "600" },
+  cancel: { marginLeft: 10, color: Colors.textPrimary, fontWeight: "600" },
   row: { flexDirection: "row", alignItems: "center", padding: 14, borderBottomWidth: 0.5, borderColor: Colors.textSecondary },
   avatar: { width: 40, height: 40, borderRadius: 20, justifyContent: "center", alignItems: "center", marginRight: 12 },
   avatarText: { color: Colors.white, fontWeight: "bold", fontSize: 16 },
-  name: { fontSize: 16, color: Colors.white, fontWeight: "500" },
+  name: { fontSize: 16, color: Colors.textPrimary, fontWeight: "500" },
   empty: { textAlign: "center", marginTop: 30, color: Colors.textSecondary },
 });

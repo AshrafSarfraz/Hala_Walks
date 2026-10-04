@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: Colors.background,        // ✅ dark card
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: Colors.lightOverlaySubtle, // subtle light border
+    borderColor: Colors.border, // subtle light border
     paddingTop: 20,
     paddingHorizontal: 20,
     paddingBottom: 16,
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 20,
     lineHeight: 28,
-    color: Colors.white,                   // ✅ white title
+    color: Colors.textPrimary,                   // ✅ white title
     fontFamily: Fonts.SF_Bold,
     letterSpacing: 0.2,
   },
@@ -100,12 +100,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 15,
     lineHeight: 22,
-    color: Colors.lightOverlay,        // ✅ soft white message
+    color: Colors.textSecondary,        // ✅ soft white message
     fontFamily: (Fonts as any).SF_Regular ?? Fonts.SF_Bold,
   },
   divider: {
     height: StyleSheet.hairlineWidth,
-    backgroundColor: Colors.lightOverlaySubtle, // ✅ light divider on dark
+    backgroundColor: Colors.border, // ✅ light divider on dark
     marginVertical: 18,
   },
   actionsRow: {
@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
   btnPrimaryTxt: {
     fontSize: 14,
     fontFamily: Fonts.SF_Bold,
-    color: Colors.white,
+    color: Colors.onAccent,
   },
 });
 

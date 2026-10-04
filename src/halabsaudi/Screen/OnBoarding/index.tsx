@@ -13,14 +13,14 @@ import { getStyles } from './style';
 
 
 
-import {languageData, onboardingLanguageData} from '../../i18n/translations';
+import {onboardingLanguageData} from '../../i18n/translations';
 
 type OnBoardingProps = {
   navigation: NativeStackNavigationProp<any>;
 };
 
 const OnBoarding: React.FC<OnBoardingProps> = ({ navigation }) => {
-  const [showRealApp] = useState(false);
+  const [showRealApp, setShowRealApp] = useState(false);
   const sliderRef = useRef<AppIntroSlider<any>>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -72,7 +72,7 @@ const OnBoarding: React.FC<OnBoardingProps> = ({ navigation }) => {
 
     return (
       <SafeAreaView style={[styles.slide]}>
-          <StatusBar hidden={false} translucent={true} animated={true} backgroundColor={Colors.background} barStyle='light-content' />
+          <StatusBar hidden={false} translucent={true} animated={true} backgroundColor={Colors.background} barStyle="dark-content" />
         {!isFirstSlide && (
           <TouchableOpacity style={styles.prevButton} onPress={handlePrevSlide}>
             <Image source={require('../../assets/Icons/Back.png')} style={styles.backIcon} />

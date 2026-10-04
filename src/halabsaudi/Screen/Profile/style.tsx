@@ -7,7 +7,7 @@ const HAIRLINE = Colors.border;
 const TEXT = Colors.textPrimary;
 const MUTED = Colors.textMuted; 
 const SUBTLE = Colors.textSecondary;
-const ICON_TINT = Colors.overlaySubtle; // soft red wash behind icons
+const ICON_TINT = Colors.accentSoft; // soft red wash behind icons
 
 // Row geometry — divider inset = paddingHorizontal + icon width + gap
 const ROW_PAD_H = 16;
@@ -174,7 +174,7 @@ export const getStyles = (language: string) => {
       width: 40,
       height: 40,
       borderRadius: 20,
-      backgroundColor: Colors.lightOverlaySubtle,
+      backgroundColor: Colors.border,
       justifyContent: 'center',
       alignItems: 'center',
     },
@@ -183,14 +183,14 @@ export const getStyles = (language: string) => {
       top: Platform.OS === 'ios' ? 62 : 28,
       fontSize: 17,
       fontWeight: '700',
-      color: Colors.white,
+      color: Colors.onMedia,
     },
     fullImage: {
       width: 300,
       height: 300,
       borderRadius: 150,
       borderWidth: 3,
-      borderColor: Colors.lightOverlaySubtle,
+      borderColor: Colors.border,
     },
     viewerEditBtn: {
       position: 'absolute',
@@ -198,7 +198,7 @@ export const getStyles = (language: string) => {
       flexDirection: rowDir,
       alignItems: 'center',
       gap: 8,
-      backgroundColor: Colors.lightOverlaySubtle,
+      backgroundColor: Colors.accent,
       paddingHorizontal: 22,
       paddingVertical: 11,
       borderRadius: 24,
@@ -221,6 +221,6 @@ export const getStyles = (language: string) => {
       alignItems: 'center',
       gap: 12,
     },
-    overlayText: {fontSize: 14, color: TEXT, fontWeight: '500'},
+    overlayText: {fontSize: 14, color: Colors.onMedia, fontWeight: '500'},
   });
 };

@@ -57,7 +57,7 @@ const DistanceFromDevice: React.FC<DistanceFromDeviceProps> = ({
 
 const textStyle = {
   fontSize: 10,
-  color: Colors.white,
+  color: Colors.textPrimary,
   fontFamily: Fonts.SF_Medium,
   lineHeight: 14,
   marginLeft: 2,

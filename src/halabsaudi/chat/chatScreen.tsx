@@ -185,7 +185,7 @@ function TickIcon({
       <Ionicons
         name="alert-circle"
         size={size}
-        color={forImage ? Colors.textSecondary : Colors.accent}
+        color={forImage ? Colors.onMedia : Colors.accent}
       />
     );
   if (msgStatus === 'seen')
@@ -289,7 +289,7 @@ export default function ChatScreen(props: any) {
   return <ChatScreenContent key={String(props.route.params?.chatId || 'missing')} {...props} />;
 }
 function ChatScreenContent({route, navigation}: any) {
- useStatusBar('light-content', Colors.surface, true);
+ useStatusBar('dark-content', Colors.surface, true);
   const language = useSelector((state: RootState) => state.language.language);
   const t = languageData[language];
   const isRTL = language === 'ar';
@@ -1369,7 +1369,7 @@ function ChatScreenContent({route, navigation}: any) {
 
               {!!msg.uploadStage && msg.uploadStage !== 'failed' && (
                 <View style={styles.uploadOverlay}>
-                  <ActivityIndicator size="small" color={Colors.white} />
+                  <ActivityIndicator size="small" color={Colors.onAccent} />
                   <Text style={styles.uploadOverlayText}>
                     {msg.uploadStage === 'uploading'
                       ? `${Math.max(1, msg.uploadProgress || 1)}%`
@@ -1386,7 +1386,7 @@ function ChatScreenContent({route, navigation}: any) {
                   onPress={() => {
                     if (msg.tempId) retryMediaJob(msg.tempId);
                   }}>
-                  <Ionicons name="refresh" size={24} color={Colors.white} />
+                  <Ionicons name="refresh" size={24} color={Colors.onMedia} />
                   <Text style={styles.uploadOverlayText}>Tap to retry</Text>
                 </TouchableOpacity>
               )}
@@ -1537,7 +1537,7 @@ function ChatScreenContent({route, navigation}: any) {
 
   if (loading)
     return (
-      <SafeAreaView style={styles.loader}><TouchableOpacity accessibilityRole="button" onPress={() => navigation.goBack()} style={{padding: 20}}><Text style={{color: Colors.white}}>{hbsText(isRTL, 'ui_back')}</Text></TouchableOpacity><ActivityIndicator size="large" color={Colors.accent} /></SafeAreaView>
+      <SafeAreaView style={styles.loader}><TouchableOpacity accessibilityRole="button" onPress={() => navigation.goBack()} style={{padding: 20}}><Text style={{color: Colors.textPrimary}}>{hbsText(isRTL, 'ui_back')}</Text></TouchableOpacity><ActivityIndicator size="large" color={Colors.accent} /></SafeAreaView>
     );
 
   return (
@@ -1639,7 +1639,7 @@ function ChatScreenContent({route, navigation}: any) {
                 </TouchableOpacity>}
               </View>}
             />
-            {awayFromLatest && <TouchableOpacity accessibilityRole="button" accessibilityLabel="Jump to latest messages" onPress={jumpToLatest} style={styles.latestButton}><Ionicons name="chevron-down" size={20} color={Colors.white} /><Text style={{color: Colors.white, fontSize: 12}}>{newCount ? `${newCount} ${hbsText(isRTL, 'ui_new')}` : hbsText(isRTL, 'ui_latest')}</Text></TouchableOpacity>}
+            {awayFromLatest && <TouchableOpacity accessibilityRole="button" accessibilityLabel="Jump to latest messages" onPress={jumpToLatest} style={styles.latestButton}><Ionicons name="chevron-down" size={20} color={Colors.textPrimary} /><Text style={{color: Colors.textPrimary, fontSize: 12}}>{newCount ? `${newCount} ${hbsText(isRTL, 'ui_new')}` : hbsText(isRTL, 'ui_latest')}</Text></TouchableOpacity>}
           </View>
 
           <View
@@ -1740,12 +1740,12 @@ function ChatScreenContent({route, navigation}: any) {
                 onPress={onSend}
                 disabled={!inputText.trim() || sending}>
                 {sending ? (
-                  <ActivityIndicator size="small" color={Colors.white} />
+                  <ActivityIndicator size="small" color={Colors.onAccent} />
                 ) : (
                   <Ionicons
                     name={editingMessage ? 'checkmark' : 'send'}
                     size={18}
-                    color={inputText.trim() ? Colors.white : Colors.textMuted}
+                    color={inputText.trim() ? Colors.onAccent : Colors.textMuted}
                   />
                 )}
               </TouchableOpacity>
@@ -1836,7 +1836,7 @@ const styles = StyleSheet.create({
   rowRight: {alignItems: 'flex-end'},
   rowLeft: {alignItems: 'flex-start'},
   bubble: {maxWidth: '82%', borderRadius: 18, paddingHorizontal: 11, paddingTop: 7, paddingBottom: 5},
-  bubbleRight: {backgroundColor: Colors.surface, borderBottomRightRadius: 3},
+  bubbleRight: {backgroundColor: Colors.accentSoft, borderBottomRightRadius: 3},
   bubbleLeft: {backgroundColor: Colors.surfaceRaised, borderBottomLeftRadius: 3},
   imageBubble: {maxWidth: 260, borderRadius: 16, overflow: 'hidden'},
   imageBubbleRight: {borderBottomRightRadius: 3},
@@ -1850,7 +1850,7 @@ const styles = StyleSheet.create({
     gap: 7,
   },
   uploadOverlayText: {
-    color: Colors.white,
+    color: Colors.textPrimary,
     fontSize: 12,
     fontWeight: '600',
   },
@@ -1878,7 +1878,7 @@ const styles = StyleSheet.create({
   replyRight: {alignSelf: 'flex-end'},
   replyLeft: {alignSelf: 'flex-start'},
   replyAccent: {width: 3, backgroundColor: Colors.brandGreen},
-  replyName: {fontSize: 12, fontWeight: '700', color: Colors.white},
+  replyName: {fontSize: 12, fontWeight: '700', color: Colors.textPrimary},
   replyText: {fontSize: 12, color: Colors.textSecondary},
   videoThumb: {
     width: 220, height: 160, borderRadius: 10, backgroundColor: Colors.background,
@@ -1924,7 +1924,7 @@ const styles = StyleSheet.create({
     borderTopColor: Colors.border, paddingHorizontal: 12, paddingVertical: 8,
   },
   replyBarInner: {alignItems: 'center', backgroundColor: Colors.surface, borderRadius: 12, padding: 8},
-  replyBarLabel: {fontSize: 12, fontWeight: '700', color: Colors.white},
+  replyBarLabel: {fontSize: 12, fontWeight: '700', color: Colors.textPrimary},
   replyBarText: {fontSize: 13, color: Colors.textSecondary, marginTop: 1},
   inputRow: {
     alignItems: 'center',
@@ -1942,19 +1942,19 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surface,
     borderRadius: 18,
     borderWidth: 1,
-    borderColor: Colors.lightOverlaySubtle,
+    borderColor: Colors.border,
     paddingHorizontal: 15,
 
     minHeight: 40,
     maxHeight: 60,
     marginRight: 10,
   },
-  textInput: {fontSize: 15, lineHeight: 20, color: Colors.white, padding: 0},
+  textInput: {fontSize: 15, lineHeight: 20, color: Colors.textPrimary, padding: 0},
   sendBtn: {width: 44, height: 44, borderRadius: 22, justifyContent: 'center', alignItems: 'center'},
   blockedFooter: {
     alignItems: 'center', justifyContent: 'center', padding: 16,
     backgroundColor: Colors.surface,
-    borderTopWidth: 0.5, borderTopColor: Colors.lightOverlaySubtle,
+    borderTopWidth: 0.5, borderTopColor: Colors.border,
   },
   blockedText: {color: Colors.textSecondary, fontSize: 14},
 });

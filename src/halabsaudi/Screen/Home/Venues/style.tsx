@@ -26,7 +26,7 @@ export const styles = StyleSheet.create({
   },
   cate_txt: {
     fontSize: 10,
-    color: Colors.white,
+    color: Colors.textPrimary,
     fontFamily: Fonts.SF_Bold,
     marginTop: 5,
     lineHeight: 14,
@@ -43,7 +43,7 @@ export const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   showMoreText: {
-    color: Colors.white,
+    color: Colors.textPrimary,
     fontSize: 12,
     fontWeight: 'bold',
   },

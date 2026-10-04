@@ -21,13 +21,13 @@ export const getStyles=(language:String) => StyleSheet.create({
     width: 25,
     height: 25,
     marginRight: 12,
-    tintColor: Colors.white,
+    tintColor: Colors.textPrimary,
   },
   headerText: {
     fontSize: 18,
     fontFamily: Fonts.SF_Bold,
     lineHeight: 24,
-    color: Colors.white,
+    color: Colors.textPrimary,
   },
   searchContainer: {
     flexDirection:language==='en'?'row':'row-reverse' ,
@@ -43,7 +43,7 @@ export const getStyles=(language:String) => StyleSheet.create({
     marginRight: 8,
     marginLeft:language==='ar'?8:0,
     resizeMode: "contain",
-    tintColor: Colors.white,
+    tintColor: Colors.textPrimary,
   },
   searchInput: {
     flex: 1,
@@ -51,7 +51,7 @@ export const getStyles=(language:String) => StyleSheet.create({
     height:45,
     lineHeight:language==='en'?18:20,
     fontFamily: language==='en'?Fonts.SF_Medium:'',
-    color: Colors.white,
+    color: Colors.textPrimary,
     textAlign:language==='en'?'left':'right',
     letterSpacing:0.3
   },
@@ -60,7 +60,7 @@ export const getStyles=(language:String) => StyleSheet.create({
     marginVertical: 10,
   },
   FoundItem_Txt: {
-    color: Colors.white,
+    color: Colors.textPrimary,
     fontSize: language==='en'?16:16,
     fontFamily: language==='en'?Fonts.SF_Medium:"",
     lineHeight: language==='en'?22:30,
@@ -75,7 +75,6 @@ export const getStyles=(language:String) => StyleSheet.create({
     padding: 12,
     marginBottom: 10,
     borderRadius: 8,
-    borderWidth:1,
     borderColor: Colors.black,
     shadowColor: Colors.black, // iOS shadow
     shadowOffset: { width: 0, height: 2 },
@@ -98,7 +97,7 @@ export const getStyles=(language:String) => StyleSheet.create({
     fontFamily: language==='en'?Fonts.SF_Bold:"",
     lineHeight: language==='en'?22:30,
     fontWeight:'500',
-    color: Colors.white,
+    color: Colors.textPrimary,
     marginLeft:language==='ar'?"2%":0,
     textAlign:language==='en'?'left':'right'
   },
@@ -107,7 +106,7 @@ export const getStyles=(language:String) => StyleSheet.create({
     fontFamily: language==='en'?Fonts.SF_Medium:"",
     lineHeight: language==='en'?14:24,
     fontWeight:'300',
-    color: Colors.white,
+    color: Colors.textPrimary,
     marginLeft:language==='ar'?"2%":0,
      textAlign:language==='en'?'left':'right'
   
@@ -117,7 +116,7 @@ export const getStyles=(language:String) => StyleSheet.create({
     fontFamily: language==='en'?Fonts.SF_Bold:"",
     lineHeight: language==='en'?14:24,
     fontWeight:'500',
-    color: Colors.white,
+    color: Colors.textPrimary,
     marginLeft:language==='ar'?"2%":0,
      textAlign:language==='en'?'left':'right'
   },
@@ -134,7 +133,7 @@ export const getStyles=(language:String) => StyleSheet.create({
    fontSize:16,
    marginTop:12,
    fontWeight:'bold',
-   color:Colors.white
+   color:Colors.textPrimary
   },
 
   Loc_Status_Cont: {
@@ -155,11 +154,11 @@ export const getStyles=(language:String) => StyleSheet.create({
     width: 12,
     height: 12,
     resizeMode: 'contain',
-    tintColor: Colors.white,
+    tintColor: Colors.textPrimary,
   },
   location_txt: {
     fontSize: 10,
-    color: Colors.white,
+    color: Colors.textPrimary,
     fontFamily: Fonts.SF_Medium,
     lineHeight: 14,
     marginLeft: 2,

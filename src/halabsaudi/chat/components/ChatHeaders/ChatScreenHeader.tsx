@@ -61,7 +61,7 @@ export default function ChatScreenHeader({
         hitSlop={{top: 8, bottom: 8, left: 8, right: 8}}>
         <Ionicons
           name={isRTL ? 'arrow-forward' : 'arrow-back'}
-          color={Colors.white}
+          color={Colors.textPrimary}
           size={22}
         />
       </TouchableOpacity>
@@ -117,7 +117,7 @@ export default function ChatScreenHeader({
         style={styles.profileBtn}
         onPress={onProfilePress}
         hitSlop={{top: 8, bottom: 8, left: 8, right: 8}}>
-        <Ionicons name="information-circle-outline" size={24} color={Colors.white} />
+        <Ionicons name="information-circle-outline" size={24} color={Colors.textPrimary} />
       </TouchableOpacity>
     </View>
   );
@@ -125,7 +125,7 @@ export default function ChatScreenHeader({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.surface,
+    backgroundColor: Colors.header,
     alignItems: 'center',
     paddingHorizontal: 10,
     paddingTop: Platform.OS === 'ios' ? 12 : 14,
@@ -137,12 +137,12 @@ const styles = StyleSheet.create({
   avatarWrap: {position: 'relative'},
   avatarImage: {
     width: 42, height: 42, borderRadius: 21,
-    borderWidth: 2, borderColor: Colors.lightOverlay,
+    borderWidth: 2, borderColor: Colors.textSecondary,
   },
   avatarCircle: {
     width: 42, height: 42, borderRadius: 21,
     justifyContent: 'center', alignItems: 'center',
-    borderWidth: 2, borderColor: Colors.lightOverlaySubtle,
+    borderWidth: 2, borderColor: Colors.border,
   },
   avatarLetter: {color: Colors.white, fontWeight: '700', fontSize: 17},
   onlineDot: {
@@ -153,8 +153,8 @@ const styles = StyleSheet.create({
   },
   textBlock: {flex: 1},
   nameRow: {alignItems: 'center', gap: 4},
-  nameText: {color: Colors.white, fontWeight: '700', fontSize: 16, flexShrink: 1},
-  statusText: {color: Colors.lightOverlay, fontSize: 12, marginTop: 2},
+  nameText: {color: Colors.textPrimary, fontWeight: '700', fontSize: 16, flexShrink: 1},
+  statusText: {color: Colors.textSecondary, fontSize: 12, marginTop: 2},
   profileBtn: {padding: 8, marginLeft: 4},
 });
 

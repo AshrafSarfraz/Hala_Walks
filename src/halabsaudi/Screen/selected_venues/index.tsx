@@ -29,7 +29,7 @@ type CacheShape = {
 
 const SelectedVenues: React.FC<{route: any}> = ({route}) => {
   const navigation = useNavigation<any>();
-  useStatusBar('light-content', Colors.background);
+  useStatusBar('dark-content', Colors.background);
   const {item} = route.params;
 
   const [searchQuery, setSearchQuery] = useState('');

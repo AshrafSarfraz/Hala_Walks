@@ -31,7 +31,7 @@ export const getStyles = (language: string) =>
       width: 38,
       height: 38,
       resizeMode: 'contain',
-      tintColor: Colors.white,
+      tintColor: Colors.textPrimary,
       
     },
 
@@ -85,7 +85,7 @@ export const getStyles = (language: string) =>
     Type_Text: {
       fontSize: 13,
       lineHeight: 18,
-      color: Colors.white,
+      color: Colors.textPrimary,
       fontFamily: Fonts.SF_Medium,
     },
 
@@ -100,7 +100,7 @@ export const getStyles = (language: string) =>
       width: '72%',
       fontSize: 17,
       lineHeight: language === 'en' ? 22 : 28,
-      color: Colors.white,
+      color: Colors.textPrimary,
       letterSpacing: 0.3,
       fontFamily: language === 'en' ? Fonts.SF_Bold : '',
       textAlign: language === 'en' ? 'left' : 'right',
@@ -166,7 +166,7 @@ export const getStyles = (language: string) =>
     },
     working_hour_txt: {
       fontSize: 14,
-      color: Colors.white,
+      color: Colors.textPrimary,
       fontFamily: Fonts.SF_Bold,
       letterSpacing: 0.2,
       paddingVertical: 2,
@@ -174,7 +174,7 @@ export const getStyles = (language: string) =>
     },
     dropdown_icon: {
       fontSize: 14,
-      color: Colors.white,
+      color: Colors.textPrimary,
       marginLeft: language === 'en' ? 6 : 0,
       marginRight: language === 'ar' ? 6 : 0,
     },
@@ -208,7 +208,7 @@ export const getStyles = (language: string) =>
     },
     timingDay: {
       fontSize: 13,
-      color: Colors.white,
+      color: Colors.textPrimary,
       fontFamily: Fonts.SF_Medium,
     },
     timingTime: {
@@ -265,18 +265,18 @@ export const getStyles = (language: string) =>
       paddingLeft: language === 'ar' ? 10 : 0,
     },
     offerBtnTitle: {
-      color: Colors.white,
+      color: Colors.onAccent,
       fontSize: 14,
       fontFamily: Fonts.SF_Bold,
     },
     offerBtnSub: {
-      color: Colors.lightOverlay,
+      color: Colors.onAccent,
       fontSize: 12,
       marginTop: 4,
       fontFamily: Fonts.SF_Regular,
     },
     offerBtnArrow: {
-      color: Colors.white,
+      color: Colors.onAccent,
       fontSize: 28,
       fontFamily: Fonts.SF_Bold,
       marginLeft: language === 'en' ? 10 : 0,
@@ -292,13 +292,13 @@ export const getStyles = (language: string) =>
       fontSize: 18,
       lineHeight: language === 'en' ? 26 : 32,
       letterSpacing: 0.2,
-      color: Colors.white,
+      color: Colors.textPrimary,
       fontFamily: language === 'en' ? Fonts.SF_Bold : '',
     },
     Detail: {
       fontSize: 14,
       lineHeight: language === 'en' ? 18 : 26,
-      color: Colors.white,
+      color: Colors.textPrimary,
       fontFamily: language === 'en' ? Fonts.SF_Regular : '',
       marginBottom: 10,
       textAlign: language === 'en' ? 'left' : 'right',

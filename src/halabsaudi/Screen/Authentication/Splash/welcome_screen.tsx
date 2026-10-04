@@ -5,7 +5,7 @@ import React, {useState} from 'react';
 import {View, StyleSheet, StatusBar, Image, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, TouchableWithoutFeedback, Keyboard} from 'react-native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {Colors} from '../../../Themes/Colors';
-import { Full_logo_B, Full_logo_w, languageIcon, Profile_Img,WW_Icon} from '../../../Themes/Images';
+import { Full_logo_B, Full_logo_w, languageIcon, Logo_G, Profile_Img,WW_Icon} from '../../../Themes/Images';
 import {Fonts} from '../../../Themes/Fonts';
 import LanguageModal from '../../../Component/CustomAlert/Lan_Modal';
 import { useSelector } from 'react-redux';
@@ -18,7 +18,7 @@ type SplashBlankProps = {
 };
 
 const WelcomeScreen: React.FC<SplashBlankProps> = ({navigation}) => {
-  useStatusBar('light-content', Colors.brandGreen);
+  useStatusBar('dark-content', Colors.background);
   const [selected, setSelected] = useState<'customer' | 'community' | null>( null,);
   const [alertVisible, setAlertVisible] = useState<boolean>(false);
   const [code, setCode] = useState('');
@@ -58,7 +58,7 @@ const WelcomeScreen: React.FC<SplashBlankProps> = ({navigation}) => {
               style={styles.languageFab}>
               <Image source={languageIcon} style={styles.languageIcon} />
             </TouchableOpacity>
-            <Image source={Full_logo_w} style={styles.logo} />
+            <Image source={Logo_G} style={styles.logo} />
             <Text style={styles.Passport_Txt} >{languageData[language].Passport_Txt}</Text>
             <View style={styles.buttonRow}>
               {/* Customer Button */}
@@ -79,7 +79,7 @@ const WelcomeScreen: React.FC<SplashBlankProps> = ({navigation}) => {
                     styles.buttonImage,
                     {
                       tintColor:
-                        selected === 'customer' ? Colors.surface : Colors.white,
+                        selected === 'customer' ? Colors.accent : Colors.accent,
                     },
                   ]}
                   resizeMode="contain"
@@ -111,7 +111,7 @@ const WelcomeScreen: React.FC<SplashBlankProps> = ({navigation}) => {
                     styles.buttonImage2,
                     {
                       tintColor:
-                        selected === 'community' ? Colors.surface : Colors.white,
+                        selected === 'community' ? Colors.accent : Colors.accent,
                     },
                   ]}
                   resizeMode="contain"
@@ -253,13 +253,13 @@ const getStyles=(langauge:string) => StyleSheet.create({
     height: 80,
   },
   buttonText: {
-    color: Colors.white,
+    color: Colors.accent,
     fontSize: 16,
     textAlign: 'center',
     fontFamily: Fonts.SF_Bold,
   },
   selectedText: {
-    color: Colors.white,
+    color: Colors.textPrimary,
   },
   inputContainer: {
     marginTop: 30,
@@ -273,7 +273,7 @@ const getStyles=(langauge:string) => StyleSheet.create({
     paddingHorizontal: 15,
     fontSize: 14,
     marginBottom: 20,
-    color: Colors.white,
+    color: Colors.textPrimary,
     fontFamily: Fonts.SF_Bold,
   },
   continueButton: {

@@ -126,7 +126,7 @@ const s = StyleSheet.create({
   },
   deleteBtn: {
     flex: 1,
-    backgroundColor: Colors.accent,
+    backgroundColor: Colors.danger,
     borderRadius: 12,
     paddingVertical: 13,
     alignItems: 'center',
@@ -134,6 +134,6 @@ const s = StyleSheet.create({
   deleteText: {
     fontSize: 15,
     fontWeight: '700',
-    color: Colors.white,
+    color: Colors.onAccent,
   },
 });

@@ -69,14 +69,14 @@ const getStyles=(language:string) => StyleSheet.create({
   tickIcon: {
     width: 10,
     height: 10,
-    tintColor: Colors.white, // ✅ Ensuring green tick
+    tintColor: Colors.onAccent, // ✅ Ensuring green tick
   },
   label: {
     fontSize: 14,
-    color: Colors.white,
+    color: Colors.textPrimary,
   },
   linkText: {
-    color: Colors.white, // ✅ Blue for privacy policy link
+    color: Colors.accent, // ✅ Blue for privacy policy link
 
   },
 });

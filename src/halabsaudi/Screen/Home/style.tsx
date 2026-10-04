@@ -51,7 +51,7 @@ export const getStyles =(language:String)=> StyleSheet.create({
     width: 24,
     height: 24,
     resizeMode: 'contain',
-    tintColor: Colors.white,
+    tintColor: Colors.textPrimary,
     marginRight:5
   },
   Categories_Cont: {
@@ -60,7 +60,7 @@ export const getStyles =(language:String)=> StyleSheet.create({
   Categories_Txt: {
     fontSize: language==='en'?18:16,
     fontFamily: language==='en'?Fonts.SF_Bold:'',
-    color: Colors.white,
+    color: Colors.textPrimary,
     fontWeight:language==='en'?'400':'bold',
     lineHeight: language==='en'?24:30,
     marginHorizontal:'4%',
@@ -73,7 +73,7 @@ export const getStyles =(language:String)=> StyleSheet.create({
   BestSeller_Txt: {
   fontSize: language==='en'?18:16,
     fontFamily: language==='en'?Fonts.SF_Bold:'',
-    color: Colors.white,
+    color: Colors.textPrimary,
     fontWeight:language==='en'?'400':'bold',
     lineHeight: language==='en'?24:30,
     marginHorizontal:'4%',

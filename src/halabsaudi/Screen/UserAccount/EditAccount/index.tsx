@@ -484,7 +484,7 @@ import { useStatusBar } from '../../../Component/UseStatusBar/useStatusBar';
 import {hbsText} from '../../../i18n/translations';
 const BASE_URL = 'https://hala-b-saudi.onrender.com';
 const EditAccountScreen: React.FC = ({navigation}: any) => {
- useStatusBar('light-content', Colors.surface);
+ useStatusBar('dark-content', Colors.surface);
   const language = useSelector((state: RootState) => state.language.language);
   const t = languageData[language];
   const isRTL = language === 'ar';
@@ -708,13 +708,13 @@ const EditAccountScreen: React.FC = ({navigation}: any) => {
               {/* ✅ uploading ya removing dono mein spinner */}
               {uploading || removing ? (
                 <View style={s.avatarCircle}>
-                  <ActivityIndicator color={Colors.white} />
+                  <ActivityIndicator color={Colors.textPrimary} />
                 </View>
               ) : (
                 <View>
                   <UserAvatar uri={avatar} style={s.avatarImg} />
                   <View style={s.avatarEditBadge}>
-                    <Ionicons name="image-outline" size={14} color={Colors.white} />
+                    <Ionicons name="image-outline" size={14} color={Colors.textPrimary} />
                   </View>
                 </View>
               )}

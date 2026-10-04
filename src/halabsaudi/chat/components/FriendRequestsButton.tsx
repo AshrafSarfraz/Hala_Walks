@@ -33,7 +33,7 @@ export default function FriendRequestsButton({navigation}: {navigation: any}) {
     <Ionicons name="person-add-outline" size={20} color={Colors.textPrimary} />
     <Text style={{flex: 1, color: Colors.textPrimary, fontWeight: '600'}}>{hbsText(ar, 'ui_friend_requests')}</Text>
     {count !== null && <View style={{backgroundColor: count ? Colors.accent : Colors.border, borderRadius: 12, minWidth: 24, padding: 4, alignItems: 'center'}}>
-      <Text style={{color: Colors.white, fontWeight: '700'}}>{count}</Text>
+      <Text style={{color: Colors.textPrimary, fontWeight: '700'}}>{count}</Text>
     </View>}
     <Ionicons name={ar ? 'chevron-back' : 'chevron-forward'} size={18} color={Colors.textPrimary} />
   </Pressable>;

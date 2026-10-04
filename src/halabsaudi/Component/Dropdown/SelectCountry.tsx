@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
   dropdown_Icon: {
     width: 12,
     height: 12,
-    tintColor: Colors.white,
+    tintColor: Colors.textPrimary,
   },
   flag: {
     width: 16,

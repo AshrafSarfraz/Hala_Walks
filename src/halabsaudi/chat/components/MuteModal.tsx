@@ -167,7 +167,7 @@ export default function MuteModal({
               <Ionicons
                 name="notifications-off-outline"
                 size={18}
-                color={Colors.white}
+                color={Colors.onAccent}
                 style={isRTL ? {marginLeft: 8} : {marginRight: 8}}
               />
               <Text style={styles.confirmText}>{t.mute_chat_btn}</Text>

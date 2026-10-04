@@ -101,7 +101,7 @@ export default function BlockUserModal({
               disabled={loading}
               activeOpacity={0.8}>
               {loading ? (
-                <ActivityIndicator size="small" color={Colors.white} />
+                <ActivityIndicator size="small" color={Colors.textPrimary} />
               ) : (
                 <Text style={styles.confirmText}>
                   {isBlocked ? t.unblock_btn : t.block_btn}

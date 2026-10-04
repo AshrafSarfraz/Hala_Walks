@@ -30,7 +30,7 @@ const ICON_COLOR = Colors.accent;
 
 const Profile: React.FC = () => {
   const navigation = useNavigation<any>();
-  useStatusBar('light-content', Colors.surface, true);
+  useStatusBar('dark-content', Colors.surface, true);
   const [alertVisible, setAlertVisible] = useState(false);
   const [showLastSeen, setShowLastSeen] = useState(true);
   const [showOnlineStatus, setShowOnlineStatus] = useState(true);
@@ -382,7 +382,7 @@ const Profile: React.FC = () => {
         onRequestClose={() => setShowFullImage(false)}>
         <View style={s.imageOverlay}>
           <TouchableOpacity style={s.closeBtn} onPress={() => setShowFullImage(false)}>
-            <Ionicons name="close" size={24} color={Colors.white} />
+            <Ionicons name="close" size={24} color={Colors.onMedia} />
           </TouchableOpacity>
           <Text style={s.viewerName}>{userName}</Text>
           {userAvatar && (
@@ -402,7 +402,7 @@ const Profile: React.FC = () => {
               setShowFullImage(false);
               navigation.navigate('EditAccount');
             }}>
-            <Ionicons name="pencil-outline" size={16} color={Colors.white} />
+            <Ionicons name="pencil-outline" size={16} color={Colors.onMedia} />
             <Text style={s.viewerEditTxt}>{hbsText(isAr, 'ui_change_photo')}</Text>
           </TouchableOpacity>
         </View>

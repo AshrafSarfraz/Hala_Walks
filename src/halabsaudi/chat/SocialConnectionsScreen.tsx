@@ -31,7 +31,7 @@ type Request = {_id: string; user: Person};
 type Mode = 'friends' | 'requests';
 
 export default function SocialConnectionsScreen({route, navigation}: any) {
-  useStatusBar('light-content', Colors.surface);
+  useStatusBar('dark-content', Colors.surface);
   const mode: Mode = route.params?.mode === 'requests' ? 'requests' : 'friends';
   const userId = route.params?.userId;
   const isOwn = !userId || route.params?.isOwn === true;
@@ -228,7 +228,7 @@ export default function SocialConnectionsScreen({route, navigation}: any) {
               onPress={() => handleRequest(request, true)}
               disabled={actionId !== null}>
               {actionId === request._id ? (
-                <ActivityIndicator size="small" color={Colors.white} />
+                <ActivityIndicator size="small" color={Colors.textPrimary} />
               ) : (
                 <Text style={s.confirmText}>Accept</Text>
               )}
@@ -243,7 +243,7 @@ export default function SocialConnectionsScreen({route, navigation}: any) {
     <SafeAreaView style={s.safe} edges={['top']}>
       <View style={s.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.back}>
-          <Ionicons name="arrow-back" size={22} color={Colors.white} />
+          <Ionicons name="arrow-back" size={22} color={Colors.textPrimary} />
         </TouchableOpacity>
         <Text style={s.title} numberOfLines={1}>
           {route.params?.profileName
@@ -291,7 +291,7 @@ const s = StyleSheet.create({
     paddingHorizontal: 14,
   },
   back: {width: 38, height: 38, justifyContent: 'center', alignItems: 'center'},
-  title: {color: Colors.white, fontSize: 17, fontWeight: '800'},
+  title: {color: Colors.textPrimary, fontSize: 17, fontWeight: '800'},
   center: {flex: 1, justifyContent: 'center', alignItems: 'center'},
   list: {backgroundColor: Colors.background, flexGrow: 1, padding: 14, gap: 10},
   empty: {
@@ -301,7 +301,7 @@ const s = StyleSheet.create({
     alignItems: 'center',
     padding: 30,
   },
-  emptyText: {color: Colors.white, fontSize: 15},
+  emptyText: {color: Colors.textPrimary, fontSize: 15},
   row: {
     minHeight: 72,
     backgroundColor: Colors.surface,
@@ -314,7 +314,7 @@ const s = StyleSheet.create({
   fallback: {justifyContent: 'center', alignItems: 'center'},
   initial: {color: Colors.white, fontSize: 18, fontWeight: '800'},
   info: {flex: 1, marginHorizontal: 11},
-  name: {color: Colors.white, fontWeight: '700', fontSize: 15},
+  name: {color: Colors.textPrimary, fontWeight: '700', fontSize: 15},
   bio: {color: Colors.textMuted, fontSize: 12, marginTop: 3},
   actions: {flexDirection: 'row', gap: 7},
   confirm: {
@@ -337,5 +337,5 @@ const s = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 8,
   },
-  rejectText: {color: Colors.white, fontSize: 12, fontWeight: '700'},
+  rejectText: {color: Colors.textPrimary, fontSize: 12, fontWeight: '700'},
 });

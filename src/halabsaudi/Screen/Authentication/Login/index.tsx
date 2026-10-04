@@ -1,5 +1,3 @@
-import {Text} from '../../../../ui/Text';
-import {TextInput} from '../../../../ui/TextInput';
 import React, {useState} from 'react';
 import {
   View,
@@ -8,65 +6,75 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  Keyboard,
 } from 'react-native';
+import {Text} from '../../../../ui/Text';
+import {TextInput} from '../../../../ui/TextInput';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {Hbk_White} from '../../../Themes/Images';
-import CustomButton from '../../../Component/CustomButton/CustomButton';
-import {Colors} from '../../../Themes/Colors';
-import CountryDropdown from '../../../Component/Dropdown/SelectCountry';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {languageData} from '../../../redux_toolkit/language/languageSlice';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../redux_toolkit/store';
-import {getStyles} from './style';
+import {languageData} from '../../../redux_toolkit/language/languageSlice';
+import CountryDropdown from '../../../Component/Dropdown/SelectCountry';
 import ActivityIndicatorModal from '../../../Component/Loader/ActivityIndicator';
-import AccountNotFoundModal from '../../../Component/CustomAlert/NoAccountFound';
 import CustomHeader from '../../../Component/CustomHeader/CustomHeader';
 import {apiPost} from '../../../firebase/api/client';
 import {useStatusBar} from '../../../Component/UseStatusBar/useStatusBar';
-
-import {hbsText} from '../../../i18n/translations';
-
-// ─────────────────────────────────────────────
-// Apple Review dummy credentials
-const APPLE_REVIEW_PHONE = '1234567890';
-const APPLE_REVIEW_CODE = '+966';
-// ─────────────────────────────────────────────
-
+import {getStyles, AuthColors} from './style';
 const buildFullPhoneNumber = (countryCode: string, input: string) => {
   const clean = (input || '').replace(/\s|-/g, '');
-  if (clean.startsWith('+')) return clean;
-  const cc = countryCode.startsWith('+') ? countryCode : `+${countryCode}`;
-  return `${cc}${clean}`;
+  return clean.startsWith('+')
+    ? clean
+    : `${
+        countryCode.startsWith('+') ? countryCode : `+${countryCode}`
+      }${clean}`;
 };
-
-const isDummyLogin = (code: string, phone: string) =>
-  code === APPLE_REVIEW_CODE && phone.replace(/\s|-/g, '') === APPLE_REVIEW_PHONE;
-
+import {startDemoSession} from '../../../demo/session';
+import AccountNotFoundModal from '../../../Component/CustomAlert/NoAccountFound';
+import { Logo_G, Phonelogin } from '../../../Themes/Images';
 const Login: React.FC<NativeStackScreenProps<any>> = ({navigation}) => {
-  useStatusBar('light-content', Colors.background);
+  useStatusBar('dark-content', AuthColors.background);
   const insets = useSafeAreaInsets();
-
+  const language = useSelector((state: RootState) => state.language.language);
+  const styles = getStyles(language);
+  const ar = language === 'ar';
   const [countryCode, setCountryCode] = useState('+966');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [showNotFoundModal, setShowNotFoundModal] = useState(false);
-
-  const language = useSelector((state: RootState) => state.language.language);
-  const styles = getStyles(language);
-
-  const handleCountrySelect = (code: string) => setCountryCode(code);
-  const clearError = () => error && setError(null);
-
+  async function handleDemoLogin() {
+    if (!__DEV__ || isLoading) return;
+    Keyboard.dismiss();
+    setIsLoading(true);
+    setError(null);
+    try {
+      await startDemoSession();
+      navigation.reset({index: 0, routes: [{name: 'BottomTab'}]});
+    } catch {
+      setError(
+        ar
+          ? 'تعذر فتح العرض التجريبي. حاول مرة أخرى.'
+          : 'Could not open demo. Please try again.',
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  }
   async function sendVerificationCode() {
+    if (isLoading) return;
     if (!phoneNumber.trim()) {
-      setError('Please enter a valid phone number');
+      setError(
+        ar ? 'يرجى إدخال رقم الهاتف' : 'Please enter a valid phone number',
+      );
       return;
     }
-
-    // Dummy: go to OTP screen with isDummy flag — no API call, no skip
-    if (isDummyLogin(countryCode, phoneNumber)) {
+    Keyboard.dismiss();
+    setError(null);
+    if (
+      countryCode === '+966' &&
+      phoneNumber.replace(/\s|-/g, '') === '1234567890'
+    ) {
       navigation.navigate('OTP', {
         Phone: '+9661234567890',
         CountryCode: '+966',
@@ -74,96 +82,110 @@ const Login: React.FC<NativeStackScreenProps<any>> = ({navigation}) => {
       });
       return;
     }
-
-    const fullPhoneNumber = buildFullPhoneNumber(countryCode, phoneNumber);
     setIsLoading(true);
-    setError(null);
-
     try {
-      const res = await apiPost<{message: string; status?: string}>(
-        '/phoneAuth/login/request-otp',
-        {phone: fullPhoneNumber},
-      );
-      console.log('OTP request success:', res);
+      const fullPhoneNumber = buildFullPhoneNumber(countryCode, phoneNumber);
+      await apiPost('/phoneAuth/login/request-otp', {phone: fullPhoneNumber});
       navigation.navigate('OTP', {
         Phone: fullPhoneNumber,
         CountryCode: countryCode,
       });
     } catch (err: any) {
-      console.log('OTP request error:', err);
-      if (err?.status === 404) {
-        setShowNotFoundModal(true);
-      } else if (err?.status === 429) {
-        setError(err?.message || 'Please wait before resending OTP');
-      } else {
-        setError(err?.message || 'Error sending verification code');
-      }
+      if (err?.status === 404) setShowNotFoundModal(true);
+      else
+        setError(
+          err?.message ||
+            (ar ? 'تعذر إرسال رمز التحقق' : 'Error sending verification code'),
+        );
     } finally {
       setIsLoading(false);
     }
   }
-
   return (
     <View style={[styles.Root, {paddingTop: insets.top}]}>
       <CustomHeader
         title=""
         onBackPress={() => navigation.goBack()}
-        backgroundColor={Colors.background}
+        backgroundColor={AuthColors.background}
       />
-
-<KeyboardAvoidingView
-  style={styles.Flex}
-  behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-  <ScrollView
-    style={styles.Flex}
-    contentContainerStyle={styles.MainContainer}
-    keyboardShouldPersistTaps="handled"
-    showsVerticalScrollIndicator={false}
-    bounces={false}>
-          {/* ── Hero ── */}
+      <KeyboardAvoidingView
+        style={styles.Flex}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <ScrollView
+          style={styles.Flex}
+          contentContainerStyle={[
+            styles.MainContainer,
+            {paddingBottom: Math.max(insets.bottom, 24)},
+          ]}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
+          showsVerticalScrollIndicator={false}>
           <View style={styles.HeroBlock}>
-            <Image source={Hbk_White} style={styles.H_Logo} resizeMode="contain" />
+            <Image
+              source={Logo_G}
+              style={styles.H_Logo}
+              resizeMode="cover"
+             borderRadius={100}
+            />
             <Text style={styles.Welcome_Txt}>
               {languageData[language].welcome_back}
             </Text>
             <Text style={styles.SignUp_Txt}>
-              {languageData[language].sign_in_message}
+              {ar
+                ? 'أدخل رقم هاتفك للبدء.'
+                : 'Enter your phone number to get started.'}
             </Text>
           </View>
-
-          {/* ── Form ── */}
           <View style={styles.InputContainer}>
+            <Text style={styles.Label}>
+              {languageData[language].phone_number}
+            </Text>
             <View
               style={[
                 styles.PhoneInput_Field,
                 phoneNumber !== '' && styles.Active_Input_Field,
               ]}>
-              <CountryDropdown onSelectCountry={handleCountrySelect} />
+              <CountryDropdown
+                onSelectCountry={code => {
+                  setCountryCode(code);
+                  setError(null);
+                }}
+              />
               <TextInput
-                placeholder={languageData[language].phone_number}
                 value={phoneNumber}
-                placeholderTextColor={Colors.textMuted}
+                placeholder={languageData[language].phone_number}
+                placeholderTextColor={AuthColors.muted}
                 onChangeText={t => {
                   setPhoneNumber(t);
-                  clearError();
+                  setError(null);
                 }}
                 style={styles.PhoneNumber_Input}
                 keyboardType="phone-pad"
                 autoCapitalize="none"
+                autoCorrect={false}
                 returnKeyType="done"
                 onSubmitEditing={sendVerificationCode}
+                editable={!isLoading}
               />
             </View>
-
+            <Text style={styles.Hint}>
+              {ar
+                ? 'سنرسل إليك رمز التحقق برسالة نصية.'
+                : 'We’ll send you a verification code via SMS.'}
+            </Text>
             <View style={styles.ErrorSlot}>
               {error ? <Text style={styles.Error}>{error}</Text> : null}
             </View>
-
-            <CustomButton
-              title={languageData[language].login}
-              onPress={sendVerificationCode}
-            />
-
+            <TouchableOpacity
+              accessibilityRole="button"
+              disabled={isLoading}
+              style={[styles.PrimaryButton, isLoading && styles.Disabled]}
+              onPress={sendVerificationCode}>
+              <Text style={styles.PrimaryText}>
+                {ar ? 'إرسال الرمز' : 'Send code'}
+              </Text>
+            </TouchableOpacity>
+  
             <TouchableOpacity
               onPress={() => navigation.navigate('SignUp')}
               style={styles.Link_Btn}>
@@ -172,17 +194,12 @@ const Login: React.FC<NativeStackScreenProps<any>> = ({navigation}) => {
               </Text>
             </TouchableOpacity>
           </View>
-
-          {/* ── Footer ── */}
           <View style={styles.Footer}>
             <View style={styles.DividerRow}>
               <View style={styles.DividerLine} />
-              <Text style={styles.DividerTxt}>
-                {hbsText(language === 'ar', 'ui_or')}
-              </Text>
+              <Text style={styles.DividerTxt}>{ar ? 'أو' : 'or'}</Text>
               <View style={styles.DividerLine} />
             </View>
-
             <TouchableOpacity
               style={styles.Partner_Btn}
               onPress={() => navigation.navigate('HalaInfo')}>
@@ -190,10 +207,12 @@ const Login: React.FC<NativeStackScreenProps<any>> = ({navigation}) => {
                 {languageData[language].become_a_Partner}
               </Text>
             </TouchableOpacity>
+            <Text style={styles.Privacy}>
+              {ar ? 'رقم هاتفك يبقى خاصاً' : 'Your number stays private'}
+            </Text>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-
       {isLoading && <ActivityIndicatorModal visible={isLoading} />}
       <AccountNotFoundModal
         visible={showNotFoundModal}
@@ -202,5 +221,4 @@ const Login: React.FC<NativeStackScreenProps<any>> = ({navigation}) => {
     </View>
   );
 };
-
 export default Login;

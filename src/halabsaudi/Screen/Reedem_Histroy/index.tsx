@@ -56,7 +56,7 @@ function formatTime(createdAt: any): string {
 
 const Redeem_His: React.FC = () => {
   const navigation = useNavigation<any>();
-   useStatusBar('light-content', Colors.surface, true);
+   useStatusBar('dark-content', Colors.surface, true);
   // ── Language / RTL ─────────────────────────────────────────────────
   const language = useSelector((state: RootState) => state.language.language);
   const t        = languageData[language];
@@ -173,7 +173,7 @@ const Redeem_His: React.FC = () => {
             activeOpacity={0.7}>
             <Ionicons
               name={isRTL ? 'arrow-forward' : 'arrow-back'}
-              size={20} color={Colors.white}
+              size={20} color={Colors.textPrimary}
             />
           </TouchableOpacity>
 
@@ -262,22 +262,22 @@ const styles = StyleSheet.create({
   headerRow: {alignItems: 'center', gap: 12},
   backBtn: {
     width: 38, height: 38, borderRadius: 19,
-    backgroundColor: Colors.lightOverlaySubtle,
+    backgroundColor: Colors.border,
     justifyContent: 'center', alignItems: 'center',
-    borderWidth: 1, borderColor: Colors.lightOverlaySubtle, flexShrink: 0,
+    borderWidth: 1, borderColor: Colors.border, flexShrink: 0,
   },
   headerText: {flex: 1},
   eyebrow: {
-    fontSize: 10, color: Colors.white,   fontFamily: Fonts.SF_Bold,
+    fontSize: 10, color: Colors.textPrimary,   fontFamily: Fonts.SF_Bold,
     letterSpacing: 0.2, textTransform: 'uppercase', marginBottom: 3,
   },
   headerTitle: {fontSize: 18,
         fontFamily: Fonts.SF_Bold,
-    fontWeight: '800', color: Colors.white, letterSpacing: -0.3},
+    fontWeight: '800', color: Colors.textPrimary, letterSpacing: -0.3},
   countBadge: {
-    backgroundColor: Colors.lightOverlaySubtle, borderRadius: 20,
+    backgroundColor: Colors.border, borderRadius: 20,
     paddingHorizontal: 12, paddingVertical: 5,
-    borderWidth: 1, borderColor: Colors.lightOverlaySubtle,
+    borderWidth: 1, borderColor: Colors.border,
   },
   countBadgeText: {color: Colors.white, fontSize: 13, fontWeight: '700'},
 
@@ -285,7 +285,7 @@ const styles = StyleSheet.create({
   listContent: {paddingHorizontal: 14, paddingTop: 12, paddingBottom: 36},
   listHeader:  {paddingHorizontal: 4, paddingBottom: 8},
   listHeaderText: {
-    fontSize: 11, fontWeight: '700', color: Colors.white,
+    fontSize: 11, fontWeight: '700', color: Colors.textPrimary,
     letterSpacing: 0.2, textTransform: 'uppercase',
   },
 
@@ -307,7 +307,7 @@ const styles = StyleSheet.create({
   brandLetter: {color: Colors.white, fontSize: 20, fontWeight: '800'},
 
   cardInfo: {flex: 1, minWidth: 0},
-  cardBrand: {fontSize: 13, fontWeight: '700', color: Colors.white, marginBottom: 5},
+  cardBrand: {fontSize: 13, fontWeight: '700', color: Colors.textPrimary, marginBottom: 5},
   cardMeta:  {alignItems: 'center', gap: 3},
   cardDate:  {fontSize: 10, color: Colors.textMuted, fontWeight: '500'},
   metaDot:   {width: 3, height: 3, borderRadius: 2, backgroundColor: Colors.textSecondary},
@@ -324,9 +324,9 @@ const styles = StyleSheet.create({
   emptyRing: {
     width: 88, height: 88, borderRadius: 44, backgroundColor: Colors.surface,
     justifyContent: 'center', alignItems: 'center',
-    marginBottom: 8, borderWidth: 3, borderColor: Colors.white,
+    marginBottom: 8, borderWidth: 3, borderColor: Colors.border,
   },
-  emptyTitle: {fontSize: 18, fontWeight: '700', color: Colors.white},
+  emptyTitle: {fontSize: 18, fontWeight: '700', color: Colors.textPrimary},
   emptySub:   {fontSize: 13, color: Colors.textMuted, lineHeight: 20},
 
   // ── Loader ──

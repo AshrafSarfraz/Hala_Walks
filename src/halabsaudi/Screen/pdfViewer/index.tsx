@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     top:15
   },
   CloseTxt:{
-    color:Colors.white,
+    color:Colors.textPrimary,
     fontSize:22,
     fontFamily:Fonts.SF_Medium
   }

@@ -26,7 +26,7 @@ const LanguageModal: React.FC<LanProps> = ({ visible, onClose }) => {
 
   return (
     <Modal transparent visible={visible} animationType="fade">
-        <StatusBar barStyle="light-content" />
+        <StatusBar barStyle="dark-content" />
       <View style={styles.overlay}>
         <View style={styles.container}>
           <Text style={styles.headerText}>
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.accent, // Highlight selected language
   },
   selectedButtonTxt:{
-   color:Colors.white
+   color:Colors.onAccent
   },
   languageText: {
     color: Colors.accent,

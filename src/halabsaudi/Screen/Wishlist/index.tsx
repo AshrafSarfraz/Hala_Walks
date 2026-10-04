@@ -22,7 +22,7 @@ const { width } = Dimensions.get('screen');
 type WishlistProps = { navigation: any };
 
 const Wishlist: React.FC<WishlistProps> = () => {
- useStatusBar('light-content', Colors.surface, true);
+ useStatusBar('dark-content', Colors.surface, true);
   const navigation = useNavigation<any>();
   const dispatch = useDispatch();
 
@@ -89,7 +89,7 @@ const Wishlist: React.FC<WishlistProps> = () => {
        
         <View style={[s.headerRow, { flexDirection: rowDir }]}>
 
-          <TouchableOpacity accessibilityRole="button" accessibilityLabel="Back" onPress={() => navigation.canGoBack() ? navigation.goBack() : navigation.navigate('BottomTab', {screen: 'Home'})} style={{width: 44, height: 44, justifyContent: 'center', alignItems: 'center', marginRight: 8}}><Ionicons name="arrow-back" size={25} color={Colors.white} /></TouchableOpacity>
+          <TouchableOpacity accessibilityRole="button" accessibilityLabel="Back" onPress={() => navigation.canGoBack() ? navigation.goBack() : navigation.navigate('BottomTab', {screen: 'Home'})} style={{width: 44, height: 44, justifyContent: 'center', alignItems: 'center', marginRight: 8}}><Ionicons name="arrow-back" size={25} color={Colors.textPrimary} /></TouchableOpacity>
           <View style={[s.headerText, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>
             <Text style={[s.eyebrow, { textAlign }]}>{t.hala_community}</Text>
             <Text style={[s.headerTitle, { textAlign }]}>{t.Wishlist}</Text>
@@ -230,7 +230,7 @@ const s = StyleSheet.create({
   headerText: { flex: 1 },
   eyebrow: {
     fontSize: 10,
-    color: Colors.white,
+    color: Colors.textPrimary,
     letterSpacing: 0.2,
     textTransform: 'uppercase',
     marginBottom: 3,
@@ -238,16 +238,16 @@ const s = StyleSheet.create({
   headerTitle: {
     fontSize: 22,
     fontWeight: '800',
-    color: Colors.white,
+    color: Colors.textPrimary,
     letterSpacing: -0.3,
   },
   countBadge: {
-    backgroundColor: Colors.lightOverlaySubtle,
+    backgroundColor: Colors.border,
     borderRadius: 20,
     paddingHorizontal: 12,
     paddingVertical: 5,
     borderWidth: 1,
-    borderColor: Colors.lightOverlaySubtle,
+    borderColor: Colors.border,
   },
   countBadgeText: {
     color: Colors.white,
@@ -294,7 +294,7 @@ const s = StyleSheet.create({
     width: 34,
     height: 34,
     borderRadius: 17,
-    backgroundColor: Colors.lightOverlay,
+    backgroundColor: Colors.textSecondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -313,7 +313,7 @@ const s = StyleSheet.create({
   cardName: {
     fontSize: 13,
     fontFamily: Fonts.SF_Bold,
-    color: Colors.white,
+    color: Colors.textPrimary,
     marginBottom: 6,
   },
   categoryPill: {
@@ -326,7 +326,7 @@ const s = StyleSheet.create({
   },
   categoryPillText: {
     fontSize: 10,
-    color: Colors.white,
+    color: Colors.textPrimary,
     fontFamily: Fonts.SF_Medium,
     lineHeight: 13,
   },
@@ -375,7 +375,7 @@ const s = StyleSheet.create({
   emptyTitle: {
     fontSize: 17,
     fontWeight: '700',
-    color: Colors.white,
+    color: Colors.textPrimary,
   },
   emptySub: {
     fontSize: 13,

@@ -78,7 +78,7 @@ function debouncedSave(data: Conversation[]) {
 }
 
 export default function ConversationsScreen({navigation}: any) {
-  useStatusBar('light-content', Colors.surface, true);
+  useStatusBar('dark-content', Colors.surface, true);
   const language = useSelector((state: RootState) => state.language.language);
   const t        = languageData[language];
   const isRTL    = language === 'ar';
@@ -365,7 +365,7 @@ export default function ConversationsScreen({navigation}: any) {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={() => { setRefreshing(true); lastLoadedRef.current = 0; fetchChats(false, true); }}
-            colors={[Colors.white]} tintColor={Colors.white}
+            colors={[Colors.textPrimary]} tintColor={Colors.textPrimary}
           />
         }
         ListEmptyComponent={
@@ -406,13 +406,13 @@ const styles = StyleSheet.create({
   avatarText:  {color: Colors.white, fontWeight: '800', fontSize: 19},
   rowContent:  {flex: 1},
   rowTop:      {alignItems: 'center', marginBottom: 3, justifyContent: 'space-between'},
-  name:        {fontSize: 15, fontWeight: '600', color: Colors.white, flex: 1},
-  nameUnread:  {fontWeight: '800', color: Colors.white},
-  time:        {fontSize: 11, color: Colors.white, fontWeight: '500', flexShrink: 0},
+  name:        {fontSize: 15, fontWeight: '600', color: Colors.textPrimary, flex: 1},
+  nameUnread:  {fontWeight: '800', color: Colors.textPrimary},
+  time:        {fontSize: 11, color: Colors.textPrimary, fontWeight: '500', flexShrink: 0},
   timeUnread:  {color: Colors.accent, fontWeight: '700'},
   rowBottom:   {alignItems: 'center', justifyContent: 'space-between'},
   preview:     {flex: 1, fontSize: 13, color: Colors.textSecondary, fontWeight: '400'},
-  previewUnread:  {color: Colors.white, fontWeight: '600'},
+  previewUnread:  {color: Colors.textPrimary, fontWeight: '600'},
   previewDeleted: {fontStyle: 'italic', color: Colors.textMuted},
   mutedIcon:   {fontSize: 13, marginRight: 4},
   badge:       {backgroundColor: Colors.accent, borderRadius: 12, minWidth: 20, height: 20, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 5, flexShrink: 0},
@@ -420,7 +420,7 @@ const styles = StyleSheet.create({
   badgeText:   {color: Colors.white, fontSize: 11, fontWeight: '700'},
   emptyState:  {alignItems: 'center', marginTop: 160, paddingHorizontal: 40, gap: 10},
   emptyIcon:   {width: 80, height: 80, borderRadius: 40, backgroundColor: Colors.surface, justifyContent: 'center', alignItems: 'center', marginBottom: 8},
-  emptyTitle:  {fontSize: 18, fontWeight: '700', color: Colors.white},
+  emptyTitle:  {fontSize: 18, fontWeight: '700', color: Colors.textPrimary},
   emptySub:    {fontSize: 13, color: Colors.textMuted, lineHeight: 18},
   emptyBtn:    {marginTop: 8, backgroundColor: Colors.accent, borderRadius: 24, paddingHorizontal: 28, paddingVertical: 12},
   emptyBtnText:{color: Colors.white, fontWeight: '700', fontSize: 14},

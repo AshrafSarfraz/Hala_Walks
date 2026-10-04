@@ -82,7 +82,7 @@ export default function ConversationHeader({
 
         <View style={[styles.actions, {flexDirection: rowDir}]}>
           <TouchableOpacity style={styles.iconBtn} onPress={openSearch}>
-            <Ionicons name="search-outline" size={20} color={Colors.white} />
+            <Ionicons name="search-outline" size={20} color={Colors.textPrimary} />
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -109,7 +109,7 @@ export default function ConversationHeader({
             <Ionicons
               name="search"
               size={15}
-              color={Colors.lightOverlay}
+              color={Colors.textMuted}
               style={isRTL ? {marginLeft: 7} : {marginRight: 7}}
             />
             <TextInput
@@ -129,7 +129,7 @@ export default function ConversationHeader({
 />
             {searchText.length > 0 && (
               <TouchableOpacity onPress={() => handleChange('')}>
-                <Ionicons name="close-circle" size={16} color={Colors.lightOverlay} />
+                <Ionicons name="close-circle" size={16} color={Colors.textMuted} />
               </TouchableOpacity>
             )}
           </View>
@@ -152,7 +152,7 @@ export default function ConversationHeader({
 
 const styles = StyleSheet.create({
   wrapper: {
-    backgroundColor: Colors.surface,
+    backgroundColor: Colors.header,
     paddingHorizontal: 20,
     paddingTop: Platform.OS === 'ios' ? 56 : 44,
     paddingBottom: 16,
@@ -161,16 +161,16 @@ const styles = StyleSheet.create({
 
   topRow: {justifyContent: 'space-between', alignItems: 'flex-start'},
   eyebrow: {
-    fontSize: 11, color: Colors.white,
+    fontSize: 11, color: Colors.textPrimary,
     letterSpacing: 0.2, textTransform: 'uppercase', marginBottom: 3,
   },
-  title: {color: Colors.white, fontSize: 26, fontWeight: '800', letterSpacing: -0.4},
+  title: {color: Colors.textPrimary, fontSize: 26, fontWeight: '800', letterSpacing: -0.4},
   actions: {alignItems: 'center', gap: 10, marginTop: 4},
   iconBtn: {
     width: 38, height: 38, borderRadius: 19,
-    backgroundColor: Colors.lightOverlaySubtle,
+    backgroundColor: Colors.surfaceRaised,
     justifyContent: 'center', alignItems: 'center',
-    borderWidth: 1, borderColor: Colors.lightOverlaySubtle,
+    borderWidth: 1, borderColor: Colors.border,
   },
   avatar: {
     width: 38, height: 38, borderRadius: 19,
@@ -189,12 +189,12 @@ const styles = StyleSheet.create({
   searchBox: {
     flex: 1, alignItems: 'center',
     borderRadius: 24, paddingHorizontal: 14, height: 46,
-    borderWidth: 1, borderColor: Colors.lightOverlaySubtle,
+    borderWidth: 1, borderColor: Colors.border,
     overflow: 'hidden',
   },
   searchInput: {
     flex: 1,
-    color: Colors.white,
+    color: Colors.textPrimary,
     fontSize: 14,
     // wrapper / Android ki default styling reset
     backgroundColor: Colors.transparent,
@@ -210,8 +210,8 @@ const styles = StyleSheet.create({
   statsStrip: {alignItems: 'center', marginTop: 14, gap: 10},
   statItem: {alignItems: 'center', gap: 5},
   statDot: {width: 7, height: 7, borderRadius: 4, backgroundColor: Colors.accent},
-  statText: {fontSize: 11, color: Colors.lightOverlay, fontWeight: '500'},
-  statDivider: {width: 1, height: 10, backgroundColor: Colors.lightOverlaySubtle},
+  statText: {fontSize: 11, color: Colors.textSecondary, fontWeight: '500'},
+  statDivider: {width: 1, height: 10, backgroundColor: Colors.surfaceRaised},
 });
 
 

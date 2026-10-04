@@ -6,7 +6,7 @@ export const TextInput = forwardRef<NativeTextInput, TextInputProps>((props, ref
   <NativeTextInput
     {...props}
     ref={ref}
-    keyboardAppearance="dark"
+    keyboardAppearance="light"
     placeholderTextColor={props.placeholderTextColor ?? theme.muted}
     selectionColor={props.selectionColor ?? theme.accent}
     style={[styles.input, props.style]}

@@ -25,7 +25,7 @@ const BRANDS_API = 'https://hala-b-saudi.onrender.com/api/hbs/brands';
 
 const SearchScreen: React.FC = () => {
   const navigation = useNavigation<any>();
-  useStatusBar('light-content', Colors.background);
+  useStatusBar('dark-content', Colors.background);
   const [searchQuery, setSearchQuery] = useState('');
   const [brands, setBrands] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -259,7 +259,7 @@ const SearchScreen: React.FC = () => {
           <TextInput
             style={styles.searchInput}
             placeholder={languageData[language].Search_for_anything}
-            placeholderTextColor={Colors.white}
+            placeholderTextColor={Colors.textMuted}
             value={searchQuery}
             onChangeText={setSearchQuery}
           />

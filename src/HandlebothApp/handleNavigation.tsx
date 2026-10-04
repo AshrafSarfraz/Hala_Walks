@@ -1,7 +1,8 @@
+import {Colors} from '../halabsaudi/Themes/Colors';
 // import {ActivityIndicator} from '../ui/ActivityIndicator';
 // import React, { useEffect, useState, useCallback } from 'react'; // ✅ useCallback add
 // import {View} from 'react-native';
-// import { NavigationContainer, DarkTheme } from '@react-navigation/native';
+// import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 // import { createNativeStackNavigator } from '@react-navigation/native-stack';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 // import auth from '@react-native-firebase/auth';
@@ -52,15 +53,15 @@
 
 //   if (loading) {
 //     return (
-//       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#101114' }}>
-//         <ActivityIndicator size="large" color="#E75049" />
+//       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.background }}>
+//         <ActivityIndicator size="large" color={Colors.accent} />
 //       </View>
 //     );
 //   }
 
 //   if (onlyStack === 'WestwalkOnly') {
 //     return (
-//       <NavigationContainer theme={{...DarkTheme, colors: {...DarkTheme.colors, background: '#101114', card: '#191B20', text: '#F5F6F8', primary: '#E75049', border: '#343841'}}} ref={navigationRef} onReady={handleNavigationReady}>
+//       <NavigationContainer theme={{...DefaultTheme, colors: {...DefaultTheme.colors, background: Colors.background, card: Colors.surface, text: Colors.textPrimary, primary: Colors.accent, border: Colors.border}}} ref={navigationRef} onReady={handleNavigationReady}>
 //         <Stack.Navigator screenOptions={{ headerShown: false }}>
 //           <Stack.Screen name="WestwalkStack" component={StackNavigation} />
 //         </Stack.Navigator>
@@ -70,7 +71,7 @@
 
 //   if (onlyStack === 'HalabOnly') {
 //     return (
-//       <NavigationContainer theme={{...DarkTheme, colors: {...DarkTheme.colors, background: '#101114', card: '#191B20', text: '#F5F6F8', primary: '#E75049', border: '#343841'}}} ref={navigationRef} onReady={handleNavigationReady}>
+//       <NavigationContainer theme={{...DefaultTheme, colors: {...DefaultTheme.colors, background: Colors.background, card: Colors.surface, text: Colors.textPrimary, primary: Colors.accent, border: Colors.border}}} ref={navigationRef} onReady={handleNavigationReady}>
 //         <Stack.Navigator screenOptions={{ headerShown: false }}>
 //           <Stack.Screen name="HalabStack" component={HalaStack} />
 //         </Stack.Navigator>
@@ -79,7 +80,7 @@
 //   }
 
 //   return (
-//     <NavigationContainer theme={{...DarkTheme, colors: {...DarkTheme.colors, background: '#101114', card: '#191B20', text: '#F5F6F8', primary: '#E75049', border: '#343841'}}} ref={navigationRef} onReady={handleNavigationReady}>
+//     <NavigationContainer theme={{...DefaultTheme, colors: {...DefaultTheme.colors, background: Colors.background, card: Colors.surface, text: Colors.textPrimary, primary: Colors.accent, border: Colors.border}}} ref={navigationRef} onReady={handleNavigationReady}>
 //       <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={initialRoute ?? 'HalabStack'}>
 //         <Stack.Screen name="HalabStack" component={HalaStack} />
 //         <Stack.Screen name="WestwalkStack" component={StackNavigation} />
@@ -98,7 +99,7 @@ import {ActivityIndicator} from '../ui/ActivityIndicator';
 import {openPendingSocialNotification} from '../halabsaudi/Notifications/social';
 import React, { useEffect, useState, useCallback } from 'react'; // ✅ useCallback add
 import {View} from 'react-native';
-import { NavigationContainer, DarkTheme } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import auth from '@react-native-firebase/auth';
@@ -150,15 +151,15 @@ const AppStack = () => {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#101114' }}>
-        <ActivityIndicator size="large" color="#E75049" />
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.background }}>
+        <ActivityIndicator size="large" color={Colors.accent} />
       </View>
     );
   }
 
   if (onlyStack === 'WestwalkOnly') {
     return (
-      <NavigationContainer theme={{...DarkTheme, colors: {...DarkTheme.colors, background: '#101114', card: '#191B20', text: '#F5F6F8', primary: '#E75049', border: '#343841'}}} ref={navigationRef} onReady={handleNavigationReady} onStateChange={() => {void openPendingSocialNotification().catch(() => {});}}>
+      <NavigationContainer theme={{...DefaultTheme, colors: {...DefaultTheme.colors, background: Colors.background, card: Colors.surface, text: Colors.textPrimary, primary: Colors.accent, border: Colors.border}}} ref={navigationRef} onReady={handleNavigationReady} onStateChange={() => {void openPendingSocialNotification().catch(() => {});}}>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="WestwalkStack" component={StackNavigation} />
         </Stack.Navigator>
@@ -168,7 +169,7 @@ const AppStack = () => {
 
   if (onlyStack === 'HalabOnly') {
     return (
-      <NavigationContainer theme={{...DarkTheme, colors: {...DarkTheme.colors, background: '#101114', card: '#191B20', text: '#F5F6F8', primary: '#E75049', border: '#343841'}}} ref={navigationRef} onReady={handleNavigationReady} onStateChange={() => {void openPendingSocialNotification().catch(() => {});}}>
+      <NavigationContainer theme={{...DefaultTheme, colors: {...DefaultTheme.colors, background: Colors.background, card: Colors.surface, text: Colors.textPrimary, primary: Colors.accent, border: Colors.border}}} ref={navigationRef} onReady={handleNavigationReady} onStateChange={() => {void openPendingSocialNotification().catch(() => {});}}>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="HalabStack" component={HalaStack} />
         </Stack.Navigator>
@@ -177,7 +178,7 @@ const AppStack = () => {
   }
 
   return (
-    <NavigationContainer theme={{...DarkTheme, colors: {...DarkTheme.colors, background: '#101114', card: '#191B20', text: '#F5F6F8', primary: '#E75049', border: '#343841'}}} ref={navigationRef} onReady={handleNavigationReady} onStateChange={() => {void openPendingSocialNotification().catch(() => {});}}>
+    <NavigationContainer theme={{...DefaultTheme, colors: {...DefaultTheme.colors, background: Colors.background, card: Colors.surface, text: Colors.textPrimary, primary: Colors.accent, border: Colors.border}}} ref={navigationRef} onReady={handleNavigationReady} onStateChange={() => {void openPendingSocialNotification().catch(() => {});}}>
       <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={initialRoute ?? 'HalabStack'}>
         <Stack.Screen name="HalabStack" component={HalaStack} />
         <Stack.Screen name="WestwalkStack" component={StackNavigation} />

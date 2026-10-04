@@ -59,7 +59,7 @@ Flatlist_Cont: {
     Type_Text: {
       fontSize: 9,
       lineHeight: 12,
-      color: Colors.white,
+      color: Colors.textPrimary,
       fontFamily: Fonts.SF_Medium,
     },
     Loc_Status_Cont: {

@@ -25,7 +25,7 @@ const PlusTabIcon = ({focused}: {focused: boolean}) => (
     <Ionicons
       name="time"
       size={25}
-      color={focused ? Colors.accent : Colors.white}
+      color={focused ? Colors.accent : Colors.textMuted}
     />
   </View>
 );
@@ -51,7 +51,7 @@ const MyTabs: React.FC = () => {
           }
 
           let iconSource: ImageSourcePropType | undefined;
-          const tintColor = focused ? Colors.accent : Colors.white;
+          const tintColor = focused ? Colors.accent : Colors.textMuted;
 
           switch (route.name) {
             case 'Home':
@@ -79,7 +79,7 @@ const MyTabs: React.FC = () => {
         },
         tabBarLabelStyle: {paddingBottom: 4, fontSize: 10, fontWeight: '500'},
         tabBarActiveTintColor: Colors.accent,
-        tabBarInactiveTintColor: Colors.white,
+        tabBarInactiveTintColor: Colors.textMuted,
         tabBarStyle: {
           height: 40 + insets.bottom,
           width:'85%',
@@ -88,9 +88,9 @@ const MyTabs: React.FC = () => {
           borderRadius:100,
           paddingHorizontal:14,
           paddingTop:8,
-          backgroundColor: Colors.lightOverlaySubtle,
+          backgroundColor: Colors.tabBar,
           borderWidth: 1,
-          borderColor: Colors.lightOverlaySubtle,
+          borderColor: Colors.border,
           overflow: 'hidden',
           position: 'absolute',
           marginRight:'7.5%',

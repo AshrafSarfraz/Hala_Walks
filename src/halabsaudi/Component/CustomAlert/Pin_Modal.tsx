@@ -210,7 +210,7 @@ const Pin_Modal: React.FC<Props> = ({
               style={[styles.languageButton, {opacity: loading ? 0.7 : 1}]}
               disabled={loading}>
               {loading ? (
-                <ActivityIndicator color={Colors.white} />
+                <ActivityIndicator color={Colors.onAccent} />
               ) : (
                 <Text style={styles.languageText}>
                   {languageData[language].Submit}
@@ -295,7 +295,7 @@ const getStyles = (language: string) =>
       borderRadius: 8,
     },
     languageText: {
-      color: Colors.white,
+      color: Colors.onAccent,
       fontFamily: Fonts.SF_Bold,
     },
     closeButtonText: {

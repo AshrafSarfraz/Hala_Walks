@@ -21,7 +21,7 @@ const IncorrectPin: React.FC<LanProps> = ({ visible, onClose, message }) => {
 
   return (
     <Modal transparent visible={visible} animationType="fade">
-      <StatusBar barStyle="light-content" />
+      <StatusBar barStyle="dark-content" />
       <View style={styles.overlay}>
         <View style={styles.container}>
         <Text style={styles.messageText}>{message}</Text>

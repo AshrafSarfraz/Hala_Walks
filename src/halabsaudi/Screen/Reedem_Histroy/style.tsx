@@ -27,7 +27,7 @@ export const getStyles = (language: 'en' | 'ar') =>
     },
     noDataText: {
       fontSize: 18,
-      color: Colors.white,
+      color: Colors.textPrimary,
       alignSelf: 'center',
       marginTop: 30,
     },
@@ -43,11 +43,11 @@ export const getStyles = (language: 'en' | 'ar') =>
     codeText: {
       fontSize: 16,
       fontWeight: 'bold',
-      color: Colors.white,
+      color: Colors.textPrimary,
     },
     percentageText: {
       fontSize: 14,
-      color: Colors.white,
+      color: Colors.textPrimary,
       marginTop: 5,
     },
     dateText: {
@@ -70,6 +70,6 @@ export const getStyles = (language: 'en' | 'ar') =>
       fontSize: 16,
       marginTop: 12,
       fontWeight: 'bold',
-      color: Colors.white,
+      color: Colors.textPrimary,
     },
   });
