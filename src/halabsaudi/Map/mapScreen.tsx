@@ -1191,7 +1191,17 @@ const MapScreen = () => {
                 selectedMarker?.type === item.type
               }
               uploadedImage={uploadedImages[item._id] ?? null}
-              onPress={() => setSelectedMarker(item)}
+              onPress={() => {
+                setSelectedMarker(item);
+              
+                animateToLocation(
+                  {
+                    latitude: item.latitude,
+                    longitude: item.longitude,
+                  },
+                  0.002,
+                );
+              }}
             />
           ))}
       </MapView>
