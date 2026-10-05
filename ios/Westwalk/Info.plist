@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>Hala B Khaleeji</string>
+	<string>Hala B Saudi</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -45,7 +45,7 @@
 		<true/>
 	</dict>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<true/>
+	<false/>
 	<key>NSCameraUsageDescription</key>
 	<string>We need access to your camera to take photos</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>

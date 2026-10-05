@@ -610,10 +610,11 @@ const LocationSearchBar = ({
 const searchBarStyles = StyleSheet.create({
   wrapper: {
     position: 'absolute',
-    top: 50,
+    top: 60,
     left: 16,
     right: 16,
     zIndex: 20,
+
   },
   banner: {
     backgroundColor: Colors.surface,
@@ -644,6 +645,7 @@ const searchBarStyles = StyleSheet.create({
   },
   bannerRight: {
     paddingLeft: 4,
+
   },
   remotePill: {
     backgroundColor: Colors.surface,
@@ -678,6 +680,7 @@ const searchBarStyles = StyleSheet.create({
     fontWeight: '500',
     color: Colors.textPrimary,
     padding: 0,
+
   },
   dropdown: {
     marginTop: 6,
@@ -1365,7 +1368,7 @@ const styles = StyleSheet.create({
   },
   markerCard: {
     position: 'absolute',
-    bottom: 160,
+    bottom: 130,
     left: 16,
     right: 16,
     backgroundColor: Colors.surface,
@@ -1396,8 +1399,8 @@ const styles = StyleSheet.create({
     paddingRight: 20,
   },
   markerCardImage: {
-    width: 90,
-    height: 90,
+    width: 80,
+    height: 80,
     borderRadius: 12,
     backgroundColor: Colors.surface,
   },
@@ -1420,7 +1423,7 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
   },
   markerViewMore: {
-    marginTop: 6,
+    marginTop: 4,
     fontSize: 12,
     fontWeight: '700',
     color: Colors.accent,

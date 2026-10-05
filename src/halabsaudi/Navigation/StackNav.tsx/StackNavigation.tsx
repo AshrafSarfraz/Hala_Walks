@@ -49,6 +49,9 @@ import Wishlist from '../../Screen/Wishlist';
 import SignUp from '../../Screen/Authentication/SignUp';
 import { Colors } from '../../Themes/Colors';
 
+// Status bars are managed by React Native StatusBar/useStatusBar.
+// Do not add native-stack statusBarStyle/statusBarHidden options on iOS:
+// those require controller-based appearance, which conflicts with RN StatusBar.
 const Stack = createNativeStackNavigator<HalaStackParamList>();
 const HalaStack: React.FC = () => {
   const [initialRoute, setInitialRoute] = useState<string | null>(null);
@@ -87,7 +90,7 @@ const HalaStack: React.FC = () => {
   return (
     <UpdateGate><PermissionHost /><Stack.Navigator
       initialRouteName={initialRoute}
-      screenOptions={{headerShown: false, statusBarStyle: 'dark', contentStyle: {backgroundColor: Colors.background}}}>
+      screenOptions={{headerShown: false, contentStyle: {backgroundColor: Colors.background}}}>
       {/* ── Auth & Onboarding ── */}
       <Stack.Screen name="Splash" component={Splash_Screen} />
       <Stack.Screen name="LocationDisclosure" component={LocationDisclosure} />
@@ -134,7 +137,7 @@ const HalaStack: React.FC = () => {
       <Stack.Screen
         name="ImagePreview"
         component={ImagePreviewScreen}
-        options={{headerShown: false, statusBarStyle: 'light', presentation: 'fullScreenModal'}}
+        options={{headerShown: false, presentation: 'fullScreenModal'}}
       />
 
       {/* ── Merchant ── */}

@@ -21,12 +21,12 @@ export  const getStyles=(_language:string) => StyleSheet.create({
        
     },
     cate_txt:{
-      fontSize:12,
+      fontSize:8,
       fontFamily:Fonts.SF_Medium,
-      marginTop:10,
-      lineHeight:16,
+      marginTop:9,
+      lineHeight:1,
       letterSpacing:0.3
     },
     caption: {position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: Colors.overlay, padding: 8, borderBottomLeftRadius: 10, borderBottomRightRadius: 10},
-    Txt: {fontSize: 13, color: Colors.onMedia, fontWeight: '600', textAlign: 'center', lineHeight: 20},
+    Txt: {fontSize: 12, color: Colors.onMedia, fontWeight: '600', textAlign: 'center', lineHeight: 13},
   });

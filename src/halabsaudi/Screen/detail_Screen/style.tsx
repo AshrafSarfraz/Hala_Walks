@@ -1,86 +1,34 @@
 
 
-import { Dimensions,Platform,StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { Colors } from '../../Themes/Colors';
 import { Fonts } from '../../Themes/Fonts';
 
-const {width} = Dimensions.get('window');
 
 export const getStyles = (language: string) =>
   StyleSheet.create({
-  imageContainer: {width: '100%', height: 220, overflow: 'hidden', borderRadius: 16},
+    addressRow: {flexDirection: language === 'en' ? 'row' : 'row-reverse', alignItems: 'center', gap: 12, marginTop: 6},
+    redeemBadge: {backgroundColor: Colors.accent, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, maxWidth: '42%'},
+    redeemText: {color: Colors.onAccent, fontSize: 13, fontFamily: Fonts.SF_Bold, textAlign: 'center'},
+    mapButton: {flexDirection: language === 'en' ? 'row' : 'row-reverse', alignItems: 'center', justifyContent: 'center', gap: 10, backgroundColor: Colors.accent, borderRadius: 12, paddingVertical: 12},
+    mapText: {color: Colors.onAccent, fontSize: 14, fontFamily: Fonts.SF_Bold},
     container: {
       paddingHorizontal: 16,
       paddingBottom: 10,
     },
-
-    HeaderCont: {
-      paddingTop: Platform.OS === 'ios' ? '2%' : '13%',
-      marginBottom:10,
-      paddingHorizontal: 16,
-      paddingBottom: 10,
-      flexDirection: language === 'en' ? 'row' : 'row-reverse',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      width: '100%',
-      backgroundColor: Colors.surface,
-     
-    },
-
-    HeartStyle: {
-      width: 38,
-      height: 38,
-      resizeMode: 'contain',
-      tintColor: Colors.textPrimary,
-      
-    },
-
     Body_Cont: {
-            justifyContent: 'center',
-            marginVertical: '2.5%',
-          },
-          image: {
-            width: '100%',
-            height: 250,
-            borderRadius: 6,
-            marginBottom: Platform.OS === 'ios' ? 20 : 16,
-            resizeMode:"contain"
-          },
-      imageSlider: {
-      width: width-40,
-      height: 250,
-      borderRadius: 6,
-      marginRight:10,
-      resizeMode:"contain"
-   
-    },
-
-    dotsRow: {
-      flexDirection: 'row',
-      justifyContent: 'center',
-      marginBottom: 12,
-      gap: 6,
-    },
-    dot: {
-      width: 7,
-      height: 7,
-      borderRadius: 99,
-      marginTop:4,
-      backgroundColor: Colors.surface,
-    },
-    dotActive: {
-      width: 18,
-      backgroundColor: Colors.surface,
+      paddingTop: 16,
+      paddingBottom: 10,
     },
 
     Type_Cont: {
-      backgroundColor: Colors.warningSoft,
+      backgroundColor: Colors.accentSoft,
       alignItems: 'center',
-      alignSelf: language === 'en' ? 'flex-start' : 'flex-end',
+      flexShrink: 1,
       paddingVertical: 6,
       paddingHorizontal: 10,
-      marginBottom: 10,
-      borderRadius: 6,
+      marginBottom: 0,
+      borderRadius: 12,
     },
     Type_Text: {
       fontSize: 13,
@@ -97,9 +45,10 @@ export const getStyles = (language: string) =>
       marginBottom: 6,
     },
     title: {
-      width: '72%',
-      fontSize: 22,
-      lineHeight: 30,
+      flex: 1,
+      paddingEnd: 12,
+      fontSize: 18,
+      lineHeight: 22,
       color: Colors.textPrimary,
       letterSpacing: 0.3,
       fontFamily: language === 'en' ? Fonts.SF_Bold : '',
@@ -107,22 +56,25 @@ export const getStyles = (language: string) =>
     },
 
     call_cont: {
-      flexDirection: 'row',
+      flexDirection: language === 'en' ? 'row' : 'row-reverse',
+      gap: 4,
       alignItems: 'center',
-      paddingVertical: 6,
+      borderWidth: 1,
+      borderColor: Colors.accent,
+      paddingVertical: 4,
       paddingHorizontal: 10,
-      borderRadius: 6,
+      borderRadius: 24,
       backgroundColor: Colors.surface,
     },
     Phone_Icon: {
-      width: 18,
-      height: 18,
+      width: 10,
+      height: 10,
       resizeMode: 'contain',
       marginRight: language === 'en' ? 6 : 0,
       marginLeft: language === 'ar' ? 6 : 0,
     },
     call_txt: {
-      fontSize: 14,
+      fontSize: 12,
       lineHeight: 20,
       color: Colors.textPrimary,
       fontFamily: Fonts.SF_Bold,
@@ -131,14 +83,15 @@ export const getStyles = (language: string) =>
     Loc_Cont: {
       flexDirection: language === 'en' ? 'row' : 'row-reverse',
       alignItems: 'center',
-      marginTop: 6,
-      padding: 10,
-      borderRadius: 6,
+      flex: 1,
+      gap: 6,
+      paddingVertical: 4,
+      borderRadius: 12,
       backgroundColor: Colors.surface,
     },
     Loc_Icon: {
-      width: 16,
-      height: 16,
+      width: 12,
+      height: 12,
       resizeMode: 'contain',
       marginRight: language === 'en' ? 8 : 0,
       marginLeft: language === 'ar' ? 8 : 0,
@@ -146,7 +99,7 @@ export const getStyles = (language: string) =>
     },
     Loc_Txt: {
       flex: 1,
-      fontSize: 14,
+      fontSize: 13,
       lineHeight: 22,
       color: Colors.textPrimary,
       textAlign: language === 'en' ? 'left' : 'right',
@@ -157,15 +110,24 @@ export const getStyles = (language: string) =>
       flexDirection: language === 'en' ? 'row' : 'row-reverse',
       alignItems: 'center',
       justifyContent: 'space-between',
-      marginTop: 12,
+      gap: 6,
+      marginTop: 14,
     },
 
     timing_dropdown: {
+      flex: 1,
+      minHeight: 50,
+      padding: 10,
+      gap: 7,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: Colors.border,
       flexDirection: language === 'en' ? 'row' : 'row-reverse',
       alignItems: 'center',
     },
     working_hour_txt: {
-      fontSize: 14,
+      flex: 1,
+      fontSize: 13,
       color: Colors.textPrimary,
       fontFamily: Fonts.SF_Bold,
       letterSpacing: 0.2,
@@ -173,28 +135,36 @@ export const getStyles = (language: string) =>
       lineHeight: 22,
     },
     dropdown_icon: {
-      fontSize: 14,
+      fontSize: 13,
       color: Colors.textPrimary,
       marginLeft: language === 'en' ? 6 : 0,
       marginRight: language === 'ar' ? 6 : 0,
     },
 
     branchBtn: {
+      flex: 1,
+      minHeight: 50,
+      flexDirection: language === 'en' ? 'row' : 'row-reverse',
+      gap: 7,
+      alignItems: 'center',
+      borderWidth: 1,
+      borderColor: Colors.border,
       paddingVertical: 8,
       paddingHorizontal: 12,
-      borderRadius: 6,
+      borderRadius: 12,
       backgroundColor: Colors.surface,
     },
     branchBtnText: {
+      flex: 1,
       color: Colors.textPrimary,
-      fontSize: 14,
+      fontSize: 13,
       fontFamily: Fonts.SF_Medium,
     },
 
     timingsCard: {
       padding: 10,
       backgroundColor: Colors.surface,
-      borderRadius: 6,
+      borderRadius: 12,
       marginTop: 10,
       borderWidth: 1,
       borderColor: Colors.border,
@@ -218,11 +188,12 @@ export const getStyles = (language: string) =>
     },
 
     Dis_Cont: {
-      marginTop: 10,
-      backgroundColor: Colors.surface,
-      paddingVertical: 14,
+      gap: 10,
+      marginTop: 12,
+      backgroundColor: Colors.accentSoft,
+      paddingVertical: 11,
       paddingHorizontal: 12,
-      borderRadius: 6,
+      borderRadius: 12,
       flexDirection: language === 'en' ? 'row' : 'row-reverse',
       justifyContent: 'space-between',
       alignItems: 'center',
@@ -231,7 +202,7 @@ export const getStyles = (language: string) =>
     },
     Total_Discount: {
       flex: 1,
-      fontSize: 14,
+      fontSize: 13,
       color: Colors.textPrimary,
       fontFamily: Fonts.SF_Bold,
       lineHeight: 20,
@@ -246,15 +217,19 @@ export const getStyles = (language: string) =>
 
     // ✅ New modern offer button
     offerBtn: {
+      gap: 10,
+      borderWidth: 1,
+      borderColor: Colors.accent,
       width: '100%',
-      borderRadius: 6,
-      paddingVertical: 14,
+      borderRadius: 12,
+      paddingVertical: 11,
       paddingHorizontal: 14,
-      backgroundColor: Colors.accent,
+      backgroundColor: Colors.surface,
       flexDirection: language === 'en' ? 'row' : 'row-reverse',
       alignItems: 'center',
       justifyContent: 'space-between',
-      marginTop: 12,
+      gap: 10,
+      marginTop: 14,
     },
     offerBtnDisabled: {
       backgroundColor: Colors.surface,
@@ -265,19 +240,19 @@ export const getStyles = (language: string) =>
       paddingLeft: language === 'ar' ? 10 : 0,
     },
     offerBtnTitle: {
-      color: Colors.onAccent,
-      fontSize: 14,
+      color: Colors.accent,
+      fontSize: 13,
       fontFamily: Fonts.SF_Bold,
     },
     offerBtnSub: {
-      color: Colors.onAccent,
-      fontSize: 14,
+      color: Colors.accent,
+      fontSize: 13,
       marginTop: 4,
       fontFamily: Fonts.SF_Regular,
     },
     offerBtnArrow: {
-      color: Colors.onAccent,
-      fontSize: 28,
+      color: Colors.accent,
+      fontSize: 22,
       fontFamily: Fonts.SF_Bold,
       marginLeft: language === 'en' ? 10 : 0,
       marginRight: language === 'ar' ? 10 : 0,
@@ -285,19 +260,22 @@ export const getStyles = (language: string) =>
 
     Desc_Cont: {
       flexDirection: language === 'en' ? 'row' : 'row-reverse',
-      marginTop: 14,
-      marginBottom: 6,
+      paddingTop: 16,
+      borderTopWidth: 1,
+      borderTopColor: Colors.border,
+      marginTop: 18,
+      marginBottom: 8,
     },
     Desc: {
-      fontSize: 18,
-      lineHeight: language === 'en' ? 26 : 32,
+      fontSize: 16,
+      lineHeight: language === 'en' ? 22 : 26,
       letterSpacing: 0.2,
       color: Colors.textPrimary,
       fontFamily: language === 'en' ? Fonts.SF_Bold : '',
     },
     Detail: {
-      fontSize: 14,
-      lineHeight: 24,
+      fontSize: 13,
+      lineHeight: 21,
       color: Colors.textPrimary,
       fontFamily: language === 'en' ? Fonts.SF_Regular : '',
       marginBottom: 10,
@@ -305,3 +283,27 @@ export const getStyles = (language: string) =>
       opacity: 0.9,
     },
   });
+
+export const heroStyles = StyleSheet.create({
+  counter: {position: 'absolute', bottom: 12, right: 16, color: Colors.onMedia, backgroundColor: Colors.overlaySoft, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 14, fontSize: 12},
+  overlayButton: {
+    position: 'absolute',
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: Colors.overlay,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  dotsRow: {
+    position: 'absolute',
+    bottom: 14,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 6,
+  },
+  dot: {width: 7, height: 7, borderRadius: 4, backgroundColor: Colors.onMedia, opacity: 0.5},
+  dotActive: {opacity: 1},
+});

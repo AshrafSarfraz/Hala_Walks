@@ -226,11 +226,11 @@ const SelectedVenues: React.FC<{route: any}> = ({route}) => {
         />
 
         <View style={styles.itemInfo}>
-          <Text style={styles.itemTitle}>
+          <Text style={styles.itemTitle} numberOfLines={2}>
             {language === 'en' ? rowItem.nameEng : rowItem.nameArabic}
           </Text>
 
-          <Text style={styles.itemLocation}>
+          <Text style={styles.itemLocation} numberOfLines={2}>
             {language === 'en'
               ? rowItem.descriptionEng?.length > 70
                 ? rowItem.descriptionEng.substring(0, 70) + '...'
@@ -240,7 +240,7 @@ const SelectedVenues: React.FC<{route: any}> = ({route}) => {
               : rowItem.descriptionArabic}
           </Text>
 
-          <Text style={styles.itemCity}>{rowItem.selectedCity}</Text>
+          <Text style={styles.itemCity} numberOfLines={1}>{rowItem.selectedCity}</Text>
         </View>
       </TouchableOpacity>
     );
@@ -253,7 +253,7 @@ const SelectedVenues: React.FC<{route: any}> = ({route}) => {
       </SafeAreaView>
 
       <View style={{flex: 1, paddingHorizontal: '4%', backgroundColor: Colors.background}}>
-        <View style={{marginTop: '4%'}} />
+        <View style={{height: 12}} />
 
         <View style={styles.searchContainer}>
           <Image source={Search} style={styles.searchIcon} />
@@ -263,6 +263,8 @@ const SelectedVenues: React.FC<{route: any}> = ({route}) => {
             placeholderTextColor={Colors.textSecondary}
             value={searchQuery}
             onChangeText={setSearchQuery}
+            returnKeyType="search"
+            autoCorrect={false}
           />
         </View>
 
@@ -290,6 +292,8 @@ const SelectedVenues: React.FC<{route: any}> = ({route}) => {
                 keyExtractor={it => String(it.id)}
                 contentContainerStyle={{flexGrow: 1, paddingBottom: 20}}
                 showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
+              keyboardDismissMode="on-drag"
                 renderItem={renderRow}
                 refreshing={refreshing}
                 onRefresh={onRefresh}

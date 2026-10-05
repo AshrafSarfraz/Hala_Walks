@@ -365,7 +365,7 @@ const Profile: React.FC = () => {
           </TouchableOpacity>
         </View>
 
-        <Text style={s.version}>Hala B Khaleeji v1.0</Text>
+        <Text style={s.version}>Hala B Saudi v3.2</Text>
       </ScrollView>
 
       {/* Who can message you — bottom sheet */}

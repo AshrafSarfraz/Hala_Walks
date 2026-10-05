@@ -3,18 +3,15 @@ import Ionicons from '@react-native-vector-icons/ionicons';
 import { useFocusEffect,useNavigation,useRoute } from '@react-navigation/native';
 import axios from 'axios';
 import React,{ useCallback,useEffect,useRef,useState } from 'react';
-import { Dimensions,FlatList,Modal,Platform,StatusBar,StyleSheet,TouchableOpacity,View } from 'react-native';
+import { FlatList,Modal,Platform,StatusBar,StyleSheet,TouchableOpacity,View,useWindowDimensions } from 'react-native';
 import FastImage from 'react-native-fast-image';
-import { SafeAreaView,useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 import { HBS_API } from '../../config/api';
 import { ActivityIndicator } from '../../ui/ActivityIndicator';
 import { Text } from '../../ui/Text';
-import CustomHeader from '../Component/CustomHeader/CustomHeader';
 import CachedImage from '../Component/Media/CachedImage';
-import ImageGallery from '../Component/Media/ImageGallery';
 import { brandGallery,uniqueImageUrls } from '../Component/Media/gallery';
-import { useStatusBar } from '../Component/UseStatusBar/useStatusBar';
 import { Colors } from '../Themes/Colors';
 import { hbsText } from '../i18n/translations';
 
@@ -45,14 +42,31 @@ type CheckIn = {_id: string; image: string; caption?: string; createdAt?: string
 
 // ─── Layout constants ───────────────────────────────────────────────────────
 
-const {width: SCREEN_WIDTH} = Dimensions.get('window');
-const SLIDER_HEIGHT = Math.round(SCREEN_WIDTH * 0.95);
 const GRID_GAP = 2;
 const GRID_COLUMNS = 3;
-const GRID_ITEM_SIZE =
-  (SCREEN_WIDTH - GRID_GAP * (GRID_COLUMNS - 1)) / GRID_COLUMNS;
 
-// ─── Image slider (top of screen) ──────────────────────────────────────────
+const ImageSlider = ({images, width}: {images: string[]; width: number}) => {
+  const [index, setIndex] = useState(0);
+  const identity = images.join('|');
+  useEffect(() => setIndex(0), [identity, width]);
+  return (
+    <View>
+      <FlatList
+        key={`${identity}:${width}`}
+        data={images.length ? images : ['']}
+        horizontal pagingEnabled showsHorizontalScrollIndicator={false}
+        initialNumToRender={2} maxToRenderPerBatch={2} windowSize={3}
+        keyExtractor={(uri, i) => `${uri}:${i}`}
+        getItemLayout={(_, i) => ({length: width, offset: width * i, index: i})}
+        onMomentumScrollEnd={event => setIndex(Math.max(0, Math.min(images.length - 1, Math.round(event.nativeEvent.contentOffset.x / width))))}
+        renderItem={({item}) => <CachedImage uri={item} style={{width, height: Math.round(width * 0.95)}} resizeMode={FastImage.resizeMode.cover} />}
+      />
+      {images.length > 1 && <View pointerEvents="none" style={styles.dotsRow}>
+        {images.map((uri, i) => <View key={`${uri}:${i}`} style={[styles.dot, i === index && styles.dotActive]} />)}
+      </View>}
+    </View>
+  );
+};
 
 // ─── Full-screen photo viewer (opened from the grid, like an IG post) ──────
 
@@ -68,6 +82,7 @@ const PhotoViewerModal = ({
   onClose: () => void;
 }) => {
   const insets = useSafeAreaInsets();
+  const {width: SCREEN_WIDTH} = useWindowDimensions();
   const [index, setIndex] = useState(initialIndex);
 
   useEffect(() => {
@@ -78,7 +93,7 @@ const PhotoViewerModal = ({
   if (!visible) return null;
 
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+    <Modal visible={visible} transparent statusBarTranslucent animationType="fade" onRequestClose={onClose}>
       <View style={styles.viewerBackdrop}>
         <StatusBar barStyle="light-content" />
         <TouchableOpacity style={[styles.viewerCloseBtn, {top: insets.top + 8}]} onPress={onClose}>
@@ -88,6 +103,7 @@ const PhotoViewerModal = ({
           {index + 1} / {images.length}
         </Text>
         <FlatList
+          key={`${initialIndex}:${SCREEN_WIDTH}`}
           data={images}
           keyExtractor={(uri, idx) => `${uri}-${idx}`}
           horizontal
@@ -103,10 +119,10 @@ const PhotoViewerModal = ({
             setIndex(Math.round(e.nativeEvent.contentOffset.x / SCREEN_WIDTH))
           }
           renderItem={({item}) => (
-            <View style={styles.viewerSlide}>
+            <View style={[styles.viewerSlide, {width: SCREEN_WIDTH}]}>
               <CachedImage
                 uri={item} priority="high"
-                style={styles.viewerImage}
+                style={[styles.viewerImage, {width: SCREEN_WIDTH}]}
                 resizeMode={FastImage.resizeMode.contain}
               />
             </View>
@@ -120,7 +136,9 @@ const PhotoViewerModal = ({
 // ─── Main screen ────────────────────────────────────────────────────────────
 
 const BrandDetailScreen = () => {
-  useStatusBar('dark-content', Colors.header);
+  const insets = useSafeAreaInsets();
+  const {width: SCREEN_WIDTH} = useWindowDimensions();
+  const GRID_ITEM_SIZE = (SCREEN_WIDTH - GRID_GAP * (GRID_COLUMNS - 1)) / GRID_COLUMNS;
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const {
@@ -206,7 +224,7 @@ const BrandDetailScreen = () => {
 
   const renderHeader = () => (
     <View>
-      <ImageGallery images={officialImages} height={SLIDER_HEIGHT} />
+      <ImageSlider images={officialImages} width={SCREEN_WIDTH} />
 
       <View style={styles.detailCard}>
         <View style={styles.detailTopRow}>
@@ -251,16 +269,27 @@ const BrandDetailScreen = () => {
 
   return (
     <View style={styles.container}>
-      <SafeAreaView edges={['top']} style={{backgroundColor: Colors.header}}>
-        <CustomHeader title={detail?.name || routeName || (isAr ? 'التفاصيل' : 'Details')} onBackPress={() => navigation.goBack()} />
-      </SafeAreaView>
+      <StatusBar barStyle="light-content" />
+      <View pointerEvents="box-none" style={[styles.overlayHeader, {top: insets.top + 8}]}>
+        <TouchableOpacity
+          style={styles.overlayBtn}
+          accessibilityRole="button"
+          accessibilityLabel={isAr ? 'رجوع' : 'Back'}
+          onPress={() => navigation.goBack()}>
+          <Ionicons name={isAr ? 'arrow-forward' : 'arrow-back'} size={20} color={Colors.onMedia} />
+        </TouchableOpacity>
+      </View>
 
       <FlatList
+        contentInsetAdjustmentBehavior="never"
+        initialNumToRender={9}
+        maxToRenderPerBatch={6}
+        windowSize={5}
         data={posts}
         keyExtractor={post => post._id}
         numColumns={GRID_COLUMNS}
         columnWrapperStyle={posts.length ? styles.gridRow : undefined}
-        contentContainerStyle={styles.gridContent}
+        contentContainerStyle={[styles.gridContent, {paddingBottom: Math.max(40, insets.bottom + 16)}]}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={renderHeader}
         ListEmptyComponent={renderEmptyGrid}
@@ -272,7 +301,7 @@ const BrandDetailScreen = () => {
             onPress={() => openViewerAt(index)}>
             <CachedImage
               uri={item.image}
-              style={styles.gridImage}
+              style={[styles.gridImage, {width: GRID_ITEM_SIZE, height: GRID_ITEM_SIZE}]}
               resizeMode={FastImage.resizeMode.cover}
             />
           </TouchableOpacity>
@@ -319,15 +348,13 @@ const styles = StyleSheet.create({
     width: 38,
     height: 38,
     borderRadius: 19,
-    backgroundColor: Colors.overlaySoft,
+    backgroundColor: Colors.overlay,
     alignItems: 'center',
     justifyContent: 'center',
   },
 
   // Slider
   slide: {
-    width: SCREEN_WIDTH,
-    height: SLIDER_HEIGHT,
     backgroundColor: Colors.surface,
   },
   sliderEmpty: {
@@ -352,10 +379,12 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: Colors.textSecondary,
+    backgroundColor: Colors.onMedia,
+    opacity: 0.5,
   },
   dotActive: {
-    backgroundColor: Colors.surface,
+    opacity: 1,
+    backgroundColor: Colors.onMedia,
     width: 8,
     height: 8,
     borderRadius: 4,
@@ -445,8 +474,6 @@ const styles = StyleSheet.create({
     gap: GRID_GAP,
   },
   gridImage: {
-    width: GRID_ITEM_SIZE,
-    height: GRID_ITEM_SIZE,
     backgroundColor: Colors.surface,
     marginBottom: GRID_GAP,
   },
@@ -479,7 +506,7 @@ const styles = StyleSheet.create({
     width: 38,
     height: 38,
     borderRadius: 19,
-    backgroundColor: Colors.overlaySoft,
+    backgroundColor: Colors.overlay,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -493,13 +520,11 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   viewerSlide: {
-    width: SCREEN_WIDTH,
     height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
   },
   viewerImage: {
-    width: SCREEN_WIDTH,
     height: '100%',
   },
 });
