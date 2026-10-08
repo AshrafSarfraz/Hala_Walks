@@ -1,5 +1,5 @@
 import React from 'react';
-import {Image, ImageSourcePropType, View, StyleSheet} from 'react-native';
+import {Image, ImageSourcePropType, View, StyleSheet, Platform} from 'react-native';
 import {
   createBottomTabNavigator,
   BottomTabNavigationOptions,
@@ -81,20 +81,21 @@ const MyTabs: React.FC = () => {
         tabBarActiveTintColor: Colors.accent,
         tabBarInactiveTintColor: Colors.textMuted,
         tabBarStyle: {
-          height: 30 + insets.bottom,
+          height: Platform.OS==='ios'? 30 + insets.bottom:40 + insets.bottom ,
           width:'85%',
           alignSelf:'center',
-          marginBottom:insets.bottom-5,
+          marginBottom:insets.bottom,
           borderRadius:100,
           paddingHorizontal:14,
-          paddingTop:5,
+          paddingTop:Platform.OS==='ios'? 5: 3.5,
           backgroundColor: 'rgba(255, 255, 255, 0.65)',
           borderWidth: 1,
           borderColor: Colors.border,
           overflow: 'hidden',
           position: 'absolute',
           marginRight:'7.5%',
-          marginLeft:'7.5%'
+          marginLeft:'7.5%',
+          elevation: 0,
 
         },
         headerShown: false,
