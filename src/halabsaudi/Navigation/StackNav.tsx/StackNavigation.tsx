@@ -71,7 +71,7 @@ const HalaStack: React.FC = () => {
           const asked = await AsyncStorage.getItem('hala_permissions_v2');
           setInitialRoute(asked ? 'BottomTab' : 'LocationDisclosure');
         } else {
-          setInitialRoute('BottomTab');
+          setInitialRoute('Splash');
         }
       } catch (e) {
         console.log('Error reading login state', e);
