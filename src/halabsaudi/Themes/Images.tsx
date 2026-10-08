@@ -3,6 +3,7 @@ export const Logo_W=require(ImgPath+'hbs_logo_White.png')
 export const Logo_G=require(ImgPath+'hbs_logo_Green.png')
 
 export const W_logo=require(ImgPath+'wel_logo.png')
+export const W_logo_N=require(ImgPath+'logo_W.png')
 // export const Full_logo_w=require(ImgPath+'hbs_white.png')
 export const Full_logo_w=require(ImgPath+'logo_B.png')
 export const Full_logo_B=require(ImgPath+'hbs_logo_White.png')

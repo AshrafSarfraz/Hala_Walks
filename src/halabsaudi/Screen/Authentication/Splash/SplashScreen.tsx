@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import {View, StyleSheet, Image, StatusBar} from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Colors } from '../../../Themes/Colors';
-import { Hala_logo_white, Logo_W } from '../../../Themes/Images';
+import { Hala_logo_white, Logo_W, W_logo_N } from '../../../Themes/Images';
 import { fetchBrandsFromFirebase, fetchFlatOfferFromFirebase, fetchVenuFromFirebase } from '../../../firebase/firebaseutils';
 
 
@@ -39,7 +39,7 @@ const Splash_Screen: React.FC<SplashScreenProps> = ({ navigation }) => {
         <StatusBar hidden={true} animated={true} />
       <View style={styles.Body}>
       <View style={styles.Img_Box} >
-      <Image source={Logo_W} style={styles.Logo_Img} />
+      <Image source={W_logo_N} style={styles.Logo_Img} />
       </View>
       <View style={styles.Footer} >
       <Text style={styles.Txt} >This Discount Application is Exclusively for Saudi Visitors</Text>
@@ -71,8 +71,8 @@ const styles = StyleSheet.create({
     alignItems:'center'
   },
   Logo_Img: {
-    width: '80%',
-    height: 150,
+    width: '60%',
+    height: 100,
     resizeMode: 'contain',
   },
   SaudiFlag_Logo:{
@@ -94,8 +94,10 @@ const styles = StyleSheet.create({
     marginBottom:"2%",
     marginTop:"-3%",
     alignSelf:"center",
-    width:"80%",
-    textAlign:'center'
+    width:"70%",
+    textAlign:'center',
+    lineHeight:22
+
   }
 
   

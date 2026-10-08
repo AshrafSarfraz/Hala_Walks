@@ -5,7 +5,7 @@ import React, {useState} from 'react';
 import {View, StyleSheet, StatusBar, Image, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, TouchableWithoutFeedback, Keyboard} from 'react-native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {Colors} from '../../../Themes/Colors';
-import { Full_logo_B, Full_logo_w, languageIcon, Logo_G, Profile_Img,WW_Icon} from '../../../Themes/Images';
+import { Full_logo_B, Full_logo_w, languageIcon, Logo_G, Logo_W, Profile_Img,WW_Icon} from '../../../Themes/Images';
 import {Fonts} from '../../../Themes/Fonts';
 import LanguageModal from '../../../Component/CustomAlert/Lan_Modal';
 import { useSelector } from 'react-redux';
@@ -18,7 +18,7 @@ type SplashBlankProps = {
 };
 
 const WelcomeScreen: React.FC<SplashBlankProps> = ({navigation}) => {
-  useStatusBar('dark-content', Colors.background);
+  useStatusBar('light-content', Colors.background);
   const [selected, setSelected] = useState<'customer' | 'community' | null>( null,);
   const [alertVisible, setAlertVisible] = useState<boolean>(false);
   const [code, setCode] = useState('');
@@ -58,7 +58,7 @@ const WelcomeScreen: React.FC<SplashBlankProps> = ({navigation}) => {
               style={styles.languageFab}>
               <Image source={languageIcon} style={styles.languageIcon} />
             </TouchableOpacity>
-            <Image source={Logo_G} style={styles.logo} />
+            <Image source={Logo_W} style={styles.logo} />
             <Text style={styles.Passport_Txt} >{languageData[language].Passport_Txt}</Text>
             <View style={styles.buttonRow}>
               {/* Customer Button */}
@@ -79,7 +79,7 @@ const WelcomeScreen: React.FC<SplashBlankProps> = ({navigation}) => {
                     styles.buttonImage,
                     {
                       tintColor:
-                        selected === 'customer' ? Colors.accent : Colors.accent,
+                        selected === 'customer' ? Colors.white : Colors.white,
                     },
                   ]}
                   resizeMode="contain"
@@ -111,7 +111,7 @@ const WelcomeScreen: React.FC<SplashBlankProps> = ({navigation}) => {
                     styles.buttonImage2,
                     {
                       tintColor:
-                        selected === 'community' ? Colors.accent : Colors.accent,
+                        selected === 'community' ? Colors.white : Colors.white,
                     },
                   ]}
                   resizeMode="contain"
@@ -126,24 +126,7 @@ const WelcomeScreen: React.FC<SplashBlankProps> = ({navigation}) => {
               </TouchableOpacity>
             </View>
 
-            {/* Input + Continue */}
-            {/* {selected && (
-              <View style={styles.inputContainer}>
-                {selected === 'community' && (
-                  <TextInput
-                    placeholder="Community code e.g. 12345"
-                    placeholderTextColor={Colors.textSecondary}
-                    style={styles.input}
-                    value={code}
-                    onChangeText={setCode}
-                    keyboardType="numeric"
-                  />
-                )}
-                <TouchableOpacity style={styles.continueButton} onPress={handleContinue}>
-                  <Text style={styles.continueText}>Continue</Text>
-                </TouchableOpacity>
-              </View>
-            )} */}
+       
           </View>
           <LanguageModal visible={alertVisible} onClose={hideAlert} />
         </ScrollView>
@@ -157,14 +140,14 @@ export default WelcomeScreen;
 const getStyles=(langauge:string) => StyleSheet.create({
   flex: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.brandGreen,
   },
   scrollContent: {
     flexGrow: 1,
   },
   Main_Container: {
     flex: 1,
-    backgroundColor: Colors.background ,
+    backgroundColor: Colors.brandGreen ,
     paddingHorizontal: 20,
     paddingVertical:60,
     justifyContent: 'flex-start',
@@ -226,7 +209,7 @@ const getStyles=(langauge:string) => StyleSheet.create({
     padding: 10,
   },
   Passport_Txt:{
-    color:Colors.warning,
+    color:Colors.white,
     fontSize:16,
     fontFamily:Fonts.SF_Bold,
     textAlign:"center",
@@ -240,26 +223,28 @@ const getStyles=(langauge:string) => StyleSheet.create({
     backgroundColor: Colors.transparent,
   },
   selectedButton: {
-    borderColor: Colors.surface,
-    backgroundColor: Colors.surface,
+    borderColor: Colors.white,
+
   },
   buttonImage: {
     width: 50,
     height: 50,
     marginBottom: 20,
+    tintColor:Colors.white
   },
   buttonImage2: {
     width: 80,
     height: 80,
+
   },
   buttonText: {
-    color: Colors.accent,
+    color: Colors.white,
     fontSize: 16,
     textAlign: 'center',
     fontFamily: Fonts.SF_Bold,
   },
   selectedText: {
-    color: Colors.textPrimary,
+    color: Colors.white,
   },
   inputContainer: {
     marginTop: 30,

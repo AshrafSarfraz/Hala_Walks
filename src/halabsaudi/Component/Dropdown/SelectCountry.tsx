@@ -22,9 +22,9 @@ const countryOptions: Country[] = [
   { name: 'Saudi Arabia', code: '+966', image: require('../../assets/Icons/Saudi_Flag.png') },
   { name: 'Qatar',        code: '+974', image: require('../../assets/Icons/Qatar_Flag.jpg') },
   { name: 'Bahrain',      code: '+973', image:  require('../../assets/Icons/flag_bahrain.png') },
-  { name: 'Kuwait',       code: '+965', image: require('../../assets/Icons/Kuwait_flag.png') },
-  { name: 'Oman',         code: '+968', image: require('../../assets/Icons/Oman_flag.png') },
-  { name: 'UAE',          code: '+971', image: require('../../assets/Icons/Uae_Flag.png') },
+  // { name: 'Kuwait',       code: '+965', image: require('../../assets/Icons/Kuwait_flag.png') },
+  // { name: 'Oman',         code: '+968', image: require('../../assets/Icons/Oman_flag.png') },
+  // { name: 'UAE',          code: '+971', image: require('../../assets/Icons/Uae_Flag.png') },
 
 
 
@@ -112,8 +112,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surface,
     borderRadius: 4,
     zIndex: 10,
-    borderWidth: 1,
-    borderColor: Colors.textSecondary,
+    borderWidth: 0.6,
+    borderColor: Colors.black,
     elevation: 4, // Adding shadow for Android
   },
   Dropdown_ContItem: {
