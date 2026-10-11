@@ -38,7 +38,7 @@ export const getStyles = (language: string) => {
 
     welcomeText: {
       ...fontW(isEn, 'regular'),
-      fontSize: 11,
+      fontSize: 13,
       lineHeight: 16,
       color: Colors.textSecondary,
       textAlign: align,
