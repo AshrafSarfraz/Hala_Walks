@@ -68,7 +68,7 @@ export const getStyles = (language: string) => {
       alignItems: 'flex-end',
       justifyContent: 'space-between',
       paddingHorizontal: GUTTER,
-      marginBottom: 10,
+      marginBottom: 5,
     },
     sectionTitle: {
       ...fontW(isEn, 'bold'),

@@ -4,7 +4,6 @@ import {
   CARD_BG,
   CARD_BORDER,
   cardShadow,
-  DEAL_RED,
   fontW,
   GUTTER,
   MUTED,
@@ -73,7 +72,7 @@ export const getStyles = (language: string) => {
       letterSpacing: isEn ? 0.8 : 0,
     },
     offBadge: {
-      backgroundColor: DEAL_RED,
+      backgroundColor: Colors.accent,
       borderRadius: 8,
       paddingHorizontal: 8,
       paddingVertical: 3,
@@ -83,7 +82,7 @@ export const getStyles = (language: string) => {
     offText: {
       ...fontW(isEn, 'bold'),
       fontSize: 10,
-      color: '#FFFFFF',
+      color: Colors.onAccent,
     },
 
     /* ---------------- text ---------------- */

@@ -1,40 +1,46 @@
-import { StyleSheet } from 'react-native';
-import { cardShadow, fontW, RADIUS } from '../../../Themes/Layout';
+import {Dimensions, StyleSheet} from 'react-native';
+import {Fonts} from '../../../Themes/Fonts';
 
-export const getStyles = (language: string) => {
-  const isEn = language === 'en';
+import {Colors} from '../../../Themes/Colors';
 
-  return StyleSheet.create({
+export const getStyles = (_language: string) =>
+  StyleSheet.create({
     container: {
-      // padding FlatList ke contentContainerStyle mein hai (GUTTER),
-      // taake scroll karte waqt card screen ke kinare tak ja sake
+      alignItems: 'center',
+      marginHorizontal: '3%',
+      marginTop: 10,
     },
-    card: {
-      borderRadius: RADIUS,
-      marginVertical: 6, // shadow ke liye jagah
-      ...cardShadow,
+    Flatlist_Cont: {
+      marginRight: 8,
+      alignItems: 'center',
+      marginBottom: 20,
     },
     image: {
-      width: 112,
-      height: 136,
-      justifyContent: 'flex-end',
+      width: 110,
+      height: 130,
     },
-    imageRadius: {
-      borderRadius: RADIUS,
+    cate_txt: {
+      fontSize: 6,
+      fontFamily: Fonts.SF_Medium,
+      marginTop: 9,
+      lineHeight: 1,
+      letterSpacing: 0.3,
     },
     caption: {
-      paddingHorizontal: 8,
-      paddingTop: 24,
-      paddingBottom: 10,
-      borderBottomLeftRadius: RADIUS,
-      borderBottomRightRadius: RADIUS,
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      // backgroundColor: Colors.overlay,
+      padding: 8,
+      borderBottomLeftRadius: 10,
+      borderBottomRightRadius: 10,
     },
     Txt: {
-      ...fontW(isEn, 'bold'),
-      fontSize: 13,
-      lineHeight: 16,
-      color: '#FFFFFF',
+      fontSize: 12,
+      color: Colors.onMedia,
+      fontWeight: '600',
       textAlign: 'center',
+      lineHeight: 13,
     },
   });
-};
