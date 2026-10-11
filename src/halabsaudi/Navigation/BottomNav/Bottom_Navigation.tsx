@@ -4,7 +4,7 @@ import {
   createBottomTabNavigator,
   BottomTabNavigationOptions,
 } from '@react-navigation/bottom-tabs';
-import {useSafeAreaInsets, SafeAreaProvider} from 'react-native-safe-area-context';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Home from '../../Screen/Home';
 import Profile from '../../Map/profileScreen';
 import {Colors} from '../../Themes/Colors';
@@ -84,7 +84,7 @@ const MyTabs: React.FC = () => {
           height: Platform.OS === 'ios' ? 30 + insets.bottom : 40 + insets.bottom,
           width: '85%',
           alignSelf: 'center',
-          marginBottom: insets.bottom,
+          marginBottom: Platform.OS === 'ios'? insets.bottom -10 : insets.bottom + 5,
           borderRadius: 100,
           paddingHorizontal: 14,
           paddingTop: Platform.OS === 'ios' ? 5 : 3.5,
