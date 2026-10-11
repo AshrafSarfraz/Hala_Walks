@@ -1,7 +1,7 @@
-import { StyleSheet } from 'react-native';
-import { Colors } from '../../../Themes/Colors';
-import { Fonts } from '../../../Themes/Fonts';
-import { CARD_BG, CARD_BORDER, GUTTER, SCREEN_W } from '../../../Themes/Layout';
+import {StyleSheet} from 'react-native';
+import {Colors} from '../../../Themes/Colors';
+import {Fonts} from '../../../Themes/Fonts';
+import {CARD_BG, CARD_BORDER, GUTTER, SCREEN_W} from '../../../Themes/Layout';
 
 const COLUMNS = 4;
 export const COL_GAP = 10;
@@ -9,7 +9,16 @@ export const COL_GAP = 10;
 // Exact 4 columns: screen - dono gutters - 3 gaps
 const itemSize = (SCREEN_W - GUTTER * 2 - COL_GAP * (COLUMNS - 1)) / COLUMNS;
 
+export const VENUE_IMAGE_SIZE = itemSize;
+
 export const styles = StyleSheet.create({
+  loadingOverlay: {...StyleSheet.absoluteFillObject},
+  fallback: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  fallbackText: {color: Colors.textSecondary, fontSize: 10},
   container: {
     marginHorizontal: GUTTER,
     marginTop: 4,

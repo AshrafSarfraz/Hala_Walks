@@ -39,7 +39,11 @@ export function unwrap<T = any>(data: any, ...keys: string[]): T[] {
       if (Array.isArray(data[k])) return data[k] as T[];
     }
     // Some controllers wrap a named collection inside {data: {...}}.
-    if (data.data && typeof data.data === 'object' && !Array.isArray(data.data)) {
+    if (
+      data.data &&
+      typeof data.data === 'object' &&
+      !Array.isArray(data.data)
+    ) {
       for (const k of [...keys, 'items', 'results', 'list']) {
         if (Array.isArray(data.data[k])) return data.data[k] as T[];
       }
@@ -60,7 +64,12 @@ export function unwrapMeta(data: any): {
   page: number;
   total: number | null;
 } {
-  const p = data?.pagination || data?.data?.pagination || data?.data || data || {};
+  const nested = data?.data && !Array.isArray(data.data) ? data.data : null;
+  const p =
+    data?.pagination ||
+    nested?.pagination ||
+    (nested?.hasMore !== undefined ? nested : data) ||
+    {};
   return {
     hasMore: Boolean(p.hasMore),
     nextCursor: p.nextCursor ?? data?.nextCursor ?? null,
@@ -70,10 +79,10 @@ export function unwrapMeta(data: any): {
 }
 
 // Tayyar helpers — call site par key yaad na rakhni pare
-export const unwrapChats    = (d: any) => unwrap(d, 'chats');
-export const unwrapUsers    = (d: any) => unwrap(d, 'users');
-export const unwrapMedia    = (d: any) => unwrap(d, 'media');
+export const unwrapChats = (d: any) => unwrap(d, 'chats');
+export const unwrapUsers = (d: any) => unwrap(d, 'users');
+export const unwrapMedia = (d: any) => unwrap(d, 'media');
 export const unwrapMessages = (d: any) => unwrap(d, 'messages');
-export const unwrapBrands   = (d: any) => unwrap(d, 'data', 'brands');
+export const unwrapBrands = (d: any) => unwrap(d, 'data', 'brands');
 
 export default unwrap;

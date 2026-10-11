@@ -4,30 +4,33 @@
 // - Cache foran dikhta hai, fresh data background mein aata hai
 // - 5 minute ke andar dobara API call nahi hoti (bar bar load nahi)
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useEffect, useState } from 'react';
-import { AppState } from 'react-native';
-import { fetchBrandCatalog } from '../api/brandCatalog';
+import {useEffect, useState} from 'react';
+import {AppState} from 'react-native';
+import {fetchBrandCatalog} from '../api/brandCatalog';
 
 const BRANDS_API = 'https://hala-b-saudi.onrender.com/api/hbs/brands';
 const CACHE_KEY = 'H-brand_catalog_v1';
 const STALE_MS = 5 * 60 * 1000;
 
-type State = { data: any[]; ts: number; loading: boolean; error: boolean };
+type State = {data: any[]; ts: number; loading: boolean; error: boolean};
 
-let state: State = { data: [], ts: 0, loading: true, error: false };
+let state: State = {data: [], ts: 0, loading: true, error: false};
 const listeners = new Set<() => void>();
 let inflight: Promise<void> | null = null;
 let hydrating: Promise<void> | null = null;
 let appStateHooked = false;
 
 const setState = (patch: Partial<State>) => {
-  state = { ...state, ...patch };
+  state = {...state, ...patch};
   listeners.forEach(l => l());
 };
 
 /* ---------------- helpers (export) ---------------- */
 export const norm = (v: any) =>
-  String(v ?? '').trim().toLowerCase().replace(/\s+/g, ' ');
+  String(v ?? '')
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, ' ');
 
 export const sameCountry = (a: any, b: any) => !!b && norm(a) === norm(b);
 
@@ -60,7 +63,8 @@ export const getDiscountPercent = (item: any): number => {
       n = v;
     } else {
       const s = String(v);
-      const m = s.match(/(\d+(?:\.\d+)?)\s*%/) || s.match(/^\s*(\d+(?:\.\d+)?)\s*$/);
+      const m =
+        s.match(/(\d+(?:\.\d+)?)\s*%/) || s.match(/^\s*(\d+(?:\.\d+)?)\s*$/);
       if (m) n = parseFloat(m[1]);
     }
     if (Number.isFinite(n) && n > best && n <= 100) best = n;
@@ -72,7 +76,9 @@ const normalize = (arr: any[]) =>
   arr.map(item => ({
     ...item,
     id: String(item._id || item.id),
-    createdAtMs: new Date(item.createdAt || item.created_at || item.time).getTime(),
+    createdAtMs: new Date(
+      item.createdAt || item.created_at || item.time,
+    ).getTime(),
   }));
 
 /* ---------------- cache + fetch ---------------- */
@@ -84,7 +90,7 @@ const hydrate = () => {
         if (raw) {
           const parsed = JSON.parse(raw);
           if (Array.isArray(parsed?.data) && !state.data.length) {
-            setState({ data: parsed.data, ts: parsed.ts ?? 0, loading: false });
+            setState({data: parsed.data, ts: parsed.ts ?? 0, loading: false});
           }
         }
       } catch {
@@ -97,11 +103,12 @@ const hydrate = () => {
 
 export const refreshBrandCatalog = (force = false): Promise<void> => {
   if (inflight) return inflight;
-  if (!force && state.ts && Date.now() - state.ts < STALE_MS) return Promise.resolve();
+  if (!force && state.ts && Date.now() - state.ts < STALE_MS)
+    return Promise.resolve();
 
   inflight = (async () => {
     try {
-      const res = await fetchBrandCatalog(BRANDS_API);
+      const res = await fetchBrandCatalog(BRANDS_API, {force});
       const json: any = await res.json();
       if (!res.ok) throw new Error('Brands API failed');
       const raw = json?.data ?? json;
@@ -110,11 +117,18 @@ export const refreshBrandCatalog = (force = false): Promise<void> => {
       // Sirf tab UI update karo jab data sach mein badla ho (flicker nahi)
       const changed = JSON.stringify(fresh) !== JSON.stringify(state.data);
       const ts = Date.now();
-      setState({ ...(changed ? { data: fresh } : {}), ts, loading: false, error: false });
-      AsyncStorage.setItem(CACHE_KEY, JSON.stringify({ ts, data: fresh })).catch(() => {});
+      setState({
+        ...(changed ? {data: fresh} : {}),
+        ts,
+        loading: false,
+        error: false,
+      });
+      AsyncStorage.setItem(CACHE_KEY, JSON.stringify({ts, data: fresh})).catch(
+        () => {},
+      );
     } catch (e) {
       console.log('Brand catalog error:', e);
-      setState({ loading: false, error: true });
+      setState({loading: false, error: true});
     } finally {
       inflight = null;
     }

@@ -43,6 +43,7 @@ export type MediaOutboxJob = {
 type Listener = (jobs: MediaOutboxJob[]) => void;
 
 let memoryJobs: MediaOutboxJob[] | null = null;
+let cacheGeneration = 0;
 let loadingPromise: Promise<MediaOutboxJob[]> | null = null;
 const listeners = new Set<Listener>();
 
@@ -64,15 +65,17 @@ export async function getMediaOutbox(): Promise<MediaOutboxJob[]> {
   if (memoryJobs) return [...memoryJobs];
   if (loadingPromise) return loadingPromise;
 
+  const generation = cacheGeneration;
   loadingPromise = (async () => {
     try {
       const raw = await AsyncStorage.getItem(STORAGE_KEY);
+      if (generation !== cacheGeneration) return [];
       memoryJobs = raw ? JSON.parse(raw) : [];
       if (!Array.isArray(memoryJobs)) memoryJobs = [];
     } catch {
-      memoryJobs = [];
+      if (generation === cacheGeneration) memoryJobs = [];
     } finally {
-      loadingPromise = null;
+      if (generation === cacheGeneration) loadingPromise = null;
     }
     return [...(memoryJobs || [])];
   })();
@@ -138,8 +141,9 @@ export async function enqueueMediaJob(
 ): Promise<MediaOutboxJob> {
   await getMediaOutbox();
 
-  const tempId =
-    `media_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+  const tempId = `media_${Date.now()}_${Math.random()
+    .toString(36)
+    .slice(2, 9)}`;
 
   const mimeType = asset.type || 'image/jpeg';
   const ext = extensionFor(asset);
@@ -206,35 +210,28 @@ export async function uploadMediaJob(
   });
 
   const formData = new FormData();
-  formData.append(
-    'file',
-    {
-      uri: job.localUri,
-      type: job.mimeType,
-      name: job.fileName,
-    } as any,
-  );
+  formData.append('file', {
+    uri: job.localUri,
+    type: job.mimeType,
+    name: job.fileName,
+  } as any);
   formData.append('chatId', job.chatId);
 
-  const res = await axios.post(
-    `${BASE_URL}/api/messages/upload`,
-    formData,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        // Do not manually set multipart/form-data. Axios adds the boundary.
-      },
-      timeout: 60000,
-      onUploadProgress: event => {
-        if (!event.total) return;
-        const pct = Math.max(
-          1,
-          Math.min(99, Math.round((event.loaded / event.total) * 100)),
-        );
-        patchMediaJob(job.tempId, {progress: pct}).catch(() => {});
-      },
+  const res = await axios.post(`${BASE_URL}/api/messages/upload`, formData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      // Do not manually set multipart/form-data. Axios adds the boundary.
     },
-  );
+    timeout: 60000,
+    onUploadProgress: event => {
+      if (!event.total) return;
+      const pct = Math.max(
+        1,
+        Math.min(99, Math.round((event.loaded / event.total) * 100)),
+      );
+      patchMediaJob(job.tempId, {progress: pct}).catch(() => {});
+    },
+  });
 
   const uploaded = res.data || {};
   if (!uploaded.mediaUrl) {
@@ -257,4 +254,12 @@ export async function uploadMediaJob(
 
   await patchMediaJob(job.tempId, next);
   return next;
+}
+
+export async function clearMediaOutbox() {
+  cacheGeneration++;
+  loadingPromise = null;
+  memoryJobs = [];
+  await AsyncStorage.removeItem(STORAGE_KEY);
+  emit();
 }

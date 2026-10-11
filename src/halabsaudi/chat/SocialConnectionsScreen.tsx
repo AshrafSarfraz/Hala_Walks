@@ -1,29 +1,24 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import React,{ useCallback,useRef,useState } from 'react';
-import {
-FlatList,
-StyleSheet,
-TouchableOpacity,
-View
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { BASE_URL } from '../../config/api';
-import { ActivityIndicator } from '../../ui/ActivityIndicator';
-import { Alert } from '../../ui/Alert';
-import { Text } from '../../ui/Text';
-import { fetchCollection } from '../api/collection';
+import React, {useState} from 'react';
+import {FlatList, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {BASE_URL} from '../../config/api';
+import {ActivityIndicator} from '../../ui/ActivityIndicator';
+import {Alert} from '../../ui/Alert';
+import {Text} from '../../ui/Text';
+import {usePagedCollection} from '../hooks/usePagedCollection';
 import CustomHeader from '../Component/CustomHeader/CustomHeader';
 import UserAvatar from '../Component/UserAvatar';
-import { useStatusBar } from '../Component/UseStatusBar/useStatusBar';
-import { Colors } from '../Themes/Colors';
+import {useStatusBar} from '../Component/UseStatusBar/useStatusBar';
+import {Colors} from '../Themes/Colors';
 import {
-bioPreview,
-canShowMessage,
-openSocialChat,
-SocialPerson,
+  bioPreview,
+  canShowMessage,
+  openSocialChat,
+  SocialPerson,
 } from './socialProfile';
-import { useSocialRefresh } from './useSocialRefresh';
+import {useSocialRefresh} from './useSocialRefresh';
 
 type Person = SocialPerson;
 type Request = {_id: string; user: Person};
@@ -34,56 +29,28 @@ export default function SocialConnectionsScreen({route, navigation}: any) {
   const mode: Mode = route.params?.mode === 'requests' ? 'requests' : 'friends';
   const userId = route.params?.userId;
   const isOwn = !userId || route.params?.isOwn === true;
-  const version = useRef(0);
-  const [error, setError] = useState<string | null>(null);
-  const [items, setItems] = useState<(Person | Request)[]>([]);
-  const [loading, setLoading] = useState(true);
   const [actionId, setActionId] = useState<string | null>(null);
   const title = mode === 'friends' ? 'Friends' : 'Friend requests';
-
-  const clear = useCallback(() => {
-    version.current++;
-    setItems([]);
-    setLoading(true);
-  }, []);
-  const load = useCallback(
-    async (signal?: AbortSignal) => {
-      const requestId = ++version.current;
-      const active = () => requestId === version.current && !signal?.aborted;
-      try {
-        const token = await AsyncStorage.getItem('hala_token');
-        const endpoint = mode === 'requests' ? 'friend-requests' : mode;
-        const rows = await fetchCollection(
-          `${BASE_URL}/api/users/${endpoint}`,
-          {
-            params: userId && mode !== 'requests' ? {userId} : {},
-            signal,
-            headers: {Authorization: `Bearer ${token}`},
-            timeout: 15000,
-          },
-          mode,
-          'users',
-          'requests',
-        );
-        if (active()) {
-          setItems(rows);
-          setError(null);
-        }
-      } catch (e: any) {
-        if (active()) {
-          setItems([]);
-          setError(
-            e.response?.status === 403
-              ? 'This account is private.'
-              : `Could not load ${title.toLowerCase()}. Tap to retry.`,
-          );
-        }
-      } finally {
-        if (active()) setLoading(false);
-      }
-    },
-    [mode, title, userId],
+  const endpoint = mode === 'requests' ? 'friend-requests' : mode;
+  const collection = usePagedCollection<Person | Request>(
+    `${BASE_URL}/api/users/${endpoint}`,
+    [mode, 'users', 'requests'],
+    userId && mode !== 'requests' ? {userId} : {},
   );
+  const {
+    items,
+    loading,
+    loadingMore,
+    hasMore,
+    refreshing,
+    clear,
+    refresh: load,
+  } = collection;
+  const error = collection.error
+    ? collection.error.response?.status === 403
+      ? 'This account is private.'
+      : `Could not load ${title.toLowerCase()}. Tap to retry.`
+    : null;
   useSocialRefresh(load, clear);
 
   const message = async (user: Person) => {
@@ -240,15 +207,47 @@ export default function SocialConnectionsScreen({route, navigation}: any) {
 
   return (
     <SafeAreaView style={s.safe} edges={['top']}>
-      <CustomHeader title={route.params?.profileName ? `${route.params.profileName} · ${title}` : title} onBackPress={() => navigation.goBack()} />
+      <CustomHeader
+        title={
+          route.params?.profileName
+            ? `${route.params.profileName} · ${title}`
+            : title
+        }
+        onBackPress={() => navigation.goBack()}
+      />
       {loading ? (
         <View style={s.center}>
           <ActivityIndicator size="large" color={Colors.accent} />
         </View>
       ) : (
         <FlatList
-          refreshing={false}
-          onRefresh={() => load()}
+          refreshing={refreshing}
+          onRefresh={collection.pullRefresh}
+          onEndReached={() => {
+            if (!collection.error) void collection.loadMore();
+          }}
+          onEndReachedThreshold={0.4}
+          initialNumToRender={15}
+          maxToRenderPerBatch={10}
+          windowSize={7}
+          ListHeaderComponent={
+            error && items.length ? (
+              <TouchableOpacity onPress={() => load()} style={{padding: 12}}>
+                <Text style={s.emptyText}>{error}</Text>
+              </TouchableOpacity>
+            ) : null
+          }
+          ListFooterComponent={
+            loadingMore ? (
+              <ActivityIndicator color={Colors.accent} />
+            ) : hasMore ? (
+              <TouchableOpacity
+                onPress={() => collection.loadMore()}
+                style={{padding: 16}}>
+                <Text style={s.emptyText}>Load more</Text>
+              </TouchableOpacity>
+            ) : null
+          }
           data={items}
           renderItem={renderItem}
           keyExtractor={(item: any) => String(item._id)}
@@ -314,7 +313,7 @@ const s = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 8,
-    marginHorizontal:6
+    marginHorizontal: 6,
   },
   confirmText: {color: Colors.white, fontSize: 12, fontWeight: '700'},
   reject: {

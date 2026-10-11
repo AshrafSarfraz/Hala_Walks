@@ -1,24 +1,34 @@
 import Ionicons from '@react-native-vector-icons/ionicons';
-import { useNavigation } from '@react-navigation/native';
-import React,{ useEffect,useMemo,useRef,useState } from 'react';
-import { FlatList,Image,Linking,Platform,ScrollView,StatusBar,TouchableOpacity,View,useWindowDimensions } from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
+import {
+  FlatList,
+  Image,
+  Linking,
+  Platform,
+  ScrollView,
+  StatusBar,
+  TouchableOpacity,
+  View,
+  useWindowDimensions,
+} from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import FastImage from 'react-native-fast-image';
-import { useDispatch,useSelector } from 'react-redux';
-import { Text } from '../../../ui/Text';
+import {useDispatch, useSelector} from 'react-redux';
+import {Text} from '../../../ui/Text';
 import Branches from '../../Component/BottomSheet/Branches';
 import MenuUnavailableModal from '../../Component/CustomAlert/MenuAlert';
 import Pin_Modal from '../../Component/CustomAlert/Pin_Modal';
 import CachedImage from '../../Component/Media/CachedImage';
-import { brandGallery } from '../../Component/Media/gallery';
-import { Colors } from '../../Themes/Colors';
-import { toggleItemInCart } from '../../redux_toolkit/cartSlice';
-import { languageData } from '../../redux_toolkit/language/languageSlice';
-import { RootState } from '../../redux_toolkit/store';
-import { getStyles,heroStyles } from './style';
+import {brandGallery} from '../../Component/Media/gallery';
+import {Colors} from '../../Themes/Colors';
+import {toggleItemInCart} from '../../redux_toolkit/cartSlice';
+import {languageData} from '../../redux_toolkit/language/languageSlice';
+import {RootState} from '../../redux_toolkit/store';
+import {getStyles, heroStyles} from './style';
 
-import { hbsText } from '../../i18n/translations';
+import {hbsText} from '../../i18n/translations';
 
 const ImageSlider = ({images, width}: {images: string[]; width: number}) => {
   const [index, setIndex] = useState(0);
@@ -29,17 +39,48 @@ const ImageSlider = ({images, width}: {images: string[]; width: number}) => {
       <FlatList
         key={`${identity}:${width}`}
         data={images.length ? images : ['']}
-        horizontal pagingEnabled showsHorizontalScrollIndicator={false}
-        initialNumToRender={2} maxToRenderPerBatch={2} windowSize={3}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        initialNumToRender={2}
+        maxToRenderPerBatch={2}
+        windowSize={3}
         keyExtractor={(uri, i) => `${uri}:${i}`}
         getItemLayout={(_, i) => ({length: width, offset: width * i, index: i})}
-        onMomentumScrollEnd={event => setIndex(Math.max(0, Math.min(images.length - 1, Math.round(event.nativeEvent.contentOffset.x / width))))}
-        renderItem={({item}) => <CachedImage uri={item} style={{width, height: Math.round(width * 0.8)}} resizeMode={FastImage.resizeMode.cover} />}
+        onMomentumScrollEnd={event =>
+          setIndex(
+            Math.max(
+              0,
+              Math.min(
+                images.length - 1,
+                Math.round(event.nativeEvent.contentOffset.x / width),
+              ),
+            ),
+          )
+        }
+        renderItem={({item}) => (
+          <CachedImage
+            uri={item}
+            style={{width, height: Math.round(width * 0.8)}}
+            resizeMode={FastImage.resizeMode.cover}
+          />
+        )}
       />
-      {images.length > 1 && <Text style={heroStyles.counter}>{index + 1} / {images.length}</Text>}
-      {images.length > 1 && <View pointerEvents="none" style={heroStyles.dotsRow}>
-        {images.map((uri, i) => <View key={`${uri}:${i}`} style={[heroStyles.dot, i === index && heroStyles.dotActive]} />)}
-      </View>}
+      {images.length > 1 && (
+        <Text style={heroStyles.counter}>
+          {index + 1} / {images.length}
+        </Text>
+      )}
+      {images.length > 1 && (
+        <View pointerEvents="none" style={heroStyles.dotsRow}>
+          {images.map((uri, i) => (
+            <View
+              key={`${uri}:${i}`}
+              style={[heroStyles.dot, i === index && heroStyles.dotActive]}
+            />
+          ))}
+        </View>
+      )}
     </View>
   );
 };
@@ -125,7 +166,9 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
   return (
     <View style={{flex: 1, backgroundColor: Colors.background}}>
       <StatusBar barStyle="light-content" />
-      <ScrollView showsVerticalScrollIndicator={false} contentInsetAdjustmentBehavior="never">
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentInsetAdjustmentBehavior="never">
         <View>
           <ImageSlider images={sliderUrls} width={width} />
           <TouchableOpacity
@@ -140,25 +183,48 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
             accessibilityLabel={language === 'ar' ? 'المفضلة' : 'Wishlist'}
             accessibilityState={{selected: isInCart}}
             onPress={handleToggleCart}
-            style={[heroStyles.overlayButton, {top: insets.top + 8, right: 16}]}>
-            <Ionicons name={isInCart ? 'heart' : 'heart-outline'} size={24} color={isInCart ? Colors.accent : Colors.onMedia} />
+            style={[
+              heroStyles.overlayButton,
+              {top: insets.top + 8, right: 16},
+            ]}>
+            <Ionicons
+              name={isInCart ? 'heart' : 'heart-outline'}
+              size={24}
+              color={isInCart ? Colors.accent : Colors.onMedia}
+            />
           </TouchableOpacity>
         </View>
         <View style={styles.container}>
           <View style={styles.Body_Cont}>
-
             <View style={styles.Title_Cont}>
-              <Text style={styles.title}>{language === 'ar' ? item.nameArabic || item.nameEng : item.nameEng || item.nameArabic}</Text>
-              {!!item.selectedCategory && <View style={styles.Type_Cont}><Text style={styles.Type_Text}>{item.selectedCategory}</Text></View>}
+              <Text style={styles.title}>
+                {language === 'ar'
+                  ? item.nameArabic || item.nameEng
+                  : item.nameEng || item.nameArabic}
+              </Text>
+              {!!item.selectedCategory && (
+                <View style={styles.Type_Cont}>
+                  <Text style={styles.Type_Text}>{item.selectedCategory}</Text>
+                </View>
+              )}
             </View>
             <View style={styles.addressRow}>
               <View style={styles.Loc_Cont}>
-                <Ionicons name="location-outline" size={21} color={Colors.textSecondary} />
+                <Ionicons
+                  name="location-outline"
+                  size={21}
+                  color={Colors.textSecondary}
+                />
                 <Text style={styles.Loc_Txt}>{Address}</Text>
               </View>
-              <TouchableOpacity accessibilityRole="button" onPress={Contact} style={styles.call_cont}>
+              <TouchableOpacity
+                accessibilityRole="button"
+                onPress={Contact}
+                style={styles.call_cont}>
                 <Ionicons name="call" size={18} color={Colors.accent} />
-                <Text style={styles.call_txt}>{languageData[language].Call_Now}</Text>
+                <Text style={styles.call_txt}>
+                  {languageData[language].Call_Now}
+                </Text>
               </TouchableOpacity>
             </View>
 
@@ -179,7 +245,11 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
               <TouchableOpacity
                 onPress={() => refRBSheet.current?.open()}
                 style={styles.branchBtn}>
-                <Ionicons name="storefront-outline" size={22} color={Colors.accent} />
+                <Ionicons
+                  name="storefront-outline"
+                  size={22}
+                  color={Colors.accent}
+                />
                 <Text style={styles.branchBtnText}>
                   {languageData[language].List_of_Branch}
                 </Text>
@@ -203,44 +273,89 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
 
             {/* Discounts */}
             <View style={{width: '100%', marginTop: 8}}>
-              {Array.isArray(item?.discounts) && item.discounts.length > 0 ? (
-                item.discounts.map((d: any, index: number) => {
-                  const englishText = `${d.value} ${language === 'ar' ? d.descriptionArabic || d.descriptionEng : d.descriptionEng}`;
-                  return (
-                    <TouchableOpacity
-                      key={`dis-${index}`}
-                      activeOpacity={0.85}
-                      style={styles.Dis_Cont}
-                      onPress={() => {
-                        setSelectedDiscountText(englishText);
-                        setSelectedDiscountValue(Number(d.value) || 0);
-                        setAlertVisible(true);
-                      }}>
-                      <Ionicons name="pricetag-outline" size={25} color={Colors.accent} />
-                      <Text style={styles.Total_Discount}>{englishText}</Text>
-                      <View style={styles.redeemBadge}><Text style={styles.redeemText}>{language === 'ar' ? 'استبدال العرض' : 'Redeem offer'}</Text></View>
-                    </TouchableOpacity>
-                  );
-                })
-              ) : null}
+              {Array.isArray(item?.discounts) && item.discounts.length > 0
+                ? item.discounts.map((d: any, index: number) => {
+                    const englishText = `${d.value} ${
+                      language === 'ar'
+                        ? d.descriptionArabic || d.descriptionEng
+                        : d.descriptionEng
+                    }`;
+                    return (
+                      <TouchableOpacity
+                        key={`dis-${index}`}
+                        activeOpacity={0.85}
+                        style={styles.Dis_Cont}
+                        onPress={() => {
+                          setSelectedDiscountText(englishText);
+                          setSelectedDiscountValue(Number(d.value) || 0);
+                          setAlertVisible(true);
+                        }}>
+                        <Ionicons
+                          name="pricetag-outline"
+                          size={25}
+                          color={Colors.accent}
+                        />
+                        <Text style={styles.Total_Discount}>{englishText}</Text>
+                        <View style={styles.redeemBadge}>
+                          <Text style={styles.redeemText}>
+                            {language === 'ar'
+                              ? 'استبدال العرض'
+                              : 'Redeem offer'}
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
+                    );
+                  })
+                : null}
             </View>
 
             {/* ✅ Modern Offer/Menu Button */}
             <TouchableOpacity
               activeOpacity={0.9}
               disabled={!hasOffer}
-              style={[styles.offerBtn, !hasOffer ? styles.offerBtnDisabled : null]}
+              style={[
+                styles.offerBtn,
+                !hasOffer ? styles.offerBtnDisabled : null,
+              ]}
               onPress={onPressOffer}>
-              <Ionicons name="document-text-outline" size={25} color={hasOffer ? Colors.accent : Colors.textMuted} />
+              <Ionicons
+                name="document-text-outline"
+                size={25}
+                color={hasOffer ? Colors.accent : Colors.textMuted}
+              />
               <View style={styles.offerBtnLeft}>
-                <Text style={[styles.offerBtnTitle, !hasOffer && {color: Colors.textSecondary}]}>
-                  {hasOffer ? languageData[language].Avaliable_Offer : (language === 'ar' ? 'لا توجد قائمة متاحة' : 'No menu available')}
+                <Text
+                  style={[
+                    styles.offerBtnTitle,
+                    !hasOffer && {color: Colors.textSecondary},
+                  ]}>
+                  {hasOffer
+                    ? languageData[language].Avaliable_Offer
+                    : language === 'ar'
+                    ? 'لا توجد قائمة متاحة'
+                    : 'No menu available'}
                 </Text>
-                <Text style={[styles.offerBtnSub, !hasOffer && {color: Colors.textSecondary}]}>
-                  {hasOffer ? (language === 'ar' ? 'اضغط لعرض القائمة أو العرض' : 'Tap to open menu / offer') : (language === 'ar' ? 'لا توجد قائمة لهذه العلامة حاليًا' : 'This brand has no menu right now')}
+                <Text
+                  style={[
+                    styles.offerBtnSub,
+                    !hasOffer && {color: Colors.textSecondary},
+                  ]}>
+                  {hasOffer
+                    ? language === 'ar'
+                      ? 'اضغط لعرض القائمة أو العرض'
+                      : 'Tap to open menu / offer'
+                    : language === 'ar'
+                    ? 'لا توجد قائمة لهذه العلامة حاليًا'
+                    : 'This brand has no menu right now'}
                 </Text>
               </View>
-              <Text style={[styles.offerBtnArrow, !hasOffer && {color: Colors.textSecondary}]}>{language === 'ar' ? '‹' : '›'}</Text>
+              <Text
+                style={[
+                  styles.offerBtnArrow,
+                  !hasOffer && {color: Colors.textSecondary},
+                ]}>
+                {language === 'ar' ? '‹' : '›'}
+              </Text>
             </TouchableOpacity>
 
             {/* Description */}
@@ -257,9 +372,14 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
 
           <View style={{marginBottom: Platform.OS === 'ios' ? 18 : 14}} />
 
-          <TouchableOpacity accessibilityRole="button" onPress={handleOpenMaps} style={styles.mapButton}>
+          <TouchableOpacity
+            accessibilityRole="button"
+            onPress={handleOpenMaps}
+            style={styles.mapButton}>
             <Ionicons name="map-outline" size={24} color={Colors.onAccent} />
-            <Text style={styles.mapText}>{languageData[language].Open_Map}</Text>
+            <Text style={styles.mapText}>
+              {languageData[language].Open_Map}
+            </Text>
           </TouchableOpacity>
         </View>
 
@@ -281,7 +401,11 @@ const DetailScreen: React.FC<{route: any}> = ({route}) => {
           onClose={() => setModalVisible(false)}
         />
 
-        <Branches ref={refRBSheet} brandName={item.nameEng} excludeId={item.id} />
+        <Branches
+          ref={refRBSheet}
+          brandName={item.nameEng}
+          excludeId={item.id}
+        />
 
         <View style={{height: Math.max(insets.bottom, 16)}} />
       </ScrollView>

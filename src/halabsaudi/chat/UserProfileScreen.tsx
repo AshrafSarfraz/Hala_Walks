@@ -1,35 +1,35 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import axios from 'axios';
-import React,{ useCallback,useRef,useState } from 'react';
+import React, {useCallback, useRef, useState} from 'react';
 import {
-FlatList,
-Image,
-StyleSheet,
-TouchableOpacity,
-View,
-useWindowDimensions,
+  FlatList,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  useWindowDimensions,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useSelector } from 'react-redux';
-import { BASE_URL } from '../../config/api';
-import { ActivityIndicator } from '../../ui/ActivityIndicator';
-import { Alert } from '../../ui/Alert';
-import { Text } from '../../ui/Text';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {useSelector} from 'react-redux';
+import {BASE_URL} from '../../config/api';
+import {ActivityIndicator} from '../../ui/ActivityIndicator';
+import {Alert} from '../../ui/Alert';
+import {Text} from '../../ui/Text';
 import CustomHeader from '../Component/CustomHeader/CustomHeader';
-import { useStatusBar } from '../Component/UseStatusBar/useStatusBar';
+import {useStatusBar} from '../Component/UseStatusBar/useStatusBar';
 import UserAvatar from '../Component/UserAvatar';
-import { Colors } from '../Themes/Colors';
-import { fetchCollection } from '../api/collection';
-import { RootState } from '../redux_toolkit/store';
+import {Colors} from '../Themes/Colors';
+import {fetchCollection} from '../api/collection';
+import {RootState} from '../redux_toolkit/store';
 import BlockUserModal from './components/BlockUserModal';
 import ImageViewerModal from './components/ImageViewerModal';
-import MuteModal,{ MuteDuration } from './components/MuteModal';
-import { SocialPerson,canShowMessage,openSocialChat } from './socialProfile';
-import { clearPeopleCache } from './startChatScreen';
-import { useSocialRefresh } from './useSocialRefresh';
+import MuteModal, {MuteDuration} from './components/MuteModal';
+import {SocialPerson, canShowMessage, openSocialChat} from './socialProfile';
+import {clearPeopleCache} from './startChatScreen';
+import {useSocialRefresh} from './useSocialRefresh';
 
-import { hbsText } from '../i18n/translations';
+import {hbsText} from '../i18n/translations';
 
 export type MediaItem = {
   id: string;
@@ -64,6 +64,8 @@ export default function UserProfileScreen({route, navigation}: any) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [postsError, setPostsError] = useState(false);
+  const [postsLoading, setPostsLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [busy, setBusy] = useState(false);
   const [iBlocked, setIBlocked] = useState(false);
   const [blockModal, setBlockModal] = useState(false);
@@ -80,6 +82,7 @@ export default function UserProfileScreen({route, navigation}: any) {
     setPosts([]);
     setViewer(null);
     setLoading(true);
+    setPostsLoading(true);
   }, []);
   const load = useCallback(
     async (signal?: AbortSignal) => {
@@ -92,56 +95,82 @@ export default function UserProfileScreen({route, navigation}: any) {
           timeout: 15000,
           signal,
         };
+        const blockPromise = axios
+          .get(`${BASE_URL}/api/block/status/${participantId}`, config)
+          .then(
+            result => ({ok: true as const, result}),
+            () => ({ok: false as const}),
+          );
         const {data} = await axios.get(
           `${BASE_URL}/api/users/${participantId}`,
           config,
         );
         if (!active()) return;
         setProfile(data);
+        setLoading(false);
         setError(false);
         setPostsError(false);
         if (!data.canViewContent) {
           setPosts([]);
           setViewer(null);
+          setPostsLoading(false);
         }
-        const block = await axios.get(
-          `${BASE_URL}/api/block/status/${participantId}`,
-          config,
-        );
-        if (!active()) return;
-        setIBlocked(!!block.data.iBlockedThem);
-        if (data.canViewContent) {
-          try {
-            const result = await fetchCollection(
+        const postsPromise = data.canViewContent
+          ? fetchCollection(
               `${BASE_URL}/api/users/${participantId}/posts`,
               config,
               'posts',
-            );
-            if (active()) setPosts(result);
-          } catch (e: any) {
+            ).then(
+              rows => ({ok: true as const, rows}),
+              (e: any) => ({ok: false as const, error: e}),
+            )
+          : Promise.resolve({ok: true as const, rows: [] as Post[]});
+        // Each section commits independently; a slow block lookup cannot hide profile/photos.
+        await Promise.all([
+          blockPromise.then(block => {
+            if (active() && block.ok)
+              setIBlocked(!!block.result.data.iBlockedThem);
+          }),
+          postsPromise.then(result => {
             if (!active()) return;
-            setPosts([]);
-            setViewer(null);
-            setPostsError(true);
-            if (e.response?.status === 403)
-              setProfile(prev =>
-                prev ? {...prev, canViewContent: false} : null,
-              );
-          }
-        }
+            if (result.ok) {
+              setPosts(result.rows);
+              setPostsError(false);
+            } else {
+              setPostsError(true);
+              if (
+                result.error.response?.status === 403 ||
+                result.error.response?.status === 401
+              ) {
+                setPosts([]);
+                setViewer(null);
+                setProfile(prev =>
+                  prev ? {...prev, canViewContent: false} : null,
+                );
+              }
+            }
+            setPostsLoading(false);
+          }),
+        ]);
         if (chatId && active()) {
           const raw = await AsyncStorage.getItem(`mute_${chatId}`);
           if (active()) setMuteDuration(raw ? JSON.parse(raw).duration : null);
         }
-      } catch {
+      } catch (e: any) {
         if (active()) {
-          setProfile(null);
-          setPosts([]);
-          setViewer(null);
+          if (e.response?.status === 403 || e.response?.status === 401) {
+            setProfile(null);
+            setPosts([]);
+            setViewer(null);
+          }
           setError(true);
         }
       } finally {
-        if (active()) setLoading(false);
+        if (active()) {
+          setLoading(false);
+          setPostsLoading(false);
+          setRefreshing(false);
+        }
       }
     },
     [participantId, chatId],
@@ -451,12 +480,15 @@ export default function UserProfileScreen({route, navigation}: any) {
 
   return (
     <SafeAreaView style={s.safe} edges={['top', 'bottom']}>
-      <CustomHeader title={isRTL ? 'الملف الشخصي' : 'Profile'} onBackPress={() => navigation.goBack()} />
+      <CustomHeader
+        title={isRTL ? 'الملف الشخصي' : 'Profile'}
+        onBackPress={() => navigation.goBack()}
+      />
       {loading ? (
         <View style={s.empty}>
           <ActivityIndicator size="large" />
         </View>
-      ) : error || !profile ? (
+      ) : !profile ? (
         <View style={s.empty}>
           <Text style={s.muted}>
             {hbsText(isRTL, 'ui_could_not_load_profile')}
@@ -470,9 +502,27 @@ export default function UserProfileScreen({route, navigation}: any) {
           data={profile.canViewContent ? posts : []}
           numColumns={3}
           keyExtractor={item => item._id}
-          ListHeaderComponent={header}
-          refreshing={false}
-          onRefresh={() => load()}
+          ListHeaderComponent={
+            <View>
+              {header}
+              {error && (
+                <TouchableOpacity onPress={() => load()} style={{padding: 12}}>
+                  <Text style={s.muted}>
+                    {hbsText(isRTL, 'ui_could_not_load_profile')} ·{' '}
+                    {hbsText(isRTL, 'ui_retry')}
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          }
+          refreshing={refreshing}
+          onRefresh={() => {
+            setRefreshing(true);
+            void load();
+          }}
+          initialNumToRender={12}
+          maxToRenderPerBatch={9}
+          windowSize={7}
           contentContainerStyle={{flexGrow: 1}}
           renderItem={({item}) => (
             <TouchableOpacity
@@ -489,37 +539,45 @@ export default function UserProfileScreen({route, navigation}: any) {
             </TouchableOpacity>
           )}
           ListEmptyComponent={
-            <View style={s.empty}>
-              <Ionicons
-                name={
-                  profile.canViewContent
-                    ? 'images-outline'
-                    : 'lock-closed-outline'
-                }
-                size={34}
-                color={Colors.textMuted}
-              />
-              <Text style={s.emptyTitle}>
-                {!profile.canViewContent
-                  ? hbsText(isRTL, 'ui_this_account_is_private')
-                  : postsError
-                  ? hbsText(isRTL, 'ui_could_not_load_check_ins')
-                  : hbsText(isRTL, 'ui_no_check_ins_yet')}
-              </Text>
-              {!profile.canViewContent && (
-                <Text style={s.hint}>
-                  {hbsText(
-                    isRTL,
-                    'ui_only_friends_can_see_private_check_ins_and_the_f',
-                  )}
+            postsLoading && profile.canViewContent ? (
+              <View style={s.empty}>
+                <ActivityIndicator color={Colors.accent} />
+              </View>
+            ) : (
+              <View style={s.empty}>
+                <Ionicons
+                  name={
+                    profile.canViewContent
+                      ? 'images-outline'
+                      : 'lock-closed-outline'
+                  }
+                  size={34}
+                  color={Colors.textMuted}
+                />
+                <Text style={s.emptyTitle}>
+                  {!profile.canViewContent
+                    ? hbsText(isRTL, 'ui_this_account_is_private')
+                    : postsError
+                    ? hbsText(isRTL, 'ui_could_not_load_check_ins')
+                    : hbsText(isRTL, 'ui_no_check_ins_yet')}
                 </Text>
-              )}
-              {postsError && profile.canViewContent && (
-                <TouchableOpacity style={s.textAction} onPress={() => load()}>
-                  <Text style={s.buttonText}>{hbsText(isRTL, 'ui_retry')}</Text>
-                </TouchableOpacity>
-              )}
-            </View>
+                {!profile.canViewContent && (
+                  <Text style={s.hint}>
+                    {hbsText(
+                      isRTL,
+                      'ui_only_friends_can_see_private_check_ins_and_the_f',
+                    )}
+                  </Text>
+                )}
+                {postsError && profile.canViewContent && (
+                  <TouchableOpacity style={s.textAction} onPress={() => load()}>
+                    <Text style={s.buttonText}>
+                      {hbsText(isRTL, 'ui_retry')}
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            )
           }
         />
       )}
@@ -574,7 +632,12 @@ const s = StyleSheet.create({
     justifyContent: 'center',
   },
   initial: {fontSize: 36, color: Colors.white},
-  name: {fontSize: 22, fontWeight: '800', color: Colors.textPrimary, marginTop: 14},
+  name: {
+    fontSize: 22,
+    fontWeight: '800',
+    color: Colors.textPrimary,
+    marginTop: 14,
+  },
   bio: {
     fontSize: 14,
     lineHeight: 21,

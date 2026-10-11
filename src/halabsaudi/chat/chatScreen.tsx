@@ -2478,22 +2478,15 @@ function ChatScreenContent({route, navigation}: any) {
             });
           return;
         }
-        const permission = await axios
+        const permissionPromise = axios
           .get(`${BASE_URL}/api/users/${participantId}/message-permission`, {
             headers: {Authorization: `Bearer ${token}`},
             timeout: 15000,
             signal: controller.signal,
           })
           .catch(() => null);
-        if (!active) return;
-        setAccess(
-          permission
-            ? permission.data?.allowed === true
-              ? 'allowed'
-              : 'waiting'
-            : 'error',
-        );
-        const [blockRes, msgRes] = await Promise.all([
+        const [permission, blockRes, msgRes] = await Promise.all([
+          permissionPromise,
           participantId
             ? axios
                 .get(`${BASE_URL}/api/block/status/${participantId}`, {
@@ -2509,6 +2502,14 @@ function ChatScreenContent({route, navigation}: any) {
             signal: controller.signal,
           }),
         ]);
+        if (!active) return;
+        setAccess(
+          permission
+            ? permission.data?.allowed === true
+              ? 'allowed'
+              : 'waiting'
+            : 'error',
+        );
         if (!active) return;
         setIBlockedThem(blockRes?.data?.iBlockedThem || false);
         setTheyBlockedMe(blockRes?.data?.theyBlockedMe || false);

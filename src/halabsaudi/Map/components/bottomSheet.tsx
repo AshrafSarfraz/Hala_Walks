@@ -1,19 +1,26 @@
-import { Text } from '../../../ui/Text';
-import { TextInput } from '../../../ui/TextInput';
+import {Text} from '../../../ui/Text';
+import {TextInput} from '../../../ui/TextInput';
 // /src/halabsaudi/Map/components/bottomSheet.tsx
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import storage from '@react-native-firebase/storage';
+import {uploadCheckInPhoto} from '../../api/checkIn';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import axios from 'axios';
-import React,{ useEffect,useRef,useState } from 'react';
-import { Animated,FlatList,Image,StyleSheet,TouchableOpacity,View } from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
+import {
+  Animated,
+  FlatList,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import Modal from 'react-native-modal';
-import { BASE_URL } from '../../../config/api';
+import {BASE_URL} from '../../../config/api';
 import ActivityIndicatorModal from '../../Component/Loader/ActivityIndicator';
-import { Colors } from '../../Themes/Colors';
-import type { PlaceSuggestion } from '../mapScreen';
-import { useCustomAlert } from './customAlert';
+import {Colors} from '../../Themes/Colors';
+import type {PlaceSuggestion} from '../mapScreen';
+import {useCustomAlert} from './customAlert';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -24,6 +31,7 @@ type PhotoEntry = {
   progress: number | null;
   downloadUrl: string | null;
   error: boolean;
+  saved?: boolean;
 };
 
 /** A place the user searched on the map (name + full address string, no coords) */
@@ -54,37 +62,6 @@ type Props = {
 };
 
 const MAX_PHOTOS = 2;
-
-// ─── Firebase upload ──────────────────────────────────────────────────────────
-
-const uploadToFirebase = (
-  uri: string,
-  onProgress: (pct: number) => void,
-): Promise<string> =>
-  new Promise((resolve, reject) => {
-    const filename = `mapGallery/${Date.now()}_${Math.random()
-      .toString(36)
-      .slice(2)}.jpg`;
-    const ref = storage().ref(filename);
-    const task = ref.putFile(uri);
-    task.on(
-      'state_changed',
-      snapshot => {
-        const pct = Math.round(
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100,
-        );
-        onProgress(pct);
-      },
-      err => reject(err),
-      async () => {
-        try {
-          resolve(await ref.getDownloadURL());
-        } catch (err) {
-          reject(err);
-        }
-      },
-    );
-  });
 
 // ─── PhotoCard ────────────────────────────────────────────────────────────────
 
@@ -209,7 +186,7 @@ const cardStyles = StyleSheet.create({
 
 const LocationToggle = ({
   mode,
-  currentLabel,
+  currentLabel: _currentLabel,
   searchedLabel,
   onChange,
 }: {
@@ -327,12 +304,19 @@ const BottomSheet = ({
 }: Props) => {
   const [description, setDescription] = useState('');
   const [photos, setPhotos] = useState<PhotoEntry[]>([]);
-  const [displayName, setDisplayName] = useState(
-    address || 'Current Location',
-  );
+  const [displayName, setDisplayName] = useState(address || 'Current Location');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [renamingLocation, setRenamingLocation] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const uploadController = useRef<AbortController | null>(null);
+  const uploadBusy = useRef(false);
+  const resolvedLocation = useRef<{key: string; id: string} | null>(null);
+  useEffect(
+    () => () => {
+      uploadController.current?.abort();
+    },
+    [],
+  );
   const [locationMode, setLocationMode] = useState<LocationMode>('current');
   const {alert, AlertComponent} = useCustomAlert();
 
@@ -352,7 +336,11 @@ const BottomSheet = ({
 
   // Keep current-mode name fresh as parent resolves GPS address
   useEffect(() => {
-    if (locationMode === 'current' && address && address !== 'Current Location') {
+    if (
+      locationMode === 'current' &&
+      address &&
+      address !== 'Current Location'
+    ) {
       setDisplayName(address);
     }
   }, [address, locationMode]);
@@ -360,6 +348,8 @@ const BottomSheet = ({
   // Reset when sheet closes
   useEffect(() => {
     if (!visible) {
+      uploadController.current?.abort();
+      resolvedLocation.current = null;
       setPhotos([]);
       setDescription('');
       setShowSuggestions(false);
@@ -421,7 +411,10 @@ const BottomSheet = ({
         //    kabhi save nahi hota tha (error catch me chup-chaap chala jata).
         `${BASE_URL}/api/hbs/map/location/${locationId}/name`,
         {name: s.name},
-        token ? {headers: {Authorization: `Bearer ${token}`}} : undefined,
+        {
+          headers: token ? {Authorization: `Bearer ${token}`} : {},
+          timeout: 15000,
+        },
       );
     } catch (err) {
       console.log('[handlePickSuggestion] PATCH failed:', err);
@@ -433,6 +426,7 @@ const BottomSheet = ({
   // ─── Check-in / upload ────────────────────────────────────────────────────
 
   const handleCheckIn = async () => {
+    if (uploadBusy.current) return;
     if (!photos.length) {
       alert('Missing photo', 'Please add at least one photo.');
       return;
@@ -445,13 +439,29 @@ const BottomSheet = ({
       return;
     }
 
+    uploadBusy.current = true;
+    const controller = new AbortController();
+    uploadController.current = controller;
     try {
       setUploading(true);
       const token = await AsyncStorage.getItem('hala_token');
-      const headers = token ? {Authorization: `Bearer ${token}`} : undefined;
+      if (!token) throw new Error('Please sign in again.');
+      const config = {
+        headers: {Authorization: `Bearer ${token}`},
+        timeout: 20000,
+        signal: controller.signal,
+      };
 
       // 1. Resolve / create the location document on the server
-      let targetId = isRemote ? null : locationId;
+      const targetKey = isRemote
+        ? JSON.stringify(searchedLocation)
+        : JSON.stringify(currentLocation);
+      let targetId =
+        resolvedLocation.current?.key === targetKey
+          ? resolvedLocation.current.id
+          : isRemote
+          ? null
+          : locationId;
 
       if (!targetId) {
         const body = isRemote
@@ -468,10 +478,9 @@ const BottomSheet = ({
         const locRes = await axios.post(
           `${BASE_URL}/api/hbs/map/location`,
           body,
-          {headers},
+          config,
         );
-        targetId =
-          locRes?.data?.data?._id ?? locRes?.data?._id ?? null;
+        targetId = locRes?.data?.data?._id ?? locRes?.data?._id ?? null;
       }
 
       if (!targetId) {
@@ -479,47 +488,47 @@ const BottomSheet = ({
         return;
       }
 
-      // 2. Upload all photos to Firebase Storage
-      const results = await Promise.all(
-        photos.map(entry =>
-          uploadToFirebase(entry.uri, pct =>
-            patchPhoto(entry.id, {progress: pct}),
-          )
-            .then(url => {
-              patchPhoto(entry.id, {downloadUrl: url, progress: 100});
-              return {ok: true as const, url};
-            })
-            .catch(err => {
-              console.log('[Firebase upload error]', err);
-              patchPhoto(entry.id, {error: true});
-              return {ok: false as const, url: null};
-            }),
-        ),
-      );
-
-      const failed = results.filter(r => !r.ok);
-      if (failed.length) {
-        alert(
-          'Upload error',
-          `${failed.length} photo(s) failed. Remove them and try again.`,
-        );
-        return;
-      }
-
-      // 3. Save Firebase URLs to backend
-      await Promise.all(
-        results.map(({url}) =>
-          axios.post(
+      resolvedLocation.current = {key: targetKey, id: targetId};
+      // Upload/save sequentially. Retry reuses uploaded URLs and skips saved photos.
+      for (const entry of photos) {
+        if (controller.signal.aborted) throw new Error('Upload cancelled.');
+        if (entry.saved) continue;
+        try {
+          patchPhoto(entry.id, {
+            error: false,
+            progress: entry.downloadUrl ? 100 : 0,
+          });
+          const url =
+            entry.downloadUrl ||
+            (await uploadCheckInPhoto(
+              entry.uri,
+              pct => {
+                if (!controller.signal.aborted)
+                  patchPhoto(entry.id, {progress: pct});
+              },
+              controller.signal,
+            ));
+          if (controller.signal.aborted) return;
+          patchPhoto(entry.id, {downloadUrl: url, progress: 100});
+          await axios.post(
             `${BASE_URL}/api/hbs/map/photos`,
             {
               locationId: targetId,
               image: url,
               caption: description?.trim() || 'Uploaded from app',
+              clientRequestId: entry.id,
             },
-            {headers},
-          ),
-        ),
-      );
+            config,
+          );
+          if (controller.signal.aborted) return;
+          patchPhoto(entry.id, {saved: true});
+        } catch (error) {
+          if (!controller.signal.aborted)
+            patchPhoto(entry.id, {error: true, progress: null});
+          throw error;
+        }
+      }
+      if (controller.signal.aborted) return;
 
       alert('Success', 'Check-in uploaded 🎉');
       setDescription('');
@@ -527,6 +536,7 @@ const BottomSheet = ({
       setShowSuggestions(false);
       onClose();
     } catch (error) {
+      if (controller.signal.aborted) return;
       const err = error as any;
       console.log(
         '[handleCheckIn]',
@@ -538,7 +548,8 @@ const BottomSheet = ({
         err?.response?.data?.message || 'Could not upload your check-in.',
       );
     } finally {
-      setUploading(false);
+      uploadBusy.current = false;
+      if (uploadController.current === controller) setUploading(false);
     }
   };
 
@@ -560,7 +571,6 @@ const BottomSheet = ({
         style={styles.modal}
         avoidKeyboard>
         <View style={styles.container}>
-
           {/* ── Drag handle ── */}
           <View style={styles.handle} />
 
@@ -623,9 +633,7 @@ const BottomSheet = ({
                     onPress={() => handlePickSuggestion(item)}>
                     <Text style={styles.suggestionName}>{item.name}</Text>
                     {!!item.vicinity && (
-                      <Text
-                        style={styles.suggestionVicinity}
-                        numberOfLines={1}>
+                      <Text style={styles.suggestionVicinity} numberOfLines={1}>
                         {item.vicinity}
                       </Text>
                     )}
@@ -672,7 +680,11 @@ const BottomSheet = ({
               ]}
               onPress={handleCamera}
               disabled={photos.length >= MAX_PHOTOS}>
-              <Ionicons name="image-outline" size={18} color={Colors.textPrimary} />
+              <Ionicons
+                name="image-outline"
+                size={18}
+                color={Colors.textPrimary}
+              />
               <Text style={styles.addPhotoText}>Photo</Text>
             </TouchableOpacity>
 
@@ -683,7 +695,11 @@ const BottomSheet = ({
               ]}
               onPress={handleGallery}
               disabled={photos.length >= MAX_PHOTOS}>
-              <Ionicons name="image-outline" size={18} color={Colors.textPrimary} />
+              <Ionicons
+                name="image-outline"
+                size={18}
+                color={Colors.textPrimary}
+              />
               <Text style={styles.addPhotoText}>Photo / Video</Text>
             </TouchableOpacity>
           </View>
@@ -720,7 +736,6 @@ const BottomSheet = ({
               <Text style={styles.checkInText}>Check in</Text>
             )}
           </TouchableOpacity>
-
         </View>
       </Modal>
 
@@ -748,7 +763,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 4,
     borderRadius: 2,
-    backgroundColor: Colors.surface ,
+    backgroundColor: Colors.surface,
     alignSelf: 'center',
     marginBottom: 16,
   },
@@ -833,7 +848,11 @@ const styles = StyleSheet.create({
   },
   suggestionName: {fontSize: 14, fontWeight: '600', color: Colors.textPrimary},
   suggestionVicinity: {fontSize: 12, color: Colors.textSecondary, marginTop: 2},
-  emptyText: {color: Colors.textSecondary, textAlign: 'center', paddingVertical: 10},
+  emptyText: {
+    color: Colors.textSecondary,
+    textAlign: 'center',
+    paddingVertical: 10,
+  },
 
   // Description input
   input: {

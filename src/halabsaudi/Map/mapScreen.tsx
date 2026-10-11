@@ -1,31 +1,37 @@
 import Ionicons from '@react-native-vector-icons/ionicons';
-import { useFocusEffect,useNavigation } from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import axios from 'axios';
-import React,{
-memo,
-useCallback,
-useEffect,
-useMemo,
-useRef,
-useState,
+import React, {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
 } from 'react';
-import { FlatList,Image,Keyboard,Platform,StyleSheet,TouchableOpacity,View } from 'react-native';
-import { launchCamera,launchImageLibrary } from 'react-native-image-picker';
-import MapView,{ Marker,PROVIDER_GOOGLE,Region } from 'react-native-maps';
-import { ActivityIndicator } from '../../ui/ActivityIndicator';
-import { Text } from '../../ui/Text';
-import { TextInput } from '../../ui/TextInput';
-import { darkMapStyle } from '../../ui/darkMap';
-import { useStatusBar } from '../Component/UseStatusBar/useStatusBar';
-import { Colors } from '../Themes/Colors';
-import { fetchBrandCatalog } from '../api/brandCatalog';
-import { ensurePermission } from '../permissions/service';
+import {
+  FlatList,
+  Image,
+  Keyboard,
+  Platform,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import MapView, {Marker, PROVIDER_GOOGLE, Region} from 'react-native-maps';
+import {ActivityIndicator} from '../../ui/ActivityIndicator';
+import {Text} from '../../ui/Text';
+import {TextInput} from '../../ui/TextInput';
+import {darkMapStyle} from '../../ui/darkMap';
+import {useStatusBar} from '../Component/UseStatusBar/useStatusBar';
+import {Colors} from '../Themes/Colors';
+import {useBrandCatalog} from '../hooks/useBrandCatalog';
+import {fetchVenueCatalog} from '../api/venueCatalog';
 
-import { BASE_URL,HBS_API } from '../../config/api';
 import ActivityIndicatorModal from '../Component/Loader/ActivityIndicator';
 import {
-ensureLocationPermission,
-getDeviceLocation,
+  ensureLocationPermission,
+  getDeviceLocation,
 } from '../utils/getDeviceLocation';
 
 // ─── Exported types ───────────────────────────────────────────────────────────
@@ -91,9 +97,6 @@ const regionFromVenues = (venues: VenueMarker[]): Region => {
 const MAX_VISIBLE_MARKERS = 45;
 const NEARBY_RADIUS_KM = 25;
 const NEAR_VENUE_RADIUS_KM = 120;
-
-const VENUES_API = `${HBS_API}/api/hbs/venues`;
-const BRANDS_API = `${HBS_API}/api/hbs/brands`;
 
 // ─── Geo helpers ──────────────────────────────────────────────────────────────
 
@@ -186,12 +189,8 @@ const isNearAnyVenue = (
 ) =>
   venues.some(
     v =>
-      haversineKm(
-        coords.latitude,
-        coords.longitude,
-        v.latitude,
-        v.longitude,
-      ) <= radiusKm,
+      haversineKm(coords.latitude, coords.longitude, v.latitude, v.longitude) <=
+      radiusKm,
   );
 
 const resolveMarkerFilterCenter = (
@@ -275,7 +274,7 @@ const ImagePin = memo(function ImagePin({
   imageUri: string;
   onImageLoadEnd: () => void;
 }) {
-  const size = type === 'venue' ? (selected ? 45 : 36) : (selected ? 60 : 46);
+  const size = type === 'venue' ? (selected ? 45 : 36) : selected ? 60 : 46;
   const borderColor = type === 'venue' ? PIN.venue : PIN.brandFill;
   return (
     <View
@@ -359,13 +358,13 @@ const PLACE_DETAIL_URL =
 
 const fetchGooglePredictions = async (
   input: string,
+  signal?: AbortSignal,
 ): Promise<AutocompletePrediction[]> => {
   const url = `${AUTOCOMPLETE_URL}?input=${encodeURIComponent(
     input,
   )}&key=${GOOGLE_MAPS_API_KEY}&language=en&types=geocode|establishment`;
 
-  const res = await fetch(url);
-  const json = await res.json();
+  const {data: json} = await axios.get(url, {signal, timeout: 10000});
 
   if (json.status !== 'OK' && json.status !== 'ZERO_RESULTS') {
     throw new Error(
@@ -384,8 +383,7 @@ const fetchGooglePlaceCoords = async (
   placeId: string,
 ): Promise<{lat: number; lng: number} | null> => {
   const url = `${PLACE_DETAIL_URL}?place_id=${placeId}&fields=geometry&key=${GOOGLE_MAPS_API_KEY}`;
-  const res = await fetch(url);
-  const json = await res.json();
+  const {data: json} = await axios.get(url, {timeout: 10000});
   const loc = json?.result?.geometry?.location ?? null;
   return loc ?? null;
 };
@@ -411,16 +409,37 @@ const LocationSearchBar = ({
   const [selectedLabel, setSelectedLabel] = useState<string | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const inputRef = useRef<TextInput>(null);
+  const searchVersion = useRef(0);
+  const searchController = useRef<AbortController | null>(null);
+  const focusTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const cancelSearch = () => {
+    searchVersion.current++;
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    searchController.current?.abort();
+    setSearching(false);
+  };
+  useEffect(
+    () => () => {
+      searchVersion.current++;
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      if (focusTimer.current) clearTimeout(focusTimer.current);
+      searchController.current?.abort();
+    },
+    [],
+  );
 
   const openSearch = () => {
     setExpanded(true);
     setQuery('');
     setPredictions([]);
     setFetchError(null);
-    setTimeout(() => inputRef.current?.focus(), 150);
+    cancelSearch();
+    focusTimer.current = setTimeout(() => inputRef.current?.focus(), 150);
   };
 
   const closeSearch = () => {
+    cancelSearch();
+    if (focusTimer.current) clearTimeout(focusTimer.current);
     Keyboard.dismiss();
     setExpanded(false);
     setQuery('');
@@ -435,6 +454,10 @@ const LocationSearchBar = ({
   };
 
   const fetchPredictions = useCallback(async (text: string) => {
+    const version = ++searchVersion.current;
+    searchController.current?.abort();
+    const controller = new AbortController();
+    searchController.current = controller;
     const trimmed = text.trim();
     if (trimmed.length < 2) {
       setPredictions([]);
@@ -444,24 +467,31 @@ const LocationSearchBar = ({
     setSearching(true);
     setFetchError(null);
     try {
-      const results = await fetchGooglePredictions(trimmed);
+      const results = await fetchGooglePredictions(trimmed, controller.signal);
+      if (version !== searchVersion.current || controller.signal.aborted)
+        return;
       setPredictions(results);
     } catch (err: any) {
+      if (version !== searchVersion.current || controller.signal.aborted)
+        return;
       console.warn('[LocationSearchBar] autocomplete error:', err?.message);
       setPredictions([]);
       setFetchError(err?.message ?? 'Search unavailable');
     } finally {
-      setSearching(false);
+      if (version === searchVersion.current) setSearching(false);
     }
   }, []);
 
   const onChangeText = (text: string) => {
+    cancelSearch();
+    setPredictions([]);
     setQuery(text);
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => fetchPredictions(text), 350);
   };
 
   const handleSelectPrediction = async (p: AutocompletePrediction) => {
+    cancelSearch();
     Keyboard.dismiss();
     setExpanded(false);
     setQuery('');
@@ -522,10 +552,18 @@ const LocationSearchBar = ({
               <TouchableOpacity
                 onPress={clearSelection}
                 hitSlop={{top: 8, bottom: 8, left: 8, right: 8}}>
-                <Ionicons name="close-circle" size={18} color={Colors.textSecondary} />
+                <Ionicons
+                  name="close-circle"
+                  size={18}
+                  color={Colors.textSecondary}
+                />
               </TouchableOpacity>
             ) : (
-              <Ionicons name="chevron-down" size={16} color={Colors.textSecondary} />
+              <Ionicons
+                name="chevron-down"
+                size={16}
+                color={Colors.textSecondary}
+              />
             )}
           </View>
         </TouchableOpacity>
@@ -597,8 +635,7 @@ const LocationSearchBar = ({
       )}
 
       {showError && (
-        <View
-          style={[searchBarStyles.dropdown, searchBarStyles.errorDropdown]}>
+        <View style={[searchBarStyles.dropdown, searchBarStyles.errorDropdown]}>
           <Ionicons name="warning-outline" size={14} color={Colors.accent} />
           <Text style={searchBarStyles.errorText}>{fetchError}</Text>
         </View>
@@ -614,7 +651,6 @@ const searchBarStyles = StyleSheet.create({
     left: 16,
     right: 16,
     zIndex: 20,
-
   },
   banner: {
     backgroundColor: Colors.surface,
@@ -645,7 +681,6 @@ const searchBarStyles = StyleSheet.create({
   },
   bannerRight: {
     paddingLeft: 4,
-
   },
   remotePill: {
     backgroundColor: Colors.surface,
@@ -680,7 +715,6 @@ const searchBarStyles = StyleSheet.create({
     fontWeight: '500',
     color: Colors.textPrimary,
     padding: 0,
-
   },
   dropdown: {
     marginTop: 6,
@@ -750,11 +784,23 @@ const MapScreen = () => {
   const navigation = useNavigation<any>();
   const mapRef = useRef<MapView>(null);
   const didFitRef = useRef(false);
+  const mounted = useRef(true);
   const lastMetaCoordsRef = useRef<{
     latitude: number;
     longitude: number;
   } | null>(null);
   const metaDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const metaVersion = useRef(0);
+  const metaController = useRef<AbortController | null>(null);
+  const {brands, loading: brandsLoading} = useBrandCatalog();
+  const [venues, setVenues] = useState<any[]>([]);
+  const [venuesLoaded, setVenuesLoaded] = useState(false);
+  useEffect(() => {
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+    };
+  }, []);
 
   const [location, setLocation] = useState<{
     latitude: number;
@@ -765,8 +811,6 @@ const MapScreen = () => {
   const [hasLocationPermission, setHasLocationPermission] = useState(false);
 
   const [address, setAddress] = useState('Current Location');
-  const [locationId, setLocationId] = useState<string | null>(null);
-  const [suggestions, setSuggestions] = useState<PlaceSuggestion[]>([]);
 
   const [allMarkers, setAllMarkers] = useState<VenueMarker[]>([]);
   const [mapCenter, setMapCenter] = useState<{
@@ -779,10 +823,6 @@ const MapScreen = () => {
   const [selectedMarker, setSelectedMarker] = useState<VenueMarker | null>(
     null,
   );
-  const [uploadedImages, setUploadedImages] = useState<Record<string, string>>(
-    {},
-  );
-
   // FIX: Force mapReady on Android if onMapReady fires late
   useEffect(() => {
     if (Platform.OS === 'android') {
@@ -806,6 +846,11 @@ const MapScreen = () => {
 
   const resolveLocationMeta = useCallback(
     async (coords: {latitude: number; longitude: number}) => {
+      if (!mounted.current) return;
+      const version = ++metaVersion.current;
+      metaController.current?.abort();
+      const controller = new AbortController();
+      metaController.current = controller;
       // ── Step 1: Google Reverse Geocoding for real place name ──────────────
       // This always works regardless of your backend status.
       try {
@@ -816,8 +861,12 @@ const MapScreen = () => {
           `&language=en` +
           `&result_type=neighborhood|sublocality|locality`;
 
-        const geoRes = await fetch(geoUrl);
-        const geoJson = await geoRes.json();
+        const {data: geoJson} = await axios.get(geoUrl, {
+          timeout: 10000,
+          signal: controller.signal,
+        });
+        if (version !== metaVersion.current || controller.signal.aborted)
+          return;
 
         if (geoJson.status === 'OK' && geoJson.results?.length > 0) {
           // Pick the most specific readable name:
@@ -843,65 +892,6 @@ const MapScreen = () => {
         }
       } catch (geoErr) {
         console.log('[resolveLocationMeta] geocode error:', geoErr);
-      }
-
-      // ── Step 2: Your backend for locationId + suggestions ─────────────────
-      const [locResult, sugResult] = await Promise.allSettled([
-        axios.post(`${BASE_URL}/api/hbs/map/location`, {
-          lat: coords.latitude,
-          lng: coords.longitude,
-        }),
-        axios.get(`${BASE_URL}/api/hbs/map/suggestions`, {
-          params: {
-            lat: coords.latitude,
-            lng: coords.longitude,
-            radius: 2000,
-            limit: 10,
-          },
-        }),
-      ]);
-
-      // -- location id / name --
-      if (locResult.status === 'fulfilled') {
-        const locData = locResult.value?.data?.data ?? locResult.value?.data;
-        if (locData?.name) setAddress(locData.name);
-        setLocationId(locData?._id ?? null);
-      } else {
-        console.log(
-          '[resolveLocationMeta] location error:',
-          (locResult.reason as any)?.response?.status,
-          (locResult.reason as any)?.response?.data ??
-            (locResult.reason as any)?.message,
-        );
-        setLocationId(null);
-      }
-
-      // -- nearby suggestions --
-      if (sugResult.status === 'fulfilled') {
-        const raw = sugResult.value?.data;
-        const sugData: PlaceSuggestion[] | null =
-          (Array.isArray(raw?.data) && raw.data) ||
-          (Array.isArray(raw?.results) && raw.results) ||
-          (Array.isArray(raw) && raw) ||
-          null;
-
-        if (sugData) {
-          setSuggestions(sugData);
-        } else {
-          console.log(
-            '[resolveLocationMeta] suggestions: unexpected response shape:',
-            raw,
-          );
-          setSuggestions([]);
-        }
-      } else {
-        console.log(
-          '[resolveLocationMeta] suggestions error:',
-          (sugResult.reason as any)?.response?.status,
-          (sugResult.reason as any)?.response?.data ??
-            (sugResult.reason as any)?.message,
-        );
-        setSuggestions([]);
       }
     },
     [],
@@ -933,12 +923,15 @@ const MapScreen = () => {
   useEffect(
     () => () => {
       if (metaDebounceRef.current) clearTimeout(metaDebounceRef.current);
+      metaVersion.current++;
+      metaController.current?.abort();
     },
     [],
   );
 
   const applyLocation = useCallback(
     (coords: {latitude: number; longitude: number}) => {
+      if (!mounted.current) return;
       setLocation(coords);
       setLocationError(null);
       setLoading(false);
@@ -953,6 +946,7 @@ const MapScreen = () => {
     setLocationError(null);
 
     const permitted = await ensureLocationPermission();
+    if (!mounted.current) return;
     setHasLocationPermission(permitted);
 
     if (!permitted) {
@@ -966,6 +960,7 @@ const MapScreen = () => {
       const coords = await getDeviceLocation();
       applyLocation(coords);
     } catch (error: any) {
+      if (!mounted.current) return;
       console.log('[getCurrentLocation] Error:', error);
       if (error?.code === 1) {
         setHasLocationPermission(false);
@@ -993,34 +988,30 @@ const MapScreen = () => {
     [resolveLocationMetaDebounced],
   );
 
-  const fetchVenueMarkers = useCallback(async () => {
-    try {
-      const [venuesRes, brandsRes] = await Promise.all([
-        fetch(VENUES_API),
-        fetchBrandCatalog(BRANDS_API),
-      ]);
-      const venuesJson = venuesRes.ok ? await venuesRes.json() : {data: []};
-      const brandsJson = brandsRes.ok ? await brandsRes.json() : {data: []};
-      const venues = Array.isArray(venuesJson.data) ? venuesJson.data : [];
-      const brands = Array.isArray(brandsJson.data) ? brandsJson.data : [];
-      const markers = buildMarkersFromCatalog(venues, brands);
-      setAllMarkers(markers);
-      didFitRef.current = false;
-    } catch (err) {
-      console.log('[fetchVenueMarkers]', err);
-    } finally {
-      setMarkersLoaded(true);
-    }
+  useEffect(() => {
+    void getCurrentLocation();
+  }, [getCurrentLocation]);
+  useEffect(() => {
+    let alive = true;
+    void fetchVenueCatalog()
+      .then(rows => {
+        if (alive) setVenues(rows);
+      })
+      .catch(error => console.log('[venues]', error?.message))
+      .finally(() => {
+        if (alive) setVenuesLoaded(true);
+      });
+    return () => {
+      alive = false;
+    };
   }, []);
-
   useEffect(() => {
-    getCurrentLocation();
-    fetchVenueMarkers();
-  }, [getCurrentLocation, fetchVenueMarkers]);
-
-  useEffect(() => {
-    if (markersLoaded) setLoading(false);
-  }, [markersLoaded]);
+    setAllMarkers(buildMarkersFromCatalog(venues, brands));
+    if (venuesLoaded && !brandsLoading) {
+      setMarkersLoaded(true);
+      setLoading(false);
+    }
+  }, [venues, brands, venuesLoaded, brandsLoading]);
 
   const visibleMarkers = useMemo(() => {
     if (allMarkers.length === 0) return [];
@@ -1076,14 +1067,15 @@ const MapScreen = () => {
 
     const venues = allMarkers.filter(m => m.type === 'venue');
     const nearUser = !!location && isNearAnyVenue(location, venues);
-    const nextRegion = nearUser && location
-      ? {
-          latitude: location.latitude,
-          longitude: location.longitude,
-          latitudeDelta: 0.08,
-          longitudeDelta: 0.08,
-        }
-      : regionFromVenues(venues);
+    const nextRegion =
+      nearUser && location
+        ? {
+            latitude: location.latitude,
+            longitude: location.longitude,
+            latitudeDelta: 0.08,
+            longitudeDelta: 0.08,
+          }
+        : regionFromVenues(venues);
     mapRef.current?.animateToRegion(nextRegion, 700);
     didFitRef.current = true;
   }, [allMarkers, location, mapReady, markersLoaded]);
@@ -1095,46 +1087,6 @@ const MapScreen = () => {
     });
   }, []);
 
-  const saveUploadedImage = useCallback(
-    (asset: {uri?: string} | null) => {
-      if (!asset?.uri || !selectedMarker) return;
-      setUploadedImages(prev => ({
-        ...prev,
-        [selectedMarker._id]: asset.uri as string,
-      }));
-    },
-    [selectedMarker],
-  );
-
-  const openCamera = useCallback(async () => {
-    if (!await ensurePermission('camera')) return null;
-    return new Promise<{uri?: string} | null>(resolve => {
-      launchCamera(
-        {mediaType: 'photo', quality: 0.8, saveToPhotos: false},
-        r => {
-          if (r.didCancel || r.errorCode) return resolve(null);
-          const asset = r.assets?.[0] ?? null;
-          saveUploadedImage(asset);
-          resolve(asset);
-        },
-      );
-    });
-  }, [saveUploadedImage]);
-
-  const openGallery = useCallback(async () => {
-    return new Promise<{uri?: string} | null>(resolve => {
-      launchImageLibrary(
-        {mediaType: 'photo', quality: 0.8, selectionLimit: 1},
-        r => {
-          if (r.didCancel || r.errorCode) return resolve(null);
-          const asset = r.assets?.[0] ?? null;
-          saveUploadedImage(asset);
-          resolve(asset);
-        },
-      );
-    });
-  }, [saveUploadedImage]);
-
   // NEW: open the full brand/venue detail screen (image slider + details + gallery)
   const openBrandDetail = useCallback(
     (marker: VenueMarker) => {
@@ -1143,10 +1095,10 @@ const MapScreen = () => {
         type: marker.type,
         name: marker.name,
         address: marker.address,
-        image: uploadedImages[marker._id] ?? marker.image ?? null,
+        image: marker.image ?? null,
       });
     },
-    [navigation, uploadedImages],
+    [navigation],
   );
 
   const showMarkers = markersLoaded && visibleMarkers.length > 0 && mapReady;
@@ -1190,10 +1142,10 @@ const MapScreen = () => {
                 selectedMarker?._id === item._id &&
                 selectedMarker?.type === item.type
               }
-              uploadedImage={uploadedImages[item._id] ?? null}
+              uploadedImage={null}
               onPress={() => {
                 setSelectedMarker(item);
-              
+
                 animateToLocation(
                   {
                     latitude: item.latitude,
@@ -1259,20 +1211,24 @@ const MapScreen = () => {
           </TouchableOpacity>
 
           <View style={styles.markerCardRow}>
-            {uploadedImages[selectedMarker._id] || selectedMarker.image ? (
+            {selectedMarker.image ? (
               <Image
                 source={{
-                  uri:
-                    uploadedImages[selectedMarker._id] ??
-                    (selectedMarker.image as string),
+                  uri: selectedMarker.image as string,
                 }}
                 style={styles.markerCardImage}
                 resizeMode="contain"
               />
             ) : (
-              <View style={[styles.markerCardImage, styles.markerCardImageFallback]}>
+              <View
+                style={[
+                  styles.markerCardImage,
+                  styles.markerCardImageFallback,
+                ]}>
                 <Ionicons
-                  name={selectedMarker.type === 'venue' ? 'business' : 'pricetag'}
+                  name={
+                    selectedMarker.type === 'venue' ? 'business' : 'pricetag'
+                  }
                   size={22}
                   color={Colors.accent}
                 />
@@ -1291,7 +1247,11 @@ const MapScreen = () => {
               <Text style={styles.markerViewMore}>View details</Text>
             </View>
 
-            <Ionicons name="chevron-forward" size={20} color={Colors.textSecondary} />
+            <Ionicons
+              name="chevron-forward"
+              size={20}
+              color={Colors.textSecondary}
+            />
           </View>
         </TouchableOpacity>
       )}
@@ -1364,7 +1324,6 @@ const styles = StyleSheet.create({
     right: 16,
     alignItems: 'center',
     gap: 6,
-
   },
   fab: {
     width: 48,
@@ -1374,7 +1333,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: Colors.black,
-
   },
   markerCard: {
     position: 'absolute',

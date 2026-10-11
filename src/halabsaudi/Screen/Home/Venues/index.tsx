@@ -11,7 +11,7 @@ import {languageData} from '../../../redux_toolkit/language/languageSlice';
 import {RootState} from '../../../redux_toolkit/store';
 import {COL_GAP, VENUE_IMAGE_SIZE, styles} from './style';
 
-const VENUES_API = 'https://hala-b-saudi.onrender.com/api/hbs/venues';
+import {fetchVenueCatalog} from '../../../api/venueCatalog';
 const VENUES_CACHE_KEY = 'H-venues_cache_v3';
 const VENUES_TTL_MS = 3 * 60 * 60 * 1000;
 
@@ -33,11 +33,7 @@ const softMatch = (a: any, b: any) => {
 
   if (!first || !second) return false;
 
-  return (
-    first === second ||
-    first.includes(second) ||
-    second.includes(first)
-  );
+  return first === second || first.includes(second) || second.includes(first);
 };
 
 const withId = (items: any[]) =>
@@ -58,9 +54,7 @@ const Venues: React.FC = () => {
   const countryName = useSelector(
     (state: RootState) => state.country?.countryName ?? null,
   );
-  const language = useSelector(
-    (state: RootState) => state.language.language,
-  );
+  const language = useSelector((state: RootState) => state.language.language);
   const isEn = language === 'en';
 
   useEffect(() => {
@@ -96,20 +90,7 @@ const Venues: React.FC = () => {
       }
 
       try {
-        const response = await fetch(VENUES_API, {
-          signal: controller.signal,
-        });
-
-        if (!response.ok) {
-          throw new Error('Venues API failed');
-        }
-
-        const json = await response.json();
-        const raw = json?.data ?? json;
-
-        if (!Array.isArray(raw)) {
-          throw new Error('Invalid venues response');
-        }
+        const raw = await fetchVenueCatalog();
 
         if (!alive) return;
 
@@ -146,22 +127,12 @@ const Venues: React.FC = () => {
   const filteredVenues = useMemo(() => {
     if (!countryName) return venues;
 
-    return venues.filter(venue =>
-      softMatch(venue?.country, countryName),
-    );
+    return venues.filter(venue => softMatch(venue?.country, countryName));
   }, [venues, countryName]);
 
-  const visibleItems = showAll
-    ? filteredVenues
-    : filteredVenues.slice(0, 8);
+  const visibleItems = showAll ? filteredVenues : filteredVenues.slice(0, 8);
 
-  const renderVenueItem = ({
-    item,
-    index,
-  }: {
-    item: any;
-    index: number;
-  }) => {
+  const renderVenueItem = ({item, index}: {item: any; index: number}) => {
     const uri = String(item.img || '').trim();
     const isLoaded = imageLoaded[uri] ?? false;
     const hasFailed = imageFailed[uri] ?? false;
@@ -185,9 +156,7 @@ const Venues: React.FC = () => {
               resizeMode={FastImage.resizeMode.cover}
               onLoad={() =>
                 setImageLoaded(previous =>
-                  previous[uri]
-                    ? previous
-                    : {...previous, [uri]: true},
+                  previous[uri] ? previous : {...previous, [uri]: true},
                 )
               }
               onError={() => {

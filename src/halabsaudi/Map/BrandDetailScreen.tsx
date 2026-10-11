@@ -1,19 +1,32 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Ionicons from '@react-native-vector-icons/ionicons';
-import { useFocusEffect,useNavigation,useRoute } from '@react-navigation/native';
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
 import axios from 'axios';
-import React,{ useCallback,useEffect,useRef,useState } from 'react';
-import { FlatList,Modal,Platform,StatusBar,StyleSheet,TouchableOpacity,View,useWindowDimensions } from 'react-native';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {
+  FlatList,
+  Modal,
+  Platform,
+  StatusBar,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  useWindowDimensions,
+} from 'react-native';
 import FastImage from 'react-native-fast-image';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useSelector } from 'react-redux';
-import { HBS_API } from '../../config/api';
-import { ActivityIndicator } from '../../ui/ActivityIndicator';
-import { Text } from '../../ui/Text';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {useSelector} from 'react-redux';
+import {HBS_API} from '../../config/api';
+import {ActivityIndicator} from '../../ui/ActivityIndicator';
+import {Text} from '../../ui/Text';
 import CachedImage from '../Component/Media/CachedImage';
-import { brandGallery,uniqueImageUrls } from '../Component/Media/gallery';
-import { Colors } from '../Themes/Colors';
-import { hbsText } from '../i18n/translations';
+import {brandGallery, uniqueImageUrls} from '../Component/Media/gallery';
+import {Colors} from '../Themes/Colors';
+import {hbsText} from '../i18n/translations';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -38,7 +51,13 @@ type EntityDetail = {
 const detailUrl = (type: EntityType, id: string) =>
   `${HBS_API}/api/hbs/${type === 'venue' ? 'venues' : 'brands'}/${id}`;
 
-type CheckIn = {_id: string; image: string; caption?: string; createdAt?: string; user?: {name?: string}};
+type CheckIn = {
+  _id: string;
+  image: string;
+  caption?: string;
+  createdAt?: string;
+  user?: {name?: string};
+};
 
 // ─── Layout constants ───────────────────────────────────────────────────────
 
@@ -54,16 +73,43 @@ const ImageSlider = ({images, width}: {images: string[]; width: number}) => {
       <FlatList
         key={`${identity}:${width}`}
         data={images.length ? images : ['']}
-        horizontal pagingEnabled showsHorizontalScrollIndicator={false}
-        initialNumToRender={2} maxToRenderPerBatch={2} windowSize={3}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        initialNumToRender={2}
+        maxToRenderPerBatch={2}
+        windowSize={3}
         keyExtractor={(uri, i) => `${uri}:${i}`}
         getItemLayout={(_, i) => ({length: width, offset: width * i, index: i})}
-        onMomentumScrollEnd={event => setIndex(Math.max(0, Math.min(images.length - 1, Math.round(event.nativeEvent.contentOffset.x / width))))}
-        renderItem={({item}) => <CachedImage uri={item} style={{width, height: Math.round(width * 0.95)}} resizeMode={FastImage.resizeMode.cover} />}
+        onMomentumScrollEnd={event =>
+          setIndex(
+            Math.max(
+              0,
+              Math.min(
+                images.length - 1,
+                Math.round(event.nativeEvent.contentOffset.x / width),
+              ),
+            ),
+          )
+        }
+        renderItem={({item}) => (
+          <CachedImage
+            uri={item}
+            style={{width, height: Math.round(width * 0.95)}}
+            resizeMode={FastImage.resizeMode.cover}
+          />
+        )}
       />
-      {images.length > 1 && <View pointerEvents="none" style={styles.dotsRow}>
-        {images.map((uri, i) => <View key={`${uri}:${i}`} style={[styles.dot, i === index && styles.dotActive]} />)}
-      </View>}
+      {images.length > 1 && (
+        <View pointerEvents="none" style={styles.dotsRow}>
+          {images.map((uri, i) => (
+            <View
+              key={`${uri}:${i}`}
+              style={[styles.dot, i === index && styles.dotActive]}
+            />
+          ))}
+        </View>
+      )}
     </View>
   );
 };
@@ -93,10 +139,17 @@ const PhotoViewerModal = ({
   if (!visible) return null;
 
   return (
-    <Modal visible={visible} transparent statusBarTranslucent animationType="fade" onRequestClose={onClose}>
+    <Modal
+      visible={visible}
+      transparent
+      statusBarTranslucent
+      animationType="fade"
+      onRequestClose={onClose}>
       <View style={styles.viewerBackdrop}>
         <StatusBar barStyle="light-content" />
-        <TouchableOpacity style={[styles.viewerCloseBtn, {top: insets.top + 8}]} onPress={onClose}>
+        <TouchableOpacity
+          style={[styles.viewerCloseBtn, {top: insets.top + 8}]}
+          onPress={onClose}>
           <Ionicons name="close" size={26} color={Colors.onMedia} />
         </TouchableOpacity>
         <Text style={[styles.viewerCounter, {top: insets.top + 18}]}>
@@ -121,7 +174,8 @@ const PhotoViewerModal = ({
           renderItem={({item}) => (
             <View style={[styles.viewerSlide, {width: SCREEN_WIDTH}]}>
               <CachedImage
-                uri={item} priority="high"
+                uri={item}
+                priority="high"
                 style={[styles.viewerImage, {width: SCREEN_WIDTH}]}
                 resizeMode={FastImage.resizeMode.contain}
               />
@@ -138,7 +192,8 @@ const PhotoViewerModal = ({
 const BrandDetailScreen = () => {
   const insets = useSafeAreaInsets();
   const {width: SCREEN_WIDTH} = useWindowDimensions();
-  const GRID_ITEM_SIZE = (SCREEN_WIDTH - GRID_GAP * (GRID_COLUMNS - 1)) / GRID_COLUMNS;
+  const GRID_ITEM_SIZE =
+    (SCREEN_WIDTH - GRID_GAP * (GRID_COLUMNS - 1)) / GRID_COLUMNS;
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
   const {
@@ -150,72 +205,160 @@ const BrandDetailScreen = () => {
   } = (route.params ?? {}) as BrandDetailRouteParams;
 
   const [loading, setLoading] = useState(true);
-  const [detail, setDetail] = useState<EntityDetail | null>({name: routeName || '', address: routeAddress});
+  const [detail, setDetail] = useState<EntityDetail | null>({
+    name: routeName || '',
+    address: routeAddress,
+  });
   const [images, setImages] = useState<string[]>([]);
   const isAr = useSelector((state: any) => state.language.language === 'ar');
   const [posts, setPosts] = useState<CheckIn[]>([]);
   const [postsError, setPostsError] = useState(false);
-  const [officialImages, setOfficialImages] = useState<string[]>(uniqueImageUrls([routeImage]));
+  const [officialImages, setOfficialImages] = useState<string[]>(
+    uniqueImageUrls([routeImage]),
+  );
   const generation = useRef(0);
+  const lastLoaded = useRef(0);
+  const requestController = useRef<AbortController | null>(null);
+  const busy = useRef(false);
   const [viewerVisible, setViewerVisible] = useState(false);
   const [viewerIndex, setViewerIndex] = useState(0);
 
   const fetchAll = useCallback(async () => {
+    if (busy.current) return;
+    busy.current = true;
+    requestController.current?.abort();
+    const controller = new AbortController();
+    requestController.current = controller;
     const requestId = ++generation.current;
-    setLoading(true);
-    setPostsError(false);
-    const token = await AsyncStorage.getItem('hala_token');
-    if (requestId !== generation.current) return;
-    // Fetch photos concurrently, but reveal brand metadata/gallery as soon as it arrives.
-    const photosPromise = Promise.allSettled([type === 'brand' ? axios.get(`${HBS_API}/api/hbs/map/brands/${id}/photos`, {
-      headers: token ? {Authorization: `Bearer ${token}`} : {}, timeout: 15000,
-    }) : Promise.resolve({data: {data: []}})]);
-    const [detailRes] = await Promise.allSettled([axios.get(detailUrl(type, id), {timeout: 15000})]);
-    if (requestId !== generation.current) return;
+    try {
+      if (!lastLoaded.current) setLoading(true);
+      setPostsError(false);
+      const token = await AsyncStorage.getItem('hala_token');
+      if (requestId !== generation.current) return;
+      // Fetch photos concurrently, but reveal brand metadata/gallery as soon as it arrives.
+      const photosPromise = Promise.allSettled([
+        type === 'brand'
+          ? axios.get(`${HBS_API}/api/hbs/map/brands/${id}/photos`, {
+              headers: token ? {Authorization: `Bearer ${token}`} : {},
+              timeout: 15000,
+              signal: controller.signal,
+            })
+          : Promise.resolve({data: {data: []}}),
+      ]);
+      const [detailRes] = await Promise.allSettled([
+        axios.get(detailUrl(type, id), {
+          timeout: 15000,
+          signal: controller.signal,
+        }),
+      ]);
+      if (requestId !== generation.current) return;
 
-    if (detailRes.status === 'fulfilled') {
-      const data = detailRes.value?.data?.data ?? detailRes.value?.data;
-      setDetail({
-        name: (isAr ? data?.nameArabic ?? data?.venueNameAr : null) ?? data?.venueName ?? data?.nameEng ?? data?.name ?? routeName ?? 'Untitled',
-        address:
-          [data?.city, data?.country].filter(Boolean).join(', ') ||
-          data?.address ||
-          routeAddress ||
-          null,
-        description: (isAr ? data?.descriptionArabic : data?.descriptionEng) ?? data?.description ?? data?.about ?? null,
-        offers: (Array.isArray(data?.discounts) ? data.discounts : []).map((offer: any) => `${offer.value}${data?.isFlatOffer ? '' : '%'} — ${isAr ? offer.descriptionArabic || offer.descriptionEng : offer.descriptionEng}`),
-        category: data?.category ?? (type === 'venue' ? 'Venue' : 'Brand'),
+      if (detailRes.status === 'fulfilled') {
+        const data = detailRes.value?.data?.data ?? detailRes.value?.data;
+        setDetail({
+          name:
+            (isAr ? data?.nameArabic ?? data?.venueNameAr : null) ??
+            data?.venueName ??
+            data?.nameEng ??
+            data?.name ??
+            routeName ??
+            'Untitled',
+          address:
+            [data?.city, data?.country].filter(Boolean).join(', ') ||
+            data?.address ||
+            routeAddress ||
+            null,
+          description:
+            (isAr ? data?.descriptionArabic : data?.descriptionEng) ??
+            data?.description ??
+            data?.about ??
+            null,
+          offers: (Array.isArray(data?.discounts) ? data.discounts : []).map(
+            (offer: any) =>
+              `${offer.value}${data?.isFlatOffer ? '' : '%'} — ${
+                isAr
+                  ? offer.descriptionArabic || offer.descriptionEng
+                  : offer.descriptionEng
+              }`,
+          ),
+          category: data?.category ?? (type === 'venue' ? 'Venue' : 'Brand'),
+        });
+      } else if (!lastLoaded.current) {
+        console.log(
+          '[BrandDetailScreen] detail error:',
+          (detailRes.reason as any)?.message,
+        );
+        // Fall back to whatever the map screen already knew about this marker
+        setDetail({
+          name: routeName ?? 'Untitled',
+          address: routeAddress ?? null,
+          description: null,
+          category: type === 'venue' ? 'Venue' : 'Brand',
+        });
+      }
+
+      const data =
+        detailRes.status === 'fulfilled'
+          ? detailRes.value.data?.data ?? detailRes.value.data
+          : null;
+      const uniqueGallery = brandGallery({
+        ...data,
+        img: data?.img || routeImage,
       });
-    } else {
-      console.log('[BrandDetailScreen] detail error:', (detailRes.reason as any)?.message);
-      // Fall back to whatever the map screen already knew about this marker
-      setDetail({
-        name: routeName ?? 'Untitled',
-        address: routeAddress ?? null,
-        description: null,
-        category: type === 'venue' ? 'Venue' : 'Brand',
-      });
+      if (detailRes.status === 'fulfilled' || !lastLoaded.current)
+        setOfficialImages(uniqueGallery);
+      const [imagesRes] = await photosPromise;
+      if (requestId !== generation.current) return;
+      if (imagesRes.status === 'fulfilled') {
+        const checkins: CheckIn[] = Array.isArray(imagesRes.value.data?.data)
+          ? imagesRes.value.data.data.filter(
+              (post: CheckIn) => typeof post.image === 'string' && !!post.image,
+            )
+          : [];
+        setPosts(checkins);
+        setImages(checkins.map(post => post.image));
+      } else {
+        const status = (imagesRes.reason as any)?.response?.status;
+        if (status === 401 || status === 403) {
+          setPosts([]);
+          setImages([]);
+          setViewerVisible(false);
+        }
+      }
+      setPostsError(imagesRes.status === 'rejected');
+
+      // Warm the cache so the slider and the full-screen viewer open instantly
+      FastImage.preload(
+        uniqueGallery
+          .slice(0, 3)
+          .map(uri => ({uri, cache: FastImage.cacheControl.web})),
+      );
+
+      if (detailRes.status === 'fulfilled' && imagesRes.status === 'fulfilled')
+        lastLoaded.current = Date.now();
+    } catch {
+      if (requestId === generation.current) setPostsError(true);
+    } finally {
+      if (requestId === generation.current) {
+        setLoading(false);
+        busy.current = false;
+      }
     }
-
-    const data = detailRes.status === 'fulfilled' ? detailRes.value.data?.data ?? detailRes.value.data : null;
-    const uniqueGallery = brandGallery({...data, img: data?.img || routeImage});
-    setOfficialImages(uniqueGallery);
-    const [imagesRes] = await photosPromise;
-    if (requestId !== generation.current) return;
-    const checkins: CheckIn[] = imagesRes.status === 'fulfilled' && Array.isArray(imagesRes.value.data?.data)
-      ? imagesRes.value.data.data.filter((post: CheckIn) => typeof post.image === 'string' && !!post.image) : [];
-    setPosts(checkins);
-    const checkinImages = checkins.map(post => post.image);
-    setImages(checkinImages);
-    setPostsError(imagesRes.status === 'rejected');
-
-    // Warm the cache so the slider and the full-screen viewer open instantly
-    FastImage.preload(uniqueGallery.slice(0, 3).map(uri => ({uri, cache: FastImage.cacheControl.web})));
-
-    setLoading(false);
   }, [id, type, routeName, routeAddress, routeImage, isAr]);
 
-  useFocusEffect(useCallback(() => {void fetchAll(); return () => {generation.current += 1;};}, [fetchAll]));
+  useEffect(() => {
+    lastLoaded.current = 0;
+  }, [id, type, isAr]);
+  useFocusEffect(
+    useCallback(() => {
+      if (Date.now() - lastLoaded.current > 60000) void fetchAll();
+      return () => {
+        generation.current += 1;
+        requestController.current?.abort();
+        busy.current = false;
+      };
+    }, [fetchAll]),
+  );
 
   const openViewerAt = useCallback((idx: number) => {
     setViewerIndex(idx);
@@ -238,7 +381,11 @@ const BrandDetailScreen = () => {
 
         {!!detail?.address && (
           <View style={styles.addressRow}>
-            <Ionicons name="location-outline" size={15} color={Colors.textSecondary} />
+            <Ionicons
+              name="location-outline"
+              size={15}
+              color={Colors.textSecondary}
+            />
             <Text style={styles.detailAddress} numberOfLines={2}>
               {detail.address}
             </Text>
@@ -248,21 +395,40 @@ const BrandDetailScreen = () => {
         {!!detail?.description && (
           <Text style={styles.detailDescription}>{detail.description}</Text>
         )}
-        {detail?.offers?.map((offer, index) => <Text key={index} style={styles.detailDescription}>{offer}</Text>)}
+        {detail?.offers?.map((offer, index) => (
+          <Text key={index} style={styles.detailDescription}>
+            {offer}
+          </Text>
+        ))}
       </View>
 
       <View style={styles.photosHeaderRow}>
-        <Text style={styles.photosHeaderTitle}>{hbsText(isAr, 'ui_brand_checkins')} ({posts.length})</Text>
+        <Text style={styles.photosHeaderTitle}>
+          {hbsText(isAr, 'ui_brand_checkins')} ({posts.length})
+        </Text>
       </View>
     </View>
   );
 
   const renderEmptyGrid = () =>
-    loading ? <View style={styles.emptyGrid}><ActivityIndicator color={Colors.accent} /></View> : (
+    loading ? (
       <View style={styles.emptyGrid}>
-        <Ionicons name="images-outline" size={30} color={Colors.textSecondary} />
+        <ActivityIndicator color={Colors.accent} />
+      </View>
+    ) : (
+      <View style={styles.emptyGrid}>
+        <Ionicons
+          name="images-outline"
+          size={30}
+          color={Colors.textSecondary}
+        />
         <TouchableOpacity disabled={!postsError} onPress={fetchAll}>
-          <Text style={styles.emptyGridText}>{hbsText(isAr, postsError ? 'ui_brand_photos_retry' : 'ui_no_brand_checkins')}</Text>
+          <Text style={styles.emptyGridText}>
+            {hbsText(
+              isAr,
+              postsError ? 'ui_brand_photos_retry' : 'ui_no_brand_checkins',
+            )}
+          </Text>
         </TouchableOpacity>
       </View>
     );
@@ -270,13 +436,19 @@ const BrandDetailScreen = () => {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
-      <View pointerEvents="box-none" style={[styles.overlayHeader, {top: insets.top + 8}]}>
+      <View
+        pointerEvents="box-none"
+        style={[styles.overlayHeader, {top: insets.top + 8}]}>
         <TouchableOpacity
           style={styles.overlayBtn}
           accessibilityRole="button"
           accessibilityLabel={isAr ? 'رجوع' : 'Back'}
           onPress={() => navigation.goBack()}>
-          <Ionicons name={isAr ? 'arrow-forward' : 'arrow-back'} size={20} color={Colors.onMedia} />
+          <Ionicons
+            name={isAr ? 'arrow-forward' : 'arrow-back'}
+            size={20}
+            color={Colors.onMedia}
+          />
         </TouchableOpacity>
       </View>
 
@@ -289,7 +461,10 @@ const BrandDetailScreen = () => {
         keyExtractor={post => post._id}
         numColumns={GRID_COLUMNS}
         columnWrapperStyle={posts.length ? styles.gridRow : undefined}
-        contentContainerStyle={[styles.gridContent, {paddingBottom: Math.max(40, insets.bottom + 16)}]}
+        contentContainerStyle={[
+          styles.gridContent,
+          {paddingBottom: Math.max(40, insets.bottom + 16)},
+        ]}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={renderHeader}
         ListEmptyComponent={renderEmptyGrid}
@@ -297,11 +472,18 @@ const BrandDetailScreen = () => {
           <TouchableOpacity
             activeOpacity={0.85}
             accessibilityRole="button"
-            accessibilityLabel={item.caption || item.user?.name || (isAr ? 'فتح الصورة' : 'Open photo')}
+            accessibilityLabel={
+              item.caption ||
+              item.user?.name ||
+              (isAr ? 'فتح الصورة' : 'Open photo')
+            }
             onPress={() => openViewerAt(index)}>
             <CachedImage
               uri={item.image}
-              style={[styles.gridImage, {width: GRID_ITEM_SIZE, height: GRID_ITEM_SIZE}]}
+              style={[
+                styles.gridImage,
+                {width: GRID_ITEM_SIZE, height: GRID_ITEM_SIZE},
+              ]}
               resizeMode={FastImage.resizeMode.cover}
             />
           </TouchableOpacity>
