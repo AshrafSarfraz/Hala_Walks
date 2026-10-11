@@ -15,12 +15,21 @@ export const CARD_W = Math.round(SCREEN_W * 0.42);
 
 // Card ke dono taraf 1px border.
 export const IMAGE_W = CARD_W - 2;
+export const IMAGE_H = Math.round(IMAGE_W * 0.78);
+const BODY_H = 56;
+const CARD_H = IMAGE_H + BODY_H + 2;
 
 export const getStyles = (language: string) => {
   const isEn = language === 'en';
   const align = isEn ? 'left' : 'right';
 
   return StyleSheet.create({
+    list: {
+      height: CARD_H + 14,
+      flexGrow: 0,
+      flexShrink: 0,
+    },
+
     listContent: {
       paddingHorizontal: GUTTER,
       paddingTop: 4,
@@ -30,6 +39,7 @@ export const getStyles = (language: string) => {
 
     card: {
       width: CARD_W,
+      height: CARD_H,
       borderRadius: RADIUS,
       backgroundColor: CARD_BG,
       borderWidth: 1,
@@ -46,8 +56,27 @@ export const getStyles = (language: string) => {
     },
 
     image: {
-      width: '100%',
-      height: '100%',
+      width: IMAGE_W,
+      height: IMAGE_H,
+    },
+
+    loadingOverlay: {
+      ...StyleSheet.absoluteFillObject,
+    },
+
+    fallback: {
+      width: IMAGE_W,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingHorizontal: 10,
+      backgroundColor: CARD_BG,
+    },
+
+    fallbackText: {
+      ...fontW(isEn, 'regular'),
+      fontSize: 11,
+      color: MUTED,
+      textAlign: 'center',
     },
 
     ribbon: {
@@ -77,8 +106,9 @@ export const getStyles = (language: string) => {
     },
 
     body: {
+      height: BODY_H,
       paddingHorizontal: 10,
-      paddingVertical: 10,
+      justifyContent: 'center',
     },
 
     title: {
@@ -100,7 +130,7 @@ export const getStyles = (language: string) => {
 
     shimmerCard: {
       width: CARD_W,
-      height: IMAGE_W + 56,
+      height: CARD_H,
       borderRadius: RADIUS,
     },
   });

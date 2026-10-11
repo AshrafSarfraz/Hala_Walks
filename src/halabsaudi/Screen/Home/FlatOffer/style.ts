@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 import { CARD_BG, GUTTER, RADIUS, SCREEN_W } from '../../../Themes/Layout';
 
 const PAGE_WIDTH = SCREEN_W - GUTTER * 2;
-const SLIDE_HEIGHT = Math.round(PAGE_WIDTH * 0.5); // 2:1 ratio, har phone pe same shape
+const SLIDE_HEIGHT = Math.round(PAGE_WIDTH * 0.56); // 2:1 ratio, har phone pe same shape
 
 export const getStyles = (_language: string) =>
   StyleSheet.create({

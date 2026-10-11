@@ -7,7 +7,7 @@ export const SCREEN_W = Dimensions.get('window').width;
 
 export const GUTTER = 16;       // screen ke dono taraf ka padding
 export const GAP = 12;          // cards ke beech ka fasla
-export const SECTION_GAP = 16;  // sections ke beech ka fasla
+export const SECTION_GAP = 12;  // sections ke beech ka fasla
 export const RADIUS = 14;
 
 export const CARD_BG = '#F6F7F9';

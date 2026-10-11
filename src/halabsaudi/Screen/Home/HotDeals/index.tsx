@@ -16,8 +16,7 @@ import {
 } from '../../../hooks/useBrandCatalog';
 import {RootState} from '../../../redux_toolkit/store';
 import {GAP} from '../../../Themes/Layout';
-import {Colors} from '../../../Themes/Colors';
-import {CARD_W, IMAGE_W, getStyles} from './style';
+import {CARD_W, IMAGE_W, IMAGE_H, getStyles} from './style';
 
 const DEALS_LIMIT = 15;
 
@@ -42,9 +41,8 @@ const HotDeals: React.FC<Props> = ({onDataLoaded}) => {
   const styles = getStyles(language);
   const {brands, loading} = useBrandCatalog();
 
-  // URI se track karne par image change ho to purana ratio use nahi hoga.
   const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
-  const [imageRatios, setImageRatios] = useState<Record<string, number>>({});
+  const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
 
   const deals = useMemo(() => {
     const sorted = brands
@@ -88,10 +86,10 @@ const HotDeals: React.FC<Props> = ({onDataLoaded}) => {
   }, [loading, deals.length, onDataLoaded]);
 
   const renderItem = ({item, index}: {item: any; index: number}) => {
-    const uri = String(item.img || '');
+    const uri = String(item.img || '').trim();
     const isLoaded = loadedImages[uri] ?? false;
-    const ratio = imageRatios[uri] || 1;
-    const imageHeight = IMAGE_W / ratio;
+    const hasFailed = failedImages[uri] ?? false;
+    const imageHeight = IMAGE_H;
 
     return (
       <TouchableOpacity
@@ -99,10 +97,7 @@ const HotDeals: React.FC<Props> = ({onDataLoaded}) => {
         style={styles.card}
         onPress={() => navigation.navigate('DetailScreen', {item})}>
         <View style={[styles.imageWrap, {height: imageHeight}]}>
-          <ShimmerPlaceholder
-            visible={isLoaded}
-            LinearGradient={LinearGradient}
-            style={{width: IMAGE_W, height: imageHeight}}>
+          {!!uri && !hasFailed && (
             <FastImage
               source={{
                 uri,
@@ -111,30 +106,44 @@ const HotDeals: React.FC<Props> = ({onDataLoaded}) => {
                     ? FastImage.priority.high
                     : FastImage.priority.normal,
               }}
-              style={styles.image}
+              style={{width: IMAGE_W, height: imageHeight}}
               resizeMode={FastImage.resizeMode.contain}
-              onLoad={event => {
-                const {width, height} = event.nativeEvent;
-
-                if (width > 0 && height > 0) {
-                  const nextRatio = width / height;
-
-                  setImageRatios(previous =>
-                    previous[uri] === nextRatio
-                      ? previous
-                      : {...previous, [uri]: nextRatio},
-                  );
-                }
-              }}
-              onLoadEnd={() =>
+              onLoad={() => {
                 setLoadedImages(previous =>
                   previous[uri]
                     ? previous
                     : {...previous, [uri]: true},
-                )
-              }
+                );
+              }}
+              onError={() => {
+                setFailedImages(previous => ({
+                  ...previous,
+                  [uri]: true,
+                }));
+
+                if (__DEV__) {
+                  console.warn('HotDeals image failed:', uri);
+                }
+              }}
             />
-          </ShimmerPlaceholder>
+          )}
+
+          {!!uri && !isLoaded && !hasFailed && (
+            <View pointerEvents="none" style={styles.loadingOverlay}>
+              <ShimmerPlaceholder
+                LinearGradient={LinearGradient}
+                style={{width: IMAGE_W, height: imageHeight}}
+              />
+            </View>
+          )}
+
+          {(!uri || hasFailed) && (
+            <View style={[styles.fallback, {height: imageHeight}]}>
+              <Text style={styles.fallbackText}>
+                {isEn ? 'Image unavailable' : 'الصورة غير متاحة'}
+              </Text>
+            </View>
+          )}
 
           <View pointerEvents="none" style={styles.ribbon}>
             <Text style={styles.ribbonNum}>{item.discount}%</Text>
@@ -162,6 +171,7 @@ const HotDeals: React.FC<Props> = ({onDataLoaded}) => {
   if (loading) {
     return (
       <FlatList
+        style={styles.list}
         data={[0, 1, 2]}
         horizontal
         inverted={!isEn}
@@ -183,8 +193,9 @@ const HotDeals: React.FC<Props> = ({onDataLoaded}) => {
 
   return (
     <FlatList
+        style={styles.list}
       data={deals}
-      extraData={{loadedImages, imageRatios}}
+      extraData={{loadedImages, failedImages}}
       horizontal
       inverted={!isEn}
       keyExtractor={item => String(item.id)}

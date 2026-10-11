@@ -104,14 +104,18 @@ const HalaStack: React.FC = () => {
       {/* ── Main app (bottom tabs) ── */}
       <Stack.Screen name="BottomTab" component={Bottom} />
 
-
       <Stack.Screen
   name="Timeline"
   component={TimelineScreen}
   options={{
-    presentation: 'card',
+    presentation: 'formSheet',
     headerShown: false,
     gestureEnabled: true,
+
+    sheetAllowedDetents: [0.9],
+    sheetInitialDetentIndex: 0,
+    sheetGrabberVisible: true,
+    sheetCornerRadius: 24,
   }}
 />
 

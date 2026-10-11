@@ -81,22 +81,29 @@ const MyTabs: React.FC = () => {
         tabBarActiveTintColor: Colors.accent,
         tabBarInactiveTintColor: Colors.textMuted,
         tabBarStyle: {
-          height: Platform.OS==='ios'? 30 + insets.bottom:40 + insets.bottom ,
-          width:'85%',
-          alignSelf:'center',
-          marginBottom:insets.bottom,
-          borderRadius:100,
-          paddingHorizontal:14,
-          paddingTop:Platform.OS==='ios'? 5: 3.5,
-          backgroundColor: 'rgba(255, 255, 255, 0.65)',
+          height: Platform.OS === 'ios' ? 30 + insets.bottom : 40 + insets.bottom,
+          width: '85%',
+          alignSelf: 'center',
+          marginBottom: insets.bottom,
+          borderRadius: 100,
+          paddingHorizontal: 14,
+          paddingTop: Platform.OS === 'ios' ? 5 : 3.5,
+          backgroundColor: '#fff',
           borderWidth: 1,
+          borderTopWidth: 1,          // navigator ki default top border override
           borderColor: Colors.border,
-          overflow: 'hidden',
           position: 'absolute',
-          marginRight:'7.5%',
-          marginLeft:'7.5%',
-          elevation: 0,
-
+          marginRight: '7.5%',
+          marginLeft: '7.5%',
+        
+          // iOS shadow
+          shadowColor: '#000',
+          shadowOpacity: 0.15,
+          shadowRadius: 12,
+          shadowOffset: {width: 0, height: 4},
+        
+          // Android shadow
+          elevation: 12,
         },
         headerShown: false,
         tabBarHideOnKeyboard: true,
