@@ -1,167 +1,132 @@
-import {fetchBrandCatalog} from '../../../api/brandCatalog';
-import {Text} from '../../../../ui/Text';
-import React, {useEffect, useState} from 'react';
-import {View, FlatList, TouchableOpacity, Dimensions} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import {useSelector} from 'react-redux';
-import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
-import LinearGradient from 'react-native-linear-gradient';
+import { useNavigation } from '@react-navigation/native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { FlatList, TouchableOpacity, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import LinearGradient from 'react-native-linear-gradient';
+import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
+import { useSelector } from 'react-redux';
+import { Text } from '../../../../ui/Text';
+import { getDiscountPercent, isActive, sameCountry, useBrandCatalog } from '../../../hooks/useBrandCatalog';
+import { RootState } from '../../../redux_toolkit/store';
+import { GAP, GUTTER } from '../../../Themes/Layout';
+import { CARD_W, getStyles } from './style';
 
-import {RootState} from '../../../redux_toolkit/store';
-import {getStyles} from './style';
+type Props = {onDataLoaded?: (hasData: boolean) => void; onLoadError?: () => void};
 
-const {width} = Dimensions.get('screen');
-const BRANDS_API = 'https://hala-b-saudi.onrender.com/api/hbs/brands';
-
-const BestSeller: React.FC<{onDataLoaded?: (hasData: boolean) => void; onLoadError?: () => void}> = ({onDataLoaded, onLoadError}) => {
+const BestSeller: React.FC<Props> = ({onDataLoaded}) => {
   const navigation = useNavigation<any>();
-  const reduxCountry = useSelector((s: RootState) => s.country?.countryName ?? null);
+  const country = useSelector((s: RootState) => s.country?.countryName ?? null);
   const language = useSelector((state: RootState) => state.language.language);
+  const isEn = language === 'en';
   const styles = getStyles(language);
 
-  const [brands, setBrands] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const {brands, loading} = useBrandCatalog();
   const [loadedCards, setLoadedCards] = useState<{[key: string]: boolean}>({});
 
-  const norm = (v: any) =>
-    String(v ?? '').trim().toLowerCase().replace(/\s+/g, ' ');
-
-  const applyFilters = (list: any[]) => {
-    return list
-      .filter(b => norm(b?.status) === 'active')
-      .filter(b => b?.isBestSeller === true)
-      .filter(b => {
-        if (!reduxCountry) return false;
-        return norm(b?.selectedCountry) === norm(reduxCountry);
-      });
-  };
-
-  useEffect(() => {
-    const loadOffers = async () => {
-      try {
-        const cachedData = await AsyncStorage.getItem('H-brands_cache');
-        if (cachedData) {
-          const parsed = JSON.parse(cachedData);
-          const arr = Array.isArray(parsed) ? parsed : [];
-          setBrands(arr);
-          setLoading(false);
-        }
-
-        const res = await fetchBrandCatalog(BRANDS_API);
-        const json = await res.json();
-
-        if (!res.ok) {
-          console.warn('Brands API failed:', json);
-          return;
-        }
-
-        const raw = json && (json as any).data ? (json as any).data : json;
-        const arr = Array.isArray(raw) ? raw : [];
-
-        const freshOffers = arr.map((item: any) => ({
-          id: item._id || item.id,
-          ...item,
-        }));
-
-        setBrands(freshOffers);
-        await AsyncStorage.setItem('H-brands_cache', JSON.stringify(freshOffers));
-      } catch (error) {
-        console.error('Error loading offers:', error);
-        onLoadError?.();
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadOffers();
-  }, []);
-
-  const filteredBrands = applyFilters(brands);
-
-  // ✅ Parent ko notify karo jab loading khatam ho
-  useEffect(() => {
-    if (!loading) {
-      onDataLoaded?.(filteredBrands.length > 0);
-    }
-  }, [filteredBrands.length, loading]);
-
-  const handleCardLoad = (id: string) =>
-    setLoadedCards(prev => ({...prev, [id]: true}));
-
-  const getDescription = (item: any) =>
-    ((language === 'en' ? item.descriptionEng : item.descriptionArabic) || '').substring(0, 60) + '...';
-
-  const renderShimmerItem = () => (
-    <View style={styles.Flatlist_Cont}>
-      <ShimmerPlaceholder LinearGradient={LinearGradient} style={styles.image} />
-    </View>
+  const list = useMemo(
+    () =>
+      brands.filter(
+        b => isActive(b) && b?.isBestSeller === true && sameCountry(b?.selectedCountry, country),
+      ),
+    [brands, country],
   );
 
-  const renderBrandItem = ({item, index}: {item: any; index: number}) => {
+  useEffect(() => {
+    if (!loading) onDataLoaded?.(list.length > 0);
+  }, [loading, list.length]);
+
+  const renderItem = ({item, index}: {item: any; index: number}) => {
     const isLoaded = loadedCards[item.id] ?? false;
+    const discount = getDiscountPercent(item);
+    const title = isEn ? item.nameEng : item.nameArabic;
+    const desc = isEn ? item.descriptionEng : item.descriptionArabic;
 
     return (
       <TouchableOpacity
-        style={styles.Flatlist_Cont}
+        activeOpacity={0.88}
+        style={styles.card}
         onPress={() => navigation.navigate('DetailScreen', {item})}>
-        <View style={{flexDirection: language === 'en' ? 'row' : 'row-reverse', alignItems: 'center'}}>
+        <View style={styles.imageWrap}>
           <ShimmerPlaceholder visible={isLoaded} LinearGradient={LinearGradient} style={styles.image}>
             <FastImage
               source={{
                 uri: item.img,
-                priority:
-                  index === 0
-                    ? FastImage.priority.high
-                    : index <= 2
-                    ? FastImage.priority.normal
-                    : FastImage.priority.low,
+                priority: index < 3 ? FastImage.priority.high : FastImage.priority.normal,
               }}
               style={styles.image}
-              onLoadEnd={() => handleCardLoad(String(item.id))}
+              resizeMode={FastImage.resizeMode.cover}
+              onLoadEnd={() => setLoadedCards(p => ({...p, [item.id]: true}))}
             />
           </ShimmerPlaceholder>
+          <View style={styles.rankBadge}>
+            <Text style={styles.rankText}>#{index + 1}</Text>
+          </View>
+        </View>
 
-          <View style={styles.bestSeller_Detail}>
-            <Text style={styles.title_txt}>
-              {language === 'en'
-                ? item.nameEng?.length > 16
-                  ? item.nameEng.substring(0, 16) + '...'
-                  : item.nameEng
-                : item.nameArabic}
+        <View style={styles.body}>
+          <View style={styles.chip}>
+            <Text style={styles.chipText}>★ {isEn ? 'Best Seller' : 'الأكثر مبيعاً'}</Text>
+          </View>
+
+          <Text style={styles.title} numberOfLines={1}>
+            {title}
+          </Text>
+
+          {!!desc && (
+            <Text style={styles.desc} numberOfLines={2}>
+              {desc}
             </Text>
-            <Text style={styles.desc_txt}>{getDescription(item)}</Text>
+          )}
+
+          <View style={styles.metaRow}>
+            {!!item.selectedCategory && (
+              <Text style={styles.meta} numberOfLines={1}>
+                {item.selectedCategory}
+              </Text>
+            )}
+            {discount > 0 && (
+              <View style={styles.offPill}>
+                <Text style={styles.offText}>{discount}% {isEn ? 'OFF' : 'خصم'}</Text>
+              </View>
+            )}
           </View>
         </View>
       </TouchableOpacity>
     );
   };
 
-  // ✅ Loading khatam ho aur data nahi to kuch render mat karo
-  if (!loading && filteredBrands.length === 0) return null;
+  if (loading) {
+    return (
+      <FlatList
+        data={[0, 1, 2]}
+        horizontal
+        inverted={!isEn}
+        keyExtractor={i => String(i)}
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{paddingHorizontal: GUTTER, paddingVertical: 6}}
+        ItemSeparatorComponent={() => <View style={{width: GAP}} />}
+        renderItem={() => (
+          <ShimmerPlaceholder LinearGradient={LinearGradient} style={styles.shimmerCard} />
+        )}
+      />
+    );
+  }
+
+  if (!list.length) return null;
 
   return (
-    <View style={styles.container}>
-      {loading ? (
-        <FlatList
-          data={[...Array(5).keys()]}
-          horizontal
-          keyExtractor={item => item.toString()}
-          showsHorizontalScrollIndicator={false}
-          renderItem={renderShimmerItem}
-        />
-      ) : (
-        <FlatList
-          data={filteredBrands}
-          horizontal
-          pagingEnabled
-          keyExtractor={item => String(item.id)}
-          showsHorizontalScrollIndicator={false}
-          renderItem={renderBrandItem}
-        />
-      )}
-    </View>
+    <FlatList
+      data={list}
+      horizontal
+      inverted={!isEn}
+      keyExtractor={item => String(item.id)}
+      showsHorizontalScrollIndicator={false}
+      snapToInterval={CARD_W + GAP}
+      decelerationRate="fast"
+      contentContainerStyle={{paddingHorizontal: GUTTER, paddingVertical: 6}}
+      ItemSeparatorComponent={() => <View style={{width: GAP}} />}
+      renderItem={renderItem}
+    />
   );
 };
 

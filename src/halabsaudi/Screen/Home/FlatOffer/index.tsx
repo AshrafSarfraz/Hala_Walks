@@ -1,183 +1,57 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
-import React,{ useEffect,useMemo,useRef,useState } from 'react';
-import { Dimensions,FlatList,TouchableOpacity,View } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { FlatList, TouchableOpacity, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { useSelector } from 'react-redux';
 import { ActivityIndicator } from '../../../../ui/ActivityIndicator';
 import CachedImage from '../../../Component/Media/CachedImage';
-import { fetchBrandCatalog } from '../../../api/brandCatalog';
+import { isActive, norm, useBrandCatalog } from '../../../hooks/useBrandCatalog';
 import { RootState } from '../../../redux_toolkit/store';
+import { Colors } from '../../../Themes/Colors';
+import { GUTTER, SCREEN_W } from '../../../Themes/Layout';
 import { getStyles } from './style';
 
-import { Colors } from '../../../Themes/Colors';
+const PAGE_WIDTH = SCREEN_W - GUTTER * 2;
 
-const {width} = Dimensions.get('window');
-const PAGE_WIDTH = width - 32;
+const softMatch = (a: any, b: any) => {
+  const A = norm(a);
+  const B = norm(b);
+  if (!A || !B) return false;
+  return A === B || A.includes(B) || B.includes(A);
+};
 
-const OFFERS_CACHE_KEY = 'H-Offer_cache_v7';
-const OFFERS_TTL_MS = 6 * 60 * 60 * 1000; // 6 hours (adjust)
+// heroImage pehle, warna logo
+const getHeroImage = (item: any) =>
+  String(item?.heroImage || '').trim() || String(item?.img || '').trim();
 
-type CacheShape = {ts: number; data: any[]};
-
-const ImageSlider: React.FC<{onLoadError?: () => void}> = ({onLoadError}) => {
+const ImageSlider: React.FC<{onLoadError?: () => void}> = () => {
   const navigation = useNavigation<any>();
   const [currentIndex, setCurrentIndex] = useState(0);
-
-  const [offers, setOffers] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const mountedRef = useRef(true);
 
   const countryName = useSelector((s: RootState) => s.country?.countryName ?? null);
   const language = useSelector((state: RootState) => state.language.language);
   const styles = getStyles(language);
 
-  const norm = (v: any) =>
-    String(v ?? '')
-      .trim()
-      .toLowerCase()
-      .replace(/\s+/g, ' ');
+  const { brands, loading } = useBrandCatalog();
 
-  const softMatch = (a: any, b: any) => {
-    const A = norm(a);
-    const B = norm(b);
-    if (!A || !B) return false;
-    return A === B || A.includes(B) || B.includes(A);
-  };
-
-  // ✅ ONLY: heroImage first, otherwise img
-  const getHeroImage = (item: any) => {
-    const hero = String(item?.heroImage || '').trim();
-    if (hero) return hero;
-    const logo = String(item?.img || '').trim();
-    return logo;
-  };
-
-  const readCache = async (): Promise<CacheShape | null> => {
-    try {
-      const raw = await AsyncStorage.getItem(OFFERS_CACHE_KEY);
-      if (!raw) return null;
-      const parsed = JSON.parse(raw);
-      if (!parsed?.data || !Array.isArray(parsed.data)) return null;
-      return {ts: parsed.ts ?? 0, data: parsed.data};
-    } catch {
-      return null;
-    }
-  };
-
-  const writeCache = async (data: any[]) => {
-    const payload: CacheShape = {ts: Date.now(), data};
-    await AsyncStorage.setItem(OFFERS_CACHE_KEY, JSON.stringify(payload));
-  };
-
-  const normalizeFlatOffers = (arr: any[]) => {
-    return arr
-      .map((item: any) => ({id: item._id || item.id, ...item}))
-      .filter((item: any) => item?.isFlatOffer === true)
-      .filter((item: any) => norm(item?.status || 'active') === 'active'); // safe
-  };
-
-  // ✅ stable hash so we only update UI if truly changed
-  const makeHash = (list: any[]) => {
-    // Only include fields that matter for slider display/order
-    const minimal = list.map(x => ({
-      id: String(x.id),
-      heroImage: String(x.heroImage || ''),
-      img: String(x.img || ''),
-      selectedCountry: String(x.selectedCountry || ''),
-      time: String(x.time || ''), // if your backend changes time on update, good signal
-    }));
-    return JSON.stringify(minimal);
-  };
-
-  const fetchBrands = async (signal?: AbortSignal) => {
-    const res = await fetchBrandCatalog('https://hala-b-saudi.onrender.com/api/hbs/brands', {signal});
-    const json = await res.json();
-    if (!res.ok) throw new Error('Brands API failed');
-    const raw = (json as any)?.data ? (json as any).data : json;
-    return Array.isArray(raw) ? raw : [];
-  };
-
-  const loadOffers = async (opts?: {force?: boolean}) => {
-    const force = opts?.force === true;
-
-    // 1) cache first
-    const cached = await readCache();
-    const cacheFresh =
-      cached && cached.ts && Date.now() - cached.ts < OFFERS_TTL_MS;
-
-    if (cached?.data?.length && mountedRef.current) {
-      setOffers(cached.data);
-      setLoading(false);
-    }
-
-    // 2) If cache fresh and not force => don't fetch (no bar bar load)
-    if (!force && cacheFresh) {
-      if (mountedRef.current) setLoading(false);
-      return;
-    }
-
-    // 3) Background fetch (revalidate)
-    const controller = new AbortController();
-    try {
-      const raw = await fetchBrands(controller.signal);
-      const flatOffers = normalizeFlatOffers(raw);
-
-      // compare with cached; update only if different
-      const newHash = makeHash(flatOffers);
-      const oldHash = cached?.data ? makeHash(cached.data) : '';
-
-      await writeCache(flatOffers);
-
-      if (!mountedRef.current) return;
-
-      // ✅ If changed, update UI. If not changed, keep old (no flicker).
-      if (newHash !== oldHash) {
-        setOffers(flatOffers);
-      } else if (!cached?.data?.length) {
-        setOffers(flatOffers);
-      }
-    } catch (e) {
-      onLoadError?.(); // Keep cached content, expose retry on Home.
-    } finally {
-      if (mountedRef.current) setLoading(false);
-    }
-
-    return () => controller.abort();
-  };
-
-  useEffect(() => {
-    mountedRef.current = true;
-    setLoading(true);
-    loadOffers({force: false});
-    return () => {
-      mountedRef.current = false;
-    };
-  }, []);
-
-  const handleScroll = (event: any) => {
-    const slideIndex = Math.round(event.nativeEvent.contentOffset.x / PAGE_WIDTH);
-    setCurrentIndex(slideIndex);
-  };
-
-  // country filter (soft match)
   const visibleOffers = useMemo(() => {
-    if (!countryName) return offers;
-    return offers.filter((item: any) => softMatch(item?.selectedCountry, countryName));
-  }, [offers, countryName]);
+    const flat = brands.filter(b => b?.isFlatOffer === true && (b?.status ? isActive(b) : true));
+    if (!countryName) return flat;
+    return flat.filter(b => softMatch(b?.selectedCountry, countryName));
+  }, [brands, countryName]);
 
-  // keep dots safe
   useEffect(() => {
     if (currentIndex >= visibleOffers.length) setCurrentIndex(0);
   }, [visibleOffers.length]);
 
-  if (loading && offers.length === 0) {
+  const handleScroll = (event: any) => {
+    setCurrentIndex(Math.round(event.nativeEvent.contentOffset.x / PAGE_WIDTH));
+  };
+
+  if (loading) {
     return (
-      <View style={styles.container}>
-        <View style={{height: styles.image?.height ?? 160, alignItems: 'center', justifyContent: 'center'}}>
-          <ActivityIndicator size="small" color="gray" />
-        </View>
+      <View style={[styles.container, styles.loaderBox]}>
+        <ActivityIndicator size="small" color="gray" />
       </View>
     );
   }
@@ -196,10 +70,12 @@ const ImageSlider: React.FC<{onLoadError?: () => void}> = ({onLoadError}) => {
         getItemLayout={(_, index) => ({length: PAGE_WIDTH, offset: PAGE_WIDTH * index, index})}
         renderItem={({item}) => (
           <TouchableOpacity
+            activeOpacity={0.9}
             style={styles.imageContainer}
             onPress={() => navigation.navigate('DetailScreen', {item})}>
             <CachedImage
-              uri={getHeroImage(item)} priority="high"
+              uri={getHeroImage(item)}
+              priority="high"
               style={styles.image}
               resizeMode={FastImage.resizeMode.cover}
             />
@@ -207,20 +83,22 @@ const ImageSlider: React.FC<{onLoadError?: () => void}> = ({onLoadError}) => {
         )}
       />
 
-      <View style={styles.pagination}>
-        {visibleOffers.map((_: any, index: number) => (
-          <View
-            key={index}
-            style={[
-              styles.dot,
-              {
-                backgroundColor: index === currentIndex ? Colors.accent : Colors.border,
-                width: index === currentIndex ? 30 : 8,
-              },
-            ]}
-          />
-        ))}
-      </View>
+      {visibleOffers.length > 1 && (
+        <View style={styles.pagination}>
+          {visibleOffers.map((_: any, index: number) => (
+            <View
+              key={index}
+              style={[
+                styles.dot,
+                {
+                  backgroundColor: index === currentIndex ? Colors.accent : Colors.border,
+                  width: index === currentIndex ? 22 : 6,
+                },
+              ]}
+            />
+          ))}
+        </View>
+      )}
     </View>
   );
 };

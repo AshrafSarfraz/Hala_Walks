@@ -1,96 +1,112 @@
-import {Text} from '../../../ui/Text';
-import React, { useEffect, useState } from 'react';
-// ✅ FIX: 'react-native' wala SafeAreaView ANDROID PAR KUCH NAHI KARTA.
-// Isi wajah se style me `marginTop: '8%'` ka jugaar lagana para tha —
-// jo har phone par alag pixel banta hai. Ye wala asli insets deta hai.
+import React, { useState } from 'react';
+import { Image, RefreshControl, ScrollView, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import {View, Image, TouchableOpacity, ScrollView} from 'react-native';
-import ImageSlider from './FlatOffer';
-import Categories from './Categories';
-import BestSeller from './BestSellers';
-import RecentlyAdded from './RecentlyAdded';
-import { Colors } from '../../Themes/Colors';
-import Venues from './Venues';
 import { useSelector } from 'react-redux';
-import { getStyles } from './style';
-import { languageData } from '../../redux_toolkit/language/languageSlice';
+import { Text } from '../../../ui/Text';
 import CountryDropdown2 from '../../Component/Dropdown/Data_for_Country';
-import { RootState } from '../../redux_toolkit/store';
 import { useStatusBar } from '../../Component/UseStatusBar/useStatusBar';
-
-import {hbsText} from '../../i18n/translations';
+import { MIN_DEAL_PERCENT, useBrandCatalog } from '../../hooks/useBrandCatalog';
+import { hbsText } from '../../i18n/translations';
+import { languageData } from '../../redux_toolkit/language/languageSlice';
+import { RootState } from '../../redux_toolkit/store';
+import { Colors } from '../../Themes/Colors';
 import { Hala_logo_white, Scope } from '../../Themes/Images';
+import BestSeller from './BestSellers';
+import Categories from './Categories';
+import ImageSlider from './FlatOffer';
+import HotDeals from './HotDeals';
+import RecentlyAdded from './RecentlyAdded';
+import { getStyles } from './style';
+import Venues from './Venues';
 
-type HomeProps = {
-  navigation: any;
-};
+type HomeProps = { navigation: any };
+
+const Section: React.FC<{
+  title: string;
+  styles: ReturnType<typeof getStyles>;
+  hidden?: boolean;
+  children: React.ReactNode;
+}> = ({ title, styles, hidden, children }) => (
+  // Data na ho to section ka fasla bhi na aaye (khali jagah nahi)
+  <View style={hidden ? undefined : styles.section}>
+    {!hidden && (
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionTitle}>{title}</Text>
+      </View>
+    )}
+    {children}
+  </View>
+);
 
 const Home: React.FC<HomeProps> = ({ navigation }) => {
   useStatusBar('dark-content', Colors.surface);
   const language = useSelector((state: RootState) => state.language.language);
+  const isEn = language === 'en';
   const styles = getStyles(language);
 
-  const [catalogError, setCatalogError] = useState(false);
-  const [revision, setRevision] = useState(0);
-  const retryCatalog = () => {setCatalogError(false); setRevision(v => v + 1);};
+  const { error, refresh } = useBrandCatalog();
+  const [refreshing, setRefreshing] = useState(false);
 
-  const [hasBestSeller, setHasBestSeller] = useState(false);     // ✅
-  const [hasRecentlyAdded, setHasRecentlyAdded] = useState(false); // ✅
+  const [hasHotDeals, setHasHotDeals] = useState(false);
+  const [hasBestSeller, setHasBestSeller] = useState(false);
+  const [hasRecentlyAdded, setHasRecentlyAdded] = useState(false);
+
+  const onPullRefresh = async () => {
+    setRefreshing(true);
+    await refresh();
+    setRefreshing(false);
+  };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.surface }} edges={['top']}>
-      <View style={styles.Container}>
-        <View style={styles.header}>
-          <Image source={Hala_logo_white} style={styles.logo} />
-          <View style={styles.language_Cont}>
-            <TouchableOpacity style={styles.Btn} onPress={() => navigation.navigate('SearchScreen')}>
-              <Image source={Scope} style={styles.Scope_Icon} />
-            </TouchableOpacity>
-            <CountryDropdown2 />
-          </View>
+    <SafeAreaView style={styles.safe} edges={['top']}>
+      <View style={styles.header}>
+        <Image source={Hala_logo_white} style={styles.logo} />
+        <View style={styles.headerActions}>
+          <TouchableOpacity style={styles.iconBtn} onPress={() => navigation.navigate('SearchScreen')}>
+            <Image source={Scope} style={styles.searchIcon} />
+          </TouchableOpacity>
+          <CountryDropdown2 />
         </View>
-
-        <ScrollView key={revision} showsVerticalScrollIndicator={false}>
-          {catalogError && <TouchableOpacity accessibilityRole="button" onPress={retryCatalog} style={{margin: 16, padding: 14, borderRadius: 12, backgroundColor: Colors.surface}}>
-            <Text style={{color: Colors.textPrimary, lineHeight: 21}}>{hbsText(language === 'ar', 'ui_some_items_could_not_refresh_tap_to_retry')}</Text>
-          </TouchableOpacity>}
-          <ImageSlider onLoadError={() => setCatalogError(true)} />
-
-          <View style={[styles.Categories_Cont, { marginTop: 7 }]}>
-            <View style={styles.txt_cont}>
-              <Text style={styles.Categories_Txt}>{languageData[language].categories}</Text>
-            </View>
-            <Categories navigation={navigation} />
-          </View>
-
-          <View style={[styles.Categories_Cont, { marginTop: '-1%' }]}>
-            <View style={styles.txt_cont}>
-              <Text style={styles.Categories_Txt}>{languageData[language].Location}</Text>
-            </View>
-            <Venues />
-          </View>
-
-          {/* ✅ Best Seller - sirf tab show karo jab data ho */}
-          <View style={[styles.BestSeller_Cont, { marginTop: '1%' }]}>
-            {hasBestSeller && (
-              <View style={styles.txt_cont}>
-                <Text style={styles.BestSeller_Txt}>{languageData[language].best_sellers}</Text>
-              </View>
-            )}
-            <BestSeller onDataLoaded={setHasBestSeller} onLoadError={() => setCatalogError(true)} />
-          </View>
-
-          {/* ✅ Recently Added - sirf tab show karo jab data ho */}
-          <View style={styles.BestSeller_Cont}>
-            {hasRecentlyAdded && (
-              <View style={styles.txt_cont}>
-                <Text style={styles.BestSeller_Txt}>{languageData[language].recently_added}</Text>
-              </View>
-            )}
-            <RecentlyAdded onDataLoaded={setHasRecentlyAdded} onLoadError={() => setCatalogError(true)} />
-          </View>
-        </ScrollView>
       </View>
+
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onPullRefresh} />}>
+        {error && (
+          <TouchableOpacity accessibilityRole="button" onPress={refresh} style={styles.errorBox}>
+            <Text style={styles.errorText}>
+              {hbsText(!isEn, 'ui_some_items_could_not_refresh_tap_to_retry')}
+            </Text>
+          </TouchableOpacity>
+        )}
+
+        <ImageSlider />
+
+        <Section title={languageData[language].categories} styles={styles}>
+          <Categories navigation={navigation} />
+        </Section>
+
+        <Section
+          title={isEn ? `🔥 ${MIN_DEAL_PERCENT}%+ OFF` : `🔥 خصم ${MIN_DEAL_PERCENT}%+`}
+          styles={styles}
+          hidden={!hasHotDeals}>
+          <HotDeals onDataLoaded={setHasHotDeals} />
+        </Section>
+
+        <Section title={languageData[language].Location} styles={styles}>
+          <Venues />
+        </Section>
+
+        <Section title={languageData[language].best_sellers} styles={styles} hidden={!hasBestSeller}>
+          <BestSeller onDataLoaded={setHasBestSeller} />
+        </Section>
+
+        <Section title={languageData[language].recently_added} styles={styles} hidden={!hasRecentlyAdded}>
+          <RecentlyAdded onDataLoaded={setHasRecentlyAdded} />
+        </Section>
+      </ScrollView>
     </SafeAreaView>
   );
 };

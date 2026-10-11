@@ -6,12 +6,12 @@ import { TextInput } from '../../../ui/TextInput';
 import { ensurePermission } from '../../permissions/service';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import storage from '@react-native-firebase/storage';
+import {submitCheckIn} from '../../api/checkIn';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import React,{ useCallback,useEffect,useRef,useState } from 'react';
-import { Animated,FlatList,Image,Keyboard,KeyboardAvoidingView,Platform,SafeAreaView,ScrollView,StatusBar,StyleSheet,TouchableOpacity,View } from 'react-native';
+import { Alert as NativeAlert,Animated,FlatList,Image,Keyboard,KeyboardAvoidingView,Platform,SafeAreaView,ScrollView,StatusBar,StyleSheet,TouchableOpacity,View } from 'react-native';
 import { launchCamera,launchImageLibrary } from 'react-native-image-picker';
 import { useSelector } from 'react-redux';
 import { BASE_URL } from '../../../config/api';
@@ -39,6 +39,7 @@ type PhotoEntry = {
   progress: number | null;
   downloadUrl: string | null;
   error: boolean;
+  saved?: boolean;
 };
 
 type CommunityBrand = {
@@ -52,43 +53,16 @@ type CommunityBrand = {
 
 // ─── Firebase upload ──────────────────────────────────────────────────────────
 
-const uploadToFirebase = (
-  uri: string,
-  onProgress: (pct: number) => void,
-): Promise<string> =>
-  new Promise((resolve, reject) => {
-    const filename = `mapGallery/${Date.now()}_${Math.random()
-      .toString(36)
-      .slice(2)}.jpg`;
-    const ref = storage().ref(filename);
-    const task = ref.putFile(uri);
-    task.on(
-      'state_changed',
-      snapshot => {
-        const pct = Math.round(
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100,
-        );
-        onProgress(pct);
-      },
-      err => reject(err),
-      async () => {
-        try {
-          resolve(await ref.getDownloadURL());
-        } catch (err) {
-          reject(err);
-        }
-      },
-    );
-  });
-
 // ─── PhotoCard ────────────────────────────────────────────────────────────────
 
 const PhotoCard = ({
   entry,
   onRemove,
+  disabled,
 }: {
   entry: PhotoEntry;
   onRemove: () => void;
+  disabled: boolean;
 }) => {
   const progressAnim = useRef(new Animated.Value(0)).current;
 
@@ -142,7 +116,7 @@ const PhotoCard = ({
       )}
 
       {!isUploading && (
-        <TouchableOpacity style={cardStyles.remove} onPress={onRemove}>
+        <TouchableOpacity style={cardStyles.remove} onPress={onRemove} disabled={disabled || entry.saved}>
           <Text style={cardStyles.removeText}>✕</Text>
         </TouchableOpacity>
       )}
@@ -218,6 +192,16 @@ const TimelineScreen: React.FC = () => {
   const [description, setDescription] = useState('');
   const [photos, setPhotos] = useState<PhotoEntry[]>([]);
   const [uploading, setUploading] = useState(false);
+  const postingRef = useRef(false);
+  const requestRef = useRef<AbortController | null>(null);
+  const mountedRef = useRef(true);
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {mountedRef.current = false; requestRef.current?.abort();};
+  }, []);
+  useEffect(() => {navigation.setOptions({gestureEnabled: !uploading});}, [navigation, uploading]);
+  const hasSubmittedPhotos = photos.some(photo => !!photo.downloadUrl);
+
 
   const loadBrands = useCallback(async () => {
     setBrandsLoading(true);
@@ -248,10 +232,11 @@ const TimelineScreen: React.FC = () => {
   // ── 7. Photo capture & library selection ───────────────────────────────────
 
   const handleCamera = useCallback(async () => {
+    if (postingRef.current) return;
     Keyboard.dismiss();
     if (!await ensurePermission('camera')) return;
     launchCamera(
-      {mediaType: 'photo', quality: 0.8, saveToPhotos: false},
+      {mediaType: 'photo', quality: 0.8, maxWidth: 1920, maxHeight: 1920, saveToPhotos: false},
       response => {
         if (response.didCancel || response.errorCode) return;
         const uri = response.assets?.[0]?.uri;
@@ -261,9 +246,10 @@ const TimelineScreen: React.FC = () => {
   }, [photos]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleGallery = useCallback(() => {
+    if (postingRef.current) return;
     Keyboard.dismiss();
     launchImageLibrary(
-      {mediaType: 'photo', quality: 0.8, selectionLimit: 1},
+      {mediaType: 'photo', quality: 0.8, maxWidth: 1920, maxHeight: 1920, selectionLimit: 1},
       response => {
         if (response.didCancel || response.errorCode) return;
         const uri = response.assets?.[0]?.uri;
@@ -283,6 +269,7 @@ const TimelineScreen: React.FC = () => {
   });
 
   const addPhoto = (uri: string) => {
+    if (postingRef.current || !mountedRef.current) return;
     setPhotos(prev => {
       if (prev.length >= MAX_PHOTOS) {
         Alert.alert('Limit reached', `Max ${MAX_PHOTOS} photos allowed.`);
@@ -295,12 +282,14 @@ const TimelineScreen: React.FC = () => {
   const removePhoto = (id: string) =>
     setPhotos(prev => prev.filter(p => p.id !== id));
 
-  const patchPhoto = (id: string, patch: Partial<PhotoEntry>) =>
-    setPhotos(prev => prev.map(p => (p.id === id ? {...p, ...patch} : p)));
+  const patchPhoto = (id: string, patch: Partial<PhotoEntry>) => {
+    if (mountedRef.current) setPhotos(prev => prev.map(p => (p.id === id ? {...p, ...patch} : p)));
+  };
 
   // ── 9. Check-in / upload ────────────────────────────────────────────────────
 
   const handleCheckIn = async () => {
+    if (postingRef.current) return;
     if (!photos.length) {
       Alert.alert('Missing photo', 'Please add at least one photo.');
       return;
@@ -310,71 +299,31 @@ const TimelineScreen: React.FC = () => {
       return;
     }
 
+    postingRef.current = true;
+    const controller = new AbortController();
+    requestRef.current = controller;
+    Keyboard.dismiss();
+    setUploading(true);
     try {
-      setUploading(true);
       const token = await AsyncStorage.getItem('hala_token');
-      const headers = token ? {Authorization: `Bearer ${token}`} : undefined;
-
-      // Upload photos to Firebase
-      const results = await Promise.all(
-        photos.map(entry =>
-          uploadToFirebase(entry.uri, pct =>
-            patchPhoto(entry.id, {progress: pct}),
-          )
-            .then(url => {
-              patchPhoto(entry.id, {downloadUrl: url, progress: 100});
-              return {ok: true as const, url};
-            })
-            .catch(err => {
-              console.log('[Timeline] Firebase upload error:', err);
-              patchPhoto(entry.id, {error: true});
-              return {ok: false as const, url: null};
-            }),
-        ),
-      );
-
-      const failed = results.filter(r => !r.ok);
-      if (failed.length) {
-        Alert.alert(
-          'Upload error',
-          `${failed.length} photo(s) failed. Remove them and try again.`,
-        );
-        return;
-      }
-
-      // Save to backend
-      await Promise.all(
-        results.map(({url}) =>
-          axios.post(
-            `${BASE_URL}/api/hbs/map/photos`,
-            {
-              brandId: selectedBrand._id,
-              image: url,
-              caption: description?.trim() || 'Uploaded from app',
-            },
-            {headers},
-          ),
-        ),
-      );
-
-      Alert.alert('Success', 'Check-in uploaded 🎉');
+      await submitCheckIn(photos, selectedBrand._id, description, token || '', controller.signal, patchPhoto);
+      if (!mountedRef.current) return;
+      // Keep the sheet mounted until the user acknowledges the native alert.
+      NativeAlert.alert('Success', 'Check-in uploaded 🎉', [{text: 'OK', onPress: () => navigation.goBack()}]);
       setDescription('');
       setPhotos([]);
       setSelectedBrand(null);
-      navigation.goBack();
     } catch (error) {
+      if (!mountedRef.current) return;
       const err = error as any;
-      console.log(
-        '[Timeline] handleCheckIn error:',
-        err?.response?.status,
-        err?.response?.data || err?.message,
-      );
-      Alert.alert(
-        'Upload failed',
-        err?.response?.data?.error || err?.response?.data?.message || 'Could not upload check-in.',
-      );
+      NativeAlert.alert('Upload failed',
+        err?.response?.data?.error || err?.response?.data?.message ||
+        (err?.code === 'ECONNABORTED' ? 'Saving timed out. Retry to finish your check-in.' : err?.message) ||
+        'Could not upload check-in. Please retry.');
     } finally {
-      setUploading(false);
+      postingRef.current = false;
+      requestRef.current = null;
+      if (mountedRef.current) setUploading(false);
     }
   };
 
@@ -399,6 +348,7 @@ const TimelineScreen: React.FC = () => {
         <TouchableOpacity
           style={styles.closeBtn}
           onPress={() => navigation.goBack()}
+          disabled={uploading}
           hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}>
           <Ionicons name="close" size={22} color={Colors.textPrimary} />
         </TouchableOpacity>
@@ -423,7 +373,7 @@ const TimelineScreen: React.FC = () => {
                 <Text style={styles.addressLine}>{brandAddress(selectedBrand)}</Text>
                 <TouchableOpacity
                   style={styles.changeRow}
-                  disabled={uploading}
+                  disabled={uploading || hasSubmittedPhotos}
                   onPress={() => {
                     setSelectedBrand(null);
                     setSearchText('');
@@ -478,7 +428,8 @@ const TimelineScreen: React.FC = () => {
             </View>
             <TextInput
               placeholder="What're you up to?"
-              placeholderTextColor={Colors.surfaceRaised}
+              placeholderTextColor={Colors.textMuted}
+              editable={!uploading && !hasSubmittedPhotos}
               value={description}
               onChangeText={setDescription}
               style={styles.input}
@@ -505,7 +456,7 @@ const TimelineScreen: React.FC = () => {
                   photos.length >= MAX_PHOTOS && styles.photoBtnDisabled,
                 ]}
                 onPress={handleCamera}
-                disabled={photos.length >= MAX_PHOTOS}
+                disabled={uploading || photos.length >= MAX_PHOTOS}
                 activeOpacity={0.8}>
                 <Ionicons name="camera-outline" size={20} color={Colors.onAccent} />
                 <Text style={styles.photoBtnText}>{isAr ? 'الكاميرا' : 'Camera'}</Text>
@@ -517,7 +468,7 @@ const TimelineScreen: React.FC = () => {
                   photos.length >= MAX_PHOTOS && styles.photoBtnDisabled,
                 ]}
                 onPress={handleGallery}
-                disabled={photos.length >= MAX_PHOTOS}
+                disabled={uploading || photos.length >= MAX_PHOTOS}
                 activeOpacity={0.8}>
                 <Ionicons name="image-outline" size={20} color={Colors.onAccent} />
                 <Text style={styles.photoBtnText}>{isAr ? 'الصور' : 'Gallery'}</Text>
@@ -534,6 +485,7 @@ const TimelineScreen: React.FC = () => {
                 renderItem={({item}) => (
                   <PhotoCard
                     entry={item}
+                    disabled={uploading}
                     onRemove={() => removePhoto(item.id)}
                   />
                 )}

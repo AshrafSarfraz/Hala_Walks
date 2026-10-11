@@ -1,237 +1,208 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import Geolocation from '@react-native-community/geolocation';
 import { useNavigation } from '@react-navigation/native';
-import React,{ useEffect,useMemo,useRef,useState } from 'react';
-import { FlatList,Image,Platform,TouchableOpacity,View } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { FlatList, Image, TouchableOpacity, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
+import LinearGradient from 'react-native-linear-gradient';
+import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import { useSelector } from 'react-redux';
-import { ActivityIndicator } from '../../../../ui/ActivityIndicator';
 import { Text } from '../../../../ui/Text';
 import DetectCountry from '../../../Component/distanceCalculate/DetectCountry';
 import DistanceFromDevice from '../../../Component/distanceCalculate/distanceCalculate';
-import { Colors } from '../../../Themes/Colors';
-import { Location } from '../../../Themes/Images';
-import { fetchBrandCatalog } from '../../../api/brandCatalog';
+import { getDiscountPercent, isActive, norm, sameCountry, useBrandCatalog } from '../../../hooks/useBrandCatalog';
 import { permissionStatus } from '../../../permissions/service';
 import { RootState } from '../../../redux_toolkit/store';
-import { getStyles } from './style';
+import { Location } from '../../../Themes/Images';
+import { GAP } from '../../../Themes/Layout';
+import { CARD_W, getStyles } from './style';
 
-const BRANDS_API = 'https://hala-b-saudi.onrender.com/api/hbs/brands';
-const RECENT_TTL_MS = 3 * 60 * 60 * 1000;
+const RECENT_LIMIT = 10;           // kitne unique brands dikhane hain
+const NEW_BADGE_DAYS = 14;         // itne din tak "NEW" badge dikhega
+const DAY_MS = 24 * 60 * 60 * 1000;
 
-type CacheShape = {ts: number; data: any[]};
+// Brand ki pehchan: ek brand ki saari branches ka naam same hota hai.
+// Agar API mein brandId / parentId ho to usay yahan pehle rakho.
+const brandKey = (item: any) => norm(item.nameEng) || norm(item.nameArabic) || String(item.id);
 
-const RecentlyAdded: React.FC<{onDataLoaded?: (hasData: boolean) => void; onLoadError?: () => void}> = ({onDataLoaded, onLoadError}) => {
+type Props = {onDataLoaded?: (hasData: boolean) => void; onLoadError?: () => void};
+
+const RecentlyAdded: React.FC<Props> = ({onDataLoaded}) => {
   const navigation = useNavigation<any>();
-  const mountedRef = useRef(true);
 
   const reduxCountry = useSelector((s: RootState) => s.country?.countryName ?? null);
   const language = useSelector((state: RootState) => state.language.language);
+  const isEn = language === 'en';
   const styles = getStyles(language);
 
   const [deviceCountry, setDeviceCountry] = useState<string | null>(null);
-  const [items, setItems] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
   const [loadedCards, setLoadedCards] = useState<{[k: string]: boolean}>({});
   const [userLocation, setUserLocation] = useState<{lat: number; long: number} | null>(null);
-
-  const norm = (v: any) => String(v ?? '').trim().toLowerCase().replace(/\s+/g, ' ');
   const selectedCountry = reduxCountry || deviceCountry;
 
-  const RECENT_CACHE_KEY = useMemo(() => {
-    return selectedCountry
-      ? `H-recent_cache_v7_${norm(selectedCountry)}`
-      : 'H-recent_cache_v7_unknown';
-  }, [selectedCountry]);
+  const {brands, loading} = useBrandCatalog();
 
   /* ---------------- location ---------------- */
   useEffect(() => {
-    const getCurrentLocation = () => {
-      Geolocation.getCurrentPosition(
-        position => {
-          if (!mountedRef.current) return;
-          setUserLocation({
-            lat: position.coords.latitude,
-            long: position.coords.longitude,
-          });
-        },
-        error => console.log('❌ Location error:', error),
-        {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-      );
-    };
-
-    const requestLocationPermission = async () => {
+    let alive = true;
+    (async () => {
       try {
-        if (await permissionStatus('location') === 'granted') getCurrentLocation();
+        if ((await permissionStatus('location')) !== 'granted') return;
+        Geolocation.getCurrentPosition(
+          pos => alive && setUserLocation({lat: pos.coords.latitude, long: pos.coords.longitude}),
+          err => console.log('❌ Location error:', err),
+          {enableHighAccuracy: false, timeout: 15000, maximumAge: 5 * 60 * 1000},
+        );
       } catch (e) {
         console.log('Permission error:', e);
       }
+    })();
+    return () => {
+      alive = false;
     };
-
-    requestLocationPermission();
   }, []);
 
-  /* ---------------- cache helpers ---------------- */
-  const readCache = async (): Promise<CacheShape | null> => {
-    try {
-      const raw = await AsyncStorage.getItem(RECENT_CACHE_KEY);
-      if (!raw) return null;
-      const parsed = JSON.parse(raw);
-      if (!parsed?.data || !Array.isArray(parsed.data)) return null;
-      return parsed;
-    } catch {
-      return null;
+  /* ---------------- last 10 unique brands ---------------- */
+  const items = useMemo(() => {
+    const sorted = brands
+      .filter(b => isActive(b))
+      .filter(b => Number.isFinite(b.createdAtMs))
+      .filter(b => sameCountry(b.selectedCountry, selectedCountry))
+      .sort((a, b) => b.createdAtMs - a.createdAtMs); // latest pehle
+
+    const seen = new Set<string>();
+    const unique: any[] = [];
+    for (const item of sorted) {
+      const key = brandKey(item);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      unique.push(item);
+      if (unique.length === RECENT_LIMIT) break;
     }
-  };
+    return unique;
+  }, [brands, selectedCountry]);
 
-  const writeCache = async (data: any[]) => {
-    const payload: CacheShape = {ts: Date.now(), data};
-    await AsyncStorage.setItem(RECENT_CACHE_KEY, JSON.stringify(payload));
-  };
+  const waitingForCountry = !selectedCountry;
+  const isLoading = loading || waitingForCountry;
 
-  /* ---------------- fetch ---------------- */
-  const fetchBrands = async (signal?: AbortSignal) => {
-    const res = await fetchBrandCatalog(BRANDS_API, {signal});
-    const json = await res.json();
-    if (!res.ok) throw new Error('Brands API failed');
-    const raw = (json as any)?.data ? (json as any).data : json;
-    return Array.isArray(raw) ? raw : [];
-  };
-
-  /* ---------------- recently added logic ---------------- */
-  const buildRecentList = (arr: any[]) => {
-    const ONE_YEAR_MS = 120 * 24 * 60 * 60 * 1000;
-    const now = Date.now();
-
-    return arr
-      .map(item => ({
-        id: item._id || item.id,
-        ...item,
-        createdAtMs: new Date(item.createdAt || item.created_at || item.time).getTime(),
-      }))
-      .filter(item => norm(item.status) === 'active')
-      .filter(item => Number.isFinite(item.createdAtMs))
-      .filter(item => now - item.createdAtMs <= ONE_YEAR_MS)
-      .filter(item => selectedCountry && norm(item.selectedCountry) === norm(selectedCountry))
-      .sort((a, b) => b.createdAtMs - a.createdAtMs)
-      .slice(0, 7);
-  };
-
-  /* ---------------- load data ---------------- */
-  const loadData = async () => {
-    if (!selectedCountry) return;
-
-    const cached = await readCache();
-    const cacheFresh = cached && Date.now() - cached.ts < RECENT_TTL_MS;
-
-    if (cached?.data?.length && mountedRef.current) {
-      setItems(cached.data);
-      setLoading(false);
-    }
-
-    if (cacheFresh) {
-      setLoading(false);
-      return;
-    }
-
-    const controller = new AbortController();
-
-    try {
-      const raw = await fetchBrands(controller.signal);
-      const recent = buildRecentList(raw);
-      if (!mountedRef.current) return;
-      setItems(recent);
-      await writeCache(recent);
-    } catch (e) {
-      onLoadError?.(); // Keep cached content visible and expose retry on Home.
-    } finally {
-      if (mountedRef.current) setLoading(false);
-    }
-
-    return () => controller.abort();
-  };
-
-  /* ---------------- effects ---------------- */
   useEffect(() => {
-    mountedRef.current = true;
-    loadData();
-    return () => {
-      mountedRef.current = false;
-    };
-  }, [selectedCountry]);
-
-  // ✅ Parent ko notify karo jab loading khatam ho
-  useEffect(() => {
-    if (!loading) {
-      onDataLoaded?.(items.length > 0);
-    }
-  }, [items.length, loading]);
+    if (!isLoading) onDataLoaded?.(items.length > 0);
+  }, [isLoading, items.length]);
 
   /* ---------------- render ---------------- */
-  const handleCardLoad = (id: string) => setLoadedCards(p => ({...p, [id]: true}));
-
-  // ✅ Loading khatam ho aur data nahi to kuch render mat karo
-  if (!loading && items.length === 0) return null;
-
   const renderItem = ({item, index}: {item: any; index: number}) => {
+    const isNew = Date.now() - item.createdAtMs < NEW_BADGE_DAYS * DAY_MS;
+    const discount = getDiscountPercent(item);
+    const isLoaded = loadedCards[item.id] ?? false;
+
     return (
       <TouchableOpacity
-        style={styles.Flatlist_Cont}
+        activeOpacity={0.88}
+        style={styles.card}
         onPress={() => navigation.navigate('DetailScreen', {item})}>
-        {Platform.OS === 'ios' ? (
-          <FastImage
-            source={{uri: item.img}}
-            style={styles.image}
-            onLoadEnd={() => handleCardLoad(String(item.id))}
-            resizeMode={FastImage.resizeMode.cover}
-          />
-        ) : (
-          <Image source={{uri: item.img}} style={styles.image} resizeMode="cover" />
-        )}
+        <View style={styles.imageWrap}>
+          <ShimmerPlaceholder visible={isLoaded} LinearGradient={LinearGradient} style={styles.image}>
+            <FastImage
+              source={{
+                uri: item.img,
+                priority: index < 2 ? FastImage.priority.high : FastImage.priority.normal,
+              }}
+              style={styles.image}
+              resizeMode={FastImage.resizeMode.cover}
+              onLoadEnd={() => setLoadedCards(p => ({...p, [item.id]: true}))}
+            />
+          </ShimmerPlaceholder>
 
-        <Text style={styles.cate_txt}>
-          {language === 'en' ? item.nameEng : item.nameArabic}
-        </Text>
+          <LinearGradient colors={['transparent', 'rgba(0,0,0,0.35)']} style={styles.imageFade} />
 
-        <View style={styles.Type_Cont}>
-          <Text style={styles.Type_Text}>{item.selectedCategory}</Text>
+          <View style={styles.badgeRow}>
+            {isNew && (
+              <View style={styles.newBadge}>
+                <Text style={styles.newText}>{isEn ? 'NEW' : 'جديد'}</Text>
+              </View>
+            )}
+            {discount > 0 && (
+              <View style={styles.offBadge}>
+                <Text style={styles.offText}>{discount}% {isEn ? 'OFF' : 'خصم'}</Text>
+              </View>
+            )}
+          </View>
         </View>
 
-        <View style={styles.Loc_Status_Cont}>
-          <View style={styles.Loc_Cont}>
-            <Image source={Location} style={styles.LocationIcon} />
-            {userLocation ? (
-              <DistanceFromDevice
-                userLat={userLocation.lat}
-                userLong={userLocation.long}
-                targetLat={Number(item.latitude)}
-                targetLong={Number(item.longitude)}
-                kmText="km"
-                mText="m"
-              />
-            ) : (
-              <Text style={{fontSize: 10, color: Colors.accent}}>--</Text>
+        <View style={styles.body}>
+          <Text style={styles.title} numberOfLines={1}>
+            {isEn ? item.nameEng : item.nameArabic}
+          </Text>
+
+          <View style={styles.footer}>
+            {!!item.selectedCategory && (
+              <View style={styles.tag}>
+                <Text style={styles.tagText} numberOfLines={1}>
+                  {item.selectedCategory}
+                </Text>
+              </View>
             )}
+
+            <View style={styles.locRow}>
+              <Image source={Location} style={styles.locIcon} />
+              {userLocation && item.latitude && item.longitude ? (
+                <DistanceFromDevice
+                  userLat={userLocation.lat}
+                  userLong={userLocation.long}
+                  targetLat={Number(item.latitude)}
+                  targetLong={Number(item.longitude)}
+                  kmText="km"
+                  mText="m"
+                />
+              ) : (
+                <Text style={styles.locText}>--</Text>
+              )}
+            </View>
           </View>
         </View>
       </TouchableOpacity>
     );
   };
 
-  return (
-    <View style={[styles.container, {minHeight: 140}]}>
-      {loading && items.length === 0 ? (
-        <ActivityIndicator size="small" color="gray" />
-      ) : (
+  // DetectCountry hamesha mounted rahe, warna country kabhi detect nahi hogi
+  const detector = <DetectCountry onCountryDetect={setDeviceCountry} />;
+
+  if (isLoading) {
+    return (
+      <View>
         <FlatList
-          data={items}
-          keyExtractor={item => String(item.id)}
+          data={[0, 1]}
           horizontal
+          inverted={!isEn}
+          keyExtractor={i => String(i)}
           showsHorizontalScrollIndicator={false}
-          renderItem={renderItem}
+          contentContainerStyle={styles.listContent}
+          ItemSeparatorComponent={() => <View style={{width: GAP}} />}
+          renderItem={() => (
+            <ShimmerPlaceholder LinearGradient={LinearGradient} style={styles.shimmerCard} />
+          )}
         />
-      )}
-      <DetectCountry onCountryDetect={setDeviceCountry} />
+        {detector}
+      </View>
+    );
+  }
+
+  if (!items.length) return detector;
+
+  return (
+    <View>
+      <FlatList
+        data={items}
+        keyExtractor={item => String(item.id)}
+        horizontal
+        inverted={!isEn}
+        showsHorizontalScrollIndicator={false}
+        snapToInterval={CARD_W + GAP}
+        decelerationRate="fast"
+        contentContainerStyle={styles.listContent}
+        ItemSeparatorComponent={() => <View style={{width: GAP}} />}
+        renderItem={renderItem}
+      />
+      {detector}
     </View>
   );
 };

@@ -109,10 +109,9 @@ const HalaStack: React.FC = () => {
   name="Timeline"
   component={TimelineScreen}
   options={{
-    presentation: 'formSheet',
+    presentation: 'card',
     headerShown: false,
     gestureEnabled: true,
-    sheetAllowedDetents: [0.9],
   }}
 />
 
