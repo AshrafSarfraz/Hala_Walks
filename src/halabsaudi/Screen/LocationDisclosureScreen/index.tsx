@@ -24,7 +24,7 @@ export default function LocationDisclosure({navigation}: any) {
   };
   return <SafeAreaView edges={['top', 'bottom']} style={styles.safe}>
     <CustomHeader title={ar ? 'اجعل هلا يناسبك' : 'Make Hala yours'} />
-    <View style={styles.progress}>{[0, 1].map(i => <View key={i} style={[styles.dot, i === step && styles.active]} />)}</View>
+    {/* <View style={styles.progress}>{[0, 1].map(i => <View key={i} style={[styles.dot, i === step && styles.active]} />)}</View> */}
     <PermissionCard key={step} kind={step === 0 ? 'location' : 'notifications'} onDone={advance} onSkip={advance} />
   </SafeAreaView>;
 }

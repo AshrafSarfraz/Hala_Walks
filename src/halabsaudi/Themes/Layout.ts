@@ -1,13 +1,13 @@
 // Poori app ke liye ek hi spacing / card system.
 // Har section isi se padding leta hai, taake sab kinare ek line mein hon.
-import { Dimensions, TextStyle, ViewStyle } from 'react-native';
+import { Dimensions, Platform, TextStyle, ViewStyle } from 'react-native';
 import { Fonts } from './Fonts';
 
 export const SCREEN_W = Dimensions.get('window').width;
 
 export const GUTTER = 16;       // screen ke dono taraf ka padding
 export const GAP = 12;          // cards ke beech ka fasla
-export const SECTION_GAP = 12;  // sections ke beech ka fasla
+export const SECTION_GAP =Platform.OS==='ios'?10:7;  // sections ke beech ka fasla
 export const RADIUS = 14;
 
 export const CARD_BG = '#F6F7F9';

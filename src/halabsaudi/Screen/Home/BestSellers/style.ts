@@ -9,7 +9,8 @@ export const getStyles=(language:String) => StyleSheet.create({
       alignItems: 'center',
       marginHorizontal:Platform.OS==='ios'?"3%":'1%'   ,
       marginTop:10,
-      marginLeft:'4%'
+      marginLeft:'4%',
+      marginBottom: 13,
     },
     Flatlist_Cont:{
       width:280,

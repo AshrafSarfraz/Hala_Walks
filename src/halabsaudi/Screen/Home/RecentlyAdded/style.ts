@@ -24,6 +24,7 @@ export const getStyles = (language: string) => {
     listContent: {
       paddingHorizontal: GUTTER,
       paddingTop: 4,
+   
       paddingBottom: 10, // shadow ke liye jagah
     },
 

@@ -11,6 +11,7 @@ export const getStyles = (language: string) => {
     safe: {
       flex: 1,
       backgroundColor: Colors.surface,
+      
     },
 
     header: {
@@ -100,7 +101,7 @@ export const getStyles = (language: string) => {
 
     sectionTitle: {
       ...fontW(isEn, 'bold'),
-      fontSize: 19,
+      fontSize: Platform.OS==='ios'?18:16,
       lineHeight: isEn ? 24 : 30,
       color: Colors.textPrimary,
       textAlign: align,
