@@ -94,16 +94,11 @@ export default function ImagePreviewScreen({route, navigation}: Props) {
             s.bottomBar,
             {
               paddingBottom:
-                Platform.OS === 'ios' ? Math.max(insets.bottom, 8) : 8,
+                Platform.OS === 'ios' ? Math.max(insets.bottom, 8) : 48,
             },
           ]}>
           <View style={s.captionBox}>
-            <Ionicons
-              name="happy-outline"
-              size={21}
-              color={Colors.textMuted}
-              style={isRTL ? {marginLeft: 8} : {marginRight: 8}}
-            />
+       
             <TextInput
               style={[
                 s.captionInput,
@@ -112,8 +107,8 @@ export default function ImagePreviewScreen({route, navigation}: Props) {
                   writingDirection: isRTL ? 'rtl' : 'ltr',
                 },
               ]}
-              placeholder="Add a caption..."
-              placeholderTextColor={Colors.lightOverlay}
+              placeholder=" Add a caption...   "
+              placeholderTextColor={Colors.black}
               value={caption}
               onChangeText={setCaption}
               multiline
@@ -143,6 +138,7 @@ const s = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: Colors.black,
+    paddingTop:10
   },
 
   keyboardRoot: {
@@ -158,6 +154,7 @@ const s = StyleSheet.create({
     paddingHorizontal: 4,
     marginTop: Platform.OS === 'ios' ? 4 : 0,
     backgroundColor: Colors.black,
+    paddingTop:10
   },
 
   topButton: {
@@ -182,6 +179,7 @@ const s = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
+    marginVertical:20
   },
 
   image: {
@@ -198,6 +196,7 @@ const s = StyleSheet.create({
     backgroundColor: Colors.surfaceRaised,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: Colors.lightOverlaySubtle,
+   
   },
 
   sendBtn: {
@@ -224,15 +223,15 @@ const s = StyleSheet.create({
     flex: 1,
     minHeight: 44,
     maxHeight: 88,
-    color: Colors.white,
-    fontSize: 15,
+    color: Colors.black,
+    fontSize: 14,
     lineHeight: 20,
     paddingTop: Platform.OS === 'ios' ? 11 : 8,
-    paddingBottom: Platform.OS === 'ios' ? 11 : 8,
-    paddingHorizontal: 0,
+    paddingBottom: Platform.OS === 'ios' ? 11 : 12,
     textAlignVertical: 'center',
     borderWidth:1,
     borderColor:Colors.border,
-    borderRadius:10
+    borderRadius:10,
+    paddingLeft:10
   },
 });

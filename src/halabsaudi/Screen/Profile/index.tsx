@@ -1,3 +1,4 @@
+import {clearLogoutStorage} from '../../api/logoutStorage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
@@ -177,6 +178,7 @@ const Profile: React.FC = () => {
   };
 
   const handleLogout = () => {
+    if (loggingOut) return;
     Alert.alert('Logout', 'Are you sure you want to logout?', [
       {text: 'Cancel', style: 'cancel'},
       {
@@ -213,37 +215,13 @@ const Profile: React.FC = () => {
               } catch {}
             }
             await clearMediaOutbox().catch(() => {});
-            const keys = await AsyncStorage.getAllKeys().catch(() => []);
-            const personalCaches = keys.filter(
-              key =>
-                key.startsWith('profile_checkins_v5_') ||
-                key.startsWith('mute_') ||
-                key.startsWith('hbs_chat_'),
-            );
-            await AsyncStorage.multiRemove([
-              'hala_user',
-              'hala_token',
-              'hala_user_data',
-              'hala_user_backend',
-              'geofence_cooldown',
-              'pending_venue_navigate',
-              'hala_show_last_seen',
-              'hala_show_online_status',
-              'hala_conversations',
-              'hala_users_cache',
-              'hala_users_cache_v2',
-              'hala_users_cache_meta',
-              'hala_blocked_cache',
-              'map_profile_checkins_cache_v1',
-              'hala_background_location_opt_in',
-              ...personalCaches,
-            ]);
+            await clearLogoutStorage();
             navigation.reset({index: 0, routes: [{name: 'WelcomeScreen'}]});
           } catch (e) {
             console.error(e);
             Alert.alert(
               'Logout failed',
-              'Could not clear your session. Please try again.',
+              `Please try again. ${e instanceof Error ? e.message : String(e)}`,
             );
           } finally {
             setLoggingOut(false);

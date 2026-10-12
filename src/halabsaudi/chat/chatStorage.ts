@@ -1,22 +1,71 @@
-// src/halabsaudi/chat/chatStorage.ts
-//
-// Persistent local cache for chat messages + the offline send queue.
-// Backed by MMKV: synchronous, fast, and — unlike a plain in-memory
-// Map — it survives app restarts and kills.
-//
-// npm install react-native-mmkv
-// (then `cd ios && pod install` if you're on bare RN with iOS)
 
-import {createMMKV} from 'react-native-mmkv';
-
-const storage = createMMKV({id: 'hala-chat-cache'});
+type NativeStorage = ReturnType<typeof import('react-native-mmkv').createMMKV>;
+let native: NativeStorage | null = null;
+let attempted = false;
+const memory = new Map<string, string>();
+function getNative(): NativeStorage | null {
+  if (!attempted) {
+    attempted = true;
+    try {
+      const {createMMKV} =
+        require('react-native-mmkv') as typeof import('react-native-mmkv');
+      native = createMMKV({id: 'hala-chat-cache'});
+    } catch (error) {
+      console.warn(
+        '[HBS chat storage] Native cache unavailable; using session memory.',
+        error,
+      );
+    }
+  }
+  return native;
+}
+const storage = {
+  getString(key: string): string | undefined {
+    try {
+      const value = getNative()?.getString(key);
+      if (typeof value === 'string') {
+        memory.set(key, value);
+        return value;
+      }
+    } catch {
+      native = null;
+    }
+    return memory.get(key);
+  },
+  set(key: string, value: string) {
+    memory.set(key, value);
+    try {
+      getNative()?.set(key, value);
+    } catch {
+      native = null;
+    }
+  },
+  remove(key: string) {
+    memory.delete(key);
+    try {
+      getNative()?.remove(key);
+    } catch {
+      native = null;
+    }
+  },
+  clearAll() {
+    memory.clear();
+    // Clear persisted caches when available; a native failure cannot block logout.
+    try {
+      getNative()?.clearAll();
+    } catch {
+      native = null;
+    }
+  },
+};
 
 // ── Message cache ───────────────────────────────────────────────────────────
 export function getCachedMessages<T>(chatId: string): T[] | null {
   const raw = storage.getString(`messages:${chatId}`);
   if (!raw) return null;
   try {
-    return JSON.parse(raw) as T[];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? (parsed as T[]) : null;
   } catch {
     return null;
   }
@@ -33,7 +82,8 @@ export function getQueue<T>(chatId: string): T[] {
   const raw = storage.getString(`queue:${chatId}`);
   if (!raw) return [];
   try {
-    return JSON.parse(raw) as T[];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? (parsed as T[]) : [];
   } catch {
     return [];
   }

@@ -1,3 +1,4 @@
+import {clearDeletedChatHistory} from './chatScreen';
 import {useSocialRefresh} from './useSocialRefresh';
 import UserAvatar from '../Component/UserAvatar';
 import {Text} from '../../ui/Text';
@@ -509,6 +510,19 @@ export default function ConversationsScreen({navigation}: any) {
 
   const deleteConversation = useCallback(
     async (chatId: string) => {
+      // Ignore list/badge requests started before this deletion.
+      requestController.current?.abort();
+      fetchVersion.current += 1;
+      busy.current = false;
+      setLoadingMore(false);
+      badgeChanges.current.set(chatId, 0);
+      if (completeBadgeChats.current) {
+        completeBadgeChats.current = completeBadgeChats.current.filter(
+          chat => chat._id !== chatId,
+        );
+        void setBadgeFromChats(completeBadgeChats.current);
+      }
+      clearChatNotifications(chatId);
       setSearchCatalog(old => old?.filter(chat => chat._id !== chatId) ?? null);
       setConversations(prev => {
         const updated = prev.filter(c => c._id !== chatId);
@@ -520,6 +534,7 @@ export default function ConversationsScreen({navigation}: any) {
           headers: {Authorization: `Bearer ${tokenRef.current}`},
           timeout: 10000,
         });
+        await clearDeletedChatHistory(chatId);
       } catch {
         fetchChats(false, true);
       }
