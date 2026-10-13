@@ -65,7 +65,7 @@ export default function Home({
   };
   return (
     <View style={styles.root}>
-      <StatusBar barStyle='light-content' backgroundColor={Colors.brandGreen} />
+      <StatusBar barStyle="dark-content" backgroundColor={Colors.White} />
       <View
         style={[
           styles.header,
@@ -92,7 +92,7 @@ export default function Home({
             <Ionicons
               name="language-outline"
               size={21}
-              color={Colors.white}
+              color={Colors.PrimaryColor}
             />
           </TouchableOpacity>
           <TouchableOpacity
@@ -103,7 +103,7 @@ export default function Home({
             <Ionicons
               name="search-outline"
               size={21}
-              color={Colors.white}
+              color={Colors.PrimaryColor}
             />
           </TouchableOpacity>
         </View>
@@ -144,17 +144,19 @@ export default function Home({
 const styles = StyleSheet.create({
   root: {flex: 1, backgroundColor: Colors.White},
   header: {
-    backgroundColor: Colors.brandGreen,
+    backgroundColor: Colors.White,
     paddingHorizontal: 16,
     paddingBottom: 10,
     alignItems: 'center',
     justifyContent: 'space-between',
+    borderBottomWidth:0.8,
+    borderColor:"#eee"
   },
-  tagline: {fontSize: 12, color: Colors.white, marginBottom: 5},
+  tagline: {fontSize: 12, color: Colors.textSecondary, marginBottom: 5},
   brand: {
     fontSize: 21,
     fontFamily: Fonts.F_Bold,
-    color: Colors.white,
+    color: Colors.PrimaryColor,
     flexShrink: 1,
   },
   headerButton: {
