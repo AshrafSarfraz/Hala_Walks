@@ -1,241 +1,166 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   View,
-  Text,
   FlatList,
   StyleSheet,
   TouchableOpacity,
   Linking,
   TextInput,
-  StatusBar,
-  Platform,
+  ActivityIndicator,
 } from 'react-native';
-import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
-import LinearGradient from 'react-native-linear-gradient';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import CustomHeader from '../../../components/header/CustomHeader';
-import { useNavigation } from '@react-navigation/native';
-import { Colors } from '../../../theme/Colors';
+import {useNavigation} from '@react-navigation/native';
+import {Text} from '../../../components/Text';
+import PageLayout from '../../../components/PageLayout';
+import Avatar from '../../../components/Avatar';
+import {Colors} from '../../../theme/Colors';
+import {fetchDirectory} from '../../../utils/directory';
 
-const API_URL = 'https://awh-api.onrender.com/employees/mongo';
-
-const makeCall = (phoneNumber: string) => {
-  if (!phoneNumber) return;
-  Linking.openURL(`tel:${phoneNumber}`);
-};
-
-const getInitials = (name: string) => {
-  if (!name || typeof name !== 'string') return '?';
-
-  const names = name
-    .trim()
-    .split(/\s+/)      // split by spaces, ignore extra spaces
-    .filter(Boolean);  // remove empty parts
-
-  if (names.length === 0) return '?';
-
-  const first = names[0][0].toUpperCase();
-  const last = names.length > 1 ? names[names.length - 1][0].toUpperCase() : '';
-
-  return (first + last) || '?';
-};
-
-
-const PhoneDirectoryScreen = () => {
-  const navigation = useNavigation();
-  const [searchText, setSearchText] = useState('');
-  const [directoryData, setDirectoryData] = useState<any[]>([]);
+export default function PhoneDirectoryScreen() {
+  const navigation = useNavigation<any>();
+  const [search, setSearch] = useState('');
+  const [rows, setRows] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-
-      const cached = await AsyncStorage.getItem('phone_directory');
-      let cachedData: any[] = cached ? JSON.parse(cached) : [];
-      if (cachedData.length > 0) {
-        setDirectoryData(cachedData);
-      }
-
-      const res = await fetch(API_URL);
-      const freshData = await res.json();
-
-      // map API fields to expected fields
-      const mappedData = freshData.map((item: any) => ({
-        id: item._id,
-        name: item.Name,
-        position: item.Title,
-        phone: item.MobilePhone,
-      }));
-
-      if (JSON.stringify(mappedData) !== JSON.stringify(cachedData)) {
-        await AsyncStorage.setItem(
-          'phone_directory',
-          JSON.stringify(mappedData)
-        );
-        setDirectoryData(mappedData);
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  const [error, setError] = useState(false);
+  const [retry, setRetry] = useState(0);
+  const running = useRef(false);
   useEffect(() => {
-    fetchData();
-  }, []);
-
-  const filteredData = directoryData.filter(
-    item =>
-      (item.name?.toLowerCase() || '').includes(searchText.toLowerCase()) ||
-      (item.position?.toLowerCase() || '').includes(searchText.toLowerCase())
+    let active = true;
+    running.current = true;
+    setLoading(true);
+    setError(false);
+    (async () => {
+      try {
+        const raw = await AsyncStorage.getItem('phone_directory');
+        const cached = raw ? JSON.parse(raw) : [];
+        if (active && Array.isArray(cached) && cached.length) setRows(cached);
+      } catch {}
+      try {
+        const fresh = await fetchDirectory();
+        if (active) setRows(fresh);
+        await AsyncStorage.setItem('phone_directory', JSON.stringify(fresh));
+      } catch {
+        if (active) setError(true);
+      } finally {
+        if (active) {
+          setLoading(false);
+          running.current = false;
+        }
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, [retry]);
+  const query = search.trim().toLowerCase();
+  const filtered = rows.filter(item =>
+    `${item.name || ''} ${item.position || ''} ${item.phone || ''}`
+      .toLowerCase()
+      .includes(query),
   );
-
-  const renderItem = ({ item }: { item: any }) => (
-    <TouchableOpacity
-      style={styles.card}
-      onPress={() => makeCall(item.phone)}
-    >
-      <View style={styles.avatar}>
-        <Text style={styles.avatarText}>{getInitials(item.name)}</Text>
-      </View>
-      <View style={styles.info}>
-        <Text style={styles.name}>{item.name}</Text>
-        <Text style={styles.position}>{item.position}</Text>
-        <Text style={styles.phone}>{item.phone}</Text>
-      </View>
-    </TouchableOpacity>
-  );
-
-  const renderShimmer = () => (
-    <View>
-      {[...Array(10)].map((_, idx) => (
-        <View key={idx} style={styles.card}>
-          <ShimmerPlaceholder
-            LinearGradient={LinearGradient}
-            style={{ width: 60, height: 60, borderRadius: 30, marginRight: 12 }}
-          />
-          <View style={{ flex: 1 }}>
-            <ShimmerPlaceholder
-              LinearGradient={LinearGradient}
-              style={{ width: '90%', height: 15, marginBottom: 6 }}
-            />
-            <ShimmerPlaceholder
-              LinearGradient={LinearGradient}
-              style={{ width: '70%', height: 12, marginBottom: 6 }}
-            />
-            <ShimmerPlaceholder
-              LinearGradient={LinearGradient}
-              style={{ width: '50%', height: 12 }}
-            />
-          </View>
-        </View>
-      ))}
-    </View>
-  );
-
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <StatusBar
-             hidden={false}
-             backgroundColor={Colors.Bg}
-             barStyle="dark-content"
-           />
-      <View style={styles.container}>
-        <View style={{ marginBottom: 10 }}>
-          <CustomHeader
-            title="Directory"
-            onBackPress={() => navigation.goBack()}
-          />
-        </View>
-
+    <PageLayout title="Directory" onBackPress={() => navigation.goBack()}>
+      <View style={styles.body}>
         <TextInput
+          style={styles.search}
           placeholder="Search by name or position"
-          placeholderTextColor={Colors.Black}
-          value={searchText}
-          onChangeText={setSearchText}
-          style={styles.searchBox}
+          placeholderTextColor={Colors.Grey}
+          value={search}
+          onChangeText={setSearch}
         />
-
-        {loading ? (
-          renderShimmer()
-        ) : (
-          <FlatList
-            data={filteredData}
-            keyExtractor={(item, index) => item.id?.toString() || index.toString()}
-            renderItem={renderItem}
-            showsVerticalScrollIndicator={false}
-            ListEmptyComponent={
-              <Text
-                style={{ textAlign: 'center', marginTop: 20, color: '#888' }}
-              >
-                No matches found.
-              </Text>
-            }
+        {error && (
+          <TouchableOpacity
+            accessibilityRole="button"
+            onPress={() => setRetry(n => n + 1)}
+            style={styles.notice}>
+            <Text>
+              {rows.length
+                ? 'Could not refresh directory.'
+                : 'Directory could not load.'}{' '}
+              Tap to retry.
+            </Text>
+          </TouchableOpacity>
+        )}
+        {loading && (
+          <ActivityIndicator
+            style={{marginBottom: 12}}
+            color={Colors.PrimaryColor}
           />
         )}
+        <FlatList
+          data={filtered}
+          keyExtractor={(item, index) => String(item.id || index)}
+          showsVerticalScrollIndicator={false}
+          refreshing={loading}
+          onRefresh={() => {
+            if (!running.current) setRetry(n => n + 1);
+          }}
+          renderItem={({item}) => (
+            <TouchableOpacity
+              disabled={!item.phone}
+              style={styles.card}
+              onPress={() =>
+                Linking.openURL(`tel:${item.phone}`).catch(() => {})
+              }>
+              <Avatar name={item.name} size={48} />
+              <View style={styles.info}>
+                <Text style={styles.name}>{item.name || 'Member'}</Text>
+                {!!item.position && (
+                  <Text style={styles.position}>{item.position}</Text>
+                )}
+                {!!item.phone && <Text style={styles.phone}>{item.phone}</Text>}
+              </View>
+            </TouchableOpacity>
+          )}
+          ListEmptyComponent={
+            !loading && !error ? (
+              <Text style={styles.empty}>
+                {query
+                  ? 'No matches found.'
+                  : 'No directory entries available.'}
+              </Text>
+            ) : null
+          }
+        />
       </View>
-    </SafeAreaView>
+    </PageLayout>
   );
-};
-
-export default PhoneDirectoryScreen;
-
+}
 const styles = StyleSheet.create({
-  container: {
+  body: {
     flex: 1,
-    backgroundColor: '#F6F6F6',
-    paddingHorizontal: 20,
-    marginTop:Platform.OS==='ios'?0:20
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    backgroundColor: Colors.White,
   },
-  searchBox: {
-    backgroundColor: '#FFF',
-    padding: 10,
+  search: {
+    height: 52,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    marginBottom: 16,
+    color: Colors.textPrimary,
+  },
+  notice: {
+    padding: 12,
+    backgroundColor: Colors.accentSoft,
     borderRadius: 10,
-    marginBottom: 15,
-    height:55,
-    borderWidth:1,
-    borderColor:Colors.Grey
+    marginBottom: 12,
   },
   card: {
     flexDirection: 'row',
-    backgroundColor: '#FFF',
-    borderRadius: 10,
+    alignItems: 'center',
+    gap: 12,
     padding: 12,
     marginBottom: 12,
-    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: Colors.border,
+    borderRadius: 14,
   },
-  avatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#007AFF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  avatarText: {
-    color: '#FFF',
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  info: {
-    flex: 1,
-  },
-  name: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  position: {
-    fontSize: 14,
-    color: '#666',
-    marginTop: 4,
-  },
-  phone: {
-    fontSize: 14,
-    color: '#005029',
-    marginTop: 4,
-  },
+  info: {flex: 1},
+  name: {fontSize: 16, fontWeight: '600'},
+  position: {color: Colors.Grey, marginTop: 4},
+  phone: {color: Colors.PrimaryColor, marginTop: 4},
+  empty: {textAlign: 'center', marginTop: 24},
 });

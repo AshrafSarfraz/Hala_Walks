@@ -1,60 +1,67 @@
-import { Dimensions, Platform, StyleSheet } from "react-native";
-import { Colors } from "../../../../theme/Colors";
-import { Fonts } from "../../../../theme/Fonts";
+import {Dimensions, Platform, StyleSheet} from 'react-native';
+import {Colors} from '../../../../theme/Colors';
+import {Fonts} from '../../../../theme/Fonts';
 
-
-const { width } = Dimensions.get('window');
-export const getStyles=(language:String) => StyleSheet.create({
+const {width} = Dimensions.get('window');
+const createStyles = (language: String) =>
+  StyleSheet.create({
     container: {
       alignItems: 'center',
-      marginHorizontal:Platform.OS==='ios'?"3%":'1%'   ,
-      marginTop:10,
-      marginLeft:'4%'
+      marginHorizontal: Platform.OS === 'ios' ? '3%' : '1%',
+      marginTop: 10,
+      marginLeft: '4%',
     },
-    Flatlist_Cont:{
-      width:240,
-      height:language==='en'?100:110,
-      backgroundColor:Colors.White,
-      marginRight:10,
-      borderRadius:10,
-      flexDirection:language==='en'?'row':'row-reverse',
-      alignItems:'center',
-      paddingHorizontal:'2%',
-      paddingVertical:"1%"
-     
+    Flatlist_Cont: {
+      width: 240,
+      height: language === 'en' ? 100 : 110,
+      backgroundColor: Colors.White,
+      marginRight: 10,
+      borderRadius: 10,
+      flexDirection: language === 'en' ? 'row' : 'row-reverse',
+      alignItems: 'center',
+      paddingHorizontal: '2%',
+      paddingVertical: '1%',
     },
-    image:{
-       width:70,
-       height:70,
-       borderRadius:40,
-       marginLeft:3
+    image: {
+      width: 70,
+      height: 70,
+      borderRadius: 40,
+      marginLeft: 3,
     },
-    bestSeller_Detail:{
-     width:140,
-     marginLeft:language==='en'?10:0,
-     marginRight:language==='en'?0:10,
-     textAlign:'justify',
+    bestSeller_Detail: {
+      width: 140,
+      marginLeft: language === 'en' ? 10 : 0,
+      marginRight: language === 'en' ? 0 : 10,
+      textAlign: 'justify',
     },
-    title_txt:{
-      fontSize:16,
-      fontFamily:language==='en'?Fonts.F_Bold:'',
-      fontWeight :language==='en'?'400':'bold',
-      color:Colors.PrimaryColor,
-      lineHeight:language==='en'?22:22,
-      letterSpacing:language==='en'?0.2:0,
-      textAlign:language==='en'?'left':'right',
+    title_txt: {
+      fontSize: 16,
+      fontFamily: language === 'en' ? Fonts.F_Bold : '',
+      fontWeight: language === 'en' ? '400' : 'bold',
+      color: Colors.PrimaryColor,
+      lineHeight: language === 'en' ? 22 : 22,
+      letterSpacing: language === 'en' ? 0.2 : 0,
+      textAlign: language === 'en' ? 'left' : 'right',
     },
-    desc_txt:{
-      fontSize:12,
-      fontFamily:language==='en'?Fonts.F_Regular:'',
-      fontWeight :'400',
-      lineHeight:language==='en'?13:18,
-      letterSpacing:0.2,
-      marginTop:2,
-      color:Colors.Black,
-      textAlign:language==='en'?'left':'right',
-    }
+    desc_txt: {
+      fontSize: 12,
+      fontFamily: language === 'en' ? Fonts.F_Regular : '',
+      fontWeight: '400',
+      lineHeight: language === 'en' ? 13 : 18,
+      letterSpacing: 0.2,
+      marginTop: 2,
+      color: Colors.Black,
+      textAlign: language === 'en' ? 'left' : 'right',
+    },
   });
-  
 
-  
+const languageStyles = new Map<string, ReturnType<typeof createStyles>>();
+export const getStyles = (language: string | String) => {
+  const key = String(language);
+  let cached = languageStyles.get(key);
+  if (!cached) {
+    cached = createStyles(key);
+    languageStyles.set(key, cached);
+  }
+  return cached;
+};

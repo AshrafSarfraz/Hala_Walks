@@ -1,52 +1,61 @@
 import React from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-
-import { useSelector } from 'react-redux';
-import { Back_Icon } from '../../theme/Images';
-import { Colors } from '../../theme/Colors';
-import { RootState } from '../../redux/store';
-import { Fonts } from '../../theme/Fonts';
-
-
-type HeaderProps={
-    title: string,
-    onBackPress: () => void,
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import Ionicons from '@react-native-vector-icons/ionicons';
+import {useSelector} from 'react-redux';
+import {Text} from '../Text';
+import {Colors} from '../../theme/Colors';
+import {Fonts} from '../../theme/Fonts';
+import {RootState} from '../../redux/store';
+export default function CustomHeader({
+  onBackPress,
+  title,
+  right,
+}: {
+  title: string;
+  right?: React.ReactNode;
+  onBackPress?: () => void;
+}) {
+  const ar = useSelector((s: RootState) => s.language.language === 'ar');
+  return (
+    <View
+      testID="westwalk-header"
+      style={[styles.header, {flexDirection: ar ? 'row-reverse' : 'row'}]}>
+      {onBackPress && (
+        <TouchableOpacity
+          accessibilityRole="button"
+          accessibilityLabel={ar ? 'رجوع' : 'Back'}
+          onPress={onBackPress}
+          style={styles.back}>
+          <Ionicons
+            name={ar ? 'arrow-forward' : 'arrow-back'}
+            size={23}
+            color={Colors.textPrimary}
+          />
+        </TouchableOpacity>
+      )}
+      <Text
+        accessibilityRole="header"
+        style={[styles.title, {textAlign: ar ? 'right' : 'left'}]}>
+        {title}
+      </Text>
+      {right}
+    </View>
+  );
 }
-
-const CustomHeader:React.FC<HeaderProps> = ({onBackPress,title}) => {
-  const language = useSelector((state: RootState) => state.language.language); // Get the current language from Redux
-  const styles = getStyles(language);
-    return (
-        <View style={styles.header}>
-                <TouchableOpacity onPress={onBackPress}>
-                  <Image source={Back_Icon} style={styles.backIcon} />
-                </TouchableOpacity>
-                <Text style={styles.headerText}>{title}</Text>
-              </View>
-    );
-}
-
-const getStyles=(language:String)=> StyleSheet.create({
+const styles = StyleSheet.create({
   header: {
-    flexDirection: language==='en'?'row':'row-reverse',
+    height: 56,
+    width: '100%',
+    paddingVertical: 8,
     alignItems: 'center',
+    gap: 10,
+    borderRadius: 0,
   },
-  backIcon: {
-    width: 30,
-    height: 30,
-    marginRight:language==='en'?12:0,
-    marginLeft:language==='ar'?12:0,
-    tintColor: Colors.PrimaryColor,
-    transform:language==='en'?[{ scaleX:1}]:[{ scaleX:-1}]
-  },
-  headerText: {
+  back: {width: 40, height: 40, justifyContent: 'center', alignItems: 'center'},
+  title: {
+    flex: 1,
     fontSize: 18,
     fontFamily: Fonts.F_Bold,
-    lineHeight: 24,
-    color: Colors.PrimaryColor,
-    letterSpacing:0.3
+    color: Colors.textPrimary,
   },
-
-})
-
-export default CustomHeader;
+});

@@ -1,55 +1,52 @@
-import { StyleSheet, Dimensions, Platform } from 'react-native';
-import { Colors } from '../../../../theme/Colors';
-import { Fonts } from '../../../../theme/Fonts';
+import {StyleSheet, Dimensions, Platform} from 'react-native';
+import {Colors} from '../../../../theme/Colors';
+import {Fonts} from '../../../../theme/Fonts';
 
+const {width} = Dimensions.get('window');
 
-
-const { width } = Dimensions.get('window');
-
-export const getStyles=(language:String)=>  StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 10,
-    
-  },
-  row: {
-    justifyContent: 'space-between', // Ensures even spacing
-    marginBottom: 10, // Adds spacing between rows
-  },
-Flatlist_Cont: {
-    flex: 1,
-    width: width * 0.45, // Reduced width for better spacing
-    margin:6,
-    borderRadius: 10,
-    backgroundColor: Colors.White,
-    height: Platform.OS === 'ios' ? 200 : 200,
-    alignItems:'flex-start',
-    borderColor: '#E0E0E0',
-    overflow: 'hidden',
-    shadowColor: '#000', // Adding shadow effect for iOS
-    shadowOpacity: 0.3,
-    shadowRadius: 2,
-    elevation: 3,
-    shadowOffset: { width: 1, height: 1 },
-  
-  },
+const createStyles = (language: String) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      padding: 10,
+    },
+    row: {
+      justifyContent: 'space-between', // Ensures even spacing
+      marginBottom: 10, // Adds spacing between rows
+    },
+    Flatlist_Cont: {
+      flex: 1,
+      width: width * 0.45, // Reduced width for better spacing
+      margin: 6,
+      borderRadius: 10,
+      backgroundColor: Colors.White,
+      height: Platform.OS === 'ios' ? 200 : 200,
+      alignItems: 'flex-start',
+      borderColor: '#E0E0E0',
+      overflow: 'hidden',
+      shadowColor: '#000', // Adding shadow effect for iOS
+      shadowOpacity: 0.3,
+      shadowRadius: 2,
+      elevation: 3,
+      shadowOffset: {width: 1, height: 1},
+    },
 
     cate_txt: {
-      width:"90%",
+      width: '90%',
       fontSize: 14,
-      marginVertical: Platform.OS==='ios'?3:2,
+      marginVertical: Platform.OS === 'ios' ? 3 : 2,
       fontFamily: Fonts.F_Bold,
       color: Colors.PrimaryColor,
-      marginHorizontal:"4%",
-      textAlign:language==='en'?'left':"right",
+      marginHorizontal: '4%',
+      textAlign: language === 'en' ? 'left' : 'right',
     },
     Type_Cont: {
-      backgroundColor: '#D0A700',
+      backgroundColor: '#005029',
       paddingHorizontal: '4%',
       paddingVertical: 3,
       borderRadius: 3,
-      marginHorizontal:"5%",
-      alignSelf:language==='en'?'flex-start':'flex-end'
+      marginHorizontal: '5%',
+      alignSelf: language === 'en' ? 'flex-start' : 'flex-end',
     },
     Type_Text: {
       fontSize: 9,
@@ -63,14 +60,12 @@ Flatlist_Cont: {
       justifyContent: 'space-between',
       width: '100%',
       marginTop: 6,
-      alignSelf:"center",
-      paddingHorizontal:"5%"
-      
+      alignSelf: 'center',
+      paddingHorizontal: '5%',
     },
     Loc_Cont: {
       flexDirection: 'row',
       alignItems: 'center',
-      
     },
     LocationIcon: {
       width: 12,
@@ -92,5 +87,15 @@ Flatlist_Cont: {
       lineHeight: 16,
       marginLeft: 5,
     },
+  });
 
-});
+const languageStyles = new Map<string, ReturnType<typeof createStyles>>();
+export const getStyles = (language: string | String) => {
+  const key = String(language);
+  let cached = languageStyles.get(key);
+  if (!cached) {
+    cached = createStyles(key);
+    languageStyles.set(key, cached);
+  }
+  return cached;
+};

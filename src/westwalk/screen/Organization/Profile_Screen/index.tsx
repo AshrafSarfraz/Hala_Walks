@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Image, ScrollView, StatusBar } from 'react-native';
-import { styles } from './style';
-import CustomHeader from '../../../components/header/CustomHeader';
-import { Colors } from '../../../theme/Colors';
+import PageLayout from '../../../components/PageLayout';
+import Avatar from '../../../components/Avatar';
+import {memberName, memberPhoto} from '../../../utils/member';
+import {Text} from '../../../components/Text';
+import React, {useEffect, useState} from 'react';
+import {View, Image, ScrollView, StatusBar} from 'react-native';
+import {styles} from './style';
+import {Colors} from '../../../theme/Colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { P_IMG } from '../../../theme/Images';
 import NoDataFound from '../../../components/NoDataFound/No_data_found';
 
-const CorporationProfile: React.FC<{ navigation: any }> = ({ navigation }) => {
+const CorporationProfile: React.FC<{navigation: any}> = ({navigation}) => {
   const [userData, setUserData] = useState<any>(null);
 
   useEffect(() => {
@@ -27,29 +29,22 @@ const CorporationProfile: React.FC<{ navigation: any }> = ({ navigation }) => {
 
   if (!userData) {
     return (
-    <NoDataFound/>
+      <PageLayout title="Profile" onBackPress={() => navigation.goBack()}>
+        <NoDataFound />
+      </PageLayout>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <StatusBar
-        hidden={false}
-        translucent
-        animated
-        backgroundColor={Colors.Bg}
-        barStyle="dark-content"
-      />
-      <CustomHeader title="Employee Profile" onBackPress={() => navigation.goBack()} />
-
+    <PageLayout title="Profile" onBackPress={() => navigation.goBack()}>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
+        contentContainerStyle={styles.scrollContent}>
         <View style={styles.card}>
-          <Image
-            source={userData.profileImage ? { uri: userData.profileImage } : P_IMG}
-            style={styles.profileImage}
+          <Avatar
+            name={memberName(userData)}
+            uri={memberPhoto(userData)}
+            size={72}
           />
           <Text style={styles.name}>{userData.name}</Text>
           <Text style={styles.label}>Employee ID</Text>
@@ -60,7 +55,7 @@ const CorporationProfile: React.FC<{ navigation: any }> = ({ navigation }) => {
           <Text style={styles.value}>{userData.companyName}</Text>
         </View>
       </ScrollView>
-    </View>
+    </PageLayout>
   );
 };
 

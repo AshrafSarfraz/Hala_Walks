@@ -1,8 +1,8 @@
+import {Text} from '../../../components/Text';
 // src/westwalk/screens/Maintenance/MyRequests.tsx
 import React, {useState, useCallback} from 'react';
 import {
   View,
-  Text,
   FlatList,
   StyleSheet,
   ActivityIndicator,
@@ -18,34 +18,57 @@ const API_URL =
 const REQUEST_TIMEOUT_MS = 30000;
 
 interface RequestRecord {
-  _id:         string;
-  name:        string;
-  qid:         string;
-  subject:     string;
+  _id: string;
+  name: string;
+  qid: string;
+  subject: string;
   description: string;
-  status:      'Pending' | 'In Progress' | 'Resolved' | 'Rejected';
-  createdAt:   string;
+  status: 'Pending' | 'In Progress' | 'Resolved' | 'Rejected';
+  createdAt: string;
 }
 
 const STATUS_CONFIG: Record<
   string,
-  {bg: string; text: string; dot: string; accent: string; icon: string; label: string}
+  {
+    bg: string;
+    text: string;
+    dot: string;
+    accent: string;
+    icon: string;
+    label: string;
+  }
 > = {
   Pending: {
-    bg: '#FFFBEB', text: '#92400E', dot: '#F59E0B',
-    accent: '#F59E0B', icon: '🕐', label: 'Pending',
+    bg: '#FFFBEB',
+    text: '#92400E',
+    dot: '#F59E0B',
+    accent: '#F59E0B',
+    icon: '🕐',
+    label: 'Pending',
   },
   'In Progress': {
-    bg: '#EEF2FF', text: '#3730A3', dot: '#6366F1',
-    accent: '#6366F1', icon: '⚙️', label: 'In Progress',
+    bg: '#EEF2FF',
+    text: '#3730A3',
+    dot: '#6366F1',
+    accent: '#6366F1',
+    icon: '⚙️',
+    label: 'In Progress',
   },
   Resolved: {
-    bg: '#F0FDF4', text: '#14532D', dot: '#22C55E',
-    accent: '#22C55E', icon: '✅', label: 'Resolved',
+    bg: '#F0FDF4',
+    text: '#14532D',
+    dot: '#22C55E',
+    accent: '#22C55E',
+    icon: '✅',
+    label: 'Resolved',
   },
   Rejected: {
-    bg: '#FFF1F2', text: '#881337', dot: '#F43F5E',
-    accent: '#F43F5E', icon: '✕', label: 'Rejected',
+    bg: '#FFF1F2',
+    text: '#881337',
+    dot: '#F43F5E',
+    accent: '#F43F5E',
+    icon: '✕',
+    label: 'Rejected',
   },
 };
 
@@ -55,7 +78,9 @@ const STATUS_STEPS = ['Pending', 'In Progress', 'Resolved'];
 function formatDate(iso: string): string {
   try {
     return new Date(iso).toLocaleDateString('en-GB', {
-      day: '2-digit', month: 'short', year: 'numeric',
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
     });
   } catch {
     return iso;
@@ -65,7 +90,8 @@ function formatDate(iso: string): string {
 function formatTime(iso: string): string {
   try {
     return new Date(iso).toLocaleTimeString('en-GB', {
-      hour: '2-digit', minute: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
     });
   } catch {
     return '';
@@ -91,7 +117,9 @@ const StatusTrack = ({status}: {status: string}) => {
       <View style={track.wrap}>
         <View style={[track.pill, {backgroundColor: '#FFF1F2'}]}>
           <View style={[track.dot, {backgroundColor: '#F43F5E'}]} />
-          <Text style={[track.label, {color: '#881337'}]}>Request Rejected</Text>
+          <Text style={[track.label, {color: '#881337'}]}>
+            Request Rejected
+          </Text>
         </View>
       </View>
     );
@@ -101,9 +129,9 @@ const StatusTrack = ({status}: {status: string}) => {
   return (
     <View style={track.wrap}>
       {STATUS_STEPS.map((step, i) => {
-        const done    = i <= currentIdx;
-        const active  = i === currentIdx;
-        const cfg     = STATUS_CONFIG[step];
+        const done = i <= currentIdx;
+        const active = i === currentIdx;
+        const cfg = STATUS_CONFIG[step];
         return (
           <React.Fragment key={step}>
             <View style={track.stepWrap}>
@@ -114,9 +142,7 @@ const StatusTrack = ({status}: {status: string}) => {
                     ? {backgroundColor: cfg.accent, borderColor: cfg.accent}
                     : {backgroundColor: '#F3F4F6', borderColor: '#E5E7EB'},
                 ]}>
-                {done && (
-                  <Text style={track.check}>{active ? '●' : '✓'}</Text>
-                )}
+                {done && <Text style={track.check}>{active ? '●' : '✓'}</Text>}
               </View>
               <Text
                 style={[
@@ -144,22 +170,37 @@ const StatusTrack = ({status}: {status: string}) => {
 
 const track = StyleSheet.create({
   wrap: {
-    flexDirection: 'row', alignItems: 'flex-start',
-    marginTop: 14, marginBottom: 2,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginTop: 14,
+    marginBottom: 2,
   },
   stepWrap: {alignItems: 'center', gap: 4},
   circle: {
-    width: 22, height: 22, borderRadius: 11,
-    borderWidth: 2, alignItems: 'center', justifyContent: 'center',
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    borderWidth: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  check:      {fontSize: 10, color: '#fff', fontWeight: '700'},
-  stepLabel:  {fontSize: 9, fontWeight: '500', textAlign: 'center', maxWidth: 56},
-  line:       {flex: 1, height: 2, marginTop: 10, marginHorizontal: 2},
+  check: {fontSize: 10, color: '#fff', fontWeight: '700'},
+  stepLabel: {
+    fontSize: 9,
+    fontWeight: '500',
+    textAlign: 'center',
+    maxWidth: 56,
+  },
+  line: {flex: 1, height: 2, marginTop: 10, marginHorizontal: 2},
   pill: {
-    flexDirection: 'row', alignItems: 'center', gap: 6,
-    paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
   },
-  dot:   {width: 7, height: 7, borderRadius: 4},
+  dot: {width: 7, height: 7, borderRadius: 4},
   label: {fontSize: 12, fontWeight: '700'},
 });
 
@@ -225,28 +266,48 @@ const card = StyleSheet.create({
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.06,
     shadowRadius: 8,
-  
   },
-  header:     {flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'},
-  headerLeft: {flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1, marginRight: 8},
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    flex: 1,
+    marginRight: 8,
+  },
   indexBadge: {
-    paddingHorizontal: 8, paddingVertical: 3,
-    borderRadius: 6, flexShrink: 0,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+    flexShrink: 0,
   },
-  indexText:  {fontSize: 10, fontWeight: '800', letterSpacing: 0.5},
-  subject:    {fontSize: 12, fontWeight: '700', color: '#111827', flex: 1},
+  indexText: {fontSize: 10, fontWeight: '800', letterSpacing: 0.5},
+  subject: {fontSize: 12, fontWeight: '700', color: '#111827', flex: 1},
   chip: {
-    flexDirection: 'row', alignItems: 'center', gap: 4,
-    borderRadius: 20, paddingHorizontal: 10, paddingVertical: 5, flexShrink: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    flexShrink: 0,
   },
   chipIcon: {fontSize: 10},
   chipText: {fontSize: 10, fontWeight: '700'},
-  divider:  {height: 1, backgroundColor: '#F3F4F6', marginVertical: 8},
-  desc: {fontSize: 10, color: '#6B7280',fontWeight: '600', lineHeight: 20},
+  divider: {height: 1, backgroundColor: '#F3F4F6', marginVertical: 8},
+  desc: {fontSize: 10, color: '#6B7280', fontWeight: '600', lineHeight: 20},
   footer: {
-    flexDirection: 'row', alignItems: 'center', gap: 16,
-    marginTop: 10, paddingTop: 10,
-    borderTopWidth: 1, borderTopColor: '#F3F4F6',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+    marginTop: 10,
+    paddingTop: 10,
+    borderTopWidth: 1,
+    borderTopColor: '#F3F4F6',
   },
   footerItem: {flexDirection: 'row', alignItems: 'center', gap: 4},
   footerIcon: {fontSize: 11},
@@ -255,10 +316,10 @@ const card = StyleSheet.create({
 
 // ── Main Screen ──────────────────────────────────────────────────────────────
 export default function MyRequests() {
-  const [requests, setRequests]     = useState<RequestRecord[]>([]);
-  const [loading, setLoading]       = useState(true);
+  const [requests, setRequests] = useState<RequestRecord[]>([]);
+  const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [error, setError]           = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchRequests = async (isRefresh = false) => {
     if (isRefresh) setRefreshing(true);
@@ -266,9 +327,9 @@ export default function MyRequests() {
     setError(null);
 
     try {
-      const raw        = await AsyncStorage.getItem('tenant_data');
+      const raw = await AsyncStorage.getItem('tenant_data');
       const tenantData = raw ? JSON.parse(raw) : null;
-      const qid        = tenantData?.qid?.toString().trim();
+      const qid = tenantData?.qid?.toString().trim();
 
       if (!qid) {
         setError('QID not found. Please log in again.');
@@ -322,8 +383,8 @@ export default function MyRequests() {
 
   // ── Stats summary bar ──
   const stats = {
-    total:    requests.length,
-    pending:  requests.filter(r => r.status === 'Pending').length,
+    total: requests.length,
+    pending: requests.filter(r => r.status === 'Pending').length,
     resolved: requests.filter(r => r.status === 'Resolved').length,
     rejected: requests.filter(r => r.status === 'Rejected').length,
   };
@@ -360,14 +421,15 @@ export default function MyRequests() {
       <FlatList
         data={requests}
         keyExtractor={item => item._id}
-        renderItem={({item, index}) => <RequestCard item={item} index={index} />}
+        renderItem={({item, index}) => (
+          <RequestCard item={item} index={index} />
+        )}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[
           styles.listContent,
           requests.length === 0 && styles.listContentEmpty,
         ]}
         ItemSeparatorComponent={() => <View style={{height: 12}} />}
-
         // ── Stats header ──
         ListHeaderComponent={
           requests.length > 0 ? (
@@ -378,23 +440,28 @@ export default function MyRequests() {
               </View>
               <View style={styles.statDivider} />
               <View style={styles.statBox}>
-                <Text style={[styles.statNum, {color: '#F59E0B'}]}>{stats.pending}</Text>
+                <Text style={[styles.statNum, {color: '#F59E0B'}]}>
+                  {stats.pending}
+                </Text>
                 <Text style={styles.statLabel}>Pending</Text>
               </View>
               <View style={styles.statDivider} />
               <View style={styles.statBox}>
-                <Text style={[styles.statNum, {color: '#22C55E'}]}>{stats.resolved}</Text>
+                <Text style={[styles.statNum, {color: '#22C55E'}]}>
+                  {stats.resolved}
+                </Text>
                 <Text style={styles.statLabel}>Resolved</Text>
               </View>
               <View style={styles.statDivider} />
               <View style={styles.statBox}>
-                <Text style={[styles.statNum, {color: '#F43F5E'}]}>{stats.rejected}</Text>
+                <Text style={[styles.statNum, {color: '#F43F5E'}]}>
+                  {stats.rejected}
+                </Text>
                 <Text style={styles.statLabel}>Rejected</Text>
               </View>
             </View>
           ) : null
         }
-
         // ── Empty state ──
         ListEmptyComponent={
           <View style={styles.emptyWrap}>
@@ -408,7 +475,6 @@ export default function MyRequests() {
             </Text>
           </View>
         }
-
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -426,56 +492,96 @@ const styles = StyleSheet.create({
   container: {flex: 1, backgroundColor: '#F8F9FB'},
 
   centerWrap: {
-    flex: 1, justifyContent: 'center', alignItems: 'center',
-    backgroundColor: '#F8F9FB', padding: 24,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F8F9FB',
+    padding: 24,
   },
   loaderText: {fontSize: 14, color: '#9CA3AF', marginTop: 12},
 
   // Error
   errorCard: {
-    backgroundColor: '#fff', borderRadius: 20, padding: 28,
-    alignItems: 'center', gap: 10,
-    shadowColor: '#000', shadowOffset: {width: 0, height: 4},
-    shadowOpacity: 0.07, shadowRadius: 12,
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 28,
+    alignItems: 'center',
+    gap: 10,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.07,
+    shadowRadius: 12,
     width: '100%',
   },
-  errorIcon:  {fontSize: 40},
+  errorIcon: {fontSize: 40},
   errorTitle: {fontSize: 17, fontWeight: '700', color: '#111827'},
-  errorText:  {fontSize: 13, color: '#6B7280', textAlign: 'center', lineHeight: 20},
+  errorText: {
+    fontSize: 13,
+    color: '#6B7280',
+    textAlign: 'center',
+    lineHeight: 20,
+  },
   retryBtn: {
-    marginTop: 8, backgroundColor: Colors.PrimaryColor,
-    borderRadius: 10, paddingHorizontal: 28, paddingVertical: 11,
+    marginTop: 8,
+    backgroundColor: Colors.PrimaryColor,
+    borderRadius: 10,
+    paddingHorizontal: 28,
+    paddingVertical: 11,
   },
   retryBtnText: {color: '#fff', fontWeight: '700', fontSize: 14},
 
   // Stats
   statsRow: {
-    flexDirection: 'row', alignItems: 'center',
-    backgroundColor: '#fff', borderRadius: 16, padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 16,
     marginBottom: 16,
-    shadowColor: '#000', shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.05, shadowRadius: 6,borderWidth:0.6
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
+    borderWidth: 0.6,
   },
-  statBox:     {flex: 1, alignItems: 'center', gap: 2},
-  statNum:     {fontSize: 22, fontWeight: '800', color: Colors.PrimaryColor},
-  statLabel:   {fontSize: 10, color: '#9CA3AF', fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.4},
+  statBox: {flex: 1, alignItems: 'center', gap: 2},
+  statNum: {fontSize: 22, fontWeight: '800', color: Colors.PrimaryColor},
+  statLabel: {
+    fontSize: 10,
+    color: '#9CA3AF',
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: 0.4,
+  },
   statDivider: {width: 1, height: 32, backgroundColor: '#F3F4F6'},
 
   // List
-  listContent:      {paddingHorizontal: 16, paddingTop: 16, paddingBottom: 32},
+  listContent: {paddingHorizontal: 16, paddingTop: 16, paddingBottom: 110},
   listContentEmpty: {flex: 1},
 
   // Empty
   emptyWrap: {
-    flex: 1, alignItems: 'center', justifyContent: 'center',
-    paddingHorizontal: 40, gap: 12,
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 40,
+    gap: 12,
   },
   emptyIconWrap: {
-    width: 80, height: 80, borderRadius: 40,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
     backgroundColor: '#EEF2FF',
-    alignItems: 'center', justifyContent: 'center', marginBottom: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 4,
   },
-  emptyIcon:  {fontSize: 36},
+  emptyIcon: {fontSize: 36},
   emptyTitle: {fontSize: 20, fontWeight: '800', color: '#111827'},
-  emptySub:   {fontSize: 13, color: '#9CA3AF', textAlign: 'center', lineHeight: 21},
+  emptySub: {
+    fontSize: 13,
+    color: '#9CA3AF',
+    textAlign: 'center',
+    lineHeight: 21,
+  },
 });

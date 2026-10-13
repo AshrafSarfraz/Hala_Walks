@@ -1,13 +1,18 @@
-import React, { useEffect } from 'react';
-import { View, StyleSheet, StatusBar } from 'react-native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Colors } from '../../../theme/Colors';
-import { fetch_OrgEmp_Data, fetch_Tenant_Data, fetchBrandsFromFirebase, fetchEventsFromFirebase, fetchFlatOfferFromFirebase } from '../../../firebase/firebaseutils';
+import React, {useEffect} from 'react';
+import {View, StyleSheet, StatusBar} from 'react-native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {Colors} from '../../../theme/Colors';
+import {
+  fetch_OrgEmp_Data,
+  fetch_Tenant_Data,
+  fetchBrandsFromFirebase,
+  fetchEventsFromFirebase,
+  fetchFlatOfferFromFirebase,
+} from '../../../firebase/firebaseutils';
 
 type SplashBlankProps = {
   navigation: NativeStackNavigationProp<any>;
 };
-
 
 export const preloadAllData = async () => {
   await Promise.all([
@@ -17,8 +22,7 @@ export const preloadAllData = async () => {
   ]);
 };
 
-const Splash_Blank: React.FC<SplashBlankProps> = ({ navigation }) => {
- 
+const Splash_Blank: React.FC<SplashBlankProps> = ({navigation}) => {
   useEffect(() => {
     const init = async () => {
       await preloadAllData();

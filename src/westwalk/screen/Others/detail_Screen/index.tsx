@@ -1,480 +1,495 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {
   View,
-  Text,
-  Image,
-  SafeAreaView,
-  TouchableOpacity,
-  Platform,
+  FlatList,
   ScrollView,
+  TouchableOpacity,
   Linking,
   StatusBar,
-  Dimensions,
+  useWindowDimensions,
+  Alert,
 } from 'react-native';
-
+import Ionicons from '@react-native-vector-icons/ionicons';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
-import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
-import LinearGradient from 'react-native-linear-gradient';
-import {getStyles} from './style';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {Text} from '../../../components/Text';
+import CachedImage from '../../../components/Media/CachedImage';
+import BranchesModal from '../../../components/Modal/BranchesModal';
+import PinModal from '../../../components/Modal/CustomAlert/Pin_Modal';
+import IncorrectPin from '../../../components/Modal/CustomAlert/IncorrectPin';
+import MenuAlert from '../../../components/Modal/CustomAlert/MenuAlert';
+import StaffReceipt from '../../../components/Modal/StaffModal/RedeemModal';
+import TenantReceipt from '../../../components/Modal/Tenant/RedeemModal2';
+import OrganizationReceipt from '../../../components/Modal/OrgEmp/RedeemModal3';
 import {RootState} from '../../../redux/store';
 import {toggleItemInCart} from '../../../redux/cartSlice';
-import CustomHeader from '../../../components/header/CustomHeader';
-import {languageData} from '../../../redux/language/languageSlice';
-import {Dark_Heart, Light_Heart, location, Phone} from '../../../theme/Images';
-import CustomButton from '../../../components/buttons/CustomButton';
 import {Colors} from '../../../theme/Colors';
-import RedeemReceiptModal from '../../../components/Modal/StaffModal/RedeemModal';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import RedeemReceiptModal2 from '../../../components/Modal/Tenant/RedeemModal2';
-import RedeemReceiptModal3 from '../../../components/Modal/OrgEmp/RedeemModal3';
-import FastImage from 'react-native-fast-image';
-import Pin_Modal from '../../../components/Modal/CustomAlert/Pin_Modal';
-import IncorrectPin from '../../../components/Modal/CustomAlert/IncorrectPin';
-const {width} = Dimensions.get('screen');
-
-const DetailScreen: React.FC<{route: any}> = ({route}) => {
-  const {item, source} = route.params; // Home se data le rahe hain
+import {
+  discountLabel,
+  galleryImages,
+  offerRows,
+  OfferRow,
+  validRedeemPin,
+} from '../../../utils/offers';
+import {getStyles, heroStyles} from './style';
+const ImageSlider = React.memo(function ImageSlider({
+  images,
+  width,
+  topInset,
+}: {
+  images: string[];
+  width: number;
+  topInset: number;
+}) {
+  const [index, setIndex] = useState(0);
+  const height = Math.max(Math.round(width * 0.8), topInset + 180);
+  const key = `${width}:${images.join('|')}`;
+  useEffect(() => setIndex(0), [key]);
+  return (
+    <View>
+      <FlatList
+        key={key}
+        data={images.length ? images : ['']}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        initialNumToRender={1}
+        maxToRenderPerBatch={2}
+        windowSize={3}
+        keyExtractor={(uri, i) => `${uri}:${i}`}
+        getItemLayout={(_, i) => ({length: width, offset: width * i, index: i})}
+        onMomentumScrollEnd={event =>
+          setIndex(
+            Math.max(
+              0,
+              Math.min(
+                images.length - 1,
+                Math.round(event.nativeEvent.contentOffset.x / width),
+              ),
+            ),
+          )
+        }
+        renderItem={({item}) => (
+          <CachedImage uri={item} style={{width, height}} />
+        )}
+      />
+      {images.length > 1 && (
+        <>
+          <Text style={heroStyles.counter}>
+            {index + 1} / {images.length}
+          </Text>
+          <View pointerEvents="none" style={heroStyles.dotsRow}>
+            {images.map((uri, i) => (
+              <View
+                key={`${uri}:${i}`}
+                style={[heroStyles.dot, i === index && heroStyles.dotActive]}
+              />
+            ))}
+          </View>
+        </>
+      )}
+    </View>
+  );
+});
+export default function DetailScreen({route}: {route: any}) {
+  const item = route.params?.item || {};
+  const event = route.params?.source === 'event';
+  const navigation = useNavigation<any>();
   const dispatch = useDispatch();
-  const latitude = item.latitude ? item.latitude : null;
-  const longitude = item.longitude ? item.longitude : null;
-  const phoneNumber = item.PhoneNumber;
-  const navigation = useNavigation();
-  const [imageLoading, setImageLoading] = useState(true);
-
-  //New Feactures
-
-  const [alertVisible, setAlertVisible] = useState<boolean>(false);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [incorrectPinModal, setIncorrectPinModal] = useState(false);
+  const insets = useSafeAreaInsets();
+  const {width} = useWindowDimensions();
+  const language = useSelector((s: RootState) => s.language.language);
+  const ar = language === 'ar';
+  const styles = useMemo(() => getStyles(language), [language]);
+  const images = useMemo(() => galleryImages(item), [item]);
+  const offers = useMemo(() => offerRows(item), [item]);
+  const cart = useSelector((s: RootState) => s.cart.items);
+  const saved = cart.some(b => b.id === item.id);
   const [showTimings, setShowTimings] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState({});
-
-  // Redux Toolkit
-  const language = useSelector((state: RootState) => state.language.language);
-  const styles = getStyles(language);
-  const cartItems = useSelector((state: RootState) => state.cart.items);
-  const isInCart = cartItems.some(cartItem => cartItem.id === item.id);
-  const [selectedItem, setSelectedItem] = useState<any>(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  const handleToggleCart = () => {
-    dispatch(toggleItemInCart(item));
-  };
-  // redux
-
-  const openModal = (item: any) => {
-    setSelectedItem(item);
-    setModalVisible(true);
-  };
-
-  const showAlert = () => {
-    setAlertVisible(true);
-  };
-  const hideAlert = () => {
-    setAlertVisible(false);
-  };
-  const handleLoad = (key: string | number) => {
-    setImageLoaded(prev => ({...prev, [key]: true}));
-  };
-
-  const handleScroll = (event: any) => {
-    const slideIndex = Math.round(event.nativeEvent.contentOffset.x / width);
-    setCurrentIndex(slideIndex);
-  };
-  const handleOpenMaps = () => {
-    const url = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
-    Linking.openURL(url);
-  };
-  const Contact = () => {
-    const url = `tel:${phoneNumber}`;
-    Linking.openURL(url);
-  };
-  const handleImageLoad = () => {
-    setImageLoading(false);
-  };
-
-  const formatDate = dateString => {
-    const date = new Date(dateString);
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Month is 0-indexed
-    const year = date.getFullYear();
-    return `${day}-${month}-${year}`;
-  };
-
+  const [showBranches, setShowBranches] = useState(false);
+  const [showPin, setShowPin] = useState(false);
+  const [wrongPin, setWrongPin] = useState(false);
+  const [showMenuAlert, setShowMenuAlert] = useState(false);
+  const [receipt, setReceipt] = useState<any>(null);
+  const [selectedOffer, setSelectedOffer] = useState<OfferRow | null>(null);
   const [userType, setUserType] = useState<'staff' | 'tenant' | 'org' | null>(
     null,
   );
   useEffect(() => {
-    const getUserType = async () => {
+    let mounted = true;
+    (async () => {
       try {
-        const staff = await AsyncStorage.getItem('staff_data');
-        const tenant = await AsyncStorage.getItem('tenant_data');
-        const org = await AsyncStorage.getItem('org_emp_data');
-        if (staff) {
-          setUserType('staff');
-        } else if (tenant) {
-          setUserType('tenant');
-        } else if (org) {
-          setUserType('org');
-        }
-      } catch (error) {
-        console.error('Error reading AsyncStorage:', error);
+        const values = await AsyncStorage.multiGet([
+          'staff_data',
+          'tenant_data',
+          'org_emp_data',
+        ]);
+        if (mounted)
+          setUserType(
+            values[0][1]
+              ? 'staff'
+              : values[1][1]
+              ? 'tenant'
+              : values[2][1]
+              ? 'org'
+              : null,
+          );
+      } catch {
+        if (mounted) setUserType(null);
       }
+    })();
+    return () => {
+      mounted = false;
     };
-    getUserType();
   }, []);
-
+  useEffect(() => {
+    setShowTimings(false);
+    setSelectedOffer(null);
+    setShowPin(false);
+    setReceipt(null);
+  }, [item.id]);
+  const openLink = async (url: string) => {
+    try {
+      await Linking.openURL(url);
+    } catch {
+      Alert.alert(
+        ar ? 'تعذر فتح الرابط' : 'Could not open link',
+        ar ? 'يرجى المحاولة مرة أخرى.' : 'Please try again.',
+      );
+    }
+  };
+  const call = () => {
+    if (item.PhoneNumber) void openLink(`tel:${item.PhoneNumber}`);
+  };
+  const map = () => {
+    const query =
+      item.latitude != null && item.longitude != null
+        ? `${item.latitude},${item.longitude}`
+        : String(item.address || '');
+    if (query)
+      void openLink(
+        `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+          query,
+        )}`,
+      );
+  };
+  const hasMenu = Boolean(item.pdfUrl || item.menuUrl);
+  const menu = () => {
+    if (item.pdfUrl)
+      navigation.navigate('PDFViewerScreen', {pdfUrl: item.pdfUrl});
+    else if (item.menuUrl)
+      /^https?:\/\//i.test(String(item.menuUrl))
+        ? void openLink(String(item.menuUrl))
+        : navigation.navigate('PDFViewerScreen', {pdfUrl: item.menuUrl});
+    else setShowMenuAlert(true);
+  };
+  const redeem = (row: OfferRow) => {
+    if (!userType) {
+      Alert.alert(
+        ar ? 'تسجيل الدخول مطلوب' : 'Login required',
+        ar
+          ? 'يرجى تسجيل الدخول للاستفادة من العرض.'
+          : 'Please log in to redeem this offer.',
+      );
+      return;
+    }
+    setSelectedOffer(row);
+    setShowPin(true);
+  };
+  const verifyPin = (pin: string) => {
+    const expected = selectedOffer?.pin ?? item.pin;
+    setShowPin(false);
+    if (selectedOffer && validRedeemPin(pin, expected)) {
+      setReceipt({
+        ...item,
+        discount: selectedOffer.value,
+        discountText: discountLabel(selectedOffer, ar),
+      });
+    } else setWrongPin(true);
+  };
+  const daysArabic: Record<string, string> = {
+    monday: 'الاثنين',
+    tuesday: 'الثلاثاء',
+    wednesday: 'الأربعاء',
+    thursday: 'الخميس',
+    friday: 'الجمعة',
+    saturday: 'السبت',
+    sunday: 'الأحد',
+  };
+  const date = (v: unknown) => {
+    const d = new Date(String(v || ''));
+    return Number.isNaN(d.getTime())
+      ? '—'
+      : d.toLocaleDateString(ar ? 'ar-QA' : 'en-GB');
+  };
   return (
-    <SafeAreaView>
+    <View style={{flex: 1, backgroundColor: Colors.White}}>
       <StatusBar
-        hidden={false}
-        translucent={true}
-        animated={true}
-        backgroundColor={Colors.Bg}
-        barStyle={'dark-content'}
+        barStyle="light-content"
+        backgroundColor="transparent"
+        translucent
       />
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {' '}
-        {source === 'event' ? (
-          <View style={styles.container}>
-            <View style={styles.HeaderCont}>
-              <CustomHeader
-                title={languageData[language].Detail_Screen}
-                onBackPress={() => {
-                  navigation.goBack();
-                }}
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentInsetAdjustmentBehavior="never"
+        contentContainerStyle={{paddingBottom: Math.max(insets.bottom, 16)}}>
+        <View>
+          <ImageSlider images={images} width={width} topInset={insets.top} />
+          <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityLabel={ar ? 'رجوع' : 'Back'}
+            onPress={() => navigation.goBack()}
+            style={[heroStyles.overlayButton, {top: insets.top + 8, left: 16}]}>
+            <Ionicons name="arrow-back" size={24} color={Colors.White} />
+          </TouchableOpacity>
+          {!event && (
+            <TouchableOpacity
+              accessibilityRole="button"
+              accessibilityLabel={ar ? 'المفضلة' : 'Wishlist'}
+              accessibilityState={{selected: saved}}
+              onPress={() => dispatch(toggleItemInCart(item))}
+              style={[
+                heroStyles.overlayButton,
+                {top: insets.top + 8, right: 16},
+              ]}>
+              <Ionicons
+                name={saved ? 'heart' : 'heart-outline'}
+                size={24}
+                color={saved ? Colors.PrimaryColor : Colors.White}
               />
-            </View>
-
-            <View style={styles.Body_Cont}>
-                 <Image
-                  source={
-                    typeof item.img === 'string' ? {uri: item.img} : item.img
-                  }
-                  style={styles.image}
-                  onLoad={handleImageLoad}
-                />
- 
-
-              <View style={styles.Title_Cont}>
-                {language === 'ar' ? (
-                  <Text style={styles.title}>{item.nameArabic}</Text>
-                ) : (
-                  <Text style={styles.title1}>{item.nameEng}</Text>
-                )}
-              </View>
-              <View style={styles.Loc_Cont1}>
-                <Image source={location} style={styles.Loc_Icon} />
-                <Text style={styles.Loc_Txt}>{item.address} </Text>
-              </View>
-            </View>
-            <View style={styles.Date_Cont}>
-              <View style={styles.Start_date}>
-                <Text style={styles.Date_txt}>Starting Date</Text>
-                <Text style={styles.date}>{formatDate(item.startAt)}</Text>
-              </View>
-              <View style={styles.End_date}>
-                <Text style={styles.Date_txt}>Ending Date</Text>
-                <Text style={styles.date}>{formatDate(item.endAt)}</Text>
-              </View>
-            </View>
-            <View style={styles.Desc_Cont}>
-              <Text style={styles.Desc}>
-                {languageData[language].description}{' '}
+            </TouchableOpacity>
+          )}
+        </View>
+        <View style={styles.container}>
+          <View style={styles.Body_Cont}>
+            <View style={styles.Title_Cont}>
+              <Text style={styles.title}>
+                {ar
+                  ? item.nameArabic || item.nameEng
+                  : item.nameEng || item.nameArabic}
               </Text>
+              {!!item.selectedCategory && (
+                <View style={styles.Type_Cont}>
+                  <Text style={styles.Type_Text}>{item.selectedCategory}</Text>
+                </View>
+              )}
             </View>
-            {language === 'ar' ? (
-              <Text style={styles.Detail}>{item.descriptionArabic}</Text>
-            ) : (
-              <Text style={styles.Detail}>{item.descriptionEng}</Text>
-            )}
-            <CustomButton
-              title={languageData[language].Call_Now}
-              onPress={Contact}
-            />
-          </View>
-        ) : (
-          <View style={styles.container}>
-            <View style={styles.HeaderCont}>
-              <CustomHeader
-                title={languageData[language].Detail_Screen}
-                onBackPress={() => {
-                  navigation.goBack();
-                }}
-              />
+            <View style={styles.addressRow}>
+              <View style={styles.Loc_Cont}>
+                <Ionicons
+                  name="location-outline"
+                  size={21}
+                  color={Colors.textSecondary}
+                />
+                <Text style={styles.Loc_Txt}>{item.address}</Text>
+              </View>
               <TouchableOpacity
-                onPress={() => {
-                  handleToggleCart();
-                }}>
-                {isInCart ? (
-                  <Image source={Dark_Heart} style={styles.HeartStyle} />
-                ) : (
-                  <Image source={Light_Heart} style={styles.HeartStyle} />
-                )}
+                accessibilityRole="button"
+                disabled={!item.PhoneNumber}
+                onPress={call}
+                style={[styles.call_cont, !item.PhoneNumber && {opacity: 0.4}]}>
+                <Ionicons name="call" size={18} color={Colors.PrimaryColor} />
+                <Text style={styles.call_txt}>
+                  {ar ? 'اتصل الآن' : 'Call Now'}
+                </Text>
               </TouchableOpacity>
             </View>
-
-            <View style={styles.Body_Cont}>
-           <View style={{height:250,marginBottom:15}} >
-              {item.multiImages && item.multiImages.length > 0 ? (
-                <ScrollView
-                  horizontal
-                  pagingEnabled
-                  showsHorizontalScrollIndicator={false}
-                  style={{marginBottom: 16}}
-                  onScroll={handleScroll}
-                  scrollEventThrottle={16}>
-                  {item.multiImages.map((url, index) => (
-                    <View key={index} style={styles.imageContainer}>
-                      <ShimmerPlaceholder
-                        LinearGradient={LinearGradient}
-                        visible={!!imageLoaded[index]} // jab load ho jaye shimmer band
-                        style={styles.imageSlider}>
-                        <FastImage
-                          source={{
-                            uri: url,
-                            priority:
-                              index <= 1
-                                ? FastImage.priority.high
-                                : FastImage.priority.normal,
-                          }}
-                          style={styles.imageSlider}
-                          resizeMode={FastImage.resizeMode.cover}
-                          onLoadEnd={() => handleLoad(index)}
-                          onError={() => handleLoad(index)} // fail case bhi handle
-                        />
-                      </ShimmerPlaceholder>
-                    </View>
-                  ))}
-                </ScrollView>
-              ) : (
-         
-                  <Image
-                    source={{uri: item.img}}
-                    style={styles.image}
-                    resizeMode={'cover'}
-                    onLoadEnd={() => handleLoad('single')}
-                    onError={() => handleLoad('single')}
-                  />
-         
-              )}
-         <View style={styles.overlay_cont} > 
-          {Platform.OS==='ios'?
-             <FastImage source={{ uri: item.img, priority:FastImage.priority.high}}
-             style={styles.overlayImage}   onLoad={handleImageLoad} resizeMode='cover'    />:
-             <Image source={{ uri: item.img}}
-             style={styles.overlayImage}   onLoad={handleImageLoad} resizeMode='cover'    />
-        }
-        </View>
-         </View>
-
-       
-
-
-              <View style={styles.Type_Cont}>
-                <Text style={styles.Type_Text}>{item.selectedCategory}</Text>
-              </View>
-
-              <View style={styles.Title_Cont}>
-                {language === 'ar' ? (
-                  <Text style={styles.title}>{item.nameArabic}</Text>
-                ) : (
-                  <Text style={styles.title}>{item.nameEng}</Text>
-                )}
-
-                <TouchableOpacity onPress={Contact} style={styles.call_cont}>
-                  <Image source={Phone} style={styles.Phone_Icon} />
-                  <Text style={styles.call_txt}>
-                    {languageData[language].Call_Now}
+            {event ? (
+              <View style={styles.timingsCard}>
+                <View style={styles.item_cont}>
+                  <Text style={styles.timingDay}>
+                    {ar ? 'تاريخ البداية' : 'Starting Date'}
                   </Text>
-                </TouchableOpacity>
+                  <Text style={styles.timingTime}>{date(item.startAt)}</Text>
+                </View>
+                <View style={styles.item_cont}>
+                  <Text style={styles.timingDay}>
+                    {ar ? 'تاريخ النهاية' : 'Ending Date'}
+                  </Text>
+                  <Text style={styles.timingTime}>{date(item.endAt)}</Text>
+                </View>
               </View>
-              <View style={styles.Loc_Cont}>
-                <Image source={location} style={styles.Loc_Icon} />
-                <Text style={styles.Loc_Txt}>{item.address} </Text>
-              </View>
-
-              {/* Working Hours */}
-              <View style={{marginTop: 5}}>
+            ) : (
+              <>
+                <View style={styles.rowBetween}>
+                  <TouchableOpacity
+                    accessibilityRole="button"
+                    accessibilityState={{expanded: showTimings}}
+                    onPress={() => setShowTimings(v => !v)}
+                    style={styles.timing_dropdown}>
+                    <Ionicons
+                      name="time-outline"
+                      size={22}
+                      color={Colors.PrimaryColor}
+                    />
+                    <Text style={styles.working_hour_txt}>
+                      {ar ? 'ساعات العمل' : 'Working Hours'}
+                    </Text>
+                    <Text style={styles.dropdown_icon}>
+                      {showTimings ? '−' : '+'}
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    accessibilityRole="button"
+                    onPress={() => setShowBranches(true)}
+                    style={styles.branchBtn}>
+                    <Ionicons
+                      name="storefront-outline"
+                      size={22}
+                      color={Colors.PrimaryColor}
+                    />
+                    <Text style={styles.branchBtnText}>
+                      {ar ? 'قائمة الفروع' : 'List of Branches'}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                {showTimings && (
+                  <View style={styles.timingsCard}>
+                    {item.timings && Object.keys(item.timings).length ? (
+                      Object.entries(item.timings).map(([day, time]) => (
+                        <View key={day} style={styles.item_cont}>
+                          <Text style={styles.timingDay}>
+                            {ar ? daysArabic[day.toLowerCase()] || day : day}
+                          </Text>
+                          <Text style={styles.timingTime}>{String(time)}</Text>
+                        </View>
+                      ))
+                    ) : (
+                      <Text>
+                        {ar
+                          ? 'ساعات العمل غير متاحة.'
+                          : 'Working hours unavailable.'}
+                      </Text>
+                    )}
+                  </View>
+                )}
+                {offers.map(row => (
+                  <TouchableOpacity
+                    key={row.key}
+                    accessibilityRole="button"
+                    onPress={() => redeem(row)}
+                    style={styles.Dis_Cont}>
+                    <Ionicons
+                      name="pricetag-outline"
+                      size={25}
+                      color={Colors.PrimaryColor}
+                    />
+                    <Text style={styles.Total_Discount}>
+                      {discountLabel(row, ar)}
+                    </Text>
+                    <View style={styles.redeemBadge}>
+                      <Text style={styles.redeemText}>
+                        {ar ? 'استبدال العرض' : 'Redeem offer'}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                ))}
                 <TouchableOpacity
-                  onPress={() => setShowTimings(!showTimings)}
-                  style={styles.timing_dropdown}>
-                  <Text style={styles.working_hour_txt}>
-                    {' '}
-                    {languageData[language].workingHours ||
-                      'Working Hours'}{' '}
-                  </Text>
-                  <Text style={styles.dropdown_icon}>
-                    {showTimings ? '▲' : '▼'}
-                  </Text>
+                  accessibilityRole="button"
+                  activeOpacity={0.85}
+                  onPress={menu}
+                  style={[
+                    styles.offerBtn,
+                    !hasMenu && styles.offerBtnDisabled,
+                  ]}>
+                  <Ionicons
+                    name="document-text-outline"
+                    size={25}
+                    color={hasMenu ? Colors.PrimaryColor : Colors.Grey}
+                  />
+                  <View style={styles.offerBtnLeft}>
+                    <Text style={styles.offerBtnTitle}>
+                      {hasMenu
+                        ? ar
+                          ? 'العرض المتاح'
+                          : 'Available Offer'
+                        : ar
+                        ? 'القائمة غير متاحة'
+                        : 'No menu available'}
+                    </Text>
+                    <Text style={styles.offerBtnSub}>
+                      {hasMenu
+                        ? ar
+                          ? 'اضغط لعرض القائمة أو العرض'
+                          : 'Tap to open menu / offer'
+                        : ar
+                        ? 'لا توجد قائمة لهذا المتجر حاليًا'
+                        : 'This venue has no menu right now'}
+                    </Text>
+                  </View>
+                  <Text style={styles.offerBtnArrow}>{ar ? '‹' : '›'}</Text>
                 </TouchableOpacity>
-
-                {showTimings && item.timings && (
-                  <View
-                    style={{
-                      padding: 10,
-                      backgroundColor: '#fff',
-                      borderRadius: 8,
-                      marginTop: 6,
-                    }}>
-                    {Object.entries(item.timings).map(([day, time]) => (
-                      <View key={day} style={styles.item_cont}>
-                        <Text
-                          style={{
-                            textTransform: 'capitalize',
-                            fontSize: 15,
-                            color: '#333',
-                          }}>
-                          {day}
-                        </Text>
-                        <Text style={{fontSize: 15, color: '#000'}}>
-                          {time}
-                        </Text>
-                      </View>
-                    ))}
-                  </View>
-                )}
-              </View>
-              <View style={styles.Dis_Cont}>
-                {item.isLimited ? (
-                  <View style={styles.Dis_txt_cont}>
-                    <Text style={styles.Total_Discount}>{item.isLimited}</Text>
-                  </View>
-                ) : (
-                  <>
-                    <View style={styles.Dis_txt_cont}>
-                      <Text style={styles.Total_Discount}>
-                        {item.discount + '%'}
-                      </Text>
-                      <Text style={styles.Discount}>
-                        {languageData[language].discount}
-                      </Text>
-                    </View>
-
-                    <TouchableOpacity
-                      style={styles.Menu_Btn}
-                      onPress={() => {
-                        const pdf = item.pdfUrl;
-                        const menu = item.menuUrl;
-
-                        if (pdf) {
-                          // PDF موجود ہے → PDFViewerScreen پر navigate کرو
-                          navigation.navigate('PDFViewerScreen', {pdfUrl: pdf});
-                        } else if (menu) {
-                          // اگر menu URL ہے → براہِ راست browser میں کھولو
-                          if (menu.startsWith('http')) {
-                            Linking.openURL(menu);
-                          } else {
-                            // اگر local file path ہے تو بھی PDFViewerScreen پر بھیج سکتے ہیں
-                            navigation.navigate('PDFViewerScreen', {
-                              pdfUrl: menu,
-                            });
-                          }
-                        } else {
-                          // کوئی URL نہیں → modal کھولو
-                          setModalVisible(true);
-                        }
-                      }}>
-                      <Text style={styles.menu_txt}>
-                        {item.selectedCategory?.toLowerCase() ===
-                        'food and drink'
-                          ? language === 'en'
-                            ? 'View Menu'
-                            : 'عرض القائمة'
-                          : item.selectedCategory?.toLowerCase() ===
-                            'shop and retail'
-                          ? language === 'en'
-                            ? 'View Products'
-                            : 'عرض المنتجات'
-                          : language === 'en'
-                          ? 'View Services'
-                          : 'عرض الخدمات'}
-                      </Text>
-                    </TouchableOpacity>
-                  </>
-                )}
-              </View>
-
-              <View style={styles.Desc_Cont}>
-                <Text style={styles.Desc}>
-                  {languageData[language].description}
-                </Text>
-              </View>
-
-              {language === 'ar' ? (
-                <Text style={styles.Detail}>{item.descriptionArabic}</Text>
-              ) : (
-                <Text style={styles.Detail}>{item.descriptionEng}</Text>
-              )}
+              </>
+            )}
+            <View style={styles.Desc_Cont}>
+              <Text style={styles.Desc}>{ar ? 'الوصف' : 'Description'}</Text>
             </View>
-
-            <CustomButton
-              title={languageData[language].Redeem}
-              onPress={() => {
-                showAlert();
-              }}
-            />
-            <Pin_Modal
-              visible={alertVisible}
-              correctPin={item.pin}
-              onSubmit={userPin => {
-                if (userPin === item.pin) {
-                  openModal(item);
-                } else {
-                  setIncorrectPinModal(true); // or use console.warn()
-                }
-                hideAlert(); // Close pin modal in both cases
-              }}
-              onClose={() => hideAlert()}
-            />
-
-            {/* //  openModal(item); */}
-
-            {userType === 'staff' && (
-              <RedeemReceiptModal
-                visible={modalVisible}
-                onClose={() => setModalVisible(false)}
-                data={selectedItem}
-              />
-            )}
-
-            {userType === 'tenant' && (
-              <RedeemReceiptModal2
-                visible={modalVisible}
-                onClose={() => setModalVisible(false)}
-                data={selectedItem}
-              />
-            )}
-
-            {userType === 'org' && (
-              <RedeemReceiptModal3
-                visible={modalVisible}
-                onClose={() => setModalVisible(false)}
-                data={selectedItem}
-              />
-            )}
-
-            <View style={{marginBottom: Platform.OS === 'ios' ? '5%' : '4%'}} />
-            <CustomButton
-              title={languageData[language].Open_Map}
-              onPress={() => {
-                handleOpenMaps();
-              }}
-            />
-
-
+            <Text style={styles.Detail}>
+              {ar
+                ? item.descriptionArabic || item.descriptionEng
+                : item.descriptionEng || item.descriptionArabic}
+            </Text>
           </View>
-        )}
-        
-        <IncorrectPin
-          visible={incorrectPinModal}
-          onClose={() => setIncorrectPinModal(false)}
-        />
-
+          <TouchableOpacity
+            accessibilityRole="button"
+            onPress={map}
+            style={styles.mapButton}>
+            <Ionicons name="map-outline" size={24} color={Colors.White} />
+            <Text style={styles.mapText}>
+              {ar ? 'افتح الخريطة' : 'Open Map'}
+            </Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
-    </SafeAreaView>
+      <PinModal
+        visible={showPin}
+        correctPin={selectedOffer?.pin ?? item.pin}
+        onSubmit={verifyPin}
+        onClose={() => {
+          setShowPin(false);
+          setSelectedOffer(null);
+        }}
+      />
+      <IncorrectPin visible={wrongPin} onClose={() => setWrongPin(false)} />
+      <MenuAlert
+        visible={showMenuAlert}
+        onClose={() => setShowMenuAlert(false)}
+      />
+      {showBranches && (
+        <BranchesModal
+          visible
+          item={item}
+          onClose={() => setShowBranches(false)}
+          onSelect={branch => {
+            setShowBranches(false);
+            if (branch.id !== item.id)
+              navigation.push('DetailScreen', {item: branch});
+          }}
+        />
+      )}
+      {userType === 'staff' && (
+        <StaffReceipt
+          visible={!!receipt}
+          data={receipt}
+          onClose={() => setReceipt(null)}
+        />
+      )}
+      {userType === 'tenant' && (
+        <TenantReceipt
+          visible={!!receipt}
+          data={receipt}
+          onClose={() => setReceipt(null)}
+        />
+      )}
+      {userType === 'org' && (
+        <OrganizationReceipt
+          visible={!!receipt}
+          data={receipt}
+          onClose={() => setReceipt(null)}
+        />
+      )}
+    </View>
   );
-};
-
-export default DetailScreen;
+}

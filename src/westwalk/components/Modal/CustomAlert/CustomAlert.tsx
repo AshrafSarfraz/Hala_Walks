@@ -1,42 +1,47 @@
-import React, { useEffect } from 'react';
-import { Text, StyleSheet, Dimensions, View, Image } from 'react-native';
+import {Text} from '../../Text';
+import React, {useEffect} from 'react';
+import {StyleSheet, Dimensions, View, Image} from 'react-native';
 import Animated, {
   useSharedValue,
   withTiming,
   useAnimatedStyle,
   Easing,
 } from 'react-native-reanimated';
-import { Info, Success, Warning, Error } from '../../../theme/Images'; // ✅ Fix Error icon import
+import {Info, Success, Warning, Error} from '../../../theme/Images'; // ✅ Fix Error icon import
 
-const { width } = Dimensions.get('window');
+const {width} = Dimensions.get('window');
 
-const AnimatedToast = ({ message, visible, duration = 500, type }) => {
+const AnimatedToast = ({
+  message,
+  visible,
+  duration = 500,
+  type,
+}: {
+  message: string;
+  visible: boolean;
+  duration?: number;
+  type: string;
+}) => {
   const translateY = useSharedValue(-150); // ✅ Start off-screen
 
   useEffect(() => {
-    if (visible) {
-      requestAnimationFrame(() => {
-        translateY.value = withTiming(45, {
-          duration: 100,
-          easing: Easing.out(Easing.ease),
-        });
-  
-        const hideTimeout = setTimeout(() => {
-          translateY.value = withTiming(-150, {
-            duration: 100,
-            easing: Easing.in(Easing.ease),
-          });
-        }, duration);
-  
-        // Cleanup
-        return () => clearTimeout(hideTimeout);
-      });
+    if (!visible) {
+      translateY.value = withTiming(-150, {duration: 100});
+      return;
     }
-  }, [visible]);
-  
+    translateY.value = withTiming(45, {
+      duration: 100,
+      easing: Easing.out(Easing.ease),
+    });
+    const timer = setTimeout(() => {
+      translateY.value = withTiming(-150, {duration: 100});
+    }, duration);
+    return () => clearTimeout(timer);
+  }, [visible, duration, translateY]);
+
   const animatedStyle = useAnimatedStyle(() => {
     return {
-      transform: [{ translateY: translateY.value }],
+      transform: [{translateY: translateY.value}],
     };
   });
 
@@ -68,8 +73,8 @@ const AnimatedToast = ({ message, visible, duration = 500, type }) => {
 
   return (
     <Animated.View style={[styles.toastContainer, animatedStyle]}>
-      <View style={[styles.sideBar, { backgroundColor: getColor() }]} />
-      <View style={[styles.circle, { backgroundColor: getColor() }]}>
+      <View style={[styles.sideBar, {backgroundColor: getColor()}]} />
+      <View style={[styles.circle, {backgroundColor: getColor()}]}>
         <Image source={getIcon()} style={styles.toastIcon} />
       </View>
       <Text style={styles.toastText}>{message}</Text>
@@ -91,7 +96,7 @@ const styles = StyleSheet.create({
     zIndex: 10,
     borderRadius: 10,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     paddingHorizontal: 10,

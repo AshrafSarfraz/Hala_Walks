@@ -1,38 +1,39 @@
-// CustomButton.tsx
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, } from 'react-native';
-import { Colors } from '../../theme/Colors';
-
-
-type buttonProps={
- title:string,
- onPress:()=>void
-}
-
-const CustomButton:React.FC<buttonProps>= ({ title, onPress, }) => {
+import {TouchableOpacity, StyleSheet} from 'react-native';
+import {Text} from '../Text';
+import {Colors} from '../../theme/Colors';
+import {Fonts} from '../../theme/Fonts';
+export default function CustomButton({
+  title,
+  onPress,
+}: {
+  title: string;
+  onPress: () => void;
+}) {
   return (
-    <TouchableOpacity style={styles.button} onPress={onPress} >
-      <Text style={styles.buttonText}>{title}</Text>
+    <TouchableOpacity
+      accessibilityRole="button"
+      style={styles.button}
+      onPress={onPress}
+      activeOpacity={0.85}>
+      <Text style={styles.text}>{title}</Text>
     </TouchableOpacity>
   );
-};
-
+}
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: Colors.PrimaryColor, // Example color
-    width:'100%',
-    alignSelf:"center",
-    height:50,
-    justifyContent:"center",
-    borderRadius: 10,
+    backgroundColor: Colors.PrimaryColor,
+    width: '100%',
+    alignSelf: 'center',
+    minHeight: 50,
+    padding: 12,
+    justifyContent: 'center',
+    borderRadius: 14,
   },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
+  text: {
+    color: Colors.White,
+    fontSize: 15,
+    fontFamily: Fonts.F_Bold,
     textAlign: 'center',
-    lineHeight:22
   },
 });
-
-export default CustomButton;

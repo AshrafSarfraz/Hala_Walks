@@ -1,13 +1,14 @@
+import PageLayout from '../../../components/PageLayout';
+import {Text} from '../../../components/Text';
 // src/westwalk/screens/Maintenance/MaintenanceTab.tsx
 import React, {useState, useRef} from 'react';
 import {
   View,
-  Text,
   TouchableOpacity,
   StyleSheet,
   StatusBar,
   Animated,
-  Dimensions,
+  useWindowDimensions,
   Platform,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -16,11 +17,10 @@ import MaintainceRequest from './MaintainceRequest';
 import MyRequests from './MyRequests';
 
 const TABS = ['New Request', 'My Requests'] as const;
-type TabType = typeof TABS[number];
-
-const {width: SCREEN_W} = Dimensions.get('window');
+type TabType = (typeof TABS)[number];
 
 const MaintenanceTab = ({navigation}: any) => {
+  const {width: SCREEN_W} = useWindowDimensions();
   const [activeTab, setActiveTab] = useState<TabType>('New Request');
   const indicatorAnim = useRef(new Animated.Value(0)).current;
 
@@ -40,30 +40,14 @@ const MaintenanceTab = ({navigation}: any) => {
   const tabWidth = TAB_BAR_INNER_W / 2;
 
   const indicatorTranslate = indicatorAnim.interpolate({
-    inputRange:  [0, 1],
+    inputRange: [0, 1],
     outputRange: [0, tabWidth],
   });
 
   return (
-    // ✅ SafeAreaView edges top only — fills notch with PrimaryColor
-    <SafeAreaView style={styles.safe} edges={['top']}>
-      <StatusBar
-        hidden={false}
-        translucent
-        animated
-        backgroundColor={Colors.PrimaryColor}
-        barStyle="light-content"
-      />
-
-      {/* ── Green header ── */}
-      <View style={styles.pageHeader}>
-        <Text style={styles.pageTitle}>Maintenance</Text>
-        <Text style={styles.pageSubtitle}>Submit or track your requests</Text>
-      </View>
-
+    <PageLayout title="Maintenance">
       {/* ── Body — Bg color ── */}
       <View style={styles.body}>
-
         {/* ── Tab bar ── */}
         <View style={styles.tabBarWrap}>
           <View style={styles.tabBar}>
@@ -71,7 +55,10 @@ const MaintenanceTab = ({navigation}: any) => {
             <Animated.View
               style={[
                 styles.tabIndicator,
-                {width: tabWidth, transform: [{translateX: indicatorTranslate}]},
+                {
+                  width: tabWidth,
+                  transform: [{translateX: indicatorTranslate}],
+                },
               ]}
             />
             {TABS.map(tab => (
@@ -100,9 +87,8 @@ const MaintenanceTab = ({navigation}: any) => {
             <MyRequests />
           )}
         </View>
-
       </View>
-    </SafeAreaView>
+    </PageLayout>
   );
 };
 
@@ -111,18 +97,16 @@ const styles = StyleSheet.create({
   safe: {
     flex: 1,
     backgroundColor: Colors.PrimaryColor,
-
   },
 
   // ── Green header ──
   pageHeader: {
-    height:Platform.OS === 'ios' ? 110 : 100,
-    backgroundColor:Colors.PrimaryColor,
-    justifyContent:'flex-end',
+    height: 70,
+    backgroundColor: Colors.PrimaryColor,
+    justifyContent: 'flex-end',
     paddingHorizontal: '5%',
-    paddingBottom:10
-   
-    
+    paddingBottom: 10,
+
     // backgroundColor: Colors.PrimaryColor,
     // paddingHorizontal: 16,
     // paddingTop: 10,
@@ -131,7 +115,7 @@ const styles = StyleSheet.create({
   pageTitle: {
     fontSize: 20,
     fontWeight: '800',
-    color: Colors.White,       // ✅ White on green
+    color: Colors.White, // ✅ White on green
     letterSpacing: -0.5,
   },
   pageSubtitle: {
@@ -158,7 +142,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 4,
     position: 'relative',
-    height: 44,             // ✅ Fixed height — indicator fills correctly
+    height: 44, // ✅ Fixed height — indicator fills correctly
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#E5E7EB',
@@ -167,7 +151,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 4,
     left: 4,
-    height: 36,             // ✅ 44 - (4 top + 4 bottom padding) = 36
+    height: 36, // ✅ 44 - (4 top + 4 bottom padding) = 36
     backgroundColor: Colors.PrimaryColor,
     borderRadius: 8,
   },
@@ -176,7 +160,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     height: '100%',
-    zIndex: 1,              // ✅ Above indicator
+    zIndex: 1, // ✅ Above indicator
   },
   tabLabel: {
     fontSize: 12,

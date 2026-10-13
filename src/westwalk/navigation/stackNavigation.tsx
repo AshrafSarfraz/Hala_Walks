@@ -1,8 +1,7 @@
 // App.js or MainNavigation.js
 import * as React from 'react';
 
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 import ProfileScreen from '../screen/Employee_Data/Profile_Screen';
 import EmployeeTab from './EmployeeTab';
@@ -34,53 +33,63 @@ import AuthLoadingScreen from '../screen/Others/auth_loading_screen/Auth_Loading
 import HrSystem from '../screen/Employee_Data/Leave Apply';
 import MaintainceRequest from '../screen/Tenants_Data/ContactUs';
 
-
-
-
-
-
 const Stack = createNativeStackNavigator();
 
 export default function StackNavigation() {
   return (
+    <Stack.Navigator
+      initialRouteName="Auth_Loading"
+      screenOptions={{headerShown: false}}>
+      <Stack.Screen name="Auth_Loading" component={AuthLoadingScreen} />
+      {/* <Stack.Screen name="SplashScreen" component={Splash_Screen}   /> */}
+      <Stack.Screen name="Role" component={RoleSelectionScreen} />
+      <Stack.Screen name="onBoarding" component={OnBoarding} />
+      <Stack.Screen name="SearchScreen" component={SearchScreen} />
+      <Stack.Screen name="DetailScreen" component={DetailScreen} />
+      <Stack.Screen name="CategoriesScreen" component={SelectedCategories} />
+      <Stack.Screen name="SelectedVenue" component={SelectedCategories} />
+      <Stack.Screen name="WishlistScreen" component={WishlistScreen} />
+      <Stack.Screen name="PDFViewerScreen" component={PDFViewerScreen} />
+      <Stack.Screen name="PhoneDirectory" component={PhoneDirectoryScreen} />
+      <Stack.Screen name="HrSystem" component={HrSystem} />
 
-      <Stack.Navigator initialRouteName="Auth_Loading" screenOptions={{headerShown:false}} >
-       <Stack.Screen name="Auth_Loading" component={AuthLoadingScreen}   />
-        {/* <Stack.Screen name="SplashScreen" component={Splash_Screen}   /> */}
-        <Stack.Screen name="Role" component={RoleSelectionScreen}   />
-        <Stack.Screen name="onBoarding" component={OnBoarding}   />
-        <Stack.Screen name="SearchScreen" component={SearchScreen}   />
-        <Stack.Screen name="DetailScreen" component={DetailScreen}   />
-        <Stack.Screen name="CategoriesScreen" component={SelectedCategories}   />
-        <Stack.Screen name="SelectedVenue" component={SelectedCategories}   />
-        <Stack.Screen name="WishlistScreen" component={WishlistScreen}   />
-        <Stack.Screen name="PDFViewerScreen" component={PDFViewerScreen}   />
-        <Stack.Screen name="PhoneDirectory" component={PhoneDirectoryScreen}   />
-        <Stack.Screen name="HrSystem" component={HrSystem}   />
-        
-      
-        {/* Staff Screen */}
-        <Stack.Screen name="StaffLogin" component={EmployeeLogin}   />
-        <Stack.Screen name="StaffForgetPassword" component={StaffForgetPassword}   />
-        <Stack.Screen name="EmployeeTab" component={EmployeeTab}   />
-        <Stack.Screen name="ProfileScreen" component={ProfileScreen}   />
-        <Stack.Screen name="StaffHistroyScreen" component={StaffHistoryScreen}   />
-        <Stack.Screen name="StaffDocumentControlScreen" component={StaffDocumentControlScreen}   />
-        <Stack.Screen name="StaffContactUs" component={StaffContactUs}   />
+      {/* Staff Screen */}
+      <Stack.Screen name="StaffLogin" component={EmployeeLogin} />
+      <Stack.Screen
+        name="StaffForgetPassword"
+        component={StaffForgetPassword}
+      />
+      <Stack.Screen name="EmployeeTab" component={EmployeeTab} />
+      <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
+      <Stack.Screen name="StaffHistroyScreen" component={StaffHistoryScreen} />
+      <Stack.Screen
+        name="StaffDocumentControlScreen"
+        component={StaffDocumentControlScreen}
+      />
+      <Stack.Screen name="StaffContactUs" component={StaffContactUs} />
 
-        {/* Tenants Screen */}
-        <Stack.Screen name="TenantsLogin" component={TenantsLogin}   />
-        <Stack.Screen name="TenantsTab" component={TenantsTab}   />
-        <Stack.Screen name="TenantsProfile" component={TenantsProfile}   />
-        <Stack.Screen name="TenantDocumentControlScreen" component={TenantDocumentControlScreen}   />
-        {/* <Stack.Screen name="TenantsMaintainceRequest" component={MaintainceRequest}   /> */}
-        <Stack.Screen name="TenantsHistroyScreen" component={TenantHistoryScreen}   />
+      {/* Tenants Screen */}
+      <Stack.Screen name="TenantsLogin" component={TenantsLogin} />
+      <Stack.Screen name="TenantsTab" component={TenantsTab} />
+      <Stack.Screen name="TenantsProfile" component={TenantsProfile} />
+      <Stack.Screen
+        name="TenantDocumentControlScreen"
+        component={TenantDocumentControlScreen}
+      />
+      {/* <Stack.Screen name="TenantsMaintainceRequest" component={MaintainceRequest}   /> */}
+      <Stack.Screen
+        name="TenantsHistroyScreen"
+        component={TenantHistoryScreen}
+      />
 
-        {/* Organization Screen */}
-        <Stack.Screen name="CorEmp_Login" component={OrgEmp_Login}   />
-        <Stack.Screen name="CorporationTab" component={CorporationTab}   />
-        <Stack.Screen name="CorporationProfile" component={CorporationProfile}   />
-        <Stack.Screen name="CorporationHistroyScreen" component={CorporationHistoryScreen}   />
-      </Stack.Navigator>
+      {/* Organization Screen */}
+      <Stack.Screen name="CorEmp_Login" component={OrgEmp_Login} />
+      <Stack.Screen name="CorporationTab" component={CorporationTab} />
+      <Stack.Screen name="CorporationProfile" component={CorporationProfile} />
+      <Stack.Screen
+        name="CorporationHistroyScreen"
+        component={CorporationHistoryScreen}
+      />
+    </Stack.Navigator>
   );
 }

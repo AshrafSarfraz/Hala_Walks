@@ -1,7 +1,8 @@
+import PageLayout from '../../../components/PageLayout';
+import {Text} from '../../../components/Text';
 import React, {useState} from 'react';
 import {
   View,
-  Text,
   TextInput,
   TouchableOpacity,
   ScrollView,
@@ -14,7 +15,6 @@ import {
   StatusBar,
 } from 'react-native';
 import {launchImageLibrary} from 'react-native-image-picker';
-import CustomHeader from '../../../components/header/CustomHeader';
 import {Colors} from '../../../theme/Colors';
 import {languageData} from '../../../redux/language/languageSlice';
 import {useSelector} from 'react-redux';
@@ -175,171 +175,161 @@ const MaintainceRequest = ({navigation}: any) => {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.flex}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      <StatusBar
-        hidden={false}
-        translucent={true}
-        animated={true}
-        backgroundColor={Colors.Bg}
-        barStyle={'dark-content'}
-      />
-      <CustomHeader
-        title={languageData[language].Back}
-        onBackPress={() => {
-          navigation.goBack();
-        }}
-      />
-      <View style={{marginBottom: 20}} />
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}>
-        {/* ── Header ── */}
-        <View style={styles.header}>
-          <Text style={styles.headerIcon}>🛠️</Text>
-          <Text style={styles.headerTitle}>Maintenance Request</Text>
-          <Text style={styles.headerSubtitle}>
-            Fill in the details below and we'll get back to you shortly.
-          </Text>
-        </View>
-
-        {/* ── Personal Info ── */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Personal Information</Text>
-          <Field
-            label="Full Name"
-            placeholder="e.g. Ashraf M Sarfraz"
-            value={form.name}
-            onChangeText={v => handleChange('name', v)}
-          />
-          <Field
-            label="Email Address"
-            placeholder="e.g. ashraf@email.com"
-            value={form.email}
-            onChangeText={v => handleChange('email', v)}
-            keyboardType="email-address"
-          />
-          <Field
-            label="Phone Number"
-            placeholder="e.g. +966 5X XXX XXXX"
-            value={form.phoneNumber}
-            onChangeText={v => handleChange('phoneNumber', v)}
-            keyboardType="phone-pad"
-          />
-        </View>
-
-        {/* ── Unit Details ── */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Unit Details</Text>
-          <View style={styles.row}>
-            <View style={styles.halfField}>
-              <Text style={styles.label}>Unit No.</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="e.g. 12"
-                value={form.unitno}
-                onChangeText={v => handleChange('unitno', v)}
-                placeholderTextColor="#9ca3af"
-              />
-            </View>
-            <View style={styles.halfField}>
-              <Text style={styles.label}>Building No.</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="e.g. A3"
-                value={form.buildingno}
-                onChangeText={v => handleChange('buildingno', v)}
-                placeholderTextColor="#9ca3af"
-              />
-            </View>
+    <PageLayout
+      title="Maintenance Request"
+      onBackPress={() => navigation.goBack()}>
+      <KeyboardAvoidingView
+        style={styles.flex}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <ScrollView
+          style={styles.container}
+          contentContainerStyle={styles.content}
+          showsVerticalScrollIndicator={false}>
+          {/* ── Header ── */}
+          <View style={styles.header}>
+            <Text style={styles.headerIcon}>🛠️</Text>
+            <Text style={styles.headerTitle}>Maintenance Request</Text>
+            <Text style={styles.headerSubtitle}>
+              Fill in the details below and we'll get back to you shortly.
+            </Text>
           </View>
-        </View>
 
-        {/* ── Request Details ── */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Request Details</Text>
-          <Field
-            label="Subject"
-            placeholder="e.g. AC not working"
-            value={form.subject}
-            onChangeText={v => handleChange('subject', v)}
-          />
-          <View style={styles.fieldWrapper}>
-            <Text style={styles.label}>Description</Text>
-            <TextInput
-              style={[styles.input, styles.textarea]}
-              placeholder="Describe the issue in detail..."
-              value={form.description}
-              onChangeText={v => handleChange('description', v)}
-              multiline
-              numberOfLines={5}
-              textAlignVertical="top"
-              placeholderTextColor="#9ca3af"
+          {/* ── Personal Info ── */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Personal Information</Text>
+            <Field
+              label="Full Name"
+              placeholder="e.g. Ashraf M Sarfraz"
+              value={form.name}
+              onChangeText={v => handleChange('name', v)}
+            />
+            <Field
+              label="Email Address"
+              placeholder="e.g. ashraf@email.com"
+              value={form.email}
+              onChangeText={v => handleChange('email', v)}
+              keyboardType="email-address"
+            />
+            <Field
+              label="Phone Number"
+              placeholder="e.g. +966 5X XXX XXXX"
+              value={form.phoneNumber}
+              onChangeText={v => handleChange('phoneNumber', v)}
+              keyboardType="phone-pad"
             />
           </View>
-        </View>
 
-        {/* ── Attach Images ── */}
-        <View style={styles.section}>
-          <View style={styles.imageSectionHeader}>
-            <Text style={styles.sectionTitle}>
-              Attach Images{' '}
-              <Text style={styles.optional}>(Optional · max 3)</Text>
-            </Text>
-            <Text style={styles.imageCount}>{images.length}/3</Text>
+          {/* ── Unit Details ── */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Unit Details</Text>
+            <View style={styles.row}>
+              <View style={styles.halfField}>
+                <Text style={styles.label}>Unit No.</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="e.g. 12"
+                  value={form.unitno}
+                  onChangeText={v => handleChange('unitno', v)}
+                  placeholderTextColor="#9ca3af"
+                />
+              </View>
+              <View style={styles.halfField}>
+                <Text style={styles.label}>Building No.</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="e.g. A3"
+                  value={form.buildingno}
+                  onChangeText={v => handleChange('buildingno', v)}
+                  placeholderTextColor="#9ca3af"
+                />
+              </View>
+            </View>
           </View>
 
-          {/* ── Image previews grid ── */}
-          {images.length > 0 && (
-            <View style={styles.imageGrid}>
-              {images.map((img, index) => (
-                <View key={index} style={styles.imageThumbWrapper}>
-                  <Image source={{uri: img.uri}} style={styles.imageThumb} />
-                  <TouchableOpacity
-                    style={styles.imageRemoveBtn}
-                    onPress={() => removeImage(index)}>
-                    <Text style={styles.imageRemoveText}>✕</Text>
-                  </TouchableOpacity>
-                </View>
-              ))}
+          {/* ── Request Details ── */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Request Details</Text>
+            <Field
+              label="Subject"
+              placeholder="e.g. AC not working"
+              value={form.subject}
+              onChangeText={v => handleChange('subject', v)}
+            />
+            <View style={styles.fieldWrapper}>
+              <Text style={styles.label}>Description</Text>
+              <TextInput
+                style={[styles.input, styles.textarea]}
+                placeholder="Describe the issue in detail..."
+                value={form.description}
+                onChangeText={v => handleChange('description', v)}
+                multiline
+                numberOfLines={5}
+                textAlignVertical="top"
+                placeholderTextColor="#9ca3af"
+              />
             </View>
-          )}
+          </View>
 
-          {/* ── Pick button (hide when 3 selected) ── */}
-          {images.length < 3 && (
-            <TouchableOpacity style={styles.imagePicker} onPress={pickImages}>
-              <Text style={styles.imagePickerIcon}>📷</Text>
-              <Text style={styles.imagePickerText}>
-                {images.length === 0
-                  ? 'Tap to upload photos'
-                  : 'Add more photos'}
+          {/* ── Attach Images ── */}
+          <View style={styles.section}>
+            <View style={styles.imageSectionHeader}>
+              <Text style={styles.sectionTitle}>
+                Attach Images{' '}
+                <Text style={styles.optional}>(Optional · max 3)</Text>
               </Text>
-              <Text style={styles.imagePickerHint}>
-                {3 - images.length} slot{3 - images.length !== 1 ? 's' : ''}{' '}
-                remaining · JPG, PNG
-              </Text>
-            </TouchableOpacity>
-          )}
-        </View>
+              <Text style={styles.imageCount}>{images.length}/3</Text>
+            </View>
 
-        {/* ── Submit ── */}
-        <TouchableOpacity
-          style={[styles.submitBtn, loading && styles.submitBtnDisabled]}
-          onPress={handleSubmit}
-          disabled={loading}
-          activeOpacity={0.85}>
-          {loading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text style={styles.submitBtnText}>Submit Request</Text>
-          )}
-        </TouchableOpacity>
+            {/* ── Image previews grid ── */}
+            {images.length > 0 && (
+              <View style={styles.imageGrid}>
+                {images.map((img, index) => (
+                  <View key={index} style={styles.imageThumbWrapper}>
+                    <Image source={{uri: img.uri}} style={styles.imageThumb} />
+                    <TouchableOpacity
+                      style={styles.imageRemoveBtn}
+                      onPress={() => removeImage(index)}>
+                      <Text style={styles.imageRemoveText}>✕</Text>
+                    </TouchableOpacity>
+                  </View>
+                ))}
+              </View>
+            )}
 
-        <View style={styles.bottomSpacer} />
-      </ScrollView>
-    </KeyboardAvoidingView>
+            {/* ── Pick button (hide when 3 selected) ── */}
+            {images.length < 3 && (
+              <TouchableOpacity style={styles.imagePicker} onPress={pickImages}>
+                <Text style={styles.imagePickerIcon}>📷</Text>
+                <Text style={styles.imagePickerText}>
+                  {images.length === 0
+                    ? 'Tap to upload photos'
+                    : 'Add more photos'}
+                </Text>
+                <Text style={styles.imagePickerHint}>
+                  {3 - images.length} slot{3 - images.length !== 1 ? 's' : ''}{' '}
+                  remaining · JPG, PNG
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
+
+          {/* ── Submit ── */}
+          <TouchableOpacity
+            style={[styles.submitBtn, loading && styles.submitBtnDisabled]}
+            onPress={handleSubmit}
+            disabled={loading}
+            activeOpacity={0.85}>
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.submitBtnText}>Submit Request</Text>
+            )}
+          </TouchableOpacity>
+
+          <View style={styles.bottomSpacer} />
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </PageLayout>
   );
 };
 
@@ -382,19 +372,16 @@ const styles = StyleSheet.create({
   flex: {
     flex: 1,
     backgroundColor: '#f5f5f5',
-    marginTop: Platform.OS === 'ios' ? 40 : 30,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
   },
   container: {
     flex: 1,
-    backgroundColor: '#f4f4f4',
+    backgroundColor: '#FFFFFF',
   },
-  content: {},
+  content: {padding: 16},
 
   header: {
     alignItems: 'center',
-    backgroundColor: '#111827',
+    backgroundColor: Colors.PrimaryColor,
     borderRadius: 16,
     padding: 24,
     marginBottom: 20,
@@ -522,7 +509,7 @@ const styles = StyleSheet.create({
   imagePickerHint: {fontSize: 12, color: '#9ca3af'},
 
   submitBtn: {
-    backgroundColor: '#111827',
+    backgroundColor: Colors.PrimaryColor,
     borderRadius: 14,
     paddingVertical: 16,
     alignItems: 'center',

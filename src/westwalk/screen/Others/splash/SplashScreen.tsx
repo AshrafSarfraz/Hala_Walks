@@ -1,34 +1,29 @@
-import React, { useEffect } from 'react';
-import { View, StyleSheet, Image, StatusBar } from 'react-native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import BrandTitle from '../../../components/BrandTitle';
+import React, {useEffect} from 'react';
+import {View, StyleSheet, Image, StatusBar} from 'react-native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Colors } from '../../../theme/Colors';
-
-
+import {Colors} from '../../../theme/Colors';
 
 type SplashScreenProps = {
   navigation: NativeStackNavigationProp<any>;
 };
 
-const Splash_Screen: React.FC<SplashScreenProps> = ({ navigation }) => {
+const Splash_Screen: React.FC<SplashScreenProps> = ({navigation}) => {
   useEffect(() => {
     const timeout = setTimeout(() => {
       navigation.navigate('onBoarding');
     }, 2000);
     return () => clearTimeout(timeout);
   }, [navigation]);
- 
-
-
 
   return (
     <View style={styles.Main_Container}>
-        <StatusBar hidden={true} translucent={true} animated={true} />
+      <StatusBar hidden={true} translucent={true} animated={true} />
       <View style={styles.Body}>
-        <Image source={require('../../../assets/images/splash2.png')} style={styles.Logo_Img} />
+        <BrandTitle light />
       </View>
-
     </View>
   );
 };
@@ -49,9 +44,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   Logo_Img: {
-     height:'100%',
-     width:'100%',
+    height: '100%',
+    width: '100%',
   },
-
-  
 });

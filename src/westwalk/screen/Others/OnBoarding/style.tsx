@@ -1,44 +1,42 @@
 import {StyleSheet} from 'react-native';
-import { Colors } from '../../../theme/Colors';
-import { Fonts } from '../../../theme/Fonts';
+import {Colors} from '../../../theme/Colors';
+import {Fonts} from '../../../theme/Fonts';
 
-
-
-export const getStyles = (language: string) =>
+const createStyles = (language: string) =>
   StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: Colors.White,
     },
- 
+
     backIcon: {
       width: 20,
       height: 20,
       resizeMode: 'contain',
       tintColor: Colors.PrimaryColor,
-      transform:language === 'en' ?  [{scaleX:1}] :  [{scaleX:-1}] 
+      transform: language === 'en' ? [{scaleX: 1}] : [{scaleX: -1}],
     },
-    LanButton:{
-      position:"absolute",
+    LanButton: {
+      position: 'absolute',
       width: 60,
-      alignItems:"center",
-      justifyContent:"center",
-      height:35,
-      alignSelf:"flex-end",
-      right:40,
-      top:20,
-      borderColor:'gray',
-      borderWidth:1,
-      borderRadius:6,
-      backgroundColor:Colors.White,
-      zIndex:1
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: 35,
+      alignSelf: 'flex-end',
+      right: 40,
+      top: 20,
+      borderColor: 'gray',
+      borderWidth: 1,
+      borderRadius: 6,
+      backgroundColor: Colors.White,
+      zIndex: 1,
     },
-    LanText:{
-     fontSize:14,
-     lineHeight:20,
-     color:Colors.PrimaryColor,
-     fontFamily:Fonts.F_Medium,
-     textAlign:"center"
+    LanText: {
+      fontSize: 14,
+      lineHeight: 20,
+      color: Colors.PrimaryColor,
+      fontFamily: Fonts.F_Medium,
+      textAlign: 'center',
     },
     slide: {
       flex: 1,
@@ -56,7 +54,7 @@ export const getStyles = (language: string) =>
       textAlign: 'center',
       fontFamily: language === 'en' ? Fonts.F_Bold : undefined,
       color: Colors.Black,
-      lineHeight: language==='en'?28:40,
+      lineHeight: language === 'en' ? 28 : 40,
       marginTop: '3%',
       marginBottom: '2%',
     },
@@ -75,7 +73,7 @@ export const getStyles = (language: string) =>
       justifyContent: 'flex-end',
       marginTop: '15%',
     },
-  
+
     prevButtonText: {
       color: Colors.Black,
       fontSize: 16,
@@ -106,3 +104,14 @@ export const getStyles = (language: string) =>
       textAlign: 'center',
     },
   });
+
+const languageStyles = new Map<string, ReturnType<typeof createStyles>>();
+export const getStyles = (language: string | String) => {
+  const key = String(language);
+  let cached = languageStyles.get(key);
+  if (!cached) {
+    cached = createStyles(key);
+    languageStyles.set(key, cached);
+  }
+  return cached;
+};

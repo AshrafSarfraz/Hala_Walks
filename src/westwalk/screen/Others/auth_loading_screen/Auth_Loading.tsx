@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
-import { View } from 'react-native';
+import React, {useEffect} from 'react';
+import BrandTitle from '../../../components/BrandTitle';
+import {View, ActivityIndicator} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation, CommonActions } from '@react-navigation/native';
-import { Colors } from '../../../theme/Colors';
+import {useNavigation, CommonActions} from '@react-navigation/native';
+import {Colors} from '../../../theme/Colors';
 
 const AuthLoadingScreen: React.FC = () => {
   const navigation = useNavigation<any>();
@@ -23,18 +24,18 @@ const AuthLoadingScreen: React.FC = () => {
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
-          routes: [{ name: targetScreen }],
-        })
+          routes: [{name: targetScreen}],
+        }),
       );
     };
 
-    checkUserType().catch((error) => {
+    checkUserType().catch(error => {
       console.error('Error checking user type:', error);
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
-          routes: [{ name: 'Role' }],
-        })
+          routes: [{name: 'Role'}],
+        }),
       );
     });
   }, []);
@@ -46,8 +47,10 @@ const AuthLoadingScreen: React.FC = () => {
         backgroundColor: Colors.PrimaryColor,
         justifyContent: 'center',
         alignItems: 'center',
-      }}
-    />
+      }}>
+      <BrandTitle light />
+      <ActivityIndicator color={Colors.White} style={{marginTop: 16}} />
+    </View>
   );
 };
 

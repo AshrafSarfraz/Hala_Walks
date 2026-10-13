@@ -1,15 +1,16 @@
+import BrandTitle from '../../BrandTitle';
+import {Text} from '../../Text';
 import React from 'react';
 import {
   Modal,
   View,
-  Text,
   StyleSheet,
   TouchableOpacity,
   Image,
   ImageBackground,
 } from 'react-native';
-import { West_NB } from '../../../theme/Images';
-import { Colors } from '../../../theme/Colors';
+import {West_NB} from '../../../theme/Images';
+import {Colors} from '../../../theme/Colors';
 
 type Props = {
   visible: boolean;
@@ -28,7 +29,7 @@ type Props = {
   } | null;
 };
 
-const RedeemHistoryModal: React.FC<Props> = ({ visible, onClose, data }) => {
+const RedeemHistoryModal: React.FC<Props> = ({visible, onClose, data}) => {
   if (!data) return null;
 
   const userData = {
@@ -78,11 +79,10 @@ const RedeemHistoryModal: React.FC<Props> = ({ visible, onClose, data }) => {
               margin: 20,
               marginVertical: 80,
               opacity: 0.08,
-            }}
-          >
-            <Image source={West_NB} style={styles.logo} resizeMode="contain" />
+            }}>
+            <BrandTitle style={{marginVertical: 24}} />
             <Text style={styles.heading}>Redeem</Text>
-            <Text style={[styles.Status,]}>{getStatusText()}</Text> 
+            <Text style={[styles.Status]}>{getStatusText()}</Text>
 
             <Detail label="Brand Name" value={data.nameEng || data.brandName} />
             <Detail
@@ -114,7 +114,7 @@ const RedeemHistoryModal: React.FC<Props> = ({ visible, onClose, data }) => {
   );
 };
 
-const Detail = ({ label, value }: { label: string; value: string }) => (
+const Detail = ({label, value}: {label: string; value: string}) => (
   <View style={styles.detailBlock}>
     <Text style={styles.label}>{label}:</Text>
     <Text style={styles.value}>{value}</Text>
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     shadowColor: '#000',
     shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: {width: 0, height: 4},
   },
   BgImg: {
     backgroundColor: Colors.White,
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: '#2f2f75',
+    color: '#005029',
     textAlign: 'center',
   },
   detailBlock: {
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   closeButton: {
-    backgroundColor: '#2f2f75',
+    backgroundColor: '#005029',
     padding: 12,
     marginTop: 15,
     alignItems: 'center',
@@ -186,14 +186,14 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
   },
-  Status:{
+  Status: {
     color: 'red',
-    textAlign:'center',
+    textAlign: 'center',
     fontSize: 18,
-    marginBottom:'4%',
-    fontWeight:'600',
-    letterSpacing:0.4
-  }
+    marginBottom: '4%',
+    fontWeight: '600',
+    letterSpacing: 0.4,
+  },
 });
 
 export default RedeemHistoryModal;

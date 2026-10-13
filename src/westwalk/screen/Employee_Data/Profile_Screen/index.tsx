@@ -1,20 +1,21 @@
+import PageLayout from '../../../components/PageLayout';
+import Avatar from '../../../components/Avatar';
+import {memberName, memberPhoto} from '../../../utils/member';
+import {Text} from '../../../components/Text';
 import React, {useEffect, useRef, useState} from 'react';
 import {
   View,
-  Text,
   Image,
   ScrollView,
   StatusBar,
   ActivityIndicator,
 } from 'react-native';
-import CustomHeader from '../../../components/header/CustomHeader';
 import {Colors} from '../../../theme/Colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../redux/store';
 import {languageData} from '../../../redux/language/languageSlice';
 import {styles} from './style';
-import {P_IMG} from '../../../theme/Images';
 
 type ProfileProps = {navigation: any};
 
@@ -91,7 +92,9 @@ const ProfileScreen: React.FC<ProfileProps> = ({navigation}) => {
       }
 
       const staffList = await response.json();
-      const matchedStaff = staffList.find((staff: any) => staff.QID === localQid);
+      const matchedStaff = staffList.find(
+        (staff: any) => String(staff.QID) === String(localQid),
+      );
 
       if (!matchedStaff) return null;
 
@@ -113,12 +116,25 @@ const ProfileScreen: React.FC<ProfileProps> = ({navigation}) => {
 
       // ✅ 1) Show cache immediately (FAST UI)
       try {
-        const cached = await AsyncStorage.getItem('profile_cache');
-        if (cached && mountedRef.current) {
-          setUserData(JSON.parse(cached));
+        const session = JSON.parse(
+          (await AsyncStorage.getItem('staff_data')) || '{}',
+        );
+        const rawCache = await AsyncStorage.getItem('profile_cache');
+        const cached = rawCache ? JSON.parse(rawCache) : null;
+        if (
+          cached &&
+          String(cached.QID) === String(session.qid) &&
+          mountedRef.current
+        ) {
+          setUserData(cached);
           setLoading(false); // ✅ UI instantly
         } else if (mountedRef.current) {
-          setUserData(DUMMY_DATA);
+          setUserData({
+            ...DUMMY_DATA,
+            Name: memberName(session) || 'Member',
+            QID: session.qid || 'N/A',
+            profileImg: memberPhoto(session),
+          });
           setLoading(false);
         }
       } catch (e) {
@@ -144,72 +160,91 @@ const ProfileScreen: React.FC<ProfileProps> = ({navigation}) => {
 
   if (!userData) {
     return (
-      <View style={[styles.container, {justifyContent: 'center', alignItems: 'center'}]}>
+      <PageLayout
+        title={languageData[language].Profile}
+        onBackPress={() => navigation.goBack()}>
         <ActivityIndicator size="large" color={Colors.PrimaryColor} />
-      </View>
+      </PageLayout>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <StatusBar
-        hidden={false}
-        translucent
-        animated
-        backgroundColor={Colors.Bg}
-        barStyle={'dark-content'}
-      />
-
-      <CustomHeader
-        title={languageData[language].Profile}
-        onBackPress={() => navigation.goBack()}
-      />
-
+    <PageLayout
+      title={languageData[language].Profile}
+      onBackPress={() => navigation.goBack()}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.Profile_container}>
-        <Image
-          source={P_IMG}
-          style={styles.profileImage}
+        <Avatar
+          name={memberName(userData)}
+          uri={memberPhoto(userData)}
+          size={72}
         />
 
         <Text style={styles.name}>{userData?.Name || 'N/A'}</Text>
         <Text style={styles.staffId}>
           Employee Code : {userData?.EmployeeCode || 'N/A'}
         </Text>
-        <Text style={styles.company}>{userData?.Title  || 'N/A'}</Text>
+        <Text style={styles.company}>{userData?.Title || 'N/A'}</Text>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Contact</Text>
           <InfoItem label="Email" value={userData?.Email || 'N/A'} />
           <InfoItem label="Phone" value={userData?.MobilePhone || 'N/A'} />
-          <InfoItem label="Date of Birth" value={formatDate(userData?.BirthDate)} />
+          <InfoItem
+            label="Date of Birth"
+            value={formatDate(userData?.BirthDate)}
+          />
         </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Company Info</Text>
           <InfoItem label="Department" value={userData?.Department || 'N/A'} />
           <InfoItem label="Position" value={userData?.Title || 'N/A'} />
-          <InfoItem label="Dep Manager Name" value={userData?.DepManagerName || 'N/A'} />
-          <InfoItem label="Joining Date" value={formatDate(userData?.DateHired)} />
-          <InfoItem label="Contract Expiry" value={userData?.ContractEndDate || 'N/A'} />
-          <InfoItem label="Status" value={userData?.EmpStatus ? 'Active' : 'Inactive'} />
+          <InfoItem
+            label="Dep Manager Name"
+            value={userData?.DepManagerName || 'N/A'}
+          />
+          <InfoItem
+            label="Joining Date"
+            value={formatDate(userData?.DateHired)}
+          />
+          <InfoItem
+            label="Contract Expiry"
+            value={userData?.ContractEndDate || 'N/A'}
+          />
+          <InfoItem
+            label="Status"
+            value={userData?.EmpStatus ? 'Active' : 'Inactive'}
+          />
         </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>ID Info</Text>
-          <InfoItem label="Nationality" value={userData?.Nationality || 'N/A'} />
-          <InfoItem label="Passport Number" value={userData?.PassportNo || 'N/A'} />
+          <InfoItem
+            label="Nationality"
+            value={userData?.Nationality || 'N/A'}
+          />
+          <InfoItem
+            label="Passport Number"
+            value={userData?.PassportNo || 'N/A'}
+          />
           <InfoItem label="QID" value={userData?.QID || 'N/A'} />
         </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Leave Overview</Text>
-          <InfoItem label="Leave Taken" value={String(userData?.Absence || 0)} />
-          <InfoItem label="Leave Balance" value={String(userData?.LeaveBalance || 0)} />
+          <InfoItem
+            label="Leave Taken"
+            value={String(userData?.Absence || 0)}
+          />
+          <InfoItem
+            label="Leave Balance"
+            value={String(userData?.LeaveBalance || 0)}
+          />
         </View>
       </ScrollView>
-    </View>
+    </PageLayout>
   );
 };
 

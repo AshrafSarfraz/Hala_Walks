@@ -1,20 +1,25 @@
+import {Text} from '../Text';
 import React from 'react';
-import { View, Text, Modal, TouchableOpacity, StyleSheet, StatusBar } from 'react-native';
+import {
+  View,
+  Modal,
+  TouchableOpacity,
+  StyleSheet,
+  StatusBar,
+} from 'react-native';
 
-
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../redux/store';
-import { switchLanguage } from '../../redux/language/languageSlice';
-import { Fonts } from '../../theme/Fonts';
-import { Colors } from '../../theme/Colors';
-
+import {useDispatch, useSelector} from 'react-redux';
+import {RootState} from '../../redux/store';
+import {switchLanguage} from '../../redux/language/languageSlice';
+import {Fonts} from '../../theme/Fonts';
+import {Colors} from '../../theme/Colors';
 
 type LanProps = {
   visible: boolean;
   onClose: () => void;
 };
 
-const LanguageModal: React.FC<LanProps> = ({ visible, onClose }) => {
+const LanguageModal: React.FC<LanProps> = ({visible, onClose}) => {
   const dispatch = useDispatch();
   const language = useSelector((state: RootState) => state.language.language); // Get current language from the Redux store
 
@@ -25,25 +30,41 @@ const LanguageModal: React.FC<LanProps> = ({ visible, onClose }) => {
 
   return (
     <Modal transparent visible={visible} animationType="fade">
-        <StatusBar hidden={true} translucent={true} animated={true} />
+      <StatusBar hidden={true} translucent={true} animated={true} />
       <View style={styles.overlay}>
         <View style={styles.container}>
           <Text style={styles.headerText}>
-            {language === 'en' ? 'Language' : 'لغة'} 
+            {language === 'en' ? 'Language' : 'لغة'}
           </Text>
 
-          <TouchableOpacity 
-            style={[styles.languageButton, language === 'en' && styles.selectedButton]} 
-            onPress={() => handleLanguageChange('en')}
-          >
-            <Text style={[styles.languageText,language === 'en' && styles.selectedButtonTxt]}>English</Text>
+          <TouchableOpacity
+            style={[
+              styles.languageButton,
+              language === 'en' && styles.selectedButton,
+            ]}
+            onPress={() => handleLanguageChange('en')}>
+            <Text
+              style={[
+                styles.languageText,
+                language === 'en' && styles.selectedButtonTxt,
+              ]}>
+              English
+            </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity 
-            style={[styles.languageButton, language === 'ar' && styles.selectedButton]} 
-            onPress={() => handleLanguageChange('ar')}
-          >
-            <Text style={[styles.languageText,language === 'ar' && styles.selectedButtonTxt]}>العربية</Text>
+          <TouchableOpacity
+            style={[
+              styles.languageButton,
+              language === 'ar' && styles.selectedButton,
+            ]}
+            onPress={() => handleLanguageChange('ar')}>
+            <Text
+              style={[
+                styles.languageText,
+                language === 'ar' && styles.selectedButtonTxt,
+              ]}>
+              العربية
+            </Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
@@ -71,7 +92,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     elevation: 5,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
+    shadowOffset: {width: 0, height: 3},
     shadowOpacity: 0.2,
     shadowRadius: 4,
   },
@@ -84,8 +105,8 @@ const styles = StyleSheet.create({
   },
   languageButton: {
     backgroundColor: '#fff',
-    borderWidth:2,
-    borderColor:Colors.PrimaryColor,
+    borderWidth: 2,
+    borderColor: Colors.PrimaryColor,
     width: '80%',
     height: 60,
     borderRadius: 8,
@@ -96,8 +117,8 @@ const styles = StyleSheet.create({
   selectedButton: {
     backgroundColor: Colors.PrimaryColor, // Highlight selected language
   },
-  selectedButtonTxt:{
-   color:"#FFF"
+  selectedButtonTxt: {
+    color: '#FFF',
   },
   languageText: {
     color: Colors.PrimaryColor,

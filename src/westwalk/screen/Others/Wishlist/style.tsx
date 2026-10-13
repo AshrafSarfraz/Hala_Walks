@@ -1,8 +1,8 @@
-import { StyleSheet, Dimensions, Platform } from 'react-native';
-import { Fonts } from '../../../theme/Fonts';
-import { Colors } from '../../../theme/Colors';
+import {StyleSheet, Dimensions, Platform} from 'react-native';
+import {Fonts} from '../../../theme/Fonts';
+import {Colors} from '../../../theme/Colors';
 
-const { width } = Dimensions.get('screen');
+const {width} = Dimensions.get('screen');
 
 const styles = StyleSheet.create({
   container: {
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
   },
 
   Type_Cont: {
-    backgroundColor: '#D0A700',
+    backgroundColor: '#005029',
     paddingHorizontal: '4%',
     paddingVertical: 4,
     borderRadius: 3,
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
 
   noDataText: {
     fontSize: 16,
-    color: '#888',
+    color: '#737873',
     textAlign: 'center',
   },
 });

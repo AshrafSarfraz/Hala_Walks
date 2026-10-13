@@ -1,25 +1,18 @@
 import React from 'react';
-import { Modal, View, StyleSheet, StatusBar } from 'react-native';
-import {
-  BallIndicator,
-  
-} from 'react-native-indicators';
-import { Colors } from '../../theme/Colors';
+import {Modal, View, StyleSheet, StatusBar} from 'react-native';
+import {BallIndicator} from 'react-native-indicators';
+import {Colors} from '../../theme/Colors';
 
-
-const LoaderModal = ({ visible }) => {
+const LoaderModal = ({visible}) => {
   return (
     <Modal
       transparent={true}
       animationType="fade"
       visible={visible}
-      onRequestClose={() => {}}
-    >
+      onRequestClose={() => {}}>
       <View style={styles.container}>
-       <StatusBar hidden={true} translucent={true} animated={true} />
-         <BallIndicator color={Colors.White} size='30' />
-      
-         
+        <StatusBar hidden={true} translucent={true} animated={true} />
+        <BallIndicator color={Colors.White} size="30" />
       </View>
     </Modal>
   );

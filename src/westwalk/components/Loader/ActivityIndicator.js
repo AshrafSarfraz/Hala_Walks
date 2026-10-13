@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, View, StyleSheet, StatusBar } from 'react-native';
+import {Modal, View, StyleSheet, StatusBar} from 'react-native';
 import {
   BallIndicator,
   BarIndicator,
@@ -11,22 +11,18 @@ import {
   UIActivityIndicator,
   WaveIndicator,
 } from 'react-native-indicators';
-import { Colors } from '../../theme/Colors';
+import {Colors} from '../../theme/Colors';
 
-
-const ActivityIndicatorModal = ({ visible }) => {
+const ActivityIndicatorModal = ({visible}) => {
   return (
     <Modal
       transparent={true}
       animationType="fade"
       visible={visible}
-      onRequestClose={() => {}}
-    >
+      onRequestClose={() => {}}>
       <View style={styles.container}>
-       <StatusBar hidden={true} translucent={true} animated={true} />
-         <BarIndicator color={Colors.PrimaryColor} size='30' />
-      
-         
+        <StatusBar hidden={true} translucent={true} animated={true} />
+        <BarIndicator color={Colors.PrimaryColor} size="30" />
       </View>
     </Modal>
   );
@@ -38,7 +34,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    zIndex:99999
+    zIndex: 99999,
   },
 });
 

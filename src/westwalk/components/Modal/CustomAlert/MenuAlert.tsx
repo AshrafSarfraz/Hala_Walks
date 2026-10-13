@@ -1,13 +1,20 @@
+import {Text} from '../../Text';
 import React from 'react';
-import { View, Text, Modal, TouchableOpacity, StyleSheet, StatusBar } from 'react-native';
-import { Fonts } from '../../../theme/Fonts';
-import { Colors } from '../../../theme/Colors';
+import {
+  View,
+  Modal,
+  TouchableOpacity,
+  StyleSheet,
+  StatusBar,
+} from 'react-native';
+import {Fonts} from '../../../theme/Fonts';
+import {Colors} from '../../../theme/Colors';
 type LanProps = {
   visible: boolean;
   onClose: () => void;
 };
 
-const MenuUnavailableModal: React.FC<LanProps> = ({ visible, onClose }) => {
+const MenuUnavailableModal: React.FC<LanProps> = ({visible, onClose}) => {
   return (
     <Modal transparent visible={visible} animationType="fade">
       <StatusBar hidden={true} translucent={true} animated={true} />
@@ -40,7 +47,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     elevation: 5,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
+    shadowOffset: {width: 0, height: 3},
     shadowOpacity: 0.2,
     shadowRadius: 4,
   },

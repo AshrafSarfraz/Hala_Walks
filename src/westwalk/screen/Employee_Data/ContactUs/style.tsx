@@ -1,17 +1,16 @@
-import { Dimensions, Platform, StyleSheet } from "react-native";
+import {Dimensions, Platform, StyleSheet} from 'react-native';
 
-
-export const getStyles=(language:String)=> StyleSheet.create({
+const createStyles = (language: String) =>
+  StyleSheet.create({
     safeArea: {
       flex: 1,
-      backgroundColor: "#ffffff",
+      backgroundColor: '#ffffff',
     },
     container: {
       flex: 1,
-      backgroundColor: "#ffffff",
-      paddingHorizontal:'4%',
-      paddingTop:Platform.OS==='ios'?5:50,
-    
+      backgroundColor: '#ffffff',
+      paddingHorizontal: '4%',
+      paddingTop: Platform.OS === 'ios' ? 5 : 50,
     },
     loading: {
       position: 'absolute',
@@ -20,3 +19,13 @@ export const getStyles=(language:String)=> StyleSheet.create({
     },
   });
 
+const languageStyles = new Map<string, ReturnType<typeof createStyles>>();
+export const getStyles = (language: string | String) => {
+  const key = String(language);
+  let cached = languageStyles.get(key);
+  if (!cached) {
+    cached = createStyles(key);
+    languageStyles.set(key, cached);
+  }
+  return cached;
+};

@@ -1,141 +1,117 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, Platform, Image } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
-import LinearGradient from 'react-native-linear-gradient';
-import FastImage from 'react-native-fast-image';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useSelector } from 'react-redux';
+import React, {useMemo} from 'react';
+import {
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  useWindowDimensions,
+} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import {useSelector} from 'react-redux';
+import Ionicons from '@react-native-vector-icons/ionicons';
+import {Text} from '../../../../components/Text';
+import CachedImage from '../../../../components/Media/CachedImage';
+import useBrandCatalog from '../../../../hooks/useBrandCatalog';
+import {RootState} from '../../../../redux/store';
+import {Colors} from '../../../../theme/Colors';
+import {Fonts} from '../../../../theme/Fonts';
+import {homeTimestamp, recentlyAdded, timeAgo} from '../homeData';
+import {SectionHeader, SectionStatus, brandName} from '../homeUi';
 
-import { getStyles } from './style';
-import { RootState } from '../../../../redux/store';
-import { firestore } from '../../../../firebase/firebaseconfig';
+/** Two-column grid with a NEW badge and "added X days ago". */
+export default function RecentlyAdded() {
+  const navigation = useNavigation<any>();
+  const ar = useSelector((s: RootState) => s.language.language === 'ar');
+  const {width} = useWindowDimensions();
+  const {brands, loading, error} = useBrandCatalog();
+  const data = useMemo(() => recentlyAdded(brands), [brands]);
+  if (!loading && !data.length && !error) return null;
 
-const STORAGE_KEY = 'recently_added_brands';
-
-const RecentlyAdded = () => {
-  const navigation = useNavigation();
-  const language = useSelector((state: RootState) => state.language.language);
-  const styles = getStyles(language);
-
-  const [recentItems, setRecentItems] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [imageLoaded, setImageLoaded] = useState<{ [key: string]: boolean }>({});
-
-  useEffect(() => {
-    const fetchRecentlyAdded = async () => {
-      try {
-        // 1. Get from cache first
-        const cached = await AsyncStorage.getItem(STORAGE_KEY);
-        if (cached) {
-          setRecentItems(JSON.parse(cached));
-        }
-
-        // 2. Fetch fresh from Firebase
-        const snapshot = await firestore().collection('Brands').get();
-        const data = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-
-        const oneMonthAgo = new Date();
-        oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-
-        const filtered = data.filter(item => {
-          const createdAt = item.time?.toDate?.();
-          return createdAt && createdAt > oneMonthAgo;
-        });
-
-        setRecentItems(filtered);
-        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
-      } catch (error) {
-        console.error('❌ Error fetching recently added items:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchRecentlyAdded();
-  }, []);
-
-  const handleImageLoad = (id: string) => {
-    setImageLoaded(prev => ({ ...prev, [id]: true }));
-  };
-
-  const renderItem = ({ item }: { item: any }) => {
-    const isLoaded = imageLoaded[item.id] ?? false;
-
-    return (
-      <TouchableOpacity
-        style={styles.Flatlist_Cont}
-        onPress={() => navigation.navigate('DetailScreen', { item })}
-      >
-        <ShimmerPlaceholder
-          visible={isLoaded}
-          LinearGradient={LinearGradient}
-          style={{ width: '100%', height: 120 }}
-        >
-          {Platform.OS === 'ios' ? (
-            <FastImage
-              source={{ uri: item.img }}
-              style={{ width: '100%', height: 120 }}
-              resizeMode={FastImage.resizeMode.cover}
-              onLoad={() => handleImageLoad(item.id)}
-              onError={() => handleImageLoad(item.id)}
-            />
-          ) : (
-            <Image
-              source={{ uri: item.img }}
-              style={{ width: '100%', height: 120 }}
-              onLoad={() => handleImageLoad(item.id)}
-              onError={() => handleImageLoad(item.id)}
-            />
-          )}
-        </ShimmerPlaceholder>
-
-        <Text style={styles.cate_txt}>
-          {language === 'en'
-            ? item.nameEng?.length > 20
-              ? item.nameEng.substring(0, 20) + '...'
-              : item.nameEng
-            : item.nameArabic}
-        </Text>
-
-        <View style={styles.Type_Cont}>
-          <Text style={styles.Type_Text}>{item.selectedCategory}</Text>
-        </View>
-
-        <View style={styles.Loc_Status_Cont}>
-          <Text style={styles.Status_Txt}>{item.status}</Text>
-        </View>
-      </TouchableOpacity>
-    );
-  };
+  const tileW = (width - 32 - 12) / 2;
+  const align = {textAlign: ar ? 'right' : 'left'} as const;
 
   return (
-    <View style={styles.container}>
-      {loading ? (
-        <ShimmerPlaceholder
-          visible={false}
-          LinearGradient={LinearGradient}
-          style={styles.image}
-        />
+    <View style={styles.section}>
+      <SectionHeader
+        ar={ar}
+        icon="sparkles-outline"
+        title={ar ? 'أضيف حديثًا' : 'Recently Added'}
+        subtitle={ar ? 'جديد في ويست ووك' : 'New at West Walk'}
+      />
+      {!data.length ? (
+        <SectionStatus ar={ar} loading={loading} height={200} />
       ) : (
-        <FlatList
-          data={recentItems.slice(0,8)}
-          keyExtractor={(item) => item.id}
-          horizontal={true}
-
-          // numColumns={1}
-          // columnWrapperStyle={styles.row}
-          showsHorizontalScrollIndicator={false}
-          renderItem={renderItem}
-        />
+        <View style={[styles.grid, {flexDirection: ar ? 'row-reverse' : 'row'}]}>
+          {data.map((item, index) => {
+            const added = timeAgo(homeTimestamp(item), ar);
+            return (
+              <TouchableOpacity
+                key={String(item.id)}
+                activeOpacity={0.85}
+                style={[styles.tile, {width: tileW}]}
+                onPress={() => navigation.navigate('DetailScreen', {item})}>
+                <View>
+                  <CachedImage
+                    uri={String(item.img || '')}
+                    style={{width: tileW, height: tileW * 0.72}}
+                    priority={index < 2 ? 'high' : 'normal'}
+                  />
+                  <View style={[styles.newBadge, ar ? {right: 8} : {left: 8}]}>
+                    <Text style={styles.newText}>{ar ? 'جديد' : 'NEW'}</Text>
+                  </View>
+                </View>
+                <View style={styles.body}>
+                  <Text style={[styles.name, align]} numberOfLines={1}>
+                    {brandName(item, ar)}
+                  </Text>
+                  <Text style={[styles.meta, align]} numberOfLines={1}>
+                    {item.selectedCategory}
+                  </Text>
+                  {!!added && (
+                    <View
+                      style={[
+                        styles.timeRow,
+                        {flexDirection: ar ? 'row-reverse' : 'row'},
+                      ]}>
+                      <Ionicons
+                        name="time-outline"
+                        size={11}
+                        color={Colors.PrimaryColor}
+                      />
+                      <Text style={styles.time}>{added}</Text>
+                    </View>
+                  )}
+                </View>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
       )}
     </View>
   );
-};
+}
 
-export default RecentlyAdded;
-
-
+const styles = StyleSheet.create({
+  section: {marginTop: 24},
+  grid: {flexWrap: 'wrap', gap: 12, paddingHorizontal: 16},
+  tile: {
+    borderRadius: 16,
+    overflow: 'hidden',
+    backgroundColor: Colors.White,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  newBadge: {
+    position: 'absolute',
+    top: 8,
+    backgroundColor: Colors.PrimaryColor,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 8,
+  },
+  newText: {fontSize: 10, fontFamily: Fonts.F_Bold, color: Colors.White},
+  body: {padding: 10},
+  name: {fontSize: 14, fontFamily: Fonts.F_Bold},
+  meta: {fontSize: 11, color: Colors.textSecondary, marginTop: 2},
+  timeRow: {alignItems: 'center', gap: 4, marginTop: 6},
+  time: {fontSize: 10, fontFamily: Fonts.F_Medium, color: Colors.PrimaryColor},
+});

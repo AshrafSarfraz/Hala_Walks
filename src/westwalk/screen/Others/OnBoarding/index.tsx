@@ -1,39 +1,40 @@
-import React, { useState, useRef } from 'react';
-import { View, Text, Image, TouchableOpacity, StatusBar } from 'react-native';
+import ScreenHeader from '../../../components/header/ScreenHeader';
+import {Text} from '../../../components/Text';
+import React, {useState, useRef} from 'react';
+import {View, Image, TouchableOpacity, StatusBar} from 'react-native';
 import AppIntroSlider from 'react-native-app-intro-slider';
 
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useSelector } from 'react-redux';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {useSelector} from 'react-redux';
 
-import { getStyles } from './style';
-import { RootState } from '../../../redux/store';
-import { languageData } from '../../../redux/language/languageSlice';
+import {getStyles} from './style';
+import {RootState} from '../../../redux/store';
+import {languageData} from '../../../redux/language/languageSlice';
 import CustomButton from '../../../components/buttons/CustomButton';
 import LanguageModal from '../../../components/Modal/Lan_Modal';
-import { Colors } from '../../../theme/Colors';
-
+import {Colors} from '../../../theme/Colors';
 
 const langData = {
   en: {
     restaurants_discounts: {
-      title: "Welcome to West Walk!",
-      text: "Welcome to West Walk, an exclusive application designed for the West Walk Family. Whether you're a staff member, tenant, or an employee of a corporate partner organization, you can enjoy special discounts and benefits simply by using the app."
+      title: 'Welcome to West Walk!',
+      text: "Welcome to West Walk, an exclusive application designed for the West Walk Family. Whether you're a staff member, tenant, or an employee of a corporate partner organization, you can enjoy special discounts and benefits simply by using the app.",
     },
   },
   ar: {
     restaurants_discounts: {
-        title: "مرحبًا بكم في ويست ووك!",
-        text: "مرحبًا بكم في ويست ووك، وهو تطبيق حصري تم تصميمه خصيصًا لعائلة ويست ووك. سواء كنت موظفًا، مستأجرًا، أو موظفًا في مؤسسة شريكة، يمكنك الاستمتاع بخصومات ومزايا خاصة بكل سهولة من خلال استخدام التطبيق."
-         },
-  }
+      title: 'مرحبًا بكم في ويست ووك!',
+      text: 'مرحبًا بكم في ويست ووك، وهو تطبيق حصري تم تصميمه خصيصًا لعائلة ويست ووك. سواء كنت موظفًا، مستأجرًا، أو موظفًا في مؤسسة شريكة، يمكنك الاستمتاع بخصومات ومزايا خاصة بكل سهولة من خلال استخدام التطبيق.',
+    },
+  },
 };
 
 type OnBoardingProps = {
   navigation: NativeStackNavigationProp<any>;
 };
 
-const OnBoarding: React.FC<OnBoardingProps> = ({ navigation }) => {
+const OnBoarding: React.FC<OnBoardingProps> = ({navigation}) => {
   const language = useSelector((state: RootState) => state.language.language); // Get the current language from Redux
   const styles = getStyles(language);
 
@@ -49,16 +50,15 @@ const OnBoarding: React.FC<OnBoardingProps> = ({ navigation }) => {
   const hideAlert = () => {
     setAlertVisible(false);
   };
- 
+
   const slides = [
     {
       key: 1,
       Title: langData[language].restaurants_discounts.title, // Fetch title based on language
-      text: langData[language].restaurants_discounts.text,   // Fetch text based on language
+      text: langData[language].restaurants_discounts.text, // Fetch text based on language
       image: require('../../../assets/images/slider1.png'),
-      backgroundColor: "white",
+      backgroundColor: 'white',
     },
-  
   ];
 
   const handleNextSlide = () => {
@@ -75,28 +75,46 @@ const OnBoarding: React.FC<OnBoardingProps> = ({ navigation }) => {
     }
   };
 
-  const renderItem = ({ item, index }: { item: any; index: number }) => {
+  const renderItem = ({item, index}: {item: any; index: number}) => {
     const isLastSlide = index === slides.length - 1;
     const isFirstSlide = index === 0;
 
     return (
-      <SafeAreaView style={[styles.slide, { backgroundColor:'#ffffff' }]}>
-          <StatusBar hidden={false} translucent={true} animated={true} backgroundColor={Colors.White}   barStyle="dark-content" />
-          <TouchableOpacity style={styles.LanButton}  onPress={showAlert} >
-            <Text style={styles.LanText} >{languageData[language].Language_Format}</Text>
-          </TouchableOpacity>
+      <View style={[styles.slide, {backgroundColor: '#ffffff'}]}>
+        <StatusBar
+          hidden={false}
+          translucent={true}
+          animated={true}
+          backgroundColor={Colors.White}
+          barStyle="dark-content"
+        />
+        <TouchableOpacity style={styles.LanButton} onPress={showAlert}>
+          <Text style={styles.LanText}>
+            {languageData[language].Language_Format}
+          </Text>
+        </TouchableOpacity>
         <Image source={item.image} style={styles.image} resizeMode="contain" />
-        <View style={{ height: 170, justifyContent: 'center', alignItems: 'center', width: '85%' }}>
+        <View
+          style={{
+            height: 170,
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: '85%',
+          }}>
           <Text style={styles.title}>{item.Title}</Text>
           <Text style={styles.description}>{item.text}</Text>
         </View>
-        <View style={styles.paginationContainer}>
-        </View>
+        <View style={styles.paginationContainer}></View>
         <View style={styles.buttonContainer}>
-          <CustomButton title={languageData[language].next} onPress={isLastSlide ? () => navigation.navigate('Role') : handleNextSlide} />
+          <CustomButton
+            title={languageData[language].next}
+            onPress={
+              isLastSlide ? () => navigation.navigate('Role') : handleNextSlide
+            }
+          />
         </View>
         <LanguageModal visible={alertVisible} onClose={hideAlert} />
-      </SafeAreaView>
+      </View>
     );
   };
 
@@ -104,19 +122,19 @@ const OnBoarding: React.FC<OnBoardingProps> = ({ navigation }) => {
     return <Text>Your App Content Goes Here</Text>;
   } else {
     return (
-      <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
+        <ScreenHeader title={language === 'ar' ? 'مرحبًا' : 'Welcome'} />
         <AppIntroSlider
           ref={sliderRef}
           renderItem={renderItem}
           data={slides} // Use slides array instead of SlidesData
           initialNumToRender={slides.length}
-          onSlideChange={(index) => setCurrentIndex(index)}
+          onSlideChange={index => setCurrentIndex(index)}
           renderNextButton={() => null}
           renderDoneButton={() => null}
           renderPagination={() => null}
         />
-
-      </SafeAreaView>
+      </View>
     );
   }
 };

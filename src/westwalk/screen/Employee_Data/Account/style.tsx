@@ -1,8 +1,8 @@
-import { Platform, StyleSheet } from 'react-native';
-import { Colors } from '../../../theme/Colors';
-import { Fonts } from '../../../theme/Fonts';
+import {Platform, StyleSheet} from 'react-native';
+import {Colors} from '../../../theme/Colors';
+import {Fonts} from '../../../theme/Fonts';
 
-export const getStyles = (language: String) =>
+const createStyles = (language: String) =>
   StyleSheet.create({
     Header_Cont: {
       width: '100%',
@@ -38,9 +38,19 @@ export const getStyles = (language: String) =>
     },
     Logout_Cont: {
       width: '92%',
-  alignSelf: 'center',
-  marginTop: 20,
-  marginBottom: 40,
- 
+      alignSelf: 'center',
+      marginTop: 20,
+      marginBottom: 40,
     },
   });
+
+const languageStyles = new Map<string, ReturnType<typeof createStyles>>();
+export const getStyles = (language: string | String) => {
+  const key = String(language);
+  let cached = languageStyles.get(key);
+  if (!cached) {
+    cached = createStyles(key);
+    languageStyles.set(key, cached);
+  }
+  return cached;
+};

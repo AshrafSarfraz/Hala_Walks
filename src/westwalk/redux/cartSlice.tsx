@@ -1,5 +1,5 @@
 // src/redux/slices/cartSlice.ts
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 
 interface CartItem {
   id: string;
@@ -19,7 +19,9 @@ const cartSlice = createSlice({
   initialState,
   reducers: {
     toggleItemInCart: (state, action: PayloadAction<CartItem>) => {
-      const itemExists = state.items.find(item => item.id === action.payload.id);
+      const itemExists = state.items.find(
+        item => item.id === action.payload.id,
+      );
 
       if (itemExists) {
         // Remove item if it already exists
@@ -29,11 +31,11 @@ const cartSlice = createSlice({
         state.items.push(action.payload);
       }
     },
-    clearCart: (state) => {
+    clearCart: state => {
       state.items = [];
-    }
+    },
   },
 });
 
-export const { toggleItemInCart, clearCart } = cartSlice.actions;
+export const {toggleItemInCart, clearCart} = cartSlice.actions;
 export default cartSlice.reducer;

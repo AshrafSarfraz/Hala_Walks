@@ -1,25 +1,28 @@
-import React, { forwardRef } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import {Text} from '../Text';
+import React, {forwardRef} from 'react';
+import {View, StyleSheet, ScrollView} from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
 
-const FilterRBSheet = forwardRef((props, ref) => {
+const FilterRBSheet = forwardRef<
+  React.ElementRef<typeof RBSheet>,
+  Record<string, never>
+>((props, ref) => {
   return (
     <RBSheet
       ref={ref}
-      closeOnDragDown={true}
+      draggable
       height={600}
       closeOnPressMask={true}
       customStyles={{
-        wrapper: { backgroundColor: 'rgba(0, 0, 0, 0.3)' },
+        wrapper: {backgroundColor: 'rgba(0, 0, 0, 0.3)'},
         container: {
           borderTopLeftRadius: 20,
           borderTopRightRadius: 20,
           backgroundColor: '#f9f9f9',
           elevation: 10,
         },
-        draggableIcon: { backgroundColor: '#bbb' },
-      }}
-    >
+        draggableIcon: {backgroundColor: '#bbb'},
+      }}>
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.heading}>🔐 How to Redeem Your Discount</Text>
 
@@ -29,11 +32,16 @@ const FilterRBSheet = forwardRef((props, ref) => {
 
         <View style={styles.listItem}>
           <Text style={styles.bullet}>•</Text>
-          <Text style={styles.text}>Visit the partner shop, restaurant, or service provider.</Text>
+          <Text style={styles.text}>
+            Visit the partner shop, restaurant, or service provider.
+          </Text>
         </View>
         <View style={styles.listItem}>
           <Text style={styles.bullet}>•</Text>
-          <Text style={styles.text}>Tap the <Text style={styles.highlight}>“Redeem”</Text> button on your phone.</Text>
+          <Text style={styles.text}>
+            Tap the <Text style={styles.highlight}>“Redeem”</Text> button on
+            your phone.
+          </Text>
         </View>
         <View style={styles.listItem}>
           <Text style={styles.bullet}>•</Text>
@@ -41,32 +49,45 @@ const FilterRBSheet = forwardRef((props, ref) => {
         </View>
         <View style={styles.listItem}>
           <Text style={styles.bullet}>•</Text>
-          <Text style={styles.text}>Hand your phone to the staff to enter the secret PIN.</Text>
+          <Text style={styles.text}>
+            Hand your phone to the staff to enter the secret PIN.
+          </Text>
         </View>
         <View style={styles.listItem}>
           <Text style={styles.bullet}>•</Text>
-          <Text style={styles.text}>Once the PIN is correct, the discount will be applied.</Text>
+          <Text style={styles.text}>
+            Once the PIN is correct, the discount will be applied.
+          </Text>
         </View>
         <View style={styles.listItem}>
           <Text style={styles.bullet}>•</Text>
-          <Text style={styles.text}>You will see a confirmation that your offer is redeemed.</Text>
+          <Text style={styles.text}>
+            You will see a confirmation that your offer is redeemed.
+          </Text>
         </View>
 
         <Text style={styles.subheading}>📌 Important Tips:</Text>
         <View style={styles.listItem}>
-        <Text style={styles.bullet}>•</Text>
-        <Text style={styles.text}>
-        The discount offered and availed is dependent on the business alone. The limitations of redemption and use is set by each business individually.
-       </Text>
-       </View>
+          <Text style={styles.bullet}>•</Text>
+          <Text style={styles.text}>
+            The discount offered and availed is dependent on the business alone.
+            The limitations of redemption and use is set by each business
+            individually.
+          </Text>
+        </View>
 
         <View style={styles.listItem}>
           <Text style={styles.bullet}>•</Text>
-          <Text style={styles.text}>The Redeem PIN is known only to the merchant staff.</Text>
+          <Text style={styles.text}>
+            The Redeem PIN is known only to the merchant staff.
+          </Text>
         </View>
         <View style={styles.listItem}>
           <Text style={styles.bullet}>•</Text>
-          <Text style={styles.text}>Only tap Redeem when you are at the shop and ready to use the discount.</Text>
+          <Text style={styles.text}>
+            Only tap Redeem when you are at the shop and ready to use the
+            discount.
+          </Text>
         </View>
       </ScrollView>
     </RBSheet>
@@ -94,7 +115,7 @@ const styles = StyleSheet.create({
   },
   paragraph: {
     fontSize: 15,
-    color: '#333',
+    color: '#232C33',
     marginBottom: 15,
     lineHeight: 22,
   },

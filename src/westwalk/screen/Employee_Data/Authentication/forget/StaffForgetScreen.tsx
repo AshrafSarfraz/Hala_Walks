@@ -1,22 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import { TextInput, View,Text,Image,Alert } from 'react-native';
-import { ManIcon, West_NB } from '../../../../theme/Images';
+import AuthLayout from '../../../../components/AuthLayout';
+import BrandTitle from '../../../../components/BrandTitle';
+import {Text} from '../../../../components/Text';
+import React, {useEffect, useState} from 'react';
+import {TextInput, View, Image, Alert} from 'react-native';
+import {ManIcon, West_NB} from '../../../../theme/Images';
 import CustomButton from '../../../../components/buttons/CustomButton';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../../redux/store';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../../../redux/store';
 import CustomHeader from '../../../../components/header/CustomHeader';
-import { auth, firestore } from '../../../../firebase/firebaseconfig';
+import {auth, firestore} from '../../../../firebase/firebaseconfig';
 import ActivityIndicatorModal from '../../../../components/Loader/ActivityIndicator';
-import { getStyles } from './style';
+import {getStyles} from './style';
 import AnimatedToast from '../../../../components/Modal/CustomAlert/CustomAlert';
-
-
 
 interface LoginProps {
   navigation: any;
 }
 
-const StaffForgetPassword: React.FC<LoginProps> = ({ navigation }) => {
+const StaffForgetPassword: React.FC<LoginProps> = ({navigation}) => {
   const language = useSelector((state: RootState) => state.language.language);
   const styles = getStyles(language);
 
@@ -25,7 +26,7 @@ const StaffForgetPassword: React.FC<LoginProps> = ({ navigation }) => {
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
   const [alertType, setAlertType] = useState<'SUCCESS' | 'ERROR'>('SUCCESS');
-  
+
   const showToast = (message: string, type: 'SUCCESS' | 'ERROR') => {
     setAlertMessage(message);
     setAlertType(type);
@@ -33,12 +34,14 @@ const StaffForgetPassword: React.FC<LoginProps> = ({ navigation }) => {
     setTimeout(() => setAlertVisible(false), 3000);
   };
 
-
- 
-
   const handlePasswordReset = async () => {
     if (!email) {
-      showToast(language === 'ar' ? 'يرجى إدخال بريدك الإلكتروني' : 'Please enter your email', 'ERROR');
+      showToast(
+        language === 'ar'
+          ? 'يرجى إدخال بريدك الإلكتروني'
+          : 'Please enter your email',
+        'ERROR',
+      );
       return;
     }
 
@@ -50,31 +53,60 @@ const StaffForgetPassword: React.FC<LoginProps> = ({ navigation }) => {
         .where('email', '==', email.trim())
         .limit(1)
         .get();
-  
+
       if (snapshot.empty) {
-        showToast(language === 'ar' ? 'هذا البريد غير مسجل لدينا' : 'This email is not registered with us', 'ERROR');
+        showToast(
+          language === 'ar'
+            ? 'هذا البريد غير مسجل لدينا'
+            : 'This email is not registered with us',
+          'ERROR',
+        );
         setIsLoading(false);
         return;
       }
-  
 
       await auth().sendPasswordResetEmail(email.trim());
-      showToast(language === 'ar' ? 'تم إرسال البريد بنجاح' : 'Password reset email sent. Please check your inbox.', 'SUCCESS');
-      
-      setTimeout(() => { navigation.goBack();}, 3000);
-      
+      showToast(
+        language === 'ar'
+          ? 'تم إرسال البريد بنجاح'
+          : 'Password reset email sent. Please check your inbox.',
+        'SUCCESS',
+      );
+
+      setTimeout(() => {
+        navigation.goBack();
+      }, 3000);
     } catch (error: any) {
-      showToast(language === 'ar' ? 'فشل في إرسال البريد' : 'Failed to send reset email.', 'ERROR');
+      showToast(
+        language === 'ar'
+          ? 'فشل في إرسال البريد'
+          : 'Failed to send reset email.',
+        'ERROR',
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
-
   return (
-    <View style={styles.Container}>
-      <CustomHeader title=" " onBackPress={() => navigation.goBack()} />
-      <Image source={West_NB} style={styles.Logo} />
+    <AuthLayout
+      title={language === 'ar' ? 'نسيت كلمة المرور' : 'Forgot Password'}
+      onBackPress={() => navigation.goBack()}
+      overlay={
+        <AnimatedToast
+          message={alertMessage}
+          visible={alertVisible}
+          duration={1000}
+          type={alertType}
+        />
+      }>
+      <BrandTitle
+        style={{
+          fontSize: 22,
+          textAlign: language === 'ar' ? 'right' : 'left',
+          marginBottom: 26,
+        }}
+      />
       <Text style={styles.Title}>
         {language === 'ar' ? 'نسيت كلمة المرور' : 'Forgot Password'}
       </Text>
@@ -84,17 +116,23 @@ const StaffForgetPassword: React.FC<LoginProps> = ({ navigation }) => {
           : 'Enter your email to reset your password'}
       </Text>
 
-      <View style={[styles.InputContainer, email !== '' && styles.Active_Input_Field]}>
+      <View
+        style={[
+          styles.InputContainer,
+          email !== '' && styles.Active_Input_Field,
+        ]}>
         <Image
           source={ManIcon}
           style={[styles.Icon, email !== '' && styles.Active_Image]}
         />
         <TextInput
-          placeholder={language === 'ar' ? 'أدخل البريد الإلكتروني' : 'Enter Email'}
+          placeholder={
+            language === 'ar' ? 'أدخل البريد الإلكتروني' : 'Enter Email'
+          }
           value={email}
           onChangeText={setEmail}
           style={styles.input}
-          placeholderTextColor="#888"
+          placeholderTextColor="#737873"
           keyboardType="email-address"
           autoCapitalize="none"
         />
@@ -106,12 +144,8 @@ const StaffForgetPassword: React.FC<LoginProps> = ({ navigation }) => {
       />
 
       {isLoading && <ActivityIndicatorModal visible={isLoading} />}
-      <AnimatedToast  message={alertMessage} visible={alertVisible} duration={1000} type={alertType} />
-
-    </View>
+    </AuthLayout>
   );
 };
 
 export default StaffForgetPassword;
-
-

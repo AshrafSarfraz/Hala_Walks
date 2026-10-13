@@ -31,7 +31,7 @@
 //   if (!userId) {
 //     return (
 //       <SafeAreaView  style={styles.center}>
-//         <ActivityIndicator size="large" color="#0000ff" />
+//         <ActivityIndicator size="large" color="#005029" />
 //       </SafeAreaView>
 //     );
 //   }
@@ -40,7 +40,7 @@
 //   const target = `https://al-wessilholding.com/app-redirect/?userId=${encodeURIComponent(userId)}`;
 
 //   return (
-//     <SafeAreaView edges={['top']} style={{ flex: 1,backgroundColor:"#31368A" }}>
+//     <SafeAreaView edges={['top']} style={{ flex: 1,backgroundColor:"#005029" }}>
 //       <WebView source={{ uri: target }} style={{ flex: 1 }} />
 //     </SafeAreaView>
 //   );
@@ -50,20 +50,23 @@
 //   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
 // });
 
-
-
-import React, { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, StyleSheet, BackHandler, Platform } from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
+import {
+  ActivityIndicator,
+  StyleSheet,
+  BackHandler,
+  Platform,
+} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { WebView } from 'react-native-webview';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
+import {WebView} from 'react-native-webview';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {useNavigation} from '@react-navigation/native';
 
 export default function SimpleQueryWebView() {
   const [userId, setUserId] = useState<string | null>(null);
   const webref = useRef<WebView>(null);
   const canGoBackRef = useRef(false);
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
 
   useEffect(() => {
     const fetchUserId = async () => {
@@ -96,22 +99,23 @@ export default function SimpleQueryWebView() {
   if (!userId) {
     return (
       <SafeAreaView style={styles.center}>
-        <ActivityIndicator size="large" color="#0000ff" />
+        <ActivityIndicator size="large" color="#005029" />
       </SafeAreaView>
     );
   }
 
   // const target = `http://localhost:5173/app-redirect/?userId=${encodeURIComponent(userId)}&inApp=1`;
-   const target = `https://al-wessilholding.com/app-redirect/?userId=${encodeURIComponent(userId)}&inApp=1`;
-
+  const target = `https://al-wessilholding.com/app-redirect/?userId=${encodeURIComponent(
+    userId,
+  )}&inApp=1`;
 
   return (
-    <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: '#31368A' }}>
+    <SafeAreaView edges={['top']} style={{flex: 1, backgroundColor: '#005029'}}>
       <WebView
         ref={webref}
-        source={{ uri: target }}
-        style={{ flex: 1 }}
-        onNavigationStateChange={(nav) => {
+        source={{uri: target}}
+        style={{flex: 1}}
+        onNavigationStateChange={nav => {
           // @ts-ignore
           canGoBackRef.current = !!nav.canGoBack;
         }}
@@ -130,7 +134,7 @@ export default function SimpleQueryWebView() {
         //   return true;
         // }}
         // Listen for "close" from the web and pop this screen
-        onMessage={(e) => {
+        onMessage={e => {
           try {
             const data = JSON.parse(e.nativeEvent.data);
             if (data?.type === 'close') {
@@ -157,5 +161,5 @@ export default function SimpleQueryWebView() {
 }
 
 const styles = StyleSheet.create({
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  center: {flex: 1, justifyContent: 'center', alignItems: 'center'},
 });

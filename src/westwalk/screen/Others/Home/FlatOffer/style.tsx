@@ -1,11 +1,8 @@
 import {Dimensions, Platform, StyleSheet} from 'react-native';
-import { Colors } from '../../../../theme/Colors';
-
-
-
+import {Colors} from '../../../../theme/Colors';
 
 const {width} = Dimensions.get('window');
-// export const getStyles=(language:string) => StyleSheet.create({
+// const createStyles=(language:string) => StyleSheet.create({
 //   container: {
 //     alignItems: 'center',
 //     marginHorizontal: Platform.OS === 'ios' ? '3%' : '1%',
@@ -56,9 +53,7 @@ const {width} = Dimensions.get('window');
 //   }
 // });
 
-
-
-export const getStyles = (language: string) =>
+const createStyles = (language: string) =>
   StyleSheet.create({
     container: {
       backgroundColor: Colors.Bg,
@@ -73,18 +68,17 @@ export const getStyles = (language: string) =>
       overflow: 'hidden', // ✅ fix for Android clipping
       marginRight: 8,
     },
-    imageSlider:{
-      width: width-40,
+    imageSlider: {
+      width: width - 40,
       height: 250,
       borderRadius: 10,
-      marginRight:10,
-      resizeMode:"contain"
+      marginRight: 10,
+      resizeMode: 'contain',
     },
     image: {
       width: '100%',
       height: '100%',
       borderRadius: 12,
-
     },
     overlay: {
       ...StyleSheet.absoluteFillObject,
@@ -113,3 +107,13 @@ export const getStyles = (language: string) =>
       justifyContent: 'center',
     },
   });
+const languageStyles = new Map<string, ReturnType<typeof createStyles>>();
+export const getStyles = (language: string | String) => {
+  const key = String(language);
+  let cached = languageStyles.get(key);
+  if (!cached) {
+    cached = createStyles(key);
+    languageStyles.set(key, cached);
+  }
+  return cached;
+};

@@ -1,14 +1,13 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import {Text} from '../Text';
+import React, {useState} from 'react';
+import {View, TouchableOpacity, Image, StyleSheet} from 'react-native';
 
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../redux/store';
-import { Tick } from '../../../theme/Images';
-import { Colors } from '../../../theme/Colors';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../redux/store';
+import {Tick} from '../../theme/Images';
+import {Colors} from '../../theme/Colors';
 
-
-
- // ✅ Dummy tick icon
+// ✅ Dummy tick icon
 
 type CheckboxProps = {
   label: string;
@@ -16,17 +15,24 @@ type CheckboxProps = {
   isChecked: boolean;
   linkText: string;
   onLinkPress: () => void;
-
 };
 
-const CustomCheckbox: React.FC<CheckboxProps> = ({ label, onPress, isChecked, linkText, onLinkPress,}) => {
+const CustomCheckbox: React.FC<CheckboxProps> = ({
+  label,
+  onPress,
+  isChecked,
+  linkText,
+  onLinkPress,
+}) => {
   const language = useSelector((state: RootState) => state.language.language); // Get the current language from Redux
- 
+
   const styles = getStyles(language);
   return (
     <View style={styles.container}>
       {/* Checkbox */}
-      <TouchableOpacity onPress={onPress} style={[styles.checkbox, isChecked && styles.checked]}>
+      <TouchableOpacity
+        onPress={onPress}
+        style={[styles.checkbox, isChecked && styles.checked]}>
         {isChecked && <Image source={Tick} style={styles.tickIcon} />}
       </TouchableOpacity>
 
@@ -34,56 +40,50 @@ const CustomCheckbox: React.FC<CheckboxProps> = ({ label, onPress, isChecked, li
       <Text style={styles.label}>
         {label}
         <Text style={styles.linkText} onPress={onLinkPress}>
-          {linkText} 
+          {linkText}
         </Text>
-      
-      
-
-     
-      
       </Text>
     </View>
   );
 };
 
-const getStyles=(language:string) => StyleSheet.create({
-  container: {
-    flexDirection: language==='en'?'row':'row-reverse',
-    alignItems: 'center',
-    marginTop: 5,
-    marginBottom:12
-  },
-  checkbox: {
-    width: 20,
-    height: 20,
-    borderWidth: 2,
-    borderColor: Colors.Grey, // ✅ Default grey border
-    borderRadius: 6,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight:language==='en'? 10:0,
-    marginLeft:language==='ar'?10:0,
-  },
-  checked: {
-    borderColor: Colors.PrimaryColor,
-    backgroundColor:Colors.PrimaryColor // ✅ Green when checked
-  },
-  tickIcon: {
-    width: 15,
-    height: 15,
-    tintColor: Colors.White, // ✅ Ensuring green tick
-  },
-  label: {
-    fontSize: 13,
-    color: Colors.Black,
-    fontWeight:'400',
-    lineHeight:18
-
-  },
-  linkText: {
-    color: Colors.Black, // ✅ Blue for privacy policy link
-  
-  },
-});
+const getStyles = (language: string) =>
+  StyleSheet.create({
+    container: {
+      flexDirection: language === 'en' ? 'row' : 'row-reverse',
+      alignItems: 'center',
+      marginTop: 5,
+      marginBottom: 12,
+    },
+    checkbox: {
+      width: 20,
+      height: 20,
+      borderWidth: 2,
+      borderColor: Colors.Grey, // ✅ Default grey border
+      borderRadius: 6,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginRight: language === 'en' ? 10 : 0,
+      marginLeft: language === 'ar' ? 10 : 0,
+    },
+    checked: {
+      borderColor: Colors.PrimaryColor,
+      backgroundColor: Colors.PrimaryColor, // ✅ Green when checked
+    },
+    tickIcon: {
+      width: 15,
+      height: 15,
+      tintColor: Colors.White, // ✅ Ensuring green tick
+    },
+    label: {
+      fontSize: 13,
+      color: Colors.Black,
+      fontWeight: '400',
+      lineHeight: 18,
+    },
+    linkText: {
+      color: Colors.Black, // ✅ Blue for privacy policy link
+    },
+  });
 
 export default CustomCheckbox;
