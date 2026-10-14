@@ -50,6 +50,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 10,
     borderRadius: 0,
+
   },
   back: {width: 40, height: 40, justifyContent: 'center', alignItems: 'center'},
   title: {

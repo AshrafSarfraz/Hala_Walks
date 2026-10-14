@@ -28,5 +28,5 @@ export default function ScreenHeader({
   );
 }
 const styles = StyleSheet.create({
-  top: {backgroundColor: Colors.White, width: '100%', marginHorizontal:12},
+  top: {backgroundColor: Colors.White, width: '90%', marginHorizontal:12, borderBottomWidth:0.6, borderColor:'#EEE' },
 });

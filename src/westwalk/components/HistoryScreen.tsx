@@ -1,9 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   View,
   FlatList,
   TouchableOpacity,
   ActivityIndicator,
+  RefreshControl,
   StyleSheet,
 } from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -19,37 +20,63 @@ import {RootState} from '../redux/store';
 import {Colors} from '../theme/Colors';
 import {Fonts} from '../theme/Fonts';
 import {percentValue} from '../utils/offers';
+
+// Screen dobara khulne par purana data foran dikhane ke liye simple in-memory cache.
+// App band hone par khud clear ho jata hai.
+const historyCache: Record<string, any[]> = {};
+
 export default function HistoryScreen({storageKey}: {storageKey: string}) {
   const navigation = useNavigation<any>();
   const insets = useSafeAreaInsets();
   const ar = useSelector((s: RootState) => s.language.language === 'ar');
-  const [history, setHistory] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const cached = historyCache[storageKey];
+  const [history, setHistory] = useState<any[]>(cached || []);
+  const [loading, setLoading] = useState(!cached); // cache ho to spinner nahi
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(false);
   const [selected, setSelected] = useState<any>(null);
-  useEffect(() => {
-    let mounted = true;
-    (async () => {
+
+  const load = useCallback(
+    async (isMounted: () => boolean = () => true) => {
       try {
         const stored = await AsyncStorage.getItem(storageKey);
         const member = stored ? JSON.parse(stored) : null;
-        if (!member) return;
+        if (!member?.qid) return;
         const snapshot = await firestore()
           .collection('redeem_history')
           .where('qid', '==', member.qid)
           .get();
-        if (mounted)
-          setHistory(snapshot.docs.map(doc => ({id: doc.id, ...doc.data()})));
+        const data = snapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
+        historyCache[storageKey] = data;
+        if (isMounted()) {
+          setHistory(data);
+          setError(false);
+        }
       } catch {
-        if (mounted) setError(true);
+        if (isMounted()) setError(true);
       } finally {
-        if (mounted) setLoading(false);
+        if (isMounted()) {
+          setLoading(false);
+          setRefreshing(false);
+        }
       }
-    })();
+    },
+    [storageKey],
+  );
+
+  useEffect(() => {
+    let mounted = true;
+    load(() => mounted); // cache ho to background mein chupchap refresh
     return () => {
       mounted = false;
     };
-  }, [storageKey]);
+  }, [load]);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    load();
+  };
+
   const date = (item: any) => {
     const value = item.createdAt?.toDate?.() || item.createdAt;
     const parsed = value ? new Date(value) : null;
@@ -57,6 +84,7 @@ export default function HistoryScreen({storageKey}: {storageKey: string}) {
       ? parsed.toLocaleDateString(ar ? 'ar-QA' : 'en-GB')
       : String(item.date || '—');
   };
+
   return (
     <View style={styles.root}>
       <ScreenHeader
@@ -80,6 +108,14 @@ export default function HistoryScreen({storageKey}: {storageKey: string}) {
           showsVerticalScrollIndicator={false}
           initialNumToRender={8}
           windowSize={5}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={Colors.PrimaryColor}
+              colors={[Colors.PrimaryColor]}
+            />
+          }
           contentContainerStyle={{
             paddingHorizontal: 18,
             paddingBottom: Math.max(insets.bottom, 16) + 20,

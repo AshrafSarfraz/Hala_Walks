@@ -44,7 +44,7 @@ export default React.memo(function OfferListCard({
             : item.nameEng || item.nameArabic}
         </Text>
         <Text
-          numberOfLines={3}
+          numberOfLines={2}
           style={[styles.description, {textAlign: ar ? 'right' : 'left'}]}>
           {ar
             ? item.descriptionArabic || item.descriptionEng
@@ -98,15 +98,15 @@ const styles = StyleSheet.create({
   info: {flex: 1, paddingVertical: 4},
   title: {
     fontFamily: Fonts.F_Bold,
-    fontSize: 17,
-    lineHeight: 22,
-    marginBottom: 7,
+    fontSize: 16,
+    lineHeight: 20,
+    marginBottom: 6,
   },
-  description: {fontSize: 13, lineHeight: 19, color: Colors.textSecondary},
-  meta: {alignItems: 'center', gap: 5, marginTop: 7},
+  description: {fontSize: 12, lineHeight: 18, color: Colors.textSecondary},
+  meta: {alignItems: 'center', gap: 5, marginTop:3},
   address: {fontSize: 11, color: Colors.textSecondary, flex: 1},
   badge: {
-    paddingVertical: 4,
+    paddingVertical: 3,
     paddingHorizontal: 8,
     backgroundColor: Colors.accentSoft,
     borderRadius: 20,
