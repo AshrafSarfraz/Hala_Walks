@@ -22,12 +22,9 @@ import StaffDocumentControlScreen from '../screen/Employee_Data/Documents';
 import StaffContactUs from '../screen/Employee_Data/ContactUs';
 import OnBoarding from '../screen/Others/OnBoarding';
 
-import OrgEmp_Login from '../screen/Organization/Authentication/login/Organization_Login';
 import StaffForgetPassword from '../screen/Employee_Data/Authentication/forget/StaffForgetScreen';
 import PDFViewerScreen from '../screen/Others/pdfViewer';
-import RoleSelectionScreen from '../screen/Others/select_role';
-import EmployeeLogin from '../screen/Employee_Data/Authentication/login/Westwalk_Staff';
-import TenantsLogin from '../screen/Tenants_Data/Authentication/login/Tenants_Login';
+import LoginScreen from '../screen/Others/Login';
 import PhoneDirectoryScreen from '../screen/Employee_Data/PhoneDirectory';
 import AuthLoadingScreen from '../screen/Others/auth_loading_screen/Auth_Loading';
 import HrSystem from '../screen/Employee_Data/Leave Apply';
@@ -42,7 +39,7 @@ export default function StackNavigation() {
       screenOptions={{headerShown: false}}>
       <Stack.Screen name="Auth_Loading" component={AuthLoadingScreen} />
       {/* <Stack.Screen name="SplashScreen" component={Splash_Screen}   /> */}
-      <Stack.Screen name="Role" component={RoleSelectionScreen} />
+      <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="onBoarding" component={OnBoarding} />
       <Stack.Screen name="SearchScreen" component={SearchScreen} />
       <Stack.Screen name="DetailScreen" component={DetailScreen} />
@@ -54,7 +51,6 @@ export default function StackNavigation() {
       <Stack.Screen name="HrSystem" component={HrSystem} />
 
       {/* Staff Screen */}
-      <Stack.Screen name="StaffLogin" component={EmployeeLogin} />
       <Stack.Screen
         name="StaffForgetPassword"
         component={StaffForgetPassword}
@@ -69,7 +65,6 @@ export default function StackNavigation() {
       <Stack.Screen name="StaffContactUs" component={StaffContactUs} />
 
       {/* Tenants Screen */}
-      <Stack.Screen name="TenantsLogin" component={TenantsLogin} />
       <Stack.Screen name="TenantsTab" component={TenantsTab} />
       <Stack.Screen name="TenantsProfile" component={TenantsProfile} />
       <Stack.Screen
@@ -83,7 +78,6 @@ export default function StackNavigation() {
       />
 
       {/* Organization Screen */}
-      <Stack.Screen name="CorEmp_Login" component={OrgEmp_Login} />
       <Stack.Screen name="CorporationTab" component={CorporationTab} />
       <Stack.Screen name="CorporationProfile" component={CorporationProfile} />
       <Stack.Screen

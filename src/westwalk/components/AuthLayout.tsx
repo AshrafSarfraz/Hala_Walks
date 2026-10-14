@@ -16,7 +16,7 @@ export default function AuthLayout({
   overlay,
 }: {
   title: string;
-  onBackPress: () => void;
+  onBackPress?: () => void;
   children: React.ReactNode;
   overlay?: React.ReactNode;
 }) {

@@ -109,7 +109,7 @@ const OnBoarding: React.FC<OnBoardingProps> = ({navigation}) => {
           <CustomButton
             title={languageData[language].next}
             onPress={
-              isLastSlide ? () => navigation.navigate('Role') : handleNextSlide
+              isLastSlide ? () => navigation.navigate('Login') : handleNextSlide
             }
           />
         </View>

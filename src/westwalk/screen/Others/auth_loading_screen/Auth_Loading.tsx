@@ -16,7 +16,7 @@ const AuthLoadingScreen: React.FC = () => {
         AsyncStorage.getItem('org_emp_data'),
       ]);
 
-      let targetScreen = 'Role';
+      let targetScreen = 'Login';
       if (staffData) targetScreen = 'EmployeeTab';
       else if (tenantData) targetScreen = 'TenantsTab';
       else if (orgEmpData) targetScreen = 'CorporationTab';
@@ -34,7 +34,7 @@ const AuthLoadingScreen: React.FC = () => {
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
-          routes: [{name: 'Role'}],
+          routes: [{name: 'Login'}],
         }),
       );
     });

@@ -1,260 +1,185 @@
 import PageLayout from '../../../components/PageLayout';
-import Avatar from '../../../components/Avatar';
+import ProfileView from '../../../components/ProfileView';
 import {memberName, memberPhoto} from '../../../utils/member';
-import {Text} from '../../../components/Text';
 import React, {useEffect, useRef, useState} from 'react';
-import {
-  View,
-  Image,
-  ScrollView,
-  StatusBar,
-  ActivityIndicator,
-} from 'react-native';
+import {ActivityIndicator} from 'react-native';
 import {Colors} from '../../../theme/Colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useSelector} from 'react-redux';
 import {RootState} from '../../../redux/store';
 import {languageData} from '../../../redux/language/languageSlice';
-import {styles} from './style';
 
 type ProfileProps = {navigation: any};
 
-const DUMMY_DATA = {
-  Name: 'N/A',
-  EmployeeCode: 'N/A',
-  CompanyName: 'N/A',
-  Email: 'N/A',
-  MobilePhone: 'N/A',
-  BirthDate: '',
-  Department: 'N/A',
-  Title: 'N/A',
-  DepManagerName: 'N/A',
-  DateHired: '',
-  ContractEndDate: '',
-  EmpStatus: false,
-  Nationality: 'N/A',
-  PassportNo: 'N/A',
-  QID: 'N/A',
-  Absence: 0,
-  LeaveBalance: 0,
-  profileImg: '',
-};
-
-const fetchWithTimeout = async (
-  url: string,
-  options: any = {},
-  timeout = 8000,
-) => {
+const fetchWithTimeout = async (url: string, timeout = 8000) => {
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeout);
-
   try {
-    const res = await fetch(url, {...options, signal: controller.signal});
-    return res;
+    return await fetch(url, {signal: controller.signal});
   } finally {
     clearTimeout(id);
   }
 };
 
+const formatDate = (value?: string) => {
+  if (!value) return '';
+  const d = new Date(value);
+  if (isNaN(d.getTime())) return String(value);
+  const day = String(d.getDate()).padStart(2, '0');
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  return `${day}-${month}-${d.getFullYear()}`;
+};
+
+// TODO (backend): ye endpoint saare employees ka data (passport, QID waghera)
+// bina login ke deta hai aur app usay phone pe filter karti hai. Behtar hai ke
+// backend pe `/hr/employees/mongo/:qid` jaisa endpoint ho jo sirf ek employee
+// ka record de, aur login token check kare.
+const fetchProfile = async () => {
+  try {
+    const stored = await AsyncStorage.getItem('staff_data');
+    if (!stored) return null;
+    const {qid, profileImg} = JSON.parse(stored);
+    const res = await fetchWithTimeout(
+      'https://hala-b-saudi.onrender.com/hr/employees/mongo',
+    );
+    if (!res.ok) throw new Error(`API error: ${res.status}`);
+    const list = await res.json();
+    const match = list.find((s: any) => String(s.QID) === String(qid));
+    if (!match) return null;
+    const full = {...match, profileImg};
+    await AsyncStorage.setItem('profile_cache', JSON.stringify(full));
+    return full;
+  } catch (error) {
+    console.log('Profile fetch error:', error);
+    return null;
+  }
+};
+
 const ProfileScreen: React.FC<ProfileProps> = ({navigation}) => {
   const language = useSelector((state: RootState) => state.language.language);
+  const ar = language === 'ar';
+  const t = (en: string, arText: string) => (ar ? arText : en);
 
-  const [userData, setUserData] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-
-  const mountedRef = useRef(true);
-
-  const formatDate = (dateString: string) => {
-    if (!dateString) return 'N/A';
-    const d = new Date(dateString);
-    if (isNaN(d.getTime())) return 'N/A';
-    const day = String(d.getDate()).padStart(2, '0');
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const year = d.getFullYear();
-    return `${day}-${month}-${year}`;
-  };
-
-  const fetchAndStoreData = async () => {
-    try {
-      const storedData = await AsyncStorage.getItem('staff_data');
-      if (!storedData) return null;
-
-      const {qid: localQid, profileImg} = JSON.parse(storedData);
-
-      const response: any = await fetchWithTimeout(
-        'https://hala-b-saudi.onrender.com/hr/employees/mongo',
-        {},
-        8000,
-      );
-
-      if (!response?.ok) {
-        throw new Error(`API error: ${response?.status}`);
-      }
-
-      const staffList = await response.json();
-      const matchedStaff = staffList.find(
-        (staff: any) => String(staff.QID) === String(localQid),
-      );
-
-      if (!matchedStaff) return null;
-
-      const fullUserData = {...matchedStaff, profileImg};
-      await AsyncStorage.setItem('profile_cache', JSON.stringify(fullUserData));
-
-      return fullUserData;
-    } catch (error) {
-      console.log('Profile fetch error:', error);
-      return null;
-    }
-  };
+  const [user, setUser] = useState<any>(null);
+  const mounted = useRef(true);
 
   useEffect(() => {
-    mountedRef.current = true;
-
-    const loadFast = async () => {
-      setLoading(true);
-
-      // ✅ 1) Show cache immediately (FAST UI)
+    mounted.current = true;
+    (async () => {
+      // 1) Cache ya session se foran kuch dikhao
       try {
         const session = JSON.parse(
           (await AsyncStorage.getItem('staff_data')) || '{}',
         );
-        const rawCache = await AsyncStorage.getItem('profile_cache');
-        const cached = rawCache ? JSON.parse(rawCache) : null;
-        if (
-          cached &&
-          String(cached.QID) === String(session.qid) &&
-          mountedRef.current
-        ) {
-          setUserData(cached);
-          setLoading(false); // ✅ UI instantly
-        } else if (mountedRef.current) {
-          setUserData({
-            ...DUMMY_DATA,
-            Name: memberName(session) || 'Member',
-            QID: session.qid || 'N/A',
+        const raw = await AsyncStorage.getItem('profile_cache');
+        const cached = raw ? JSON.parse(raw) : null;
+        if (!mounted.current) return;
+        if (cached && String(cached.QID) === String(session.qid)) {
+          setUser(cached);
+        } else {
+          setUser({
+            Name: memberName(session),
+            QID: session.qid,
+            EmployeeCode: session.staffId,
+            Email: session.email,
             profileImg: memberPhoto(session),
           });
-          setLoading(false);
         }
-      } catch (e) {
-        if (mountedRef.current) {
-          setUserData(DUMMY_DATA);
-          setLoading(false);
-        }
+      } catch {
+        if (mounted.current) setUser({});
       }
-
-      // ✅ 2) Fetch fresh in background (doesn't block UI)
-      const fresh = await fetchAndStoreData();
-      if (fresh && mountedRef.current) {
-        setUserData(fresh);
-      }
-    };
-
-    loadFast();
-
+      // 2) Background mein fresh data
+      const fresh = await fetchProfile();
+      if (fresh && mounted.current) setUser(fresh);
+    })();
     return () => {
-      mountedRef.current = false;
+      mounted.current = false;
     };
   }, []);
-
-  if (!userData) {
-    return (
-      <PageLayout
-        title={languageData[language].Profile}
-        onBackPress={() => navigation.goBack()}>
-        <ActivityIndicator size="large" color={Colors.PrimaryColor} />
-      </PageLayout>
-    );
-  }
 
   return (
     <PageLayout
       title={languageData[language].Profile}
       onBackPress={() => navigation.goBack()}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.Profile_container}>
-        <Avatar
-          name={memberName(userData)}
-          uri={memberPhoto(userData)}
-          size={72}
+      {!user ? (
+        <ActivityIndicator
+          size="large"
+          color={Colors.PrimaryColor}
+          style={{marginTop: 40}}
         />
-
-        <Text style={styles.name}>{userData?.Name || 'N/A'}</Text>
-        <Text style={styles.staffId}>
-          Employee Code : {userData?.EmployeeCode || 'N/A'}
-        </Text>
-        <Text style={styles.company}>{userData?.Title || 'N/A'}</Text>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Contact</Text>
-          <InfoItem label="Email" value={userData?.Email || 'N/A'} />
-          <InfoItem label="Phone" value={userData?.MobilePhone || 'N/A'} />
-          <InfoItem
-            label="Date of Birth"
-            value={formatDate(userData?.BirthDate)}
-          />
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Company Info</Text>
-          <InfoItem label="Department" value={userData?.Department || 'N/A'} />
-          <InfoItem label="Position" value={userData?.Title || 'N/A'} />
-          <InfoItem
-            label="Dep Manager Name"
-            value={userData?.DepManagerName || 'N/A'}
-          />
-          <InfoItem
-            label="Joining Date"
-            value={formatDate(userData?.DateHired)}
-          />
-          <InfoItem
-            label="Contract Expiry"
-            value={userData?.ContractEndDate || 'N/A'}
-          />
-          <InfoItem
-            label="Status"
-            value={userData?.EmpStatus ? 'Active' : 'Inactive'}
-          />
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>ID Info</Text>
-          <InfoItem
-            label="Nationality"
-            value={userData?.Nationality || 'N/A'}
-          />
-          <InfoItem
-            label="Passport Number"
-            value={userData?.PassportNo || 'N/A'}
-          />
-          <InfoItem label="QID" value={userData?.QID || 'N/A'} />
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Leave Overview</Text>
-          <InfoItem
-            label="Leave Taken"
-            value={String(userData?.Absence || 0)}
-          />
-          <InfoItem
-            label="Leave Balance"
-            value={String(userData?.LeaveBalance || 0)}
-          />
-        </View>
-      </ScrollView>
+      ) : (
+        <ProfileView
+          name={user.Name || memberName(user) || t('Member', 'عضو')}
+          photo={memberPhoto(user)}
+          subtitle={user.Title}
+          idLabel={t('Code', 'الرقم')}
+          idValue={user.EmployeeCode}
+          status={
+            typeof user.EmpStatus === 'boolean'
+              ? {
+                  label: user.EmpStatus
+                    ? t('Active', 'نشط')
+                    : t('Inactive', 'غير نشط'),
+                  active: user.EmpStatus,
+                }
+              : undefined
+          }
+          sections={[
+            {
+              title: t('Contact', 'التواصل'),
+              icon: 'call-outline',
+              rows: [
+                {label: t('Email', 'البريد الإلكتروني'), value: user.Email},
+                {label: t('Phone', 'الهاتف'), value: user.MobilePhone},
+                {
+                  label: t('Date of Birth', 'تاريخ الميلاد'),
+                  value: formatDate(user.BirthDate),
+                },
+              ],
+            },
+            {
+              title: t('Company Info', 'معلومات العمل'),
+              icon: 'briefcase-outline',
+              rows: [
+                {label: t('Company', 'الشركة'), value: user.CompanyName},
+                {label: t('Department', 'القسم'), value: user.Department},
+                {label: t('Position', 'المنصب'), value: user.Title},
+                {label: t('Manager', 'المدير'), value: user.DepManagerName},
+                {
+                  label: t('Joining Date', 'تاريخ الانضمام'),
+                  value: formatDate(user.DateHired),
+                },
+                {
+                  label: t('Contract Expiry', 'انتهاء العقد'),
+                  value: formatDate(user.ContractEndDate),
+                },
+              ],
+            },
+            {
+              title: t('ID Info', 'معلومات الهوية'),
+              icon: 'card-outline',
+              rows: [
+                {label: t('Nationality', 'الجنسية'), value: user.Nationality},
+                {label: t('Passport No.', 'رقم الجواز'), value: user.PassportNo},
+                {label: t('QID', 'رقم البطاقة'), value: user.QID},
+              ],
+            },
+            {
+              title: t('Leave Overview', 'ملخص الإجازات'),
+              icon: 'calendar-outline',
+              rows: [
+                {label: t('Leave Taken', 'الإجازات المأخوذة'), value: user.Absence},
+                {
+                  label: t('Leave Balance', 'رصيد الإجازات'),
+                  value: user.LeaveBalance,
+                },
+              ],
+            },
+          ]}
+        />
+      )}
     </PageLayout>
   );
 };
-
-type InfoItemProps = {label: string; value: string};
-
-const InfoItem: React.FC<InfoItemProps> = ({label, value}) => (
-  <View style={styles.infoBox}>
-    <Text style={styles.label}>{label}:</Text>
-    <Text style={styles.value}>{value}</Text>
-  </View>
-);
 
 export default ProfileScreen;

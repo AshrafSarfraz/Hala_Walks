@@ -10,7 +10,7 @@
 //   StatusBar,
 //   StyleSheet,
 // } from 'react-native';
-// import {useFocusEffect} from '@react-navigation/native';
+// import {CommonActions, useFocusEffect} from '@react-navigation/native';
 // import {useSafeAreaInsets} from 'react-native-safe-area-context';
 // import {useSelector} from 'react-redux';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -251,7 +251,7 @@ import {
   StatusBar,
   StyleSheet,
 } from 'react-native';
-import {useFocusEffect} from '@react-navigation/native';
+import {CommonActions, useFocusEffect} from '@react-navigation/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useSelector} from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -364,7 +364,9 @@ export default function AccountScreen({
     try {
       if (role === 'staff') await auth().signOut();
       await AsyncStorage.removeItem(key);
-      navigation.replace(role === 'org' ? 'WelcomeScreen' : 'Role');
+      navigation.dispatch(
+        CommonActions.reset({index: 0, routes: [{name: 'Login'}]}),
+      );
     } catch {
       setLoggingOut(false);
     }
