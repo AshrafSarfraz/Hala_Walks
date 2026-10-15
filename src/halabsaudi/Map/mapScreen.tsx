@@ -1,5 +1,5 @@
 import Ionicons from '@react-native-vector-icons/ionicons';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
 import React, {
   memo,
@@ -95,7 +95,6 @@ const regionFromVenues = (venues: VenueMarker[]): Region => {
 };
 
 const MAX_VISIBLE_MARKERS = 45;
-const NEARBY_RADIUS_KM = 25;
 const NEAR_VENUE_RADIUS_KM = 120;
 
 // ─── Geo helpers ──────────────────────────────────────────────────────────────
@@ -193,40 +192,17 @@ const isNearAnyVenue = (
       radiusKm,
   );
 
-const resolveMarkerFilterCenter = (
-  location: {latitude: number; longitude: number} | null,
-  mapCenter: {latitude: number; longitude: number} | null,
-  venues: VenueMarker[],
-) => {
-  if (location && isNearAnyVenue(location, venues)) return location;
-  return mapCenter ?? DEFAULT_REGION;
-};
-
-const pickVisibleMarkers = (
-  all: VenueMarker[],
-  center: {latitude: number; longitude: number},
-  radiusKm = NEARBY_RADIUS_KM,
-): VenueMarker[] => {
-  const venues = all.filter(m => m.type === 'venue');
-  const brandSlots = Math.max(0, MAX_VISIBLE_MARKERS - venues.length);
-
-  const nearbyBrands = all
-    .filter(m => m.type === 'brand')
-    .map(m => ({
-      ...m,
-      distance: haversineKm(
-        center.latitude,
-        center.longitude,
-        m.latitude,
-        m.longitude,
-      ),
-    }))
-    .filter(m => m.distance <= radiusKm)
-    .sort((a, b) => a.distance - b.distance)
-    .slice(0, brandSlots)
-    .map(({distance: _d, ...m}) => m);
-
-  return [...venues, ...nearbyBrands];
+// Keep original catalog objects so unchanged markers retain their props.
+const pickVisibleMarkers = (all: VenueMarker[], region: Region): VenueMarker[] => {
+  const latSpan = Math.min(180, Math.abs(region.latitudeDelta) * 0.65);
+  const lngSpan = Math.min(180, Math.abs(region.longitudeDelta) * 0.65);
+  return all.filter(item => {
+    const lngDistance = Math.abs(((item.longitude - region.longitude + 540) % 360) - 180);
+    return Math.abs(item.latitude - region.latitude) <= latSpan && lngDistance <= lngSpan;
+  }).map(item => ({item, distance: haversineKm(
+    region.latitude, region.longitude, item.latitude, item.longitude,
+  )})).sort((a, b) => a.distance - b.distance)
+    .slice(0, MAX_VISIBLE_MARKERS).map(entry => entry.item);
 };
 
 // ─── Pin components ───────────────────────────────────────────────────────────
@@ -298,54 +274,39 @@ const ImagePin = memo(function ImagePin({
   );
 });
 
-function CatalogMarker({
-  item,
-  selected,
-  uploadedImage,
-  onPress,
-}: {
+const CatalogMarker = memo(function CatalogMarker({item, selected, onSelect}: {
   item: VenueMarker;
   selected: boolean;
-  uploadedImage?: string | null;
-  onPress: () => void;
+  onSelect: (item: VenueMarker) => void;
 }) {
-  const coordinate = {latitude: item.latitude, longitude: item.longitude};
-  const resolvedImage = uploadedImage ?? item.image ?? null;
-  const useImagePin = !!resolvedImage;
-  const [tracks, setTracks] = useState(useImagePin);
-
-  useEffect(() => {
+  const coordinate = useMemo(() => ({latitude: item.latitude, longitude: item.longitude}),
+    [item.latitude, item.longitude]);
+  const resolvedImage = item.image || null;
+  const [tracks, setTracks] = useState(true);
+  const redrawTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const refreshMarker = useCallback(() => {
+    if (redrawTimer.current) clearTimeout(redrawTimer.current);
     setTracks(true);
-  }, [selected, resolvedImage]);
-  const onImageLoadEnd = useCallback(() => setTracks(true), []);
-
+    redrawTimer.current = setTimeout(() => {
+      setTracks(false);
+      redrawTimer.current = null;
+    }, Platform.OS === 'android' ? 500 : 800);
+  }, []);
   useEffect(() => {
-    if (!tracks) return;
-    const delay = Platform.OS === 'android' ? 500 : 800;
-    const t = setTimeout(() => setTracks(false), delay);
-    return () => clearTimeout(t);
-  }, [tracks, useImagePin]);
-
-  return (
-    <Marker
-      coordinate={coordinate}
-      tracksViewChanges={tracks}
-      zIndex={selected ? 10 : item.type === 'venue' ? 5 : 1}
-      anchor={{x: 0.5, y: 0.5}}
-      onPress={onPress}>
-      {useImagePin ? (
-        <ImagePin
-          type={item.type}
-          selected={selected}
-          imageUri={resolvedImage as string}
-          onImageLoadEnd={onImageLoadEnd}
-        />
-      ) : (
-        <MapPin type={item.type} selected={selected} />
-      )}
-    </Marker>
-  );
-}
+    refreshMarker();
+    return () => {
+      if (redrawTimer.current) clearTimeout(redrawTimer.current);
+    };
+  }, [selected, resolvedImage, refreshMarker]);
+  const handlePress = useCallback(() => onSelect(item), [item, onSelect]);
+  return <Marker coordinate={coordinate} tracksViewChanges={tracks}
+    zIndex={selected ? 10 : item.type === 'venue' ? 5 : 1}
+    anchor={{x: 0.5, y: 0.5}} onPress={handlePress}>
+    {resolvedImage ? <ImagePin type={item.type} selected={selected}
+      imageUri={resolvedImage} onImageLoadEnd={refreshMarker} />
+      : <MapPin type={item.type} selected={selected} />}
+  </Marker>;
+});
 
 // ─── Google Places helpers ────────────────────────────────────────────────────
 
@@ -812,25 +773,14 @@ const MapScreen = () => {
 
   const [address, setAddress] = useState('Current Location');
 
-  const [allMarkers, setAllMarkers] = useState<VenueMarker[]>([]);
-  const [mapCenter, setMapCenter] = useState<{
-    latitude: number;
-    longitude: number;
-  } | null>(null);
+  const allMarkers = useMemo(() => buildMarkersFromCatalog(venues, brands), [venues, brands]);
+  const [mapCenter, setMapCenter] = useState<Region | null>(null);
   const [mapReady, setMapReady] = useState(false);
   const [markersLoaded, setMarkersLoaded] = useState(false);
 
   const [selectedMarker, setSelectedMarker] = useState<VenueMarker | null>(
     null,
   );
-  // FIX: Force mapReady on Android if onMapReady fires late
-  useEffect(() => {
-    if (Platform.OS === 'android') {
-      const timer = setTimeout(() => setMapReady(true), 1500);
-      return () => clearTimeout(timer);
-    }
-  }, []);
-
   const animateToLocation = useCallback(
     (coords: {latitude: number; longitude: number}, delta = 0.05) => {
       const region: Region = {
@@ -935,7 +885,10 @@ const MapScreen = () => {
       setLocation(coords);
       setLocationError(null);
       setLoading(false);
-      animateToLocation(coords);
+      if (!didFitRef.current && mapRef.current) {
+        animateToLocation(coords);
+        didFitRef.current = true;
+      }
       resolveLocationMeta(coords);
     },
     [animateToLocation, resolveLocationMeta],
@@ -978,9 +931,11 @@ const MapScreen = () => {
       nativeEvent: {coordinate?: {latitude: number; longitude: number}};
     }) => {
       const coord = event.nativeEvent.coordinate;
-      if (!coord) return;
+      if (!coord || !mounted.current || !isValidCoord(coord.latitude, coord.longitude)) return;
       const coords = {latitude: coord.latitude, longitude: coord.longitude};
-      setLocation(coords);
+      setLocation(previous => previous && haversineKm(
+        previous.latitude, previous.longitude, coords.latitude, coords.longitude,
+      ) < 0.025 ? previous : coords);
       setLocationError(null);
       setLoading(false);
       resolveLocationMetaDebounced(coords);
@@ -1006,60 +961,15 @@ const MapScreen = () => {
     };
   }, []);
   useEffect(() => {
-    setAllMarkers(buildMarkersFromCatalog(venues, brands));
     if (venuesLoaded && !brandsLoading) {
       setMarkersLoaded(true);
       setLoading(false);
     }
   }, [venues, brands, venuesLoaded, brandsLoading]);
 
-  const visibleMarkers = useMemo(() => {
-    if (allMarkers.length === 0) return [];
-    const venues = allMarkers.filter(m => m.type === 'venue');
-    if (!location && !mapCenter) return allMarkers;
-    const center = resolveMarkerFilterCenter(location, mapCenter, venues);
-    const nearUser =
-      !!location && isNearAnyVenue(location, venues, NEAR_VENUE_RADIUS_KM);
-    const radiusKm = nearUser ? NEARBY_RADIUS_KM : NEAR_VENUE_RADIUS_KM;
-    return pickVisibleMarkers(allMarkers, center, radiusKm);
-  }, [allMarkers, location, mapCenter]);
-
-  const fitMapToContent = useCallback(() => {
-    if (!mapRef.current || allMarkers.length === 0) return false;
-    const venues = allMarkers.filter(m => m.type === 'venue');
-    const markersToFit =
-      visibleMarkers.length > 0 ? visibleMarkers : allMarkers;
-    const markerCoords = markersToFit.map(m => ({
-      latitude: m.latitude,
-      longitude: m.longitude,
-    }));
-    if (markerCoords.length === 0) return false;
-    const userNearVenues = !!location && isNearAnyVenue(location, venues);
-    const coords = userNearVenues
-      ? [
-          {latitude: location!.latitude, longitude: location!.longitude},
-          ...markerCoords,
-        ]
-      : markerCoords;
-    mapRef.current.fitToCoordinates(coords, {
-      edgePadding: {top: 100, right: 50, bottom: 140, left: 50},
-      animated: true,
-    });
-    return true;
-  }, [allMarkers, location, visibleMarkers]);
-
-  useFocusEffect(
-    useCallback(() => {
-      if (didFitRef.current) return;
-      const timer = setTimeout(() => {
-        if (mapRef.current && allMarkers.length > 0) {
-          fitMapToContent();
-          didFitRef.current = true;
-        }
-      }, 600);
-      return () => clearTimeout(timer);
-    }, [allMarkers.length, fitMapToContent]),
-  );
+  const visibleMarkers = useMemo(() =>
+    pickVisibleMarkers(allMarkers, mapCenter ?? GCC_OVERVIEW_REGION),
+    [allMarkers, mapCenter]);
 
   useEffect(() => {
     if (!markersLoaded || allMarkers.length === 0 || !mapReady) return;
@@ -1081,11 +991,23 @@ const MapScreen = () => {
   }, [allMarkers, location, mapReady, markersLoaded]);
 
   const onRegionChangeComplete = useCallback((region: Region) => {
-    setMapCenter({
-      latitude: region.latitude,
-      longitude: region.longitude,
+    setMapCenter(previous => {
+      if (previous) {
+        const latTolerance = Math.max(0.00001, Math.abs(previous.latitudeDelta) * 0.03);
+        const lngTolerance = Math.max(0.00001, Math.abs(previous.longitudeDelta) * 0.03);
+        if (Math.abs(previous.latitude - region.latitude) < latTolerance &&
+            Math.abs(previous.longitude - region.longitude) < lngTolerance &&
+            Math.abs(previous.latitudeDelta - region.latitudeDelta) < latTolerance &&
+            Math.abs(previous.longitudeDelta - region.longitudeDelta) < lngTolerance) return previous;
+      }
+      return region;
     });
   }, []);
+
+  const handleMarkerSelect = useCallback((item: VenueMarker) => {
+    setSelectedMarker(item);
+    animateToLocation({latitude: item.latitude, longitude: item.longitude}, 0.002);
+  }, [animateToLocation]);
 
   // NEW: open the full brand/venue detail screen (image slider + details + gallery)
   const openBrandDetail = useCallback(
@@ -1117,9 +1039,14 @@ const MapScreen = () => {
         showsMyLocationButton={false}
         followsUserLocation={false}
         moveOnMarkerPress={false}
+        scrollEnabled={true}
+        zoomEnabled={true}
+        rotateEnabled={true}
+        pitchEnabled={true}
         loadingEnabled
         initialRegion={GCC_OVERVIEW_REGION}
         onMapReady={() => setMapReady(true)}
+        onPanDrag={() => { didFitRef.current = true; }}
         onUserLocationChange={onUserLocationChange}
         onRegionChangeComplete={onRegionChangeComplete}>
         {location && hasLocationPermission && Platform.OS === 'android' && (
@@ -1142,23 +1069,12 @@ const MapScreen = () => {
                 selectedMarker?._id === item._id &&
                 selectedMarker?.type === item.type
               }
-              uploadedImage={null}
-              onPress={() => {
-                setSelectedMarker(item);
-
-                animateToLocation(
-                  {
-                    latitude: item.latitude,
-                    longitude: item.longitude,
-                  },
-                  0.002,
-                );
-              }}
+              onSelect={handleMarkerSelect}
             />
           ))}
       </MapView>
 
-      <ActivityIndicatorModal visible={loading} />
+      {loading && <ActivityIndicatorModal visible />}
 
       {!loading && locationError && (
         <View style={styles.errorBanner}>

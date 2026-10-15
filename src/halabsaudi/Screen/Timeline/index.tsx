@@ -20,7 +20,7 @@ import { hbsText } from '../../i18n/translations';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const MAX_PHOTOS = 2;
+const MAX_PHOTOS = 3;
 
 const PURPLE = Colors.accent;
 const BG = Colors.background;

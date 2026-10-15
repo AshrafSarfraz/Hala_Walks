@@ -203,7 +203,8 @@ const LoginScreen: React.FC = () => {
 
   return (
     <AuthLayout
-      title=""
+     title={t('West Walk Family', 'عائلة ويست ووك')}
+     onBackPress={() => navigation.goBack()}
       overlay={
         <AnimatedToast
           message={alertMessage}

@@ -1,54 +1,3 @@
-// // SimpleQueryWebView.tsx
-// import React, { useEffect, useState } from 'react';
-// import { View, ActivityIndicator, StyleSheet } from 'react-native';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
-// import { WebView } from 'react-native-webview';
-// import { SafeAreaView } from 'react-native-safe-area-context';
-
-// export default function SimpleQueryWebView() {
-//   const [userId, setUserId] = useState<string | null>(null);
-
-//   useEffect(() => {
-//     const fetchUserId = async () => {
-//       try {
-//         const raw = await AsyncStorage.getItem('staff_data');
-//         if (!raw) {
-//           console.log('No user data found in AsyncStorage');
-//           return;
-//         }
-
-//         const data = JSON.parse(raw);
-//         console.log('User ID to send:', data.userId);
-//         setUserId(data.userId);
-//       } catch (error) {
-//         console.log('Error fetching userId:', error);
-//       }
-//     };
-
-//     fetchUserId();
-//   }, []);
-
-//   if (!userId) {
-//     return (
-//       <SafeAreaView  style={styles.center}>
-//         <ActivityIndicator size="large" color="#005029" />
-//       </SafeAreaView>
-//     );
-//   }
-
-//   // const target = `http://localhost:5173/?userId=${encodeURIComponent(userId)}`;
-//   const target = `https://al-wessilholding.com/app-redirect/?userId=${encodeURIComponent(userId)}`;
-
-//   return (
-//     <SafeAreaView edges={['top']} style={{ flex: 1,backgroundColor:"#005029" }}>
-//       <WebView source={{ uri: target }} style={{ flex: 1 }} />
-//     </SafeAreaView>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-// });
 
 import React, {useEffect, useRef, useState} from 'react';
 import {
@@ -56,6 +5,7 @@ import {
   StyleSheet,
   BackHandler,
   Platform,
+  StatusBar,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {WebView} from 'react-native-webview';
@@ -110,7 +60,8 @@ export default function SimpleQueryWebView() {
   )}&inApp=1`;
 
   return (
-    <SafeAreaView edges={['top']} style={{flex: 1, backgroundColor: '#005029'}}>
+    <SafeAreaView edges={['top']} style={{flex: 1, backgroundColor: '#31368A'}}>
+       <StatusBar  barStyle="light-content" />
       <WebView
         ref={webref}
         source={{uri: target}}
