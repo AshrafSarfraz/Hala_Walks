@@ -5,11 +5,12 @@ import { permissionStatus } from '../../permissions/service';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import { useNavigation } from '@react-navigation/native';
 import React,{ useEffect,useState } from 'react';
-import { Dimensions,FlatList,Image,ImageBackground,Platform,StyleSheet,TouchableOpacity,View } from 'react-native';
+import { Dimensions,FlatList,Image,Platform,StyleSheet,TouchableOpacity,View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch,useSelector } from 'react-redux';
 
 import Geolocation from '@react-native-community/geolocation';
+import BrandImage from '../../Component/Media/BrandImage';
 import { useStatusBar } from '../../Component/UseStatusBar/useStatusBar';
 import DistanceFromDevice from '../../Component/distanceCalculate/distanceCalculate';
 import { Colors } from '../../Themes/Colors';
@@ -107,8 +108,9 @@ const Wishlist: React.FC<WishlistProps> = () => {
               onPress={() => navigation.navigate('DetailScreen', { item })}
               activeOpacity={0.85}>
 
-              {/* Image */}
-              <ImageBackground source={{ uri: item.img }} style={s.cardImage}>
+              {/* Image — gallery ki pehli image, warna logo */}
+              <View style={s.cardImage}>
+                <BrandImage item={item} cache="immutable" style={StyleSheet.absoluteFillObject} />
                 <View style={s.imageOverlay} />
 
                 {/* Heart — flips to left in Arabic */}
@@ -124,7 +126,7 @@ const Wishlist: React.FC<WishlistProps> = () => {
                     style={s.heartIcon}
                   />
                 </TouchableOpacity>
-              </ImageBackground>
+              </View>
 
               {/* Card content */}
               <View style={[s.cardBody, { alignItems: isRTL ? 'flex-end' : 'flex-start' }]}>

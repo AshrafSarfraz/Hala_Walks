@@ -5,6 +5,7 @@ import {useSelector} from 'react-redux';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import {Text} from '../../../../components/Text';
 import CachedImage from '../../../../components/Media/CachedImage';
+import {brandImageProps} from '../../../../utils/brandCover';
 import useBrandCatalog from '../../../../hooks/useBrandCatalog';
 import {getDiscountPercent} from '../../../../utils/offers';
 import {RootState} from '../../../../redux/store';
@@ -60,7 +61,7 @@ export default function BestSellers() {
                 onPress={() => navigation.navigate('DetailScreen', {item})}>
                 <View>
                   <CachedImage
-                    uri={String(item.img || '')}
+                    {...brandImageProps(item, 'cover')}
                     style={styles.image}
                     priority={index < 2 ? 'high' : 'normal'}
                   />

@@ -2,6 +2,8 @@ import {useNavigation} from '@react-navigation/native';
 import React, {useEffect, useMemo, useState} from 'react';
 import {FlatList, TouchableOpacity, View} from 'react-native';
 import FastImage from 'react-native-fast-image';
+import BrandImage from '../../../Component/Media/BrandImage';
+import {brandCoverUri} from '../../../Component/Media/brandCover';
 import LinearGradient from 'react-native-linear-gradient';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import {useSelector} from 'react-redux';
@@ -86,7 +88,7 @@ const HotDeals: React.FC<Props> = ({onDataLoaded}) => {
   }, [loading, deals.length, onDataLoaded]);
 
   const renderItem = ({item, index}: {item: any; index: number}) => {
-    const uri = String(item.img || '').trim();
+    const uri = brandCoverUri(item);
     const isLoaded = loadedImages[uri] ?? false;
     const hasFailed = failedImages[uri] ?? false;
     const imageHeight = IMAGE_H;
@@ -98,16 +100,12 @@ const HotDeals: React.FC<Props> = ({onDataLoaded}) => {
         onPress={() => navigation.navigate('DetailScreen', {item})}>
         <View style={[styles.imageWrap, {height: imageHeight}]}>
           {!!uri && !hasFailed && (
-            <FastImage
-              source={{
-                uri,
-                priority:
-                  index < 3
-                    ? FastImage.priority.high
-                    : FastImage.priority.normal,
-              }}
+            <BrandImage
+              item={item}
+              priority={
+                index < 3 ? FastImage.priority.high : FastImage.priority.normal
+              }
               style={{width: IMAGE_W, height: imageHeight}}
-              resizeMode={FastImage.resizeMode.contain}
               onLoad={() => {
                 setLoadedImages(previous =>
                   previous[uri]

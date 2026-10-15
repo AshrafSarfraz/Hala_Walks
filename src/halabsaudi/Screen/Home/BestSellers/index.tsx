@@ -7,6 +7,7 @@ import {useSelector} from 'react-redux';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import LinearGradient from 'react-native-linear-gradient';
 import FastImage from 'react-native-fast-image';
+import BrandImage from '../../../Component/Media/BrandImage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {RootState} from '../../../redux_toolkit/store';
@@ -108,16 +109,15 @@ const BestSeller: React.FC<{onDataLoaded?: (hasData: boolean) => void; onLoadErr
         onPress={() => navigation.navigate('DetailScreen', {item})}>
         <View style={{flexDirection: language === 'en' ? 'row' : 'row-reverse', alignItems: 'center'}}>
           <ShimmerPlaceholder visible={isLoaded} LinearGradient={LinearGradient} style={styles.image}>
-            <FastImage
-              source={{
-                uri: item.img,
-                priority:
-                  index === 0
-                    ? FastImage.priority.high
-                    : index <= 2
-                    ? FastImage.priority.normal
-                    : FastImage.priority.low,
-              }}
+            <BrandImage
+              item={item}
+              priority={
+                index === 0
+                  ? FastImage.priority.high
+                  : index <= 2
+                  ? FastImage.priority.normal
+                  : FastImage.priority.low
+              }
               style={styles.image}
               onLoadEnd={() => handleCardLoad(String(item.id))}
             />

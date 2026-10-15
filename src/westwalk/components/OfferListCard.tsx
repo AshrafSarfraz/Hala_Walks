@@ -11,6 +11,7 @@ import CachedImage from './Media/CachedImage';
 import {Colors} from '../theme/Colors';
 import {Fonts} from '../theme/Fonts';
 import {getDiscountPercent} from '../utils/offers';
+import {brandImageProps} from '../utils/brandCover';
 export default React.memo(function OfferListCard({
   item,
   ar,
@@ -31,8 +32,7 @@ export default React.memo(function OfferListCard({
       onPress={onPress}
       style={[styles.row, {flexDirection: ar ? 'row-reverse' : 'row'}]}>
       <CachedImage
-        uri={String(item.img || '')}
-        resizeMode="contain"
+        {...brandImageProps(item)}
         style={[styles.image, {width: size, height: size}]}
       />
       <View style={styles.info}>

@@ -4,6 +4,8 @@ import { useNavigation } from '@react-navigation/native';
 import React,{ useEffect,useState } from 'react';
 import { FlatList,Image,TextInput,TouchableOpacity,View } from 'react-native';
 import FastImage from 'react-native-fast-image';
+import BrandImage from '../../Component/Media/BrandImage';
+import { brandCoverUri } from '../../Component/Media/brandCover';
 import LinearGradient from 'react-native-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
@@ -37,11 +39,6 @@ const SearchScreen: React.FC = () => {
 
   const norm = (v: any) => String(v ?? '').trim().toLowerCase();
 
-  const getBrandImage = (b: any) => {
-    const hero = String(b?.heroImage || '').trim();
-    if (hero) return hero;
-    return String(b?.img || '').trim();
-  };
 
   /* ================= LOCATION ================= */
   useEffect(() => {
@@ -175,7 +172,7 @@ const SearchScreen: React.FC = () => {
 
     // baaki brands ki sirf list image
     brands.slice(15).forEach((b: any) => {
-      push(b?.heroImage || b?.img);
+      push(brandCoverUri(b));
     });
 
     if (urls.length) FastImage.preload(urls);
@@ -274,14 +271,11 @@ const SearchScreen: React.FC = () => {
                 <TouchableOpacity
                   style={styles.itemContainer}
                   onPress={() => navigation.navigate('DetailScreen', {item})}>
-                  <FastImage
-                    source={{
-                      uri: getBrandImage(item),
-                      priority: index <= 6 ? FastImage.priority.high : FastImage.priority.normal,
-                      cache: FastImage.cacheControl.immutable,
-                    }}
+                  <BrandImage
+                    item={item}
+                    priority={index <= 6 ? FastImage.priority.high : FastImage.priority.normal}
+                    cache="immutable"
                     style={styles.itemImage}
-                    resizeMode={FastImage.resizeMode.contain}
                   />
 
                   <View style={styles.itemInfo}>

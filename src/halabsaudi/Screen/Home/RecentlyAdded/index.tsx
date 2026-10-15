@@ -3,6 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useMemo, useState } from 'react';
 import { FlatList, Image, TouchableOpacity, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
+import BrandImage from '../../../Component/Media/BrandImage';
 import LinearGradient from 'react-native-linear-gradient';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
 import { useSelector } from 'react-redux';
@@ -101,13 +102,10 @@ const RecentlyAdded: React.FC<Props> = ({onDataLoaded}) => {
         onPress={() => navigation.navigate('DetailScreen', {item})}>
         <View style={styles.imageWrap}>
           <ShimmerPlaceholder visible={isLoaded} LinearGradient={LinearGradient} style={styles.image}>
-            <FastImage
-              source={{
-                uri: item.img,
-                priority: index < 2 ? FastImage.priority.high : FastImage.priority.normal,
-              }}
+            <BrandImage
+              item={item}
+              priority={index < 2 ? FastImage.priority.high : FastImage.priority.normal}
               style={styles.image}
-              resizeMode={FastImage.resizeMode.cover}
               onLoadEnd={() => setLoadedCards(p => ({...p, [item.id]: true}))}
             />
           </ShimmerPlaceholder>

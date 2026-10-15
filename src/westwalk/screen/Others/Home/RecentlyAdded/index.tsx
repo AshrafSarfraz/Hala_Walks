@@ -10,6 +10,7 @@ import {useSelector} from 'react-redux';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import {Text} from '../../../../components/Text';
 import CachedImage from '../../../../components/Media/CachedImage';
+import {brandImageProps} from '../../../../utils/brandCover';
 import useBrandCatalog from '../../../../hooks/useBrandCatalog';
 import {RootState} from '../../../../redux/store';
 import {Colors} from '../../../../theme/Colors';
@@ -51,7 +52,7 @@ export default function RecentlyAdded() {
                 onPress={() => navigation.navigate('DetailScreen', {item})}>
                 <View>
                   <CachedImage
-                    uri={String(item.img || '')}
+                    {...brandImageProps(item, 'cover')}
                     style={{width: tileW, height: tileW * 0.72}}
                     priority={index < 2 ? 'high' : 'normal'}
                   />

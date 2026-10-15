@@ -3,6 +3,8 @@ import { useNavigation } from '@react-navigation/native';
 import React,{ useEffect,useMemo,useRef,useState } from 'react';
 import { FlatList,Image,TouchableOpacity,View } from 'react-native';
 import FastImage from 'react-native-fast-image';
+import BrandImage from '../../Component/Media/BrandImage';
+import { brandCoverUri } from '../../Component/Media/brandCover';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 import { ActivityIndicator } from '../../../ui/ActivityIndicator';
@@ -60,11 +62,6 @@ const SelectedVenues: React.FC<{route: any}> = ({route}) => {
 
   const venueNameNorm = useMemo(() => norm(item?.venueName), [item?.venueName]);
 
-  const getBrandImage = (b: any) => {
-    const hero = String(b?.heroImage || '').trim();
-    if (hero) return hero;
-    return String(b?.img || '').trim();
-  };
 
   const filterByVenueAndActive = (arr: any[]) => {
     return arr
@@ -180,7 +177,7 @@ const SelectedVenues: React.FC<{route: any}> = ({route}) => {
     });
 
     items.slice(15).forEach((b: any) => {
-      push(b?.heroImage || b?.img);
+      push(brandCoverUri(b));
     });
 
     if (urls.length) FastImage.preload(urls);
@@ -215,14 +212,11 @@ const SelectedVenues: React.FC<{route: any}> = ({route}) => {
       <TouchableOpacity
         style={styles.itemContainer}
         onPress={() => navigation.navigate('DetailScreen', {item: rowItem})}>
-        <FastImage
-          source={{
-            uri: getBrandImage(rowItem),
-            priority: FastImage.priority.normal,
-            cache: FastImage.cacheControl.immutable,
-          }}
+        <BrandImage
+          item={rowItem}
+          priority={FastImage.priority.normal}
+          cache="immutable"
           style={styles.itemImage}
-          resizeMode={FastImage.resizeMode.contain}
         />
 
         <View style={styles.itemInfo}>

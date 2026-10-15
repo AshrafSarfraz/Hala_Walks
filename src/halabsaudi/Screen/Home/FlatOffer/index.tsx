@@ -5,6 +5,7 @@ import FastImage from 'react-native-fast-image';
 import { useSelector } from 'react-redux';
 import { ActivityIndicator } from '../../../../ui/ActivityIndicator';
 import CachedImage from '../../../Component/Media/CachedImage';
+import { brandPhotos } from '../../../Component/Media/brandCover';
 import { isActive, norm, useBrandCatalog } from '../../../hooks/useBrandCatalog';
 import { RootState } from '../../../redux_toolkit/store';
 import { Colors } from '../../../Themes/Colors';
@@ -20,9 +21,11 @@ const softMatch = (a: any, b: any) => {
   return A === B || A.includes(B) || B.includes(A);
 };
 
-// heroImage pehle, warna logo
+// heroImage pehle, phir gallery ki pehli image, warna logo
 const getHeroImage = (item: any) =>
-  String(item?.heroImage || '').trim() || String(item?.img || '').trim();
+  String(item?.heroImage || '').trim() ||
+  brandPhotos(item)[0] ||
+  String(item?.img || '').trim();
 
 const ImageSlider: React.FC<{onLoadError?: () => void}> = () => {
   const navigation = useNavigation<any>();
